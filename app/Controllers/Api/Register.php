@@ -36,8 +36,8 @@ class Register
         $username = $_POST['username'];
         $password = $_POST['password'];
         $email = $_POST['email'];
-        if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false || !preg_match("#^[a-zA-Z0-9]+$#", $username)) {
-            if (Word::strlen(ltrim($username)) >= 5 && Word::strlen(ltrim($username)) <= 20 && Router::checkCurl($_SERVER['HTTP_HOST'] . '/' . $username) != 200) {
+        if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false || Router::checkCurl($_SERVER['HTTP_HOST'] . '/' . $username) != 200 ) {
+            if (Word::strlen(ltrim($username)) >= 5 && Word::strlen(ltrim($username)) <= 20 && !preg_match("#^[a-zA-Z0-9]+$#", $username)) {
 
 
                         if (Word::strlen(ltrim($password)) >= 5 && Word::strlen(ltrim($password)) <= 120) {
@@ -106,6 +106,7 @@ class Register
                                     echo json_encode(
                                         array(
                                             'errorcode' => '2',
+                                            'errortitle' => 'Пользователь с такой почтой уже существует!',
                                             'error' => 1
                                         )
                                     );
@@ -115,6 +116,7 @@ class Register
                         echo json_encode(
                             array(
                                 'errorcode' => '3',
+                                'errortitle' => 'Почта некорректного формата!',
                                 'error' => 1
                             )
                         );
@@ -123,6 +125,7 @@ class Register
                     echo json_encode(
                         array(
                             'errorcode' => '4',
+                            'errortitle' => 'Пароль меньше 5 символов!',
                             'error' => 1
                         )
                     );
@@ -131,6 +134,7 @@ class Register
                 echo json_encode(
                     array(
                         'errorcode' => '5',
+                        'errortitle' => 'Никнейм некорректный!',
                         'error' => 1
                     )
                 );
@@ -139,6 +143,7 @@ class Register
             echo json_encode(
                 array(
                     'errorcode' => '6',
+                    'errortitle' => 'Никнейм уже существует!!',
                     'error' => 1
                 )
             );

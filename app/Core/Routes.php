@@ -16,7 +16,7 @@ class Routes
         Router::get('/register', 'RegisterController@i');
         Router::get('/photo/$id', 'PhotoController@i');
         Router::post('/api/login', 'ApiController@login');
-       
+        Router::post('/api/register', 'ApiController@register');
 
 
 

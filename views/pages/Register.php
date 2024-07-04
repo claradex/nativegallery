@@ -56,18 +56,21 @@
                                     if (!email.match(/^[0-9a-z_\-.]+@[0-9a-z_\-^.]+\.[a-z]{2,4}$/i)) err_email.html('Некорректный адрес');
 
 
-                                    if (err_email.html() == '' && captchaPassed) {
+                                    if (err_email.html() == '') {
                                         $(this).prop('disabled', true).val('Отправка данных...');
 
-                                        $.get('/api/register', {
+                                        $.post('/api/register', {
                                                 username: username,
                                                 email: email,
                                                 password: password
                                             }, function(r) {
-                                                if (r != 0) {
-                                                    $('#err_email').html(r == 1 ? 'Пользователь с таким e-mail уже зарегистрирован' : 'На этот адрес уже было отправлено письмо со ссылкой для подтверждения.<br /><br />Проверьте, не попало ли оно в папку "Спам"!');
+                                                r = JSON.parse(r);
+                                                if (r.errorcode > 0) {
+                                                    $('#err_email').html(r.errortitle);
                                                     $('#regbtn').prop('disabled', false).val('Зарегистрироваться');
-                                                } else $('#form').submit();
+                                                } else {
+                                                    window.location.href = "/"
+                                                }
                                             })
                                             .fail(function(jx) {
                                                 if (jx.responseText != '') alert(jx.responseText);
