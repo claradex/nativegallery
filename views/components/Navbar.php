@@ -1,44 +1,6 @@
 <tr>
             <td class="mm-bar">
                 <ul class="mm mm-level-1">
-                    <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">База вагонов и ТС</span></a>
-                        <div>
-                            <ul class="mm-level-2">
-                                <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Модели</span></a>
-                                    <div>
-                                        <ul class="mm-level-3">
-                                            <li><a href="/models.php?t=1" class="mm-item"><span class="mm-label">Трамвай</span></a></li>
-                                            <li><a href="/models.php?t=2" class="mm-item"><span class="mm-label">Троллейбус</span></a></li>
-                                            <li><a href="/models.php?t=3" class="mm-item"><span class="mm-label">Метрополитен</span></a></li>
-                                            <li><a href="/models.php?t=4" class="mm-item"><span class="mm-label">Монорельс</span></a></li>
-                                            <li><a href="/models.php?t=5" class="mm-item"><span class="mm-label">Фуникулёр</span></a></li>
-                                            <li><a href="/models.php?t=6" class="mm-item"><span class="mm-label">Транслор</span></a></li>
-                                            <li><a href="/models.php?t=7" class="mm-item"><span class="mm-label">Мувер (АТН)</span></a></li>
-                                            <li><a href="/models.php?t=8" class="mm-item"><span class="mm-label">Маглев</span></a></li>
-                                            <li><a href="/models.php?t=9" class="mm-item"><span class="mm-label">Электробус</span></a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Города и системы</span></a>
-                                    <div>
-                                        <ul class="mm-level-3">
-                                            <li><a href="/networks.php?t=1" class="mm-item"><span class="mm-label">Трамвай</span></a></li>
-                                            <li><a href="/networks.php?t=2" class="mm-item"><span class="mm-label">Троллейбус</span></a></li>
-                                            <li><a href="/networks.php?t=3" class="mm-item"><span class="mm-label">Метрополитен</span></a></li>
-                                            <li><a href="/networks.php?t=4" class="mm-item"><span class="mm-label">Монорельс</span></a></li>
-                                            <li><a href="/networks.php?t=5" class="mm-item"><span class="mm-label">Фуникулёр</span></a></li>
-                                            <li><a href="/networks.php?t=6" class="mm-item"><span class="mm-label">Транслор</span></a></li>
-                                            <li><a href="/networks.php?t=7" class="mm-item"><span class="mm-label">Мувер (АТН)</span></a></li>
-                                            <li><a href="/networks.php?t=8" class="mm-item"><span class="mm-label">Маглев</span></a></li>
-                                            <li><a href="/networks.php?t=9" class="mm-item"><span class="mm-label">Электробус</span></a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li><a href="/country/" class="mm-item"><span class="mm-label">Страны и регионы</span></a></li>
-                                <li><a href="/update-v/" class="mm-item"><span class="mm-label">Изменения в базе данных</span></a></li>
-                            </ul>
-                        </div>
-                    </li>
                     <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Дополнительно</span></a>
                         <div>
                             <ul class="mm-level-2">
@@ -75,7 +37,6 @@
                             </ul>
                         </div>
                     </li>
-                    <li><a href="//forum.transphoto.org" class="mm-item"><span class="mm-label">Форум</span></a></li>
                     <li><a href="/search.php" class="mm-item"><span class="mm-label">Поиск</span></a>
                         <div>
                             <ul class="mm-level-2">

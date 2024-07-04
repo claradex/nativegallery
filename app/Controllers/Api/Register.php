@@ -36,8 +36,8 @@ class Register
         $username = $_POST['username'];
         $password = $_POST['password'];
         $email = $_POST['email'];
-        if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false || Router::checkCurl($_SERVER['HTTP_HOST'] . '/' . $username) != 200 ) {
-            if (Word::strlen(ltrim($username)) >= 5 && Word::strlen(ltrim($username)) <= 20 && !preg_match("#^[a-zA-Z0-9]+$#", $username)) {
+        if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false) {
+            if (Word::strlen(ltrim($username)) >= 5 && Word::strlen(ltrim($username)) <= 20) {
 
 
                         if (Word::strlen(ltrim($password)) >= 5 && Word::strlen(ltrim($password)) <= 120) {
