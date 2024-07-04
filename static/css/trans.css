@@ -1,0 +1,11 @@
+:root {
+    --theme-bg-color:           #292929;
+    --theme-bg-hover-color:     #505050;
+    --theme-link-color:         #3b7dc1;
+    --theme-link-visited-color: #5b7289;
+
+    --theme-link-hover-bg-color:          rgba(70, 135, 200, .15);
+    --theme-link-underline-color:         rgba(59, 125, 193,  .3);
+    --theme-link-underline-visited-color: rgba(91, 114, 137,  .3);
+    --theme-preview-hover-bg-color:       rgba(41,  90, 140,  .7);
+}

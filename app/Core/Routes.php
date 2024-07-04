@@ -12,14 +12,15 @@ class Routes
     public static function init()
     {
         Router::get('/', 'MainController@i');
+        Router::get('/photo/$id', 'PhotoController@i');
        
 
 
 
         if (Auth::userid() > 0) {
-            
+
         } else {
-            Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
+            //Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }
     }
 }

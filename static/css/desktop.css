@@ -1,0 +1,40 @@
+.mm-bar, .mm-bar > ul, .mm-bar li, .mm-item, #title-small { display:flex; align-items:center; box-sizing:border-box; height:30px; flex-wrap:nowrap; }
+.mm-bar, .mm-bar ul { background:linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)) var(--theme-bg-color); }
+.mm-bar ul { list-style-type:none; padding:0; margin:0; }
+
+ul.mm { margin:0 8px; width:100%; }
+.mm li { position:relative; transition:background-color 0.2s linear; }
+.mm li:hover, .mm li:hover { background-color:var(--theme-bg-hover-color); }
+.mm-item, a.mm-item:visited, a.mm-item:hover, a.mm-item:visited:hover { padding:0 12px; white-space:nowrap; background-color:transparent; color:var(--theme-fg-color); font-family:var(--narrow-font); font-size:17px; flex-grow:1; }
+.mm-item .notify-count { margin-right:-5px; }
+.mm-item[href="#"] { cursor:default; }
+.mm ul { display:none; position:absolute; z-index:2001; left:0; top:30px; }
+.mm-level-2 div { position:relative; width:0; height:30px; top:-1px; }
+.mm-level-2 div::before { content:''; display:block; position:relative; left:-16px; top:11px; width:9px; height:9px; background:url('/img/arrow.png') no-repeat; transform:rotate(-90deg); }
+.mm-level-2 div > ul { left:0; top:0; }
+.mm li:hover > div > ul { display:block; }
+.mm ul li { height:31px; border-top:solid 1px var(--theme-bg-color); }
+
+.mm-icon + .mm-label, .mm-label + .mm-right-icon { margin-left: 9px; }
+.mm-icon + .mm-right-icon { margin-left: 11px; }
+.mm-notify { margin-left: 7px; }
+
+.mm-pad-right { margin-left: auto; }
+.mm-lang > div > ul, .mm-pad-right > div > ul { right: 0; left: auto; }
+.mm-lang > .mm-item > .mm-label { display: none; }
+
+.mm-pad-right ul .mm-item { padding:0 17px 0 12px !important; }
+/*.mm-lang .mm-item { justify-content:flex-end; padding:0 12px 0 17px !important; }
+.mm-lang .mm-item[href="#"] { padding:0 12px 0 10px !important; }*/
+.mm-lang .arrow { width:9px; height:9px; transition:transform .1s ease-out; }
+.mm-lang:hover .arrow { transform:rotate(-180deg); }
+
+.tools { position:absolute; box-sizing:border-box; height:52px; top:31px; right:1px; padding:0; }
+.tools a { display:inline-block; border-left:solid 1px var(--theme-bg-color); box-sizing:border-box; height:52px; padding:14px 11px 0; }
+
+
+@media screen and (max-width: 1200px) {
+    li.mm-wide { position: static; }
+    .mm-wide > .mm-item > .mm-label { display: none; }
+    .mm-wide > div > ul { right: 8px; left: auto; }
+}
