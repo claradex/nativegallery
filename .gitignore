@@ -1,1 +1,5 @@
 /vendor/
+*.zip
+.osp
+.git
+.github
