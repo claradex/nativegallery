@@ -34,8 +34,7 @@
 
                         </form>
 
-                        <div style="margin-top:15px"><a href="/register.php" class="mf-button">Регистрация</a></div>
-                        <div style="margin-top:15px"><a href="/forgot.php" class="mf-label-narrow">Забыли пароль?</a></div>
+                        <div style="margin-top:15px"><a href="/register" class="mf-button">Регистрация</a></div>
                     </div><br />
 
                     <script>
@@ -81,16 +80,7 @@
                 </center>
             </td>
         </tr>
-        <tr>
-            <td class="footer"><b><a href="/">Главная</a> &nbsp; &nbsp; <a href="https://forum.transphoto.org">Форум</a> &nbsp; &nbsp; <a href="/rules/">Правила</a> &nbsp; &nbsp; <a href="/admin/">Редколлегия</a></b><br>
-                <a href="/set.php?pcver=0">Мобильная версия</a><br><a href="/set.php?dark=1" style="display:inline-block; padding:1px 10px; margin-top:5px; background-color:#333; color:#fff">Тёмная тема</a>
-                <div class="sitecopy">&copy; Администрация ТрансФото и авторы материалов, 2002—2024<br>Использование фотографий и иных материалов, опубликованных на сайте, допускается только с разрешения их авторов.</div>
-                <div style="margin:15px 0">
-                    
-                </div>
-
-            </td>
-        </tr>
+    
     </table>
 
 

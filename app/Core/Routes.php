@@ -13,6 +13,7 @@ class Routes
     {
         Router::get('/', 'MainController@i');
         Router::get('/login', 'LoginController@i');
+        Router::get('/register', 'RegisterController@i');
         Router::get('/photo/$id', 'PhotoController@i');
         Router::post('/api/login', 'ApiController@login');
        
