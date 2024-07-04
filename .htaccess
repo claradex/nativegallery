@@ -1,0 +1,32 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+AddDefaultCharset UTF-8
+RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+
+Options -Indexes
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .gitignore>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .yml>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files .yaml>
+    Order allow,deny
+    Deny from all
+</Files>
+
+
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.yml
+RedirectMatch 404 /\.yaml
+RedirectMatch 404 /\..*$

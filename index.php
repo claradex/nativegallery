@@ -1,10 +1,7 @@
 <?php
 // Prevent worker script termination when a client connection is interrupted
-ignore_user_abort(true);
-echo 'gfdfgdfgdgfdgf';
 require __DIR__.'/vendor/autoload.php';
 
-// Include the App class definition
 use App\Core\{Routes, Page};
 use App\Services\DB;
 use Symfony\Component\Yaml\Yaml;

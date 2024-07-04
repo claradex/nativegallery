@@ -1,0 +1,29 @@
+ngallery:
+  root:
+    maintenance: false
+    debug: true
+    botkey: ''
+    db:
+      name: ''
+      host: ''
+      login: ''
+      password: ''
+    websockets:
+      messages: ""
+    storage:
+      type: 's3'
+      s3:
+        domains:
+          public: ''
+          gateway: ''
+        credentials:
+          key: ''
+          secret: ''
+          region: 'auto'
+          version: 'latest'
+          bucket: ''
+    img:
+      proxy: true
+      percent: 50
+
+ 
