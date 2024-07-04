@@ -9,3 +9,7 @@
     <link rel="stylesheet" href="/static/css/desktop.css">
     <link rel="stylesheet" href="/static/css/trans.css">
     <link rel="stylesheet" href="/static/css/photo.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+    <script src="/static/js/core.js"></script>
+    <script src="/static/js/index.js"></script>

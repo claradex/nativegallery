@@ -12,7 +12,9 @@ class Routes
     public static function init()
     {
         Router::get('/', 'MainController@i');
+        Router::get('/login', 'LoginController@i');
         Router::get('/photo/$id', 'PhotoController@i');
+        Router::post('/api/login', 'ApiController@login');
        
 
 

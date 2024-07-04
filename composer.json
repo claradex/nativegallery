@@ -16,6 +16,7 @@
     "require": {
         "aws/aws-sdk-php": "^3.315",
         "tracy/tracy": "^2.10",
-        "symfony/yaml": "^7.1"
+        "symfony/yaml": "^7.1",
+        "donatj/phpuseragentparser": "^1.8"
     }
 }

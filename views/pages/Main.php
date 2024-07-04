@@ -2,16 +2,10 @@
 <html lang="ru">
 
 <head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
-    <meta name="viewport" content="width=1000,user-scalable=yes">
-    <title>NativeGallery</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Narrow:wght@400;700&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/fontawesome/css/all.min.css?1649451403">
-    <link rel="stylesheet" href="/static/css/style.css?1718122698">
-    <link rel="stylesheet" href="/static/css/desktop.css?1704280890">
-    <link rel="stylesheet" href="/static/css/trans.css?1670622746">
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
+
+   
+</head>
 
 
     <style>
