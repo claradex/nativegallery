@@ -6,6 +6,10 @@ namespace App\Services;
 class Upload
 
 {
+    public $type;
+    public $src;
+    public $size;
+    public $name;
 
     private static function human_filesize($bytes, $dec = 2): string
         {
@@ -37,11 +41,29 @@ class Upload
             'Key' => $folder,
             'SourceFile' => $file['tmp_name']
         ]);
-        return [
-            'type' => explode('/', $file['type'])[0],
-            'src' => NGALLERY['root']['storage']['s3']['domains']['public'].'/'.$location . $filecdn,
-            'size' => self::human_filesize(filesize($file['tmp_name'])),
-            'name' => $file['name']
-        ];
+        $this->type = explode('/', $file['type'])[0];
+        $this->src = NGALLERY['root']['storage']['s3']['domains']['public'] . '/' . $location . $filecdn;
+        $this->size = self::human_filesize(filesize($file['tmp_name']));
+        $this->name = $file['name'];
+    }
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getSrc()
+    {
+        return $this->src;
+    }
+
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }
+

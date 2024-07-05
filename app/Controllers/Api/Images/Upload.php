@@ -17,7 +17,7 @@ class Upload
 
     public static function create($postbody, $content, $exif)
     {
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :exif, 0, :content, :country, :city)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':country' => $_POST['country'], ':city' => $_POST['city']));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :exif, 0, :place, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place']));
         echo json_encode(
             array(
                 'errorcode' => 0,
@@ -28,17 +28,19 @@ class Upload
     public function __construct()
     {   
 
-        if ($_FILES['filebody']['error'][0] != 4) {
-            $exif = new EXIF($_FILES['filebody']['tmp_name']);
-            $upload = new UploadPhoto($_FILES['filebody'], 'cdn/img');
-            if ($upload['type'] !== null) {
+        if ($_FILES['image']['error'] != 4) {
+            $exif = new EXIF($_FILES['image']['tmp_name']);
+            $upload = new UploadPhoto($_FILES['image'], 'cdn/img');
+            if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
-                        'type' => 'none'
+                        'type' => 'none',
+                        'copyright' => $_POST['license'],
+                        'comment' => $_POST['comment'],
                     )
                 );
-                self::$photourl = $upload['src'];
-                self::create($_POST['descr'], $content, $exif);
+                self::$photourl = $upload->getSrc();
+                self::create($_POST['descr'], $content, $exif->getData());
             }
         } else {
             echo json_encode(

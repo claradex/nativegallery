@@ -574,16 +574,7 @@ $user = new User(Auth::userid());
                                         </table>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td style="padding:5px 2px 10px">
-                                        <input type="checkbox" name="naa" id="naa" value="1" onclick="toggleNAA()"> <label for="naa">Я не автор этой фотографии</label>
-                                        <div id="naa_hint" style="display:none">
-                                            <div class="sm" style="margin-top:5px; line-height:14px"><b>Не забудьте указать источник и имя автора в поле «Описание»!</b><br />Если Вы не являетесь автором фотографии, убедитесь, что автор дал Вам разрешение публиковать её на СТТС.<br />Загрузка фотографий без разрешения их автора <u>запрещена</u>.<br><br><b>Разрешение на публикацию на Transphoto</b> (ссылка или пояснение):</div>
-                                            <input type="text" name="naa_allow" id="naa_allow" style="width:506px" value="">
-                                        </div>
-                                    </td>
-                                </tr>
+                              
                                 <tr>
                                     <td colspan="2" style="height:7px"></td>
                                 <tr>
@@ -607,13 +598,7 @@ $user = new User(Auth::userid());
                                 <tr>
                                     <td colspan="2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 3. <b>Выберите опции загрузки:</b></td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td style="padding-right:15px; padding-bottom:15px">
-                                        <input type="checkbox" name="up-comment-link" id="up-comment-link" value="1"> <label for="up-comment-link">Добавить комментарий при публикации</label><span id="up-comment-row" style="display:none">:<br>
-                                            <textarea name="comment" id="comment" rows="5" style="width:100%; margin-top:5px"></textarea></span>
-                                    </td>
-                                </tr>
+                              
                                 <tr>
                                     <td class="lcol">Лицензия:</td>
                                     <td style="padding-bottom:7px">
@@ -631,16 +616,7 @@ $user = new User(Auth::userid());
                                         </select> &nbsp; &nbsp;<a href="https://creativecommons.org/licenses/?lang=ru" target="_blank" class="und sm">Информация о лицензиях</a>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="lcol">
-                                        Пояснения модератору:
-                                        <div class="sm" style="color:#999; margin:3px 5px 0 0">(если требуются)</div>
-                                    </td>
-                                    <td style="padding-right:15px">
-                                        <textarea name="notes_mod" id="notes_mod" style="width:100%; height:40px"></textarea>
-                                        <div class="sm" style="color:#999; margin-top:3px">Можно пояснить ценность фотографии, если на ней изображёно что-то редкое или уникальное (ведь фотомодераторам это может быть неизвестно).</div>
-                                    </td>
-                                </tr>
+                              
                                
                                 <tr>
                                     <td></td>
@@ -678,7 +654,7 @@ var continuepost = 0;
 
 $.ajax({
     type: "POST",
-    url: '/api/posts/create',
+    url: '/api/upload',
     data: formData,
 
     xhr: function() {

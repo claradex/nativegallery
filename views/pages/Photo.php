@@ -1,17 +1,25 @@
+<?php
+
+use App\Services\{DB, Auth, Date, Json};
+
+$photo = new \App\Models\Photo(explode('/', $_SERVER['REQUEST_URI'])[2]);
+$photouser = new \App\Models\User($photo->i('user_id'));
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
-   
+
 </head>
 
 
 <body>
     <div id="backgr"></div>
     <table class="tmain">
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">
                 <center>
@@ -67,14 +75,14 @@
                             })
                         </script>
                     </div>
-                  
+
                     <div id="photobar">
                         <div id="prev" title="Переход по профилю ТС"><span>&lt;</span></div>
                         <div id="next" title="Переход по профилю ТС"><span>&gt;</span></div>
                         <div style="display:inline-block">
                             <div id="underphoto_frame">
                                 <div id="ph_frame">
-                                    <img id="ph" src="/photo/13/61/06/1361063.jpg" alt="Москва, ЗиУ-683Б [Б00] № 4608; Москва, ЗиУ-682В-012 [В0А] № 4238; Москва — Троллейбусные баррикады в августе 1991" title="Москва, ЗиУ-683Б [Б00] № 4608; Москва, ЗиУ-682В-012 [В0А] № 4238; Москва — Троллейбусные баррикады в августе 1991">
+                                    <img id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                 </div>
                             </div>
                         </div>
@@ -116,28 +124,17 @@
             <div style="line-height:15px; margin-bottom:10px">
                 <table class="pwrite">
                     <tr>
-                        <td class="nw" valign="top" align="right"><a href="/country/1/"><img class="flag" src="/img/r/1.gif" title="Россия"></a>&nbsp; <b><a href="/city/1/">Москва</a></b>,&nbsp;</td>
-                        <td class="nw" valign="top" align="right"><span class="s5">&nbsp;ЗиУ-683Б [Б00]</span></td>
-                        <td class="nw s5" align="left" valign="top">&nbsp;№ <b><a href="/vehicle/78618/#n76272">4608</a></b>&nbsp;</td>
+                        <td class="nw" valign="top" align="right"><b><?= $photo->i('place') ?></b></td>
                         <td class="nw" align="left" valign="top"></td>
                     </tr>
-                    <tr>
-                        <td class="nw" valign="top" align="right" colspan="2"><span class="s5">&nbsp;ЗиУ-682В-012 [В0А]</span></td>
-                        <td class="nw s5" align="left" valign="top">&nbsp;№ <b><a href="/vehicle/71937/#n70204">4238</a></b>&nbsp;</td>
-                        <td class="nw" align="left" valign="top"></td>
-                    </tr>
+
                 </table>
-                <div><a href="/articles/183/">Троллейбусные баррикады в августе 1991</a></div>
             </div>
         </div>
-        <div><b>Новинский бульвар</b>
-            <div style="padding-top:8px">Еще целые троллейбусы.<br />
-                <br />
-                Автор : А.И.Авдеев<br />
-                Источник <a href="https://pastvu.com/p/807429" target="_blank">https://pastvu.com/p/807429</a>
-            </div>
+        <div>
+            <div style="padding-top:8px"><?= $photo->content('comment') ?></div>
         </div><br>
-        <div>Прислал <a href="/author/14224/">Максим Дорофеев ( ФанатВ )</a> &middot; <span class="flag"><img src="/img/r/1.gif" title="Россия"> Калуга</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b>19 августа 1991 г., понедельник (примерно)</b></div>
+        <div>Прислал <a href="/author/<?= $photo->i('user_id') ?>/"><?= $photouser->i('username') ?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b><?= Date::zmdate($photo->i('posted_at')) ?></b></div>
         <table id="pp-items">
             <tr>
                 <td id="pp-left-col">
@@ -369,150 +366,61 @@
                 </td>
                 <td id="pp-main-col">
                     <div id="pp-item-vdata">
-                        <div class="p0">
-                            <h4 class="pp-item-header"><b><a href="/vehicle/78618/#n76272">Москва, ЗиУ-683Б [Б00] № 4608</a></b></h4>
-                            <div class="pp-item-body">
-                                <table class="linetable">
-                                    <col width="25%">
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Депо/Парк:</td>
-                                        <td class="ds"><b><a href="/list.php?did=10">4-й троллейбусный парк имени П.М. Щепетильникова</a></b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">С...:</td>
-                                        <td class="ds"><b>01.1989</b></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Модель:</td>
-                                        <td class="ds"><b><a href="/model/66/">ЗиУ-683Б [Б00]</a></b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">Построен:</td>
-                                        <td class="ds"><b>12.1988</b></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Заводской №:</td>
-                                        <td class="ds"><b>158</b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">Текущее состояние:</td>
-                                        <td class="ds" style="padding-left:7px; padding-top:1px"><span class="state s5">Списан (<b>10.09.1992</b>)</span></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Назначение:</td>
-                                        <td class="ds">Пассажирский</td>
-                                    </tr>
-                                    <tr class="s1">
-                                        <td colspan="2" class="ds" style="padding:9px 11px">Заводская окраска изображена на фото <a href="https://transphoto.org/photo/1194603/" target="_blank">https://transphoto.org/photo/1194603/</a> .<br />
-                                            <br />
-                                            Капитальных ремонтов не проходил.<br />
-                                            <br />
-                                            Работал на маршрутах Б,10.<br />
-                                            <br />
-                                            Разбит во время событий августа 1991 г.
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="p0">
-                            <h4 class="pp-item-header"><b><a href="/vehicle/71937/#n70204">Москва, ЗиУ-682В-012 [В0А] № 4238</a></b></h4>
-                            <div class="pp-item-body">
-                                <table class="linetable">
-                                    <col width="25%">
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Депо/Парк:</td>
-                                        <td class="ds"><b><a href="/list.php?did=10">4-й троллейбусный парк имени П.М. Щепетильникова</a></b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">С...:</td>
-                                        <td class="ds"><b>1988</b></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Модель:</td>
-                                        <td class="ds"><b><a href="/model/104/">ЗиУ-682В-012 [В0А]</a></b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">Построен:</td>
-                                        <td class="ds"><b>1988</b></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Заводской №:</td>
-                                        <td class="ds"><b>31447</b></td>
-                                    </tr>
-                                    <tr class="s1 h21">
-                                        <td class="ds nw">Текущее состояние:</td>
-                                        <td class="ds" style="padding-left:7px; padding-top:1px"><span class="state s5">Списан (<b>09.1992</b>)</span></td>
-                                    </tr>
-                                    <tr class="s11 h21">
-                                        <td class="ds nw">Назначение:</td>
-                                        <td class="ds">Пассажирский</td>
-                                    </tr>
-                                    <tr class="s1">
-                                        <td colspan="2" class="ds" style="padding:9px 11px">Заводская окраска бело-красный в &quot;шипиловской&quot; схеме.<br />
-                                            <br />
-                                            Капитальных ремонтов не проходил.<br />
-                                            <br />
-                                            Работал на маршрутах Б,10.<br />
-                                            <br />
-                                            &quot;Баррикада&quot; в путче 1991 года
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p0" id="pp-item-exif">
-                        <h4 class="pp-item-header">Параметры съёмки</h4>
-                        <div class="pp-item-body">
-                            <table class="linetable" id="exif">
-                                <tr class="s11 h21" style="display:none">
-                                    <td class="ds nw" width="30%">Производитель камеры:</td>
-                                    <td class="ds">Epson</td>
-                                </tr>
-                                <tr class="s11 h21">
-                                    <td class="ds nw" width="30%">Модель камеры:</td>
-                                    <td class="ds">Perfection3200</td>
-                                </tr>
-                                <tr class="s1 h21" style="display:none">
-                                    <td class="ds nw" width="30%">Программное обеспечение:</td>
-                                    <td class="ds">Adobe Photoshop CC 2018 (Windows)</td>
-                                </tr>
-                                <tr class="s1 h21">
-                                    <td class="ds" colspan="2"><a id="showexif" href="#">Показать весь EXIF</a></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
 
-                    <div class="p0" id="pp-item-comments">
-                        <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> 1</span></h4>
-                        <div class="s11 comment" wid="2681468">
-                            <div style="float:right; text-align:right" class="sm">
-                                <span class="message_date">12.08.2020</span> 16:57 MSK<br>
-                                <a href="#2681468" class="cmLink dot">Ссылка</a>
+                        <div class="p0" id="pp-item-exif">
+                            <h4 class="pp-item-header">Параметры съёмки</h4>
+                            <div class="pp-item-body">
+                                <table class="linetable" id="exif">
+                                    <?php
+                                    $data = json_decode($photo->i('exif'), true);
+
+                                    foreach ($data as $key => $value) {
+                                        if ($key === 'FILE.FileDateTime') {
+                                            $value = Date::zmdate($value);
+                                        }
+                                        
+                                        echo '
+                                            <tr class="s11 h21">
+                                                <td class="ds nw" width="30%">' . htmlspecialchars($key) . ':</td>
+                                                <td class="ds">' . htmlspecialchars($value) . '</td>
+                                            </tr>';
+                                        }
+
+
+                                    ?>
+
+                                </table>
                             </div>
-                            <a name="2681468"></a><a name="last"></a>
-                            <div><b><a href="/author/533/" class="message_author">Андрей Янковский</a></b> &middot; <span class="flag"><img src="/img/r/3.gif" title="Украина"> Днепр</span></div>
-                            <div class="rank">Фото: 1585</div>
-                            <div class="message-text">Есть аналогичное фото в цвете:<br><a href="https://smart-lab.ru/uploads/images/00/00/16/2011/10/16/433a3c.jpg" target="_blank">https://smart-lab.ru/uploads/images/00/0...a3c.jpg</a></div>
-                            <div class="comment-votes-block">
-                                <div class="wvote" wid="2681468">
-                                    <div class="w-rating pro">+1</div>
-                                    <div class="w-rating-ext">
-                                        <div><span class="pro">+1</span> / <span class="con">–0</span></div>
+                        </div>
+
+                        <div class="p0" id="pp-item-comments">
+                            <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> 1</span></h4>
+                            <div class="s11 comment" wid="2681468">
+                                <div style="float:right; text-align:right" class="sm">
+                                    <span class="message_date">12.08.2020</span> 16:57 MSK<br>
+                                    <a href="#2681468" class="cmLink dot">Ссылка</a>
+                                </div>
+                                <a name="2681468"></a><a name="last"></a>
+                                <div><b><a href="/author/533/" class="message_author">Андрей Янковский</a></b> &middot; <span class="flag"><img src="/img/r/3.gif" title="Украина"> Днепр</span></div>
+                                <div class="rank">Фото: 1585</div>
+                                <div class="message-text">Есть аналогичное фото в цвете:<br><a href="https://smart-lab.ru/uploads/images/00/00/16/2011/10/16/433a3c.jpg" target="_blank">https://smart-lab.ru/uploads/images/00/0...a3c.jpg</a></div>
+                                <div class="comment-votes-block">
+                                    <div class="wvote" wid="2681468">
+                                        <div class="w-rating pro">+1</div>
+                                        <div class="w-rating-ext">
+                                            <div><span class="pro">+1</span> / <span class="con">–0</span></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="cmt-write s1">
-                            <h4 class="pp-item-header">Ваш комментарий</h4>
-                            <div style="padding:0 11px 11px">
-                                <div class="no-politics">За обсуждение политики будет выноситься бан на 1 месяц и более.</div>
-                                Вы не <a href="/login.php">вошли на сайт</a>.<br />Комментарии могут оставлять только зарегистрированные пользователи.
+                            <div class="cmt-write s1">
+                                <h4 class="pp-item-header">Ваш комментарий</h4>
+                                <div style="padding:0 11px 11px">
+                                    <div class="no-politics">За обсуждение политики будет выноситься бан на 1 месяц и более.</div>
+                                    Вы не <a href="/login.php">вошли на сайт</a>.<br />Комментарии могут оставлять только зарегистрированные пользователи.
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </td>
             </tr>
         </table>
