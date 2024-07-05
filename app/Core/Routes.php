@@ -18,6 +18,7 @@ class Routes
         Router::get('/photo/$id', 'PhotoController@i');
         Router::get('/author/$id', 'ProfileController@i');
         Router::post('/api/login', 'ApiController@login');
+        Router::get('/api/photo/vote', 'ApiController@photovote');
         Router::post('/api/register', 'ApiController@register');
 
 

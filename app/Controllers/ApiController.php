@@ -6,6 +6,7 @@ use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 use \App\Controllers\Api\{Login, Register};
 use \App\Controllers\Api\Images\{Upload};
+use \App\Controllers\Api\Images\Rate as PhotoVote;
 class ApiController
 {
 
@@ -19,5 +20,9 @@ class ApiController
     public static function upload() {
         return new Upload();
     }
+    public static function photovote() {
+        return new PhotoVote();
+    }
+
 
 }

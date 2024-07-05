@@ -19,6 +19,7 @@
     <script src="/static/js/imageupload.js"></script>
     <script src="/static/js/progress.js"></script>
     <script src="/static/js/notie.js"></script>
+    <script src="/static/js/photo.js"></script>
     <div class="progress-container fixed-top">
 <span class="progress-bard"></span>
 </div>

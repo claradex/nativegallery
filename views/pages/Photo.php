@@ -1,8 +1,10 @@
 <?php
 
 use App\Services\{DB, Auth, Date, Json};
+use App\Models\{User, Vote};
 
-$photo = new \App\Models\Photo(explode('/', $_SERVER['REQUEST_URI'])[2]);
+$id = explode('/', $_SERVER['REQUEST_URI'])[2];
+$photo = new \App\Models\Photo($id);
 $photouser = new \App\Models\User($photo->i('user_id'));
 ?>
 
@@ -153,202 +155,37 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                         <h4 class="pp-item-header">Оценка</h4>
                         <div class="sm">
                             <img class="loader" pid="1361063" src="/img/loader.png">
-                            <div class="rtext">Рейтинг: <b id="rating">+48</b></div>
+                            <div class="rtext">Рейтинг: <b id="rating"><?=Vote::count($id)?></b></div>
                             <div class="star" pid="1361063"></div>
+                            <div class="vote" pid="<?=$id?>">
+                                <a href="#" vote="1" class="vote_btn"><span>Интересная фотография!</span></a><a href="#" vote="0" class="vote_btn"><span>Мне не&nbsp;нравится</span></a>
+                            </div>
                             <div id="votes" class="votes">
                                 <table class="vblock pro">
-                                    <tr>
-                                        <td><a href="/author/22530/">Alexey Becker</a></td>
+                                   <?php
+                                   $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1', array(':pid'=>$id));
+                                   foreach ($votespos as $ps) {
+                                    $uservote = new User($ps['user_id']);
+                                    echo ' <tr>
+                                        <td><a href="/author/'.$ps['user_id'].'/">'.$uservote->i('username').'</a></td>
                                         <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/9169/">tatra t4su</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/32862/">kostyan_piterski</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/15634/">Victor Irkut</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/11756/">Яков Фёдоров</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/3907/">Сергей Валерьевич</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/23757/">Empty Underground</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/34845/">KILATIV</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/6206/">Никита Лапин</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/26544/">Aleksandr_Urickiy</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/27099/">Silbervogel</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/21326/">VOLGA</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/25878/">Андрей Ширинкин</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/6185/">TOXA</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/8718/">Diman</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/26699/">Qwerty_qwertovich</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/25475/">Алексей ЛВ</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/33168/">Владислав Масев</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/19680/">Сергей Александров</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/31083/">Yastrebov Nikolay</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/33941/">Trains63</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/36219/">Темерник</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/862/">AVB</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/1028/">IvanPG</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/14003/">Михаил_123</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/259/">АК (Александр)</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/1464/">Mitay</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/533/">Андрей Янковский</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/369/">Юрий А.</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/4572/">Alexandr Matr</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/7686/">Томич</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/1560/">Александр Рябов</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/5075/">Etix1979</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/17149/">Timofeiikarus</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/11563/">Lasselan</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/5899/">Э.В.Ротгрифф</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/15817/">Егор Шмаков (Василий Фрескин)</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/11424/">Натаныч</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/986/">Александров Николай</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/359/">Виктор Бергман</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/12232/">Александр Vl</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/1572/">Palmer</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/20725/">Sergei 34</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/21132/">New_Wave</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/5929/">Barbar1s</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/515/">Andrew Gri-Shen</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/1676/">Сэм</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="/author/8764/">nss991</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>
+                                    </tr>';
+                                   }
+                                   ?>
+                                  
+                                </table>
+                                <table class="vblock coN">
+                                   <?php
+                                   $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0', array(':pid'=>$id));
+                                   foreach ($votespos as $ps) {
+                                    $uservote = new User($ps['user_id']);
+                                    echo ' <tr>
+                                        <td><a href="/author/'.$ps['user_id'].'/">'.$uservote->i('username').'</a></td>
+                                        <td class="vv">-1</td>
+                                    </tr>';
+                                   }
+                                   ?>
+                                  
                                 </table>
                             </div>
                         </div>
@@ -378,13 +215,13 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                                         if ($key === 'FILE.FileDateTime') {
                                             $value = Date::zmdate($value);
                                         }
-                                        
+
                                         echo '
                                             <tr class="s11 h21">
                                                 <td class="ds nw" width="30%">' . htmlspecialchars($key) . ':</td>
                                                 <td class="ds">' . htmlspecialchars($value) . '</td>
                                             </tr>';
-                                        }
+                                    }
 
 
                                     ?>
