@@ -7,12 +7,10 @@ use \App\Core\Page;
 
 class MainController
 {
-    public function __invoke()
+    public static function t()
     {
-        
-
+       Page::set('t');
     }
-
   
     public static function i()
     {

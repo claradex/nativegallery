@@ -5,6 +5,7 @@ use \App\Services\{Router, Auth, DB, Json};
 use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 use \App\Controllers\Api\{Login, Register};
+use \App\Controllers\Api\Images\{Upload};
 class ApiController
 {
 
@@ -14,6 +15,9 @@ class ApiController
     }
     public static function register() {
         return new Register();
+    }
+    public static function upload() {
+        return new Upload();
     }
 
 }
