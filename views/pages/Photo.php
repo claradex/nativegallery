@@ -213,6 +213,9 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                                         if ($key === 'FILE.FileDateTime') {
                                             $value = Date::zmdate($value);
                                         }
+                                        if (is_array($value)) {
+                                            $value = implode(', ', $value); // Convert array to a comma-separated string
+                                        }
 
                                         echo '
                                             <tr class="s11 h21">

@@ -59,7 +59,7 @@ $user = new \App\Models\User(Auth::userid());
                 <li class="mm-pad-right"><a href="/login" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-address-card"></i></span><span class="mm-label">Войти</span></a></li>
                 <li><a href="/register" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-user"></i></span><span class="mm-label">Регистрация</span></a></li>
             <?php } else { ?>
-                <li class="mm-pad-right mm-wide"><a href="/author/32944/" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-user"></i></span><span class="mm-label"><?=$user->i('username')?></span></a>
+                <li class="mm-pad-right mm-wide"><a href="/author/<?=Auth::userid()?>/" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-user"></i></span><span class="mm-label"><?=$user->i('username')?></span></a>
                     <div>
                         <ul class="mm-level-2">
                             <li><a href="/lk/" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Общая информация</span></a></li>
