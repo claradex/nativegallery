@@ -56,7 +56,7 @@ class Register
                                         )
                                     );
 
-                                    DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password 5, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':email' => $email, ':content' => $content));
+                                    DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl'=>'/static/img/avatar.png', ':email' => $email, ':content' => $content));
                                     $cstrong = True;
                                     $token = GenerateRandomStr::gen_uuid();
                                     $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
@@ -81,15 +81,10 @@ class Register
                                 
                                     $data = json_decode($response, true);
                                     $loc = $data['country'].', '.$data['city'];
-                                    DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :platform, :browser, :browserversion, 0, :ip, :servicekey, :loc)', array(
+                                    DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
                                         ':token' => $token,
                                         ':user_id' => $user_id,
-                                        ':platform' => $ua->platform(),
-                                        ':browser' => $ua->browser(),
-                                        ':browserversion' => $ua->browserVersion(),
-                                        ':ip' => $ip,
-                                        ':servicekey' => $servicekey,
-                                        ':loc' => $loc
+                                       
                                     ));
 
                                     setcookie("NGALLERYSESS", $token, time() + 120 * 180 * 240 * 720, '/', NULL, NULL, TRUE);
