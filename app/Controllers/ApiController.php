@@ -7,6 +7,8 @@ use \App\Core\Page;
 use \App\Controllers\Api\{Login, Register};
 use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
+use \App\Controllers\Api\Images\Comment as PhotoComment;
+use \App\Controllers\Api\Images\CommentsLoad as PhotoCommentLoad;
 class ApiController
 {
 
@@ -22,6 +24,12 @@ class ApiController
     }
     public static function photovote() {
         return new PhotoVote();
+    }
+    public static function photocomment() {
+        return new PhotoComment();
+    }
+    public static function photocommentload() {
+        return new PhotoCommentLoad();
     }
 
 

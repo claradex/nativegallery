@@ -1,7 +1,7 @@
 <?php
 
 use App\Services\{DB, Auth, Date, Json};
-use App\Models\{User, Vote};
+use App\Models\{User, Vote, Comment};
 
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
@@ -144,9 +144,7 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                         <h4>Статистика</h4>
                         <div class="sm">
                             <div style="margin-bottom:10px">Лицензия: <b>BY-NC</b></div>
-                            Опубликовано <b>13.07.2020 17:47 MSK</b><br>
-                            Просмотров — <b>1693</b><br><br>
-                            <a href="/photoext.php?pid=1361063">Подробная информация</a>
+                            Опубликовано <b><?= Date::zmdate($photo->i('timeupload')) ?></b><br>
                         </div>
                     </div>
 
@@ -155,37 +153,37 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                         <h4 class="pp-item-header">Оценка</h4>
                         <div class="sm">
                             <img class="loader" pid="1361063" src="/img/loader.png">
-                            <div class="rtext">Рейтинг: <b id="rating"><?=Vote::count($id)?></b></div>
+                            <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
                             <div class="star" pid="1361063"></div>
-                            <div class="vote" pid="<?=$id?>">
+                            <div class="vote" pid="<?= $id ?>">
                                 <a href="#" vote="1" class="vote_btn"><span>Интересная фотография!</span></a><a href="#" vote="0" class="vote_btn"><span>Мне не&nbsp;нравится</span></a>
                             </div>
                             <div id="votes" class="votes">
                                 <table class="vblock pro">
-                                   <?php
-                                   $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1', array(':pid'=>$id));
-                                   foreach ($votespos as $ps) {
-                                    $uservote = new User($ps['user_id']);
-                                    echo ' <tr>
-                                        <td><a href="/author/'.$ps['user_id'].'/">'.$uservote->i('username').'</a></td>
+                                    <?php
+                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1', array(':pid' => $id));
+                                    foreach ($votespos as $ps) {
+                                        $uservote = new User($ps['user_id']);
+                                        echo ' <tr>
+                                        <td><a href="/author/' . $ps['user_id'] . '/">' . $uservote->i('username') . '</a></td>
                                         <td class="vv">+1</td>
                                     </tr>';
-                                   }
-                                   ?>
-                                  
+                                    }
+                                    ?>
+
                                 </table>
                                 <table class="vblock coN">
-                                   <?php
-                                   $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0', array(':pid'=>$id));
-                                   foreach ($votespos as $ps) {
-                                    $uservote = new User($ps['user_id']);
-                                    echo ' <tr>
-                                        <td><a href="/author/'.$ps['user_id'].'/">'.$uservote->i('username').'</a></td>
+                                    <?php
+                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0', array(':pid' => $id));
+                                    foreach ($votespos as $ps) {
+                                        $uservote = new User($ps['user_id']);
+                                        echo ' <tr>
+                                        <td><a href="/author/' . $ps['user_id'] . '/">' . $uservote->i('username') . '</a></td>
                                         <td class="vv">-1</td>
                                     </tr>';
-                                   }
-                                   ?>
-                                  
+                                    }
+                                    ?>
+
                                 </table>
                             </div>
                         </div>
@@ -194,9 +192,9 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 
                     <div class="p20a" id="pp-item-link">
                         <h4 style="margin-bottom:7px">Постоянная ссылка на фото</h4>
-                        <input type="text" value="https://transphoto.org/photo/1361063/" readonly="readonly" class="pp-link" onclick="this.select()">
-                        <script src="//yandex.st/share/share.js" charset="utf-8" async defer></script>
-                        <div class="yashare-auto-init" data-yashareL10n="ru" data-yashareType="none" data-yashareQuickServices="yaru,vkontakte,facebook,twitter,odnoklassniki,moimir,lj"></div>
+                        <input type="text" value="https://<?= $_SERVER['SERVER_NAME'] ?>/photo/<?= $id ?>/" readonly="readonly" class="pp-link" onclick="this.select()">
+                        <script src="https://yastatic.net/share2/share.js"></script>
+                        <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,odnoklassniki,telegram,twitter,whatsapp"></div>
                     </div>
 
 
@@ -232,106 +230,83 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 
                         <div class="p0" id="pp-item-comments">
                             <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> 1</span></h4>
-                            <div class="s11 comment" wid="2681468">
-                                <div style="float:right; text-align:right" class="sm">
-                                    <span class="message_date">12.08.2020</span> 16:57 MSK<br>
-                                    <a href="#2681468" class="cmLink dot">Ссылка</a>
-                                </div>
-                                <a name="2681468"></a><a name="last"></a>
-                                <div><b><a href="/author/533/" class="message_author">Андрей Янковский</a></b> &middot; <span class="flag"><img src="/img/r/3.gif" title="Украина"> Днепр</span></div>
-                                <div class="rank">Фото: 1585</div>
-                                <div class="message-text">Есть аналогичное фото в цвете:<br><a href="https://smart-lab.ru/uploads/images/00/00/16/2011/10/16/433a3c.jpg" target="_blank">https://smart-lab.ru/uploads/images/00/0...a3c.jpg</a></div>
-                                <div class="comment-votes-block">
-                                    <div class="wvote" wid="2681468">
-                                        <div class="w-rating pro">+1</div>
-                                        <div class="w-rating-ext">
-                                            <div><span class="pro">+1</span> / <span class="con">–0</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                           <div id="posts">
+                           <?php
+                           $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid'=>$id));
+                           foreach ($comments as $c) {
+                                $comm = new Comment($c);
+                                $comm->i();
+                           }
+                           ?>
+                           </div>
                             <div class="cmt-write s1">
                                 <h4 class="pp-item-header">Ваш комментарий</h4>
                                 <div style="padding:0 11px 11px">
-                                    <div class="no-politics">За обсуждение политики будет выноситься бан на 1 месяц и более.</div>
-                                    Вы не <a href="/login.php">вошли на сайт</a>.<br />Комментарии могут оставлять только зарегистрированные пользователи.
+                                    <form action="/comment.php" method="post" id="f1">
+                                        <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
+                                        <input type="hidden" name="last_comment_rand" value="893329610">
+                                        <input type="hidden" name="id" id="id" value="<?=$id?>">
+                                        <input type="hidden" name="subj" id="subj" value="p">
+                                        <textarea name="wtext" id="wtext"></textarea><br>
+                                        <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
+                                        </div>
+                                    </form>
                                 </div>
+                                
                             </div>
                         </div>
                 </td>
             </tr>
         </table>
-    </div>
-    <table width="100%">
-        <tr>
-            <td>
-                </center>
-            </td>
-        </tr>
-        <tr>
-            <td id="adframe">
-                <!-- Yandex.RTB R-A-115118-1 -->
-                <div id="yandex_rtb_R-A-115118-1"></div>
-                <script>
-                    window.yaContextCb.push(() => {
-                        Ya.Context.AdvManager.render({
-                            renderTo: 'yandex_rtb_R-A-115118-1',
-                            blockId: 'R-A-115118-1'
-                        })
-                    })
-                </script>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer"><b><a href="/">Главная</a> &nbsp; &nbsp; <a href="https://forum.transphoto.org">Форум</a> &nbsp; &nbsp; <a href="/rules/">Правила</a> &nbsp; &nbsp; <a href="/admin/">Редколлегия</a></b><br>
-                <a href="/set.php?pcver=0">Мобильная версия</a><br><a href="/set.php?dark=1" style="display:inline-block; padding:1px 10px; margin-top:5px; background-color:#333; color:#fff">Тёмная тема</a>
-                <div class="sitecopy">&copy; Администрация ТрансФото и авторы материалов, 2002—2024<br>Использование фотографий и иных материалов, опубликованных на сайте, допускается только с разрешения их авторов.</div>
-                <div style="margin:15px 0">
-                    <noindex>
+        <script>
+             $(document).ready(function() {
+        $('#f1').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: '/api/photo/comment',
+                data: $(this).serialize(),
+                success: function(response) {
+                    var jsonData = JSON.parse(response);
+                    if (jsonData.errorcode == "1") {
+                        Notify.noty('danger', 'Комментарий неккоректен');
+                        //$("#result").html("<div class='alert alert-dangernew container mt-5' role='alert'>Неправильная почта или пароль!</div>");
+                    } else if (jsonData.errorcode == "2") {
+                        Notify.noty('warning', 'Пожалуйста, подождите...');
+                        setTimeout(function(){
+                            window.location.replace(jsonData.twofaurl);
+                        }, 1000);
+                    } else if (jsonData.errorcode == "0") {
+                        Notify.noty('success', 'Комментарий отправлен!');
+                        //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
+                        $.ajax({
 
-                        <!-- Yandex.Metrika informer -->
-                        <a href="https://metrika.yandex.ru/stat/?id=73971775&amp;from=informer" target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/73971775/3_0_DDDDDDFF_DDDDDDFF_0_pageviews" style="width:88px; height:31px; border:0;" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="73971775" data-lang="ru" /></a>
-                        <!-- /Yandex.Metrika informer -->
 
-                    </noindex>
-                </div>
+                        type: "POST",
+                        url: "/api/photo/getcomments/<?=$id?>",
+                        processData: false,
+                        async: true,
+                        success: function(r) {
+                            $('#posts').html(r)
 
-            </td>
-        </tr>
-    </table>
 
-    <script>
-        (function() {
-            function c() {
-                var b = a.contentDocument || a.contentWindow.document;
-                if (b) {
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'89de09cd798e66c9',t:'MTcyMDA4NDgxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d)
-                }
-            }
-            if (document.body) {
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if ('loading' !== document.readyState) c();
-                else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function() {};
-                    document.onreadystatechange = function(b) {
-                        e(b);
-                        'loading' !== document.readyState && (document.onreadystatechange = e, c())
+                        },
+                        error: function(r) {
+                            console.log(r)
+                        }
+
+                        });
+                                                
+                    } else {
+                        Notify.noty('danger', 'Неизвестная ошибка');
                     }
                 }
-            }
-        })();
+            });
+        });
+    });
     </script>
-</body>
+    </div>
+
+
 
 </html>
