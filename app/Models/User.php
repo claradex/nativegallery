@@ -11,5 +11,9 @@ class User {
     public function i($table) {
         return DB::query("SELECT * FROM users WHERE id=:id", array(':id'=>$this->userid))[0][$table];
     }
+    public function content($table) {
+        $content = json_decode(self::i('content'), true);
+        return $content[$table];
+    }
 
 }

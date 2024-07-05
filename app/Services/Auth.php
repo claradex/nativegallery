@@ -14,7 +14,7 @@ class Auth
             if ($userInfo && count($userInfo) > 0) {
                 $userid = $userInfo[0]['user_id'];
             
-                //DB::query('UPDATE users SET online=:timed WHERE id=:id', array(':id'=>$userid, ':timed'=>time()));
+                DB::query('UPDATE users SET online=:timed WHERE id=:id', array(':id'=>$userid, ':timed'=>time()));
             }
         }
 

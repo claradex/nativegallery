@@ -15,15 +15,16 @@ class Routes
         Router::get('/login', 'LoginController@i');
         Router::get('/register', 'RegisterController@i');
         Router::get('/photo/$id', 'PhotoController@i');
+        Router::get('/author/$id', 'ProfileController@i');
         Router::post('/api/login', 'ApiController@login');
         Router::post('/api/register', 'ApiController@register');
 
 
 
         if (Auth::userid() > 0) {
-
+            Router::get('/lk', 'ProfileController@lk');
         } else {
-            //Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
+            Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }
     }
 }
