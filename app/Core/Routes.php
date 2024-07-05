@@ -28,6 +28,7 @@ class Routes
         if (Auth::userid() > 0) {
             Router::get('/lk', 'ProfileController@lk');
             Router::get('/lk/upload', 'ProfileController@upload');
+            Router::get('/lk/history', 'ProfileController@lkhistory');
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');

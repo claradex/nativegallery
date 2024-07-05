@@ -11,7 +11,7 @@ class ProfileController
   
     public static function lk()
     {
-       Page::set('Profile/LK');
+       Page::set('Profile/LK/Index');
     }
     public static function i()
     {
@@ -20,6 +20,10 @@ class ProfileController
     public static function upload()
     {
        Page::set('Profile/UploadPhoto');
+    }
+    public static function lkhistory()
+    {
+       Page::set('Profile/LK/History');
     }
 
 

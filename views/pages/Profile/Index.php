@@ -3,7 +3,7 @@
 use \App\Services\{Auth, DB, Date};
 use \App\Models\User;
 
-$user = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
+$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -21,9 +21,9 @@ $user = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">
-                <h1><?= $user->i('username') ?></h1>
+                <h1><?= $userprofile->i('username') ?></h1>
                 <?php
-                if ($user->i('id') === Auth::userid()) { ?>
+                if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
                 <table width="100%">
@@ -33,35 +33,24 @@ $user = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 <table>
                                     <col width="170px">
                                     <?php
-                                    if ($user->content('location') !== null) { ?>
+                                    if ($userprofile->content('location') !== null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
-                                            <td><?= $user->content('location') ?></td>
+                                            <td><?= $userprofile->content('location') ?></td>
                                         </tr>
                                     <?php } ?>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Дата регистрации:</td>
-                                        <td><span class="sm"><?= Date::zmdate($user->content('regdate')) ?></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="sm" style="padding:3px 10px 3px 0">Рейтинг:</td>
-                                        <td><span class="sm">фото <b>0</b>, комментарии <b>+1</b></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="sm" style="padding:3px 10px 3px 0">Время у пользователя:</td>
-                                        <td><span class="sm"><b>06:22</b></span></td>
+                                        <td><span class="sm"><?= Date::zmdate($userprofile->content('regdate')) ?></span></td>
                                     </tr>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Был на сайте:</td>
-                                        <td><span class="sm"><?= Date::zmdate($user->i('online')) ?> <?php if (time() - 300 <= $user->i('online')) { ?>(<b>online</b>)<?php } ?></span></td>
+                                        <td><span class="sm"><?= Date::zmdate($userprofile->i('online')) ?> <?php if (time() - 300 <= $userprofile->i('online')) { ?>(<b>online</b>)<?php } ?></span></td>
                                     </tr>
                                 </table>
                             </div><br />
                             <div class="sm" style="float:right"><a href="/lk/ticket.php?action=add&amp;aid=140"></a></div>
-                            <div>Пользователей, подписанных на мои фотографии: <b>2</b></div><br>
-                            <div><b><a href="/comments.php?w-aid=140">Комментарии, написанные этим пользователем</a><br />
-                                    <a href="/favorites/?aid=140&amp;type=1">Избранное пользователя</a></b></div>
-                            <p><b><a href="/lk/pm.php?action=new&amp;to=140">Отправить личное сообщение пользователю</a></b></p>
+                           
                         </td>
                         <td valign="top" align="right">
                             <script>
@@ -70,7 +59,7 @@ $user = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 }
 
                                 function showUserPhoto() {
-                                    _getID('userphoto_big_img').src = '<?= $user->i('photourl') ?>';
+                                    _getID('userphoto_big_img').src = '<?= $userprofile->i('photourl') ?>';
                                     _getID('userphoto_big_div').style.top = '' + (getBodyScrollTop() + 10) + 'px';
                                     _getID('userphoto_big_div').style.display = 'block';
                                 }
@@ -92,7 +81,7 @@ $user = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 <div style="margin-top:8px"><a class="dot" href="#" onclick="hideUserPhoto(); return false">закрыть</a></div>
                             </div>
 
-                            <a href="<?= $user->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img src="<?= $user->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
+                            <a href="<?= $userprofile->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img src="<?= $userprofile->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
                         </td>
                     </tr>
                 </table>
