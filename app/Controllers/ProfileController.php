@@ -25,6 +25,10 @@ class ProfileController
     {
        Page::set('Profile/LK/History');
     }
+    public static function lkprofile()
+    {
+       Page::set('Profile/LK/Profile');
+    }
 
 
 }

@@ -9,6 +9,7 @@ use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Comment as PhotoComment;
 use \App\Controllers\Api\Images\CommentsLoad as PhotoCommentLoad;
+use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 class ApiController
 {
 
@@ -30,6 +31,9 @@ class ApiController
     }
     public static function photocommentload() {
         return new PhotoCommentLoad();
+    }
+    public static function updateprofile() {
+        return new ProfileUpdate();
     }
 
 

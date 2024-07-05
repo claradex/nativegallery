@@ -39,6 +39,13 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                             <td><?= $userprofile->content('location') ?></td>
                                         </tr>
                                     <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutlive']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutlive']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Дата регистрации:</td>
                                         <td><span class="sm"><?= Date::zmdate($userprofile->content('regdate')) ?></span></td>
@@ -50,8 +57,15 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 </table>
                             </div><br />
                             <div class="sm" style="float:right"><a href="/lk/ticket.php?action=add&amp;aid=140"></a></div>
-                           
+                            <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
+                            <div class="p20">
+<h4>О себе</h4>
+<?=nl2br(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])?>
+</div>
+<?php } ?>
                         </td>
+                        
                         <td valign="top" align="right">
                             <script>
                                 function getBodyScrollTop() {

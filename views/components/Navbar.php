@@ -69,7 +69,7 @@ $user = new \App\Models\User(Auth::userid());
                             <li><a href="/lk/vehicles.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-folder-plus"></i></span><span class="mm-label"><b>Правка БД</b></span></a></li>
                             <li><a href="/lk/video.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-film"></i></span><span class="mm-label">Мои видео</span></a></li>
                             <li><a href="/lk/ticket.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-question-circle"></i></span><span class="mm-label">Мои заявки</span></a></li>
-                            <li><a href="/lk/profile.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-cog"></i></span><span class="mm-label">Настройки профиля</span></a></li>
+                            <li><a href="/lk/profile" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-cog"></i></span><span class="mm-label">Настройки профиля</span></a></li>
                             <li><a href="/lk/pm.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-comments"></i></span><span class="mm-label">Личные сообщения</span></a></li>
                             <li><a href="/search.php?aid=32944" class="mm-item"><span class="mm-icon"><i class="far fa-sm fa-fw fa-images"></i></span><span class="mm-label">Мои фотографии</span></a></li>
                             <li><a href="/fav.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-star"></i></span><span class="mm-label">Избранные снимки</span></a></li>

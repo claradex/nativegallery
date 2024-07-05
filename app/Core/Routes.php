@@ -29,7 +29,9 @@ class Routes
             Router::get('/lk', 'ProfileController@lk');
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
+            Router::get('/lk/profile', 'ProfileController@lkprofile');
             Router::post('/api/upload', 'ApiController@upload');
+            Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
         } else {
