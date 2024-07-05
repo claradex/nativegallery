@@ -17,6 +17,10 @@ class ProfileController
     {
        Page::set('Profile/Index');
     }
+    public static function upload()
+    {
+       Page::set('Profile/UploadPhoto');
+    }
 
 
 }

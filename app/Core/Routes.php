@@ -23,6 +23,7 @@ class Routes
 
         if (Auth::userid() > 0) {
             Router::get('/lk', 'ProfileController@lk');
+            Router::get('/lk/upload', 'ProfileController@upload');
         } else {
             Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }
