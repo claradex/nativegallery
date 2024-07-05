@@ -17,7 +17,7 @@ class Upload
 
     public static function create($postbody, $content, $exif)
     {
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :exif, 0, :content, :country, :city)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' => time(), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':country' => $_POST['country'], ':city' => $_POST['city']));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :exif, 0, :content, :country, :city)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':country' => $_POST['country'], ':city' => $_POST['city']));
         echo json_encode(
             array(
                 'errorcode' => 0,
