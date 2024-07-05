@@ -30,7 +30,19 @@
   display: block;
 }
 
+@media screen and (max-width: 768px) {
+                                :root {
+                                    --bckgr: -1500px 0;
+                                    --bckgr2: 1500px 0;
+                                }
+                            }
 
+                            @media screen and (min-width: 768px) {
+                                :root {
+                                    --bckgr: -3500px 0;
+                                    --bckgr2: 3500px 0;
+                                }
+                            }
 @-webkit-keyframes bg-move {
   0%   { background-position: var(--bckgr); }
   100% { background-position: var(--bckgr2); }
@@ -41,14 +53,57 @@
 }
 
 .progress-bard {
-  background-color: #3862eb;
+  background-color: var(--theme-bg-color); 
   width: 0%;
   display: block;
   height: inherit;
   transition: width 0.6s ease;
-  background-image: linear-gradient(270deg, rgba(100, 181, 239, 0) 48.44%, #64b5ef 75.52%, rgba(100, 181, 239, 0) 100%);
+  background-image: linear-gradient(270deg, rgba(100, 181, 239, 0) 48.44%,  var(--theme-bg-hover-color) 75.52%, rgba(100, 181, 239, 0) 100%);
     background-repeat: no-repeat;
   animation: bg-move linear 2s infinite;
 }
   
 </style>
+<script>
+    notie.setOptions({
+    transitionCurve: 'cubic-bezier(0.2, 0, 0.2, 1)'
+});
+var Notify =  {
+    noty: function(status, text) {
+
+        if (status == 'danger') status = 'error';
+
+        return notie.alert({ type: status, text: text })
+
+    },
+}
+function scrollProgressBarWidth(number) {
+                var getMax = function() {
+                    return $(document).height() - $(window).height();
+                };
+                var progressBar = $(".progress-bard"),
+                    max = getMax(),
+                    value,
+                    width;
+
+                var setWidth = function() {
+                    progressBar.css({
+                        width: number + '%'
+                    });
+                };
+
+                setWidth();
+            }
+            
+function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+</script>

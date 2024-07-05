@@ -645,7 +645,7 @@ $user = new User(Auth::userid());
                                 <tr>
                                     <td></td>
                                     <td style="padding:20px 2px 12px">
-                                        <a id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка...">Отправить фотографию</a> &nbsp; &nbsp;&nbsp;
+                                        <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Отправить фотографию</button> &nbsp; &nbsp;&nbsp;
                                         <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
                                         <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
                                     </td>
@@ -662,7 +662,129 @@ $user = new User(Auth::userid());
         </tr>
        
     </table>
+    <script>
+          $('#mform').submit(function(e) {
 
+
+e.preventDefault();
+var formData = new FormData(this);
+var bar = $('.bar');
+var percent = $('.percent');
+var status = $('#status');
+var continuepost = 0;
+
+
+
+
+$.ajax({
+    type: "POST",
+    url: '/api/posts/create',
+    data: formData,
+
+    xhr: function() {
+// Добавляем спиннер и блокируем кнопку во время загрузки
+//$("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3" disabled><div class="plus-button-reflection"></div>Опубликовать</button>');
+
+var xhr = new window.XMLHttpRequest();
+xhr.upload.addEventListener("progress", function(evt) {
+if (evt.lengthComputable) {
+var percentComplete = parseInt(((evt.loaded / evt.total) * 100));
+console.log(evt.total);
+
+// Обновляем прогресс загрузки
+scrollProgressBarWidth(percentComplete);
+}
+}, false);
+return xhr;
+},
+
+
+
+    success: function(response) {
+        try {
+            var jsonData = JSON.parse(response);
+        } catch (err) {
+            //$("#r").html('<button id="uploadbtn" style="margin-right: 15px; background: none; border: none; color: aliceblue; " type="submit" name="createpost" class="mb-3 mt-3"><i style="position:relative; font-size: 25px; margin-right: 10px; color: aliceblue; top: 4px;" class="ti ti-message-share uploadbtn"></i>Опубликовать</button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+            Notify.noty('danger', escapeHtml(err.message));
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            scrollProgressBarWidth(0);
+        }
+
+        if (jsonData.errorcode == "1") {
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            //$("#r").html('<button id="uploadbtn" style="margin-right: 15px; background: none; border: none; color: aliceblue; " type="submit" name="createpost" class="mb-3 mt-3"><i style="position:relative; font-size: 25px; margin-right: 10px; color: aliceblue; top: 4px;" class="ti ti-message-share uploadbtn"></i>Опубликовать</button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+            Notify.noty('danger', 'В посте нет контента!');
+            scrollProgressBarWidth(0);
+          
+        } else if (jsonData.errorcode == "101") {
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            //$("#r").html('<button id="uploadbtn" style="margin-right: 15px; background: none; border: none; color: aliceblue; " type="submit" name="createpost" class="mb-3 mt-3"><i style="position:relative; font-size: 25px; margin-right: 10px; color: aliceblue; top: 4px;" class="ti ti-message-share uploadbtn"></i>Опубликовать</button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+            Notify.noty('danger', 'В посте больше 10 медиафайлов');
+            scrollProgressBarWidth(0);
+        }
+         else if (jsonData.errorcode == "0") {
+            Notify.noty('success', 'Успешная публикация!');
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3" disabled>Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            //$("#r").html('<button id="uploadbtn" style="margin-right: 15px; background: none; border: none; color: aliceblue; " type="submit" name="createpost" class="mb-3 mt-3"><i style="position:relative; font-size: 25px; margin-right: 10px; color: aliceblue; top: 4px;" class="ti ti-message-share uploadbtn"></i>Опубликовать</button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            /*let positionData = {
+                id: jsonData.id,
+                user_id: jsonData.user_id,
+                text: jsonData.text,
+                user_flname: jsonData.user_flname,
+                username: jsonData.username,
+                user_photo: jsonData.user_photo
+            };
+
+            ws.send(JSON.stringify(positionData));*/
+            setTimeout(function() {
+                window.location.replace("/feed");
+                scrollProgressBarWidth(0);
+            }, 1000);
+        } else if (jsonData.errorcode == "LIMITEXCEEDED") {
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+            //alert('За последнюю минуту вы отправили слишком много запросов. Повторите попытку позже.');
+            createModal('NONE', 'NONE', 'NONE', 'LIMITEXCEEDED', 'limit');
+            scrollProgressBarWidth(0);
+        } else {
+            $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+            $("#prgtd").html('');
+            $("#prgrsg").html('');
+            //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+            Notify.noty('danger', 'Неизвестная ошибка');
+            scrollProgressBarWidth(0);
+        }
+    },
+    error: function(xhr, status, error) {
+        $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
+        $("#prgtd").html('');
+        $("#prgrsg").html('');
+        //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
+        Notify.noty('danger', 'Не удалось опубликовать пост');
+        scrollProgressBarWidth(0);
+    },
+    cache: false,
+    contentType: false,
+    processData: false
+});
+
+});
+
+
+</script>
 </body>
 
 </html>
