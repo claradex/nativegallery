@@ -641,17 +641,7 @@ $user = new User(Auth::userid());
                                         <div class="sm" style="color:#999; margin-top:3px">Можно пояснить ценность фотографии, если на ней изображёно что-то редкое или уникальное (ведь фотомодераторам это может быть неизвестно).</div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td style="padding-top:15px"><input type="checkbox" name="px" id="px" value="1"> <label for="px">Не участвовать в <a href="/voting.php?show=results">Фотоконкурсе</a></label></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td style="padding-top:10px">
-                                        <input type="checkbox" name="dontclear" id="dontclear" value="1"> <label for="dontclear">Не очищать привязки</label>
-                                        <div class="sm" style="margin-top:5px; color:#888">Если установить эту галочку, после загрузки фото не будут очищены привязки к ТС и галереям. <br />Установите её, если Вы планируете загрузить еще фото в тот же профиль или галерею.</div>
-                                    </td>
-                                </tr>
+                               
                                 <tr>
                                     <td></td>
                                     <td style="padding:20px 2px 12px">
@@ -670,22 +660,7 @@ $user = new User(Auth::userid());
                 </div>
             </td>
         </tr>
-        <tr>
-            <td class="footer"><b><a href="/">Главная</a> &nbsp; &nbsp; <a href="/lk/">Личный кабинет</a> &nbsp; &nbsp; <a href="https://forum.transphoto.org">Форум</a> &nbsp; &nbsp; <a href="/rules/">Правила</a> &nbsp; &nbsp; <a href="/admin/">Редколлегия</a></b><br>
-                <a href="/set.php?dark=0" style="display:inline-block; padding:1px 10px; margin-top:5px; background-color:#ddd; color:#333">Светлая тема</a>
-                <div class="sitecopy">&copy; Администрация ТрансФото и авторы материалов, 2002—2024<br>Использование фотографий и иных материалов, опубликованных на сайте, допускается только с разрешения их авторов.</div>
-                <div style="margin:15px 0">
-                    <noindex>
-
-                        <!-- Yandex.Metrika informer -->
-                        <a href="https://metrika.yandex.ru/stat/?id=73971775&amp;from=informer" target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/73971775/3_0_DDDDDDFF_DDDDDDFF_0_pageviews" style="width:88px; height:31px; border:0;" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="73971775" data-lang="ru" /></a>
-                        <!-- /Yandex.Metrika informer -->
-
-                    </noindex>
-                </div>
-
-            </td>
-        </tr>
+       
     </table>
 
 </body>
