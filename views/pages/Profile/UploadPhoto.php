@@ -724,7 +724,7 @@ return xhr;
 
             ws.send(JSON.stringify(positionData));*/
             setTimeout(function() {
-                window.location.replace("/feed");
+                window.location.replace("/photo/"+jsonData.id);
                 scrollProgressBarWidth(0);
             }, 1000);
         } else if (jsonData.errorcode == "LIMITEXCEEDED") {

@@ -20,6 +20,7 @@ class Upload
         DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :place, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup'=>time()));
         echo json_encode(
             array(
+                'id' => DB::query('SELECT id FROM photos ORDER BY id DESC LIMIT 1')[0]['id'],
                 'errorcode' => 0,
                 'error' => 0
             )
@@ -30,7 +31,15 @@ class Upload
 
         if ($_FILES['image']['error'] != 4) {
             $exif = new EXIF($_FILES['image']['tmp_name']);
+            $exif = $exif->getData();
             $upload = new UploadPhoto($_FILES['image'], 'cdn/img');
+            if ($exif === null) {
+                $exif = Json::return(
+                    array(
+                        'type' => 'none',
+                    )
+                );
+            }
             if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
@@ -40,7 +49,7 @@ class Upload
                     )
                 );
                 self::$photourl = $upload->getSrc();
-                self::create($_POST['descr'], $content, $exif->getData());
+                self::create($_POST['descr'], $content, $exif);
             }
         } else {
             echo json_encode(
