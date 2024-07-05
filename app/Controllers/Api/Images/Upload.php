@@ -45,7 +45,7 @@ class Upload
                     array(
                         'type' => 'none',
                         'copyright' => $_POST['license'],
-                        'comment' => $_POST['comment'],
+                        'comment' => $_POST['descr'],
                     )
                 );
                 self::$photourl = $upload->getSrc();
