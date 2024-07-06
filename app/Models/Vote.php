@@ -10,7 +10,6 @@ class Vote
         $result = DB::query('SELECT type FROM photos_rates WHERE user_id=:uid AND photo_id=:pid', array(':uid' => $user_id, ':pid' => $pid));
         if (!empty($result)) {
             $type = $result[0]['type'];
-
             if ($type < 0) {
                 $type = -1;
             }

@@ -21,7 +21,7 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 <body>
     <div id="backgr"></div>
     <table class="tmain">
-
+<?=Vote::photo(Auth::userid(), $id)?>
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -133,7 +133,7 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                             <div class="star" pid="1361063"></div>
                             <div class="vote" pid="<?= $id ?>">
                                 <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) { echo 'voted'; } ?>"><span>Интересная фотография!</span></a>
-                                <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === -1) { echo 'voted'; } ?>"><span>Мне не&nbsp;нравится</span></a>
+                                <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) { echo 'voted'; } ?>"><span>Мне не&nbsp;нравится</span></a>
                             </div>
                             <div id="votes" class="votes">
                                 <table class="vblock pro">

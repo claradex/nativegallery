@@ -32,9 +32,9 @@ class Rate
             foreach ($votes as $vote) {
                 $user = new User($vote['user_id']);
                 if ($vote['type'] === 0) {
-                    $type = -1;
+                    $type = 0;
                     $formattedVotesNeg[] = [$vote['user_id'], $user->i('username'), $type];
-                } else {
+                } else if ($vote['type'] === 1) {
                     $type = 1;
                     $formattedVotesPos[] = [$vote['user_id'], $user->i('username'), $type];
                 }
@@ -44,16 +44,27 @@ class Rate
             if (Vote::photo(Auth::userid(), $_GET['pid']) === 0) {
                 $negbtn = true;
                 $posbtn = false;
-            } else {
+            } else if (Vote::photo(Auth::userid(), $_GET['pid']) === 1) {
                 $negbtn = false;
                 $posbtn = true;
+            } else {
+                $negbtn = false;
+                $posbtn = false;
             }
             $result = [
-                'votes' => [$formattedVotesNeg, $formattedVotesPos],
                 'buttons' => [$negbtn, $posbtn],
                 'errors' => '',
                 'rating' => Vote::count($_GET['pid'])
             ];
+            $votes = [];
+            $votes[1] = $formattedVotesPos;
+            $votes[0] = $formattedVotesNeg;
+
+            if (!empty($votes)) {
+                $result['votes'] = $votes;
+            }
+            
+            
 
             header('Content-Type: application/json');
             echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
