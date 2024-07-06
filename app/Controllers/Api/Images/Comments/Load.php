@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Api\Images;
+namespace App\Controllers\Api\Images\Comments;
 
 
 
@@ -8,7 +8,7 @@ use App\Services\{Auth, Router, GenerateRandomStr, DB, Json, EXIF};
 use App\Models\{User, Vote, Comment};
 
 
-class CommentsLoad
+class Load
 {
     public function __construct()
     {

@@ -21,7 +21,6 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 <body>
     <div id="backgr"></div>
     <table class="tmain">
-<?=Vote::photo(Auth::userid(), $id)?>
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>

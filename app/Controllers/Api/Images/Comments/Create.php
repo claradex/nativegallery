@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers\Api\Images;
+namespace App\Controllers\Api\Images\Comments;
 
 use App\Services\{Auth, Router, GenerateRandomStr, DB, Json, Files, Shell};
 use App\Models\Notification;
 
-class Comment
+class Create
 {
 
 
