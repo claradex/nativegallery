@@ -4,6 +4,19 @@ use \App\Services\Auth;
 use \App\Models\User;
 
 $user = new \App\Models\User(Auth::userid());
+
+if (NGALLERY['root']['logo'] != null) {
+    $logo = NGALLERY['root']['logo'];
+} else {
+    $logo = '/static/img/logosmall.png';
+}
+
+if (NGALLERY['root']['title'] != null) {
+    $title = NGALLERY['root']['title'];
+} else {
+    $title = 'NativeGallery';
+}
+    
 ?>
 <tr>
     <td class="mm-bar">
@@ -83,5 +96,5 @@ $user = new \App\Models\User(Auth::userid());
     </td>
 </tr>
 <tr>
-    <td><a href="/" id="title"><img src="/static/img/logosmall.png" alt="TransPhoto"><span>NativeGallery</span></a></td>
+    <td><a href="/" id="title"><img src="<?=$logo?>" alt="<?=$title?>"><span><?=$title?></span></a></td>
 </tr>

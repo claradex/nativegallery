@@ -111,7 +111,14 @@ $photouser = new \App\Models\User($photo->i('user_id'));
         <div>
             <div style="padding-top:8px"><?= $photo->content('comment') ?></div>
         </div><br>
-        <div>Прислал <a href="/author/<?= $photo->i('user_id') ?>/"><?= $photouser->i('username') ?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b><?= Date::zmdate($photo->i('posted_at')) ?></b></div>
+        <?php
+        if ($photo->i('posted_at') === 943909200) {
+            $date = 'не указана';
+        } else {
+            $date = Date::zmdate($photo->i('posted_at'));
+        }
+        ?>
+        <div>Прислал <a href="/author/<?= $photo->i('user_id') ?>/"><?= $photouser->i('username') ?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b><?= $date ?></b></div>
         <table id="pp-items">
             <tr>
                 <td id="pp-left-col">

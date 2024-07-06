@@ -138,7 +138,7 @@ use App\Models\{User, Vote, Comment};
                             <h4 style="clear:both"><a href="/update.php?time=72">Недавно добавленные фотографии</a></h4>
                             <div id="recent-photos" class="ix-photos ix-photos-multiline" lastpid="1970527" firstpid="1970550">
                                 <?php
-                                $photos = DB::query('SELECT * FROM photos ORDER BY id DESC');
+                                $photos = DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 30');
                                 foreach ($photos as $p) {
                                     $bck = 'background-image:url("' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">

@@ -1,5 +1,7 @@
 ngallery:
   root:
+    title: "NativeGallery"
+    logo: "/static/img/logosmall.png"
     maintenance: false
     debug: true
     botkey: ''
