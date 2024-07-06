@@ -5,23 +5,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Narrow:wght@400;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/css/desktop.css">
-    <link rel="stylesheet" href="/static/css/trans.css">
-    <link rel="stylesheet" href="/static/css/photo.css">
-    <link rel="stylesheet" href="/static/css/notie.css">
-    <link rel="stylesheet" href="/static/css/comments.css">
-    <link rel="stylesheet" href="/static/css/map.css">
-    <script src="/static/js/jquery.js"></script>
-    <script src="/static/js/jquery-ui.js"></script>
-    <script src="/static/js/jquery.form.min.js"></script>
-    <script src="/static/js/core.js"></script>
-    <script src="/static/js/core_lk.js"></script>
-    <script src="/static/js/imageupload.js"></script>
-    <script src="/static/js/progress.js"></script>
-    <script src="/static/js/notie.js"></script>
-    <script src="/static/js/photo.js"></script>
-    <script src="/static/js/comments.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/desktop.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/trans.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/photo.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/notie.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/comments.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <link rel="stylesheet" href="/static/css/map.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+    <script src="/static/js/jquery.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/jquery-ui.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/jquery.form.min.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/core.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/core_lk.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/imageupload.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/progress.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/notie.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/photo.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/comments.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <div class="progress-container fixed-top">
 <span class="progress-bard"></span>
 </div>

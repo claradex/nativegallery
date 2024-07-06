@@ -5,6 +5,7 @@ ngallery:
     maintenance: false
     debug: true
     botkey: ''
+    cloudflare-caching: false
     db:
       name: ''
       host: ''
