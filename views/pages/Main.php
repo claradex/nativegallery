@@ -100,12 +100,21 @@ use App\Models\{User, Vote, Comment};
             <td class="main">
                 <table id="idx-main">
                     <tr>
+
                         <td style="vertical-align:top; padding-right:20px">
 
+	<h4><a href="top30.php">Самые популярные за 24 часа</a></h4>
+	<div>
+		Когда-нибудь, этот раздел появится :)
+	</div>
+
+	
+	<div style="text-align:center; margin-bottom:20px">
+<div style="width: 250px;"></div></div>
 
 
 
-                        </td>
+</td>
                         <td style="vertical-align:top; width:100%; padding-top:4px">
 
                             <div id="morerand">
