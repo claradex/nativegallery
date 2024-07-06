@@ -285,9 +285,10 @@ $user = new User(Auth::userid());
                     </div>
 
                     <form id="mform" method="post" enctype="multipart/form-data" action="?action=write">
-                        <input type="hidden" name="MAX_FILE_SIZE" value="20971520">
-
                         <input type="hidden" name="creative" id="creative" value="">
+                        <input type="hidden" name="lat" id="markerLat" value="20971520">
+
+                        <input type="hidden" name="lng" id="markerLng" id="creative" value="">
 
 
                         <table width="100%">
@@ -622,8 +623,6 @@ $user = new User(Auth::userid());
 		<td></td>
 		<td style="padding:7px 2px">
 			<input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не указывать координаты</label>
-			<input name="lat" id="lat" type="hidden" value="59.93822478386888">
-			<input name="lng" id="lng" type="hidden" value="30.318908840417865">
 		</td>
 	</tr>
 	<tr class="upl-map">

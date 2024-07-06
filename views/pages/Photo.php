@@ -21,62 +21,38 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 <body>
     <div id="backgr"></div>
     <table class="tmain">
+
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <style>
+        #map_canvas {
+            width: 600px !important;
+        }
+        #photobar {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+#photobar {
+    background-color: #000;
+}
+#photobar {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+#photobar {
+    margin: 0 -20px;
+    position: relative;
+    background-color: #333;
+}
+    </style>
             <td class="main">
                 <center>
-                    <script>
-                        var pid = 1361063;
-                        var video = 0;
-                        var self_p = 0;
-                        var subscr_pro = 0;
-                        var subscr_fav = 0;
-                        addTexts({
-                            'P_CURRENT': 'Это — текущая фотография.',
-                            'P_MOVE_FIRST': 'Это самое первое фото',
-                            'P_MOVE_LAST': 'Это самое новое фото',
-                            'P_MOVE_ALONE_V': 'Это единственное фото ТС',
-                            'P_MOVE_ALONE_G': 'Это единственное фото в галерее',
-                            'P_QUOTE_MSG': 'Нет смысла цитировать последнее сообщение целиком.<br />Если Вы хотите процитировать часть сообщения, выделите часть текста и нажмите на ссылку ещё раз.',
-                            'P_QUOTE_LEN': 'Слишком длинная цитата. Пользователям будет неудобно читать такой комментарий.<br>Пожалуйста, выделите конкретное предложение, на которое вы отвечаете, и нажмите на ссылку еще раз.',
-                            'P_QUOTE_TXT': 'Цитата',
-                            'P_DEL_CONF': 'Вы действительно хотите удалить свой комментарий?',
-                            'P_WAIT': 'Пожалуйста, подождите...',
-                            'P_ADDFAV': 'Добавить фото в Избранное',
-                            'P_DELFAV': 'Удалить фото из Избранного',
-                            'P_ENTERTEXT': 'Введите текст комментария',
-                            'LOADING': 'Загрузка...',
-                            'NO_VOTES': 'Нет голосов',
-                            'MAP_OSM': 'Карта OpenStreetMap',
-                            'MAP_OSM_BW': 'Чёрно-белая карта OpenStreetMap',
-                            'MAP_OSM_HOT': 'Карта Humanitarian OpenStreetMap Team',
-                            'MAP_TOPO': 'Карта OpenTopoMap',
-                            'MAP_WIKIMEDIA': 'Карта Wikimedia',
-                            'MAP_OPNV': 'Карта ÖPNVKarte',
-                            'MAP_OPENPTMAP': 'Общественный транспорт от OpenPtMap',
-                            'MAP_RAILWAY': 'Железная дорога от OpenRailwayMap',
-                            'MAP_BING': 'Спутник Bing',
-                            'MAP_YANDEX': 'Карта Яндекс',
-                            'MAP_YANDSAT': 'Спутник Яндекс'
-                        });
-                        var showmap = false;
-                        var vid = 78618;
-                        var gid = 0;
-                        var aid = 0;
-                        var upd = 0;
-                    </script>
-                    <div style="background-color:#555; margin:0 -20px; padding:7px">
-                        <!-- Yandex.RTB R-A-115118-6 -->
-                        <div id="yandex_rtb_R-A-115118-6"></div>
-                        <script>
-                            window.yaContextCb.push(() => {
-                                Ya.Context.AdvManager.render({
-                                    renderTo: 'yandex_rtb_R-A-115118-6',
-                                    blockId: 'R-A-115118-6'
-                                })
-                            })
-                        </script>
-                    </div>
+                 
+
 
                     <div id="photobar">
                         <div id="prev" title="Переход по профилю ТС"><span>&lt;</span></div>
@@ -84,7 +60,7 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                         <div style="display:inline-block">
                             <div id="underphoto_frame">
                                 <div id="ph_frame">
-                                    <img id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
+                                    <img class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                 </div>
                             </div>
                         </div>
@@ -156,7 +132,8 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                             <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
                             <div class="star" pid="1361063"></div>
                             <div class="vote" pid="<?= $id ?>">
-                                <a href="#" vote="1" class="vote_btn"><span>Интересная фотография!</span></a><a href="#" vote="0" class="vote_btn"><span>Мне не&nbsp;нравится</span></a>
+                                <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) { echo 'voted'; } ?>"><span>Интересная фотография!</span></a>
+                                <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === -1) { echo 'voted'; } ?>"><span>Мне не&nbsp;нравится</span></a>
                             </div>
                             <div id="votes" class="votes">
                                 <table class="vblock pro">
@@ -230,6 +207,46 @@ $photouser = new \App\Models\User($photo->i('user_id'));
                                 </table>
                             </div>
                         </div>
+                        <?php
+                        if ($photo->content('lat') != null && $photo->content('lng') != null) { ?>
+                        <div class="p0" id="pp-item-exif">
+                          
+                            <h4 class="pp-item-header">Место на карте</h4>
+                            <div class="pp-item-body">
+                                <table class="linetable" id="exif">
+                                <tr class="upl-map">
+                                    <div id="map_frame" class="s11 p20" style="display:inline-block; padding:3px">
+                                <div id="map_canvas"></div></div>
+                                <script>
+                                // Координаты выбранной точки
+const selectedPoint = {
+    lat: <?=$photo->content('lat')?>, // Пример: Широта Москвы
+    lng: <?=$photo->content('lng')?>  // Пример: Долгота Москвы
+};
+
+// Создание карты
+const map = L.map('map_canvas').setView([selectedPoint.lat, selectedPoint.lng], 13);
+
+// Добавление базового слоя карты (OpenStreetMap)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Добавление маркера на выбранной точке
+const marker = L.marker([selectedPoint.lat, selectedPoint.lng]).addTo(map);
+
+// Установка всплывающего окна на маркере
+marker.bindPopup("<b>Выбранная точка</b>").openPopup();
+
+</script>
+	</tr>
+
+                                </table>
+                            </div>
+                        </div>
+                        <?php } ?>
+
 
                         <div class="p0" id="pp-item-comments">
                             <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> 1</span></h4>

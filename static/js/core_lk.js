@@ -321,16 +321,7 @@ function setDate(d, m, y)
 
 
 
-document.onclick = function(e)
-{
-	e = e || window.event;
-	E = e.target || e.srcElement;
-	if (E.id != 'phint' && E.parentNode.id != 'phint' && E != _getID('mform').place) $('#phint').slideUp();
 
-	if (E.className != 'searchVehiclesBtn' && E.id != 'vlist_table' && E.className != 'num' && $('#vlist').css('display') == 'block') $('#vlist').hide().html('');
-
-	if ($(E).closest('#views-selector').length == 0) $('#views-selector').hide();
-};
 
 
 

@@ -54,7 +54,7 @@ $(document).ready(function()
 	{
 		var vote = $(this).attr('vote');
 		if (vote != 0 && vote != 1) return false;
-		if (vote && subscr_pro) $('.toggle').attr('class', 'toggle on');
+		if (vote) $('.toggle').attr('class', 'toggle on');
 
 		var pid = $(this).closest('.vote').attr('pid');
 
