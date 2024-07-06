@@ -1,0 +1,48 @@
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+}
+.leaflet-center {
+	margin-left: 55px;
+}
+.leaflet-control-geosearch, .leaflet-control-geosearch ul {
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.25);
+	margin: 4px 0 0;
+	padding: 2px;
+	height: auto;
+	border-radius: 4px;
+}
+.leaflet-control-geosearch-msg ul {
+	list-style: none;
+	display: none;
+	height: auto;
+	background: none;
+	padding: 0;
+}
+.leaflet-control-geosearch ul li {
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.75);
+    margin: 0;
+    padding: 0 4px;
+}
+.leaflet-container .leaflet-control-geosearch input {
+	width: 240px;
+	height: 21px;
+	padding: 0;
+	text-indent: 4px;
+	background: #fff;
+	border: none;
+	border-radius: 2px;
+	box-shadow: none;
+}
+.leaflet-control-layers-list {
+	text-align:left;
+}
+.multimark {
+	background:url('/img/m/multimark.png') no-repeat;
+	font-family:PT Sans Narrow,sans-serif;
+	font-size:18px;
+	color:#fff;
+	font-weight:bold;
+	padding-top:11px;
+	text-align:center;
+}

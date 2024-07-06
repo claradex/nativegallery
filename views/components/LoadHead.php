@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/css/photo.css">
     <link rel="stylesheet" href="/static/css/notie.css">
     <link rel="stylesheet" href="/static/css/comments.css">
+    <link rel="stylesheet" href="/static/css/map.css">
     <script src="/static/js/jquery.js"></script>
     <script src="/static/js/jquery-ui.js"></script>
     <script src="/static/js/jquery.form.min.js"></script>

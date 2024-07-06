@@ -198,8 +198,6 @@ $(document).ready(function()
 	$('#conn_veh').on('change', 'input:checkbox, input:text', modify);
 
 
-	// Предотвращение случайного закрытия формы
-	window.onbeforeunload = function() { if (modified) return false; }
 });
 
 

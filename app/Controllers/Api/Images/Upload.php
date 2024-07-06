@@ -40,12 +40,18 @@ class Upload
                     )
                 );
             }
+            if (isset($_POST['nomap'])) {
+                $_POST['lat'] = null;
+                $_POST['lng'] = null;
+            }
             if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
                         'type' => 'none',
                         'copyright' => $_POST['license'],
                         'comment' => $_POST['descr'],
+                        'lat' => $_POST['lat'],
+                        'lng' => $_POST['lng']
                     )
                 );
                 self::$photourl = $upload->getSrc();

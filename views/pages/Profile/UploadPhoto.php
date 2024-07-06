@@ -9,7 +9,7 @@ $user = new User(Auth::userid());
 <head>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
-   
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 
 
@@ -18,6 +18,23 @@ $user = new User(Auth::userid());
     <table class="tmain">
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.83/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.83/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-indoor/0.4.2/leaflet.indoor.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-indoor/0.4.2/leaflet.indoor.min.css" />
+<!-- Подключение плагина Leaflet.markercluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+ <!-- Подключение плагина Leaflet-Geoman -->
+ <link rel="stylesheet" href="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.css">
+    <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+
+    <!-- Подключение плагина Leaflet-3d-model -->
+    <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js"></script>
             <td class="main">
                 <h1>Предложить фото на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?=$user->i('uploadindex')?></b></p>
@@ -281,8 +298,11 @@ $user = new User(Auth::userid());
                                         Шаг 1. <b>Выберите фотографию для загрузки и укажите дату съёмки:</b> </td>
                                 </tr>
                                 <tr>
+                                
+
                                     <td></td>
                                     <td style="padding:2px 15px 5px 2px">
+                                   
                                         <label class="button">
                                             Выбрать файл... <input type="file" name="image" id="image" accept="image/*">
                                         </label>
@@ -593,13 +613,228 @@ $user = new User(Auth::userid());
                                     <td colspan="2" style="height:10px"></td>
                                 </tr>
                             </tbody>
+                            
+                            <tbody class="p20">
+	<tr>
+		<td colspan="2" id="step4" class="narrow" style="font-size:20px; padding:10px 15px 0">Шаг 3. <b>Отметьте точку, с которой вы делали кадр, на карте:</b></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td style="padding:7px 2px">
+			<input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не указывать координаты</label>
+			<input name="lat" id="lat" type="hidden" value="59.93822478386888">
+			<input name="lng" id="lng" type="hidden" value="30.318908840417865">
+		</td>
+	</tr>
+	<tr class="upl-map">
+		<td class="lcol">Точка съёмки:</td>
+		<td>
+			<div id="map_frame" class="s11 p20" style="display:inline-block; padding:3px">
+				<div id="map_canvas" style="width:600px; height:300px; overflow:hidden"></div>
+                <div>
+    <label for="mapSelector">Выберите карту:</label>
+    <select id="mapSelector">
+        <option value="osm">OpenStreetMap</option>
+        <option value="hot">Humanitarian OpenStreetMap Team</option>
+        <option value="opnv">OPNVKarte</option>
+        <option value="2gis">2ГИС (только Россия)</option>
+        <option value="google">Google Maps</option>
+    </select>
+    <div>
+    <label for="railwayCheckbox">Железная дорога от OpenRailwayMap:</label>
+    <input type="checkbox" id="railwayCheckbox">
+</div>
 
+</div>
+			</div>
+		</td>
+	</tr>
+	
+
+</tbody>
+
+
+	</tr>
+	<tr><td colspan="2" style="height:7px"></td></tr><tr>
+
+</tr></tbody><script>
+      var map = L.map('map_canvas').setView([55.7558, 37.6176], 13);
+    var marker;
+    var geocoder;
+
+    // Инициализация базовых слоев Leaflet.js
+    var baseLayers = {
+        "osm": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }),
+        "hot": L.tileLayer('https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }),
+        "opnv": L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data &copy; <a href="https://www.thunderforest.com/">Thunderforest</a>'
+        }),
+        "2gis": L.tileLayer('https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1', {
+            maxZoom: 19,
+            attribution: '&copy; 2GIS'
+        }),
+        "yandex": L.tileLayer('https://vec0{s}.maps.yandex.net/tiles?l=map&v=4.53.2&z={z}&x={x}&y={y}&scale=1&lang=ru_RU', {
+            subdomains: ['01', '02', '03', '04'],
+            maxZoom: 19
+        }),
+        "yandex-satellite": L.tileLayer('https://sat0{s}.maps.yandex.net/tiles?l=sat&v=3.827.0&z={z}&x={x}&y={y}&scale=1&lang=ru_RU', {
+            subdomains: ['01', '02', '03', '04'],
+            maxZoom: 19
+        }),
+        "google": L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxZoom: 19,
+            attribution: '&copy; Google Maps'
+        }),
+        "openrailway": L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenRailwayMap'
+        })
+    };
+
+    document.getElementById('railwayCheckbox').addEventListener('change', function() {
+    if (this.checked) {
+        baseLayers["openrailway"].addTo(map);
+    } else {
+        map.removeLayer(baseLayers["openrailway"]);
+    }
+});
+    // Инициализация карты Leaflet.js с выбранным базовым слоем по умолчанию
+    baseLayers["osm"].addTo(map);
+
+    // Добавляем элемент управления выбора карты
+    document.getElementById('mapSelector').addEventListener('change', function() {
+        var selectedLayer = this.value;
+
+        // Удаляем текущий слой карты Leaflet.js
+        map.eachLayer(function(layer) {
+            map.removeLayer(layer);
+        });
+
+        // Добавляем выбранный слой карты Leaflet.js
+        baseLayers[selectedLayer].addTo(map);
+
+        // Добавляем разметку внутри зданий для выбранных карт
+        if (selectedLayer === "osm" || selectedLayer === "hot" || selectedLayer === "opnv") {
+            addIndoorLayer(selectedLayer);
+        } else {
+            // Очищаем слой indoor, если выбран другой тип карты
+            clearIndoorLayer();
+        }
+    });
+
+    // Функция добавления слоя разметки внутри зданий (Indoor)
+    function addIndoorLayer(selectedLayer) {
+        // Очищаем предыдущий indoor слой, если он был добавлен
+        clearIndoorLayer();
+
+        // Пример добавления indoor слоя с использованием Leaflet Indoor.js
+        // Ваш код для загрузки и отображения indoor карты
+        // Ниже приведён пример заглушки
+
+        // Создаём новый indoor слой
+        map.indoorLayer = new L.Indoor();
+
+        // Добавляем его на карту
+        map.indoorLayer.addTo(map);
+
+        // Загрузка и отображение indoor карты с помощью Indoor.js
+        // Пример заглушки: добавление одного здания с этажами и метками
+        var building = {
+            name: "Пример здания",
+            floors: [{
+                level: 0,
+                plan: {
+                    imageUrl: "path/to/indoor/plan.png", // URL изображения плана здания
+                    width: 800, // Ширина изображения в пикселях
+                    height: 600 // Высота изображения в пикселях
+                },
+                markers: [{
+                    latLng: [51.505, -0.09], // Координаты метки на плане
+                    label: "Метка на плане"
+                }]
+            }]
+        };
+
+        // Добавляем здание на indoor слой
+        map.indoorLayer.addLevel(building);
+
+        // Пример настройки интерактивности для меток
+        building.floors.forEach(function(floor) {
+            floor.markers.forEach(function(marker) {
+                var markerIcon = L.divIcon({ className: 'indoor-marker', html: marker.label });
+                L.marker(marker.latLng, { icon: markerIcon }).addTo(map.indoorLayer.getLevel(floor.level));
+            });
+        });
+    }
+
+    // Функция очистки indoor слоя
+    function clearIndoorLayer() {
+        if (map.indoorLayer) {
+            map.removeLayer(map.indoorLayer);
+            delete map.indoorLayer;
+        }
+    }
+
+    // Добавляем обработчик клика на карту Leaflet.js
+    map.on('click', function(e) {
+        if (marker) {
+        map.removeLayer(marker);
+    }
+
+    marker = L.marker(e.latlng).addTo(map);
+    document.getElementById('markerLat').value = e.latlng.lat;
+    document.getElementById('markerLng').value = e.latlng.lng;
+    });
+
+    // Инициализация поискового элемента управления Leaflet.js
+    geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    }).on('markgeocode', function(e) {
+        var latlng = e.geocode.center;
+
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker(latlng).addTo(map);
+        map.setView(latlng, 13);
+
+        document.getElementById('markerLat').value = latlng.lat;
+        document.getElementById('markerLng').value = latlng.lng;
+
+        var bbox = e.geocode.bbox;
+        if (bbox.isValid()) {
+            var poly = L.polygon([
+                bbox.getSouthEast(),
+                bbox.getNorthEast(),
+                bbox.getNorthWest(),
+                bbox.getSouthWest()
+            ]).addTo(map);
+            map.fitBounds(poly.getBounds());
+        }
+    }).addTo(map);
+</script>
                             <tbody class="p20">
                                 <tr>
-                                    <td colspan="2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 3. <b>Выберите опции загрузки:</b></td>
+                                    <td colspan="2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 4. <b>Выберите опции загрузки:</b></td>
                                 </tr>
-                              
                                 <tr>
+                                
+      
+    
+   
+                                </tr>
+                                
+                                <tr>
+                               
+
+   
                                     <td class="lcol">Лицензия:</td>
                                     <td style="padding-bottom:7px">
                                         <select name="license">
