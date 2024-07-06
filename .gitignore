@@ -6,3 +6,5 @@
 /ngallery.yaml
 ngallery.yaml
 /cdn/
+*.yaml
+ngallery.yaml
