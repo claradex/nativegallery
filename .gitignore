@@ -9,3 +9,4 @@ ngallery.yaml
 *.yaml
 ngallery.yaml
 /views/pages/t.php
+views/pages/t.php
