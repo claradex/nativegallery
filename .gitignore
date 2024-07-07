@@ -8,3 +8,4 @@ ngallery.yaml
 /cdn/
 *.yaml
 ngallery.yaml
+/views/pages/t.php
