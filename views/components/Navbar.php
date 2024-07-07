@@ -68,7 +68,7 @@ if (NGALLERY['root']['title'] != null) {
                 </div>
             </li>
             <?php
-            if (Auth::userid() < 0) { ?>
+            if (Auth::userid() <= 0) { ?>
                 <li class="mm-pad-right"><a href="/login" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-address-card"></i></span><span class="mm-label">Войти</span></a></li>
                 <li><a href="/register" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-user"></i></span><span class="mm-label">Регистрация</span></a></li>
             <?php } else { ?>

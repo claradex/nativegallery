@@ -1,3 +1,9 @@
+<?php
+use App\Services\{Router, Auth};
+if (Auth::userid() > 0) {
+    Router::redirect('/');
+}
+?>
 <!DOCTYPE html>
 <html lang="ru">
 

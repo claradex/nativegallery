@@ -14,7 +14,12 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 <head>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
-
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="description" content="<?=NGALLERY['root']['description']?>">
+    <meta name="keywords" content="<?=NGALLERY['root']['keywords']?>">
+    <meta property="og:title" content="<?=$photo->i('title')?> — Фото">
+    <link rel="alternate" hreflang="x-default" href="<?=$_SERVER['REQUEST_URI']?>">
+    <meta property="og:image" content="<?=$photo->i('photourl')?>">
 </head>
 
 

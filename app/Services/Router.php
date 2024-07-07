@@ -45,7 +45,6 @@ class Router
     }
     public static function route($route, $path_to_include)
     {
-        // Определение корневой директории
         $root = $_SERVER['DOCUMENT_ROOT'];
 
         // Обработка случая, когда маршрут - 404

@@ -15,6 +15,7 @@ class MainController
     public static function i()
     {
        Page::set('Main');
+       
     }
 
     public static function logout()

@@ -2,6 +2,8 @@ ngallery:
   root:
     title: "NativeGallery"
     logo: "/static/img/logosmall.png"
+    description: ""
+    keywords: ""
     maintenance: false
     debug: true
     botkey: ''

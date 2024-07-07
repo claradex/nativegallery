@@ -1,3 +1,9 @@
+<?php
+use App\Services\{Router, Auth};
+if (Auth::userid() > 0) {
+    Router::redirect('/');
+}
+?>
 <html lang="ru">
 
 
@@ -14,6 +20,8 @@
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
             <tr>
                 <td class="main">
+                    <?php
+                    if (NGALLERY['root']['registration']['access']['public'] === true) {  ?>
                     <center>
                         <h1>Регистрация</h1>
                         <div class="mf-center-block">
@@ -80,6 +88,11 @@
                             });
                         </script>
                     </center>
+                    <?php } else { ?>
+                        <center>
+                        <h1>К сожалению, регистрация на сервере <?=$title?> запрещена.</h1>
+                        </center?
+                        <?php } ?>
                 </td>
             </tr>
             <tr>
