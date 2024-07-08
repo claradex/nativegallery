@@ -7,6 +7,9 @@ $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
 if ($photo->i('id') !== null) {
     $photouser = new \App\Models\User($photo->i('user_id'));
+    if (DB::query('SELECT * FROM photos_views WHERE user_id=:uid AND photo_id=:pid ORDER BY id DESC LIMIT 1', array(':uid'=>Auth::userid(), ':pid'=>$id))[0]['time'] <= time()-86400) {
+        DB::query('INSERT INTO photos_views VALUES (\'0\', :uid, :pid, :time)', array(':uid'=>Auth::userid(), ':pid'=>$id, ':time'=>time()));
+    }
 }
 
 ?>

@@ -105,7 +105,26 @@ use App\Models\{User, Vote, Comment};
 
 	<h4><a href="top30.php">Самые популярные за 24 часа</a></h4>
 	<div>
-		Когда-нибудь, этот раздел появится :)
+		<?php
+        $photos = DB::query('SELECT photo_id, COUNT(*) as view_count
+FROM photos_views
+WHERE time >= UNIX_TIMESTAMP(NOW()) - 86400
+GROUP BY photo_id
+ORDER BY view_count DESC
+LIMIT 10;');
+foreach ($photos as $pd) {
+    $photo = DB::query('SELECT * FROM photos WHERE id=:id', array(':id'=>$pd['photo_id']));
+    foreach ($photo as $p) {
+         $author = new User($p['user_id']);
+         echo '<a href="/photo/'.$p['id'].'" target="_blank" class="prw pop-prw">
+   <img width="250" src="'.$p['photourl'].'">
+   <div class="hpshade">
+      <div class="eye-icon">+'.$pd['view_count'].'</div>
+   </div>
+</a>';
+    }
+}
+        ?>
 	</div>
 
 	
