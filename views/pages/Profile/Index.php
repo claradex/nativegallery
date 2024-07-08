@@ -208,7 +208,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                         </td>
                     </tr>
                 </table>
-              
+                <div><b><a href="/search?aid=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
             </td>
         </tr>
         <tr>

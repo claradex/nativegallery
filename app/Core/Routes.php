@@ -29,12 +29,16 @@ class Routes
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
             Router::get('/lk/profile', 'ProfileController@lkprofile');
+
+            Router::get('/search', 'SearchController@i');
+
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
+
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
         } else {
