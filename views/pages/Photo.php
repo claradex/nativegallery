@@ -74,6 +74,12 @@ if ($photo->i('id') !== null) {
                             <div id="underphoto_frame">
                                 <div id="ph_frame">
                                     <img class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
+                                    <?php
+                                    if ($photo->i('priority') === 1) { ?>
+                                    <div class="underphoto s17" style="cursor:help" title="Фотография не удовлетворяет действующим на момент публикации критериям качества снимков."><i style="position:relative; top:1px" class="fas fa-info-circle"></i>&ensp;<b class="dot">Условная публикация</b></div>
+                                    <?php } else if ($photo->i('priority') === 2) {  ?>
+                                    <div class="underphoto s19" style="cursor:help" title="Изображение будет удалено с сайта через некоторое время"><i style="position:relative; top:1px" class="fas fa-clock"></i>&ensp;<b class="dot">Временная публикация</b></div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
