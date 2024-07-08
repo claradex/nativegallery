@@ -98,7 +98,7 @@ class Register
                                         )
                                     );
 
-                                    DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :online, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl'=>'/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online'=>time()));
+                                    DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, 0, :online, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl'=>'/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online'=>time()));
                                     $cstrong = True;
                                     $token = GenerateRandomStr::gen_uuid();
                                     $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];

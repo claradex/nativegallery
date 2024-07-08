@@ -17,6 +17,11 @@ class MainController
        Page::set('Main');
        
     }
+    public static function about()
+    {
+       Page::set('About');
+       
+    }
 
     public static function logout()
     {

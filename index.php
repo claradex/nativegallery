@@ -26,11 +26,10 @@ class App
                     Page::set('Errors/ServerDown');
                 }
             } catch (PDOException $ex) {
-                echo $ex;
-                Page::set('Errors/DB_42000');
+                echo '<details><summary class="p20 s5" style="border:none; margin:0 -20px"><b>Произошла ошибка MySQL</b></summary>'.nl2br($ex).'</details>';
+                
             } catch (Exception $ex) {
-                echo $ex;
-                Page::set('Errors/DB_42000');
+                echo '<details><summary class="p20 s5" style="border:none; margin:0 -20px"><b>Произошла скриптовая ошибка PHP</b></summary>'.nl2br($ex).'</details>';
             }
         } else {
             Page::set('Errors/Problems');

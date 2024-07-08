@@ -293,7 +293,7 @@ marker.bindPopup("<b>Выбранная точка</b>").openPopup();
                             </div>
                         </div>
                 </td>
-            </tr>
+            </tr></tbody></table>
             <?php } else { ?>
                 <center>
 <h1>Изображение не найдено</h1>
@@ -303,9 +303,11 @@ marker.bindPopup("<b>Выбранная точка</b>").openPopup();
 </div>
 </center>
 <?php } ?>
+<table width="100%" style="margin-top: 30px;"><tbody>
             <tr>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
     </tr>
+    </tbody>
         </table>
         <script>
              $(document).ready(function() {

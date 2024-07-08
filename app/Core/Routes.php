@@ -19,6 +19,7 @@ class Routes
         Router::get('/author/$id', 'ProfileController@i');
         Router::post('/api/login', 'ApiController@login');
         Router::post('/api/register', 'ApiController@register');
+        Router::get('/about', 'MainController@about');
 
 
 
@@ -34,6 +35,7 @@ class Routes
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
+            Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
         } else {
             Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
