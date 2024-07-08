@@ -32,6 +32,7 @@ ngallery:
       percent: 50
     photo:
       upload:
+        allow: true
         premoderation: true
         defaultindex: 5.0
     comments:

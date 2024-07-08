@@ -13,7 +13,46 @@ class Register
 {
 
 
+    private static function checkforb($nickname, $nicknames) {
+        $replacements = [
+            '1' => 'i', '!' => 'i', '|' => 'i', 'l' => 'i', 'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i', 'İ' => 'i', '¡' => 'i',
+            '0' => 'o', '@' => 'a', '$' => 's', '5' => 's', '§' => 's', '2' => 'z', '3' => 'e', '7' => 't', '4' => 'a', '8' => 'b',
+            '6' => 'b', '9' => 'g', 'ß' => 'ss', 'µ' => 'u', 'æ' => 'ae', 'œ' => 'oe', 'z' => '2', 'x' => '%', 'w' => 'vv', 'v' => 'u',
+            'ñ' => 'n', 'á' => 'a', 'à' => 'a', 'â' => 'a', 'ä' => 'a', 'ã' => 'a', 'å' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e',
+            'ë' => 'e', 'í' => 'i', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'ö' => 'o', 'õ' => 'o', 'ú' => 'u', 'ù' => 'u', 'û' => 'u',
+            'ü' => 'u', 'ç' => 'c', 'ć' => 'c', 'č' => 'c', 'đ' => 'd', 'š' => 's', 'ž' => 'z', 'б' => 'b', 'в' => 'v', 'г' => 'g',
+            'д' => 'd', 'е' => 'e', 'ё' => 'e', 'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'i', 'к' => 'k', 'л' => 'l', 'м' => 'm',
+            'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'kh', 'ц' => 'ts',
+            'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shch', 'ы' => 'y', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya', 'ѣ' => 'e', 'і' => 'i', 'ѳ' => 'f',
+            'ѵ' => 'i', 'қ' => 'k', 'ғ' => 'g', 'ң' => 'n', 'ү' => 'u', 'ұ' => 'u', 'ө' => 'o', 'ә' => 'a', 'җ' => 'zh', 'һ' => 'h',
+            'ү' => 'u', 'ұ' => 'u', 'ҙ' => 'z', 'ӣ' => 'i', 'ӯ' => 'u', 'ҷ' => 'ch', 'ҳ' => 'h', 'ѯ' => 'ks', 'ѱ' => 'ps', 'ѝ' => 'i',
+            'ѫ' => 'u', 'ѭ' => 'yu', 'ў' => 'u', 'џ' => 'dz', 'є' => 'e', 'і' => 'i', 'ї' => 'i', 'ґ' => 'g', 'є' => 'e', 'і' => 'i', 
+            'ї' => 'i', 'ґ' => 'g', 'ä' => 'a', 'ö' => 'o', 'ü' => 'u', 'ß' => 'ss', 'ā' => 'a', 'ē' => 'e', 'ī' => 'i', 'ō' => 'o', 
+            'ū' => 'u', 'ç' => 'c', 'ğ' => 'g', 'ş' => 's', 'ÿ' => 'y', 'œ' => 'oe', 'æ' => 'ae', 'å' => 'a', 'ø' => 'o', 'ē' => 'e',
+            'ş' => 's', 'ū' => 'u', 'ž' => 'z', 'ž' => 'z', 'ł' => 'l', 'đ' => 'd', 'č' => 'c', 'ć' => 'c', 'ś' => 's', 'ź' => 'z', 
+            'ń' => 'n', 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ý' => 'y', 'ř' => 'r', 'ě' => 'e', 'ů' => 'u', 
+            'ű' => 'u', 'ő' => 'o', 'ě' => 'e', 'ň' => 'n', 'ď' => 'd', 'ť' => 't', 'ĺ' => 'l', 'ľ' => 'l', 'ŕ' => 'r', 'ă' => 'a', 
+            'ș' => 's', 'ț' => 't', 'ā' => 'a', 'ē' => 'e', 'ī' => 'i', 'ō' => 'o', 'ū' => 'u', 'ė' => 'e', 'į' => 'i', 'ų' => 'u',
+            'ţ' => 't', 'ș' => 's', 'ä' => 'a', 'ö' => 'o', 'ü' => 'u', 'ß' => 'ss', 'ā' => 'a', 'ē' => 'e', 'ī' => 'i', 'ō' => 'o',
+            'ū' => 'u', 'ç' => 'c', 'ğ' => 'g', 'ş' => 's', 'ÿ' => 'y', 'œ' => 'oe', 'æ' => 'ae', 'å' => 'a', 'ø' => 'o', 'ē' => 'e',
+            'ş' => 's', 'ū' => 'u', 'ž' => 'z', 'ž' => 'z', 'ł' => 'l', 'đ' => 'd', 'č' => 'c', 'ć' => 'c', 'ś' => 's', 'ź' => 'z',
+            'ń' => 'n', 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ý' => 'y', 'ř' => 'r', 'ě' => 'e', 'ů' => 'u',
+            'ű' => 'u', 'ő' => 'o', 'ě' => 'e', 'ň' => 'n', 'ď' => 'd', 'ť' => 't', 'ĺ' => 'l', 'ľ' => 'l', 'ŕ' => 'r', 'ă' => 'a',
+            'ș' => 's', 'ț' => 't', 'ā' => 'a', 'ē' => 'e', 'ī' => 'i', 'ō' => 'o', 'ū' => 'u', 'ė' => 'e', 'į' => 'i', 'ų' => 'u',
+            'ţ' => 't', 'ș' => 's'
+        ];
 
+        $normalized_nickname = strtr(strtolower($nickname), $replacements);
+
+        foreach ($nicknames as $nick) {
+            $normalized_nick = strtr(strtolower($nick), $replacements);
+            $lev_distance = levenshtein($normalized_nickname, $normalized_nick);
+            if ($lev_distance <= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function __construct()
     {
@@ -36,8 +75,11 @@ class Register
         $username = $_POST['username'];
         $password = $_POST['password'];
         $email = $_POST['email'];
-        if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false) {
-            if (Word::strlen(ltrim($username)) >= 5 && Word::strlen(ltrim($username)) <= 20) {
+        $forbusernames = explode(',', NGALLERY['root']['registration']['prohibited_usernames']);
+        if (!self::checkforb($_POST['username'], $forbusernames)) {
+        
+            if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false) {
+            if (Word::strlen(ltrim($username)) >= 2 && Word::strlen(ltrim($username)) <= 20) {
 
 
                         if (Word::strlen(ltrim($password)) >= 5 && Word::strlen(ltrim($password)) <= 120) {
@@ -138,11 +180,20 @@ class Register
             echo json_encode(
                 array(
                     'errorcode' => '6',
-                    'errortitle' => 'Никнейм уже существует!!',
+                    'errortitle' => 'Никнейм уже существует!',
                     'error' => 1
                 )
             );
         }
+    } else {
+        echo json_encode(
+            array(
+                'errorcode' => '7',
+                'errortitle' => 'Никнейм '.$_POST['username'].' запрещён на сервере.',
+                'error' => 1
+            )
+        );
+    }
         unlink($lockFile);
     }
 }
