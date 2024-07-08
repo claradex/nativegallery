@@ -19,11 +19,11 @@ use App\Services\{Router, Auth, DB, Date};
         <tr>
             <td class="main">
                 <h1>Результаты поиска</h1>
-                <div>Найдено изображений: <b>12</b> &nbsp;·&nbsp; <a href="#sf">Новый поиск</a></div><br>
+                <div>Найдено изображений: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['id']))[0]['COUNT(*)']?></b> &nbsp;·&nbsp; <a href="#sf">Новый поиск</a></div><br>
                <?php
-               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['aid']));
+               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['id']));
                foreach ($photos as $p) {
-                echo ' <div class="p20p">
+                echo '<div class="p20p">
                     <table>
                         <tbody>
                             <tr>
@@ -47,18 +47,6 @@ use App\Services\{Router, Auth, DB, Date};
     </table>
 
 
-
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-2" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-3" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-4" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-5" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-6" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-7" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-8" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-9" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-10" tabindex="0" style="display: none;"></ul>
-    <ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-11" tabindex="0" style="display: none;"></ul>
 </body>
 
 </html>
