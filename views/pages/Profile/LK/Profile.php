@@ -34,7 +34,7 @@ $user = new User(Auth::userid());
                                 dataType: 'text',
                                 beforeSubmit: function() {
                                     $('#applied').hide();
-                                   
+
                                     $('#errors').hide();
                                     $('#submitBtn').val('Отправка данных...').prop('disabled', true);
 
@@ -96,7 +96,7 @@ $user = new User(Auth::userid());
 
                     <div id="userphoto_big_div" style="position:absolute; display:none; padding:10px; background-color:white; margin:auto; text-align:center; left:10px" class="p5 shadow"><a href="#" onclick="hideUserPhoto(); return false"><img alt="" src="" id="userphoto_big_img" border="0"></a><br><br><a href="#" onclick="hideUserPhoto(); return false">закрыть</a></div>
 
-                    <p>Ссылка на публичный профиль: <b><a href="/author/<?=Auth::userid()?>/" class="nw"><?=$user->i('username')?></a></b></p>
+                    <p>Ссылка на публичный профиль: <b><a href="/author/<?= Auth::userid() ?>/" class="nw"><?= $user->i('username') ?></a></b></p>
                     <form method="post" name="form" id="form" enctype="multipart/form-data" style="display:inline-block">
                         <input type="hidden" name="MAX_FILE_SIZE" value="215040">
 
@@ -106,21 +106,22 @@ $user = new User(Auth::userid());
 
 
 
-                        
 
 
-                         
 
 
-                        
+
+
+
                         <?php
-                        function getSelectedCountryId() {
+                        function getSelectedCountryId()
+                        {
                             $user = new User(Auth::userid());
                             $result = json_decode($user->i('content'), true)['aboutrid']['value'];
                             return $result;
                         }
-                        
-                        
+
+
                         $selectedCountryId = getSelectedCountryId();
                         $optionsHtml = '
                         <option value="0">(Без страны)</option>
@@ -224,10 +225,11 @@ $user = new User(Auth::userid());
                         <option value="48">Япония</option>
                         <option value="26">Прочее</option>
                         ';
-                        function addSelectedAttribute($optionsHtml, $selectedValue) {
+                        function addSelectedAttribute($optionsHtml, $selectedValue)
+                        {
                             return preg_replace_callback(
                                 '/<option value="(\d+)"(.*?)>(.*?)<\/option>/',
-                                function($matches) use ($selectedValue) {
+                                function ($matches) use ($selectedValue) {
                                     $selected = ($matches[1] == $selectedValue) ? ' selected' : '';
                                     return '<option value="' . $matches[1] . '"' . $selected . $matches[2] . '>' . $matches[3] . '</option>';
                                 },
@@ -239,28 +241,59 @@ $user = new User(Auth::userid());
 
                             <h4>Информация</h4>
 
-                         
+
 
                             <div style="margin-bottom:3px; margin-top:5px">Страна:</div>
                             <select name="aboutrid" style="width:100%">
-                               <?=addSelectedAttribute($optionsHtml, $selectedCountryId)?>
+                                <?= addSelectedAttribute($optionsHtml, $selectedCountryId) ?>
                             </select>
                             <div style="margin-bottom:3px; margin-top:5px">Откуда:</div>
-                            <input type="text" name="aboutlive" id="live" style="width:100%" maxlength="50" value="<?=json_decode($user->i('content'), true)['aboutlive']['value']?>">
-
+                            <input type="text" name="aboutlive" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutlive']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Дата рождения</div>
+                            <input type="text" name="aboutbirthday" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutbirthday']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Владение языками</div>
+                            <input type="text" name="aboutlangs" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutlangs']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Пол</div>
+                            <select name="sex" style="width:100%">
+                                <option value="0">(не указан)</option>
+                                <option value="1" selected="">мужской</option>
+                                <option value="2">женский</option>
+                            </select>
                         </div>
 
 
-                     
+
 
                         <div class="p20" style="text-align:left; margin-bottom:15px">
 
                             <h4>О себе</h4>
 
                             <div style="margin-bottom:15px">
-                                <textarea name="aboutmemo" style="width:100%; height:200px"><?=json_decode($user->i('content'), true)['aboutmemo']['value']?></textarea>
-                               
+                                <textarea name="aboutmemo" style="width:100%; height:200px"><?= json_decode($user->i('content'), true)['aboutmemo']['value'] ?></textarea>
+
                             </div>
+                            <div style="margin-bottom:3px; margin-top:5px">Telegram</div>
+                            <input type="text" name="abouttelegram" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['abouttelegram']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">ВКонтакте</div>
+                            <input type="text" name="aboutvk" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutvk']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Twitter/X</div>
+                            <input type="text" name="abouttwitter" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['abouttwitter']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">YouTube</div>
+                            <input type="text" name="aboutyoutube" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutyoutube']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Почта</div>
+                            <input type="text" name="aboutemail" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutemail']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Instagram</div>
+                            <input type="text" name="aboutinstagram" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutinstagram']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">TransPhoto</div>
+                            <input type="text" name="abouttransphoto" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['abouttransphoto']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Личный сайт</div>
+                            <input type="text" name="aboutwebsite" id="live" style="width:100%; margin-bottom: 35px;" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutwebsite']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Любимые модели поездов</div>
+                            <input type="text" name="aboutfavs_trains" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutfavs_trains']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Любимые страны</div>
+                            <input type="text" name="aboutfavs_countries" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutfavs_countries']['value'] ?>">
+                            <div style="margin-bottom:3px; margin-top:5px">Любимые города</div>
+                            <input type="text" name="aboutfavs_cities" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['aboutfavs_cities']['value'] ?>">
 
                             <div style="margin-bottom:7px"><b>Фотография</b></div>
                             <div style="margin-bottom:15px">
@@ -284,7 +317,7 @@ $user = new User(Auth::userid());
         </tr>
         <tr>
             <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-            </tr>
+        </tr>
     </table>
 
 

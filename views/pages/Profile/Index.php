@@ -21,16 +21,22 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">
-                <h1><?= $userprofile->i('username') ?></h1>
+                <h1><?= $userprofile->i('username') ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
+                
                 <?php
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
                 <table width="100%">
                     <tr>
+                    <?php if ($userprofile->content('badge') !== null) { ?>
+                    <div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b><?=nl2br($userprofile->content('badge'))?></div><br>
+                    <?php } ?>
                         <td valign="top" width="100%">
                             <div class="p20" style="padding-right:12px">
-                                <table>
+                                <table style="margin-bottom: 15px;">
+                                <colgroup><col width="170px">
+                                </colgroup>
                                     <col width="170px">
                                     <?php
                                     if ($userprofile->content('location') !== null) { ?>
@@ -46,6 +52,109 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                             <td><?= json_decode($userprofile->i('content'), true)['aboutlive']['value'] ?></td>
                                         </tr>
                                     <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutbirthday']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">День рождения:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutbirthday']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    </col></table>
+                                    <table style="margin-bottom: 15px;">
+                                    <colgroup><col width="170px">
+                                    </colgroup>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutlangs']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Владение языками:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutlangs']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['abouttelegram']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Telegram:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['abouttelegram']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutvk']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">ВКонтакте:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutvk']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['abouttwitter']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Twitter/X:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['abouttwitter']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutyoutube']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Twitter/X:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutyoutube']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutemail']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Почта:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutemail']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutinstagram']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Instagram:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutinstagram']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['abouttransphoto']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">TransPhoto:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['abouttransphoto']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutwebsite']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Личный сайт:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutwebsite']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    </table>
+                                    <table style="margin-bottom: 15px;">
+                                    <colgroup><col width="170px">
+                                    </colgroup>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutfavs_trains']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Любимые модели поездов:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_trains']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutfavs_countries']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Любимые страны:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_countries']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    <?php
+                                    if (json_decode($userprofile->i('content'), true)['aboutfavs_cities']['value'] != null) { ?>
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">Любимые города:</td>
+                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_cities']['value'] ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                    </table>
+                                    <table>
+                                    <colgroup><col width="170px">
+                                    </colgroup>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Дата регистрации:</td>
                                         <td><span class="sm"><?= Date::zmdate($userprofile->content('regdate')) ?></span></td>
