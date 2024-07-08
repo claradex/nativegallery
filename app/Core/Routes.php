@@ -34,7 +34,7 @@ class Routes
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
-            
+            Router::get('/404', 'ExceptionRegister@notfound');
         } else {
             Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }

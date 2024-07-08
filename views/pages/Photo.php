@@ -5,7 +5,10 @@ use App\Models\{User, Vote, Comment};
 
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
-$photouser = new \App\Models\User($photo->i('user_id'));
+if ($photo->i('id') !== null) {
+    $photouser = new \App\Models\User($photo->i('user_id'));
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -54,6 +57,9 @@ $photouser = new \App\Models\User($photo->i('user_id'));
 }
     </style>
             <td class="main">
+                <?php
+                if ($photo->i('id') !== null) {
+                    ?>
                 <center>
                  
 
@@ -288,6 +294,15 @@ marker.bindPopup("<b>Выбранная точка</b>").openPopup();
                         </div>
                 </td>
             </tr>
+            <?php } else { ?>
+                <center>
+<h1>Изображение не найдено</h1>
+<div class="p20w" style="margin-bottom:20px; padding:10px 30px">
+	<img src="/static/img/pnp.jpg" alt="Пусто" width="400" height="205" border="0">
+	<p>Изображения с таким номером нет на сайте.<br />Может быть, его здесь никогда и не было.<br />Если Вы уверены, что что-то здесь всё-таки было, значит, администратор по каким-то причинам это удалил.</p>
+</div>
+</center>
+<?php } ?>
             <tr>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
     </tr>
