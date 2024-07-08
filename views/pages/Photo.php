@@ -288,6 +288,9 @@ marker.bindPopup("<b>Выбранная точка</b>").openPopup();
                         </div>
                 </td>
             </tr>
+            <tr>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
         </table>
         <script>
              $(document).ready(function() {

@@ -102,6 +102,9 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
               
             </td>
         </tr>
+        <tr>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
     </table>
 
 

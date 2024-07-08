@@ -96,7 +96,9 @@ if (Auth::userid() > 0) {
                 </td>
             </tr>
             <tr>
-          
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
+                        
         </tbody>
     </table>
 

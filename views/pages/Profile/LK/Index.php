@@ -37,6 +37,8 @@ $user = new User(Auth::userid());
             </td>
         </tr>
         <tr>
+            <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+            </tr>
       
     </table>
 

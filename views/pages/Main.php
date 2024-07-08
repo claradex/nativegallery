@@ -173,7 +173,9 @@ use App\Models\{User, Vote, Comment};
                 </table>
             </td>
         </tr>
-
+        <tr>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
     </table>
 
 

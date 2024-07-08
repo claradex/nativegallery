@@ -40,71 +40,15 @@ $user = new User(Auth::userid());
             <td class="main">
                 <h1>Предложить фото на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?= $user->i('uploadindex') ?></b></p>
-                <script>
-                    var UPLOAD_JPG_MAX_PX = 2500;
-                    var UPLOAD_PNG_MAX_PX = 0;
-                    var UPLOAD_MIN_PX = 0;
-                    var UPLOAD_STD_PX = 1300;
-                    var can_upload_oversized = false;
-
-                    var UPLOAD_MAX_SIZE = 20;
-                    var maxsize = 700;
-
-                    var no_exif = 0;
-
-                    var pid = 0;
-                    var pub_pid = 0;
-                    var moderator = false;
-                    var aid = 32944;
-
-                    var lat = 59.939;
-                    var lng = 30.3158;
-                    var dir = 0;
-
-                    var cnames = {
-                        2: 'Санкт-Петербург'
-                    };
-
-                    var views = {
-                        0: '<span class="s5">&nbsp;Не указан&nbsp;</span>',
-                        1: 'Спереди-справа (двери)',
-                        2: 'Спереди-слева (окна)',
-                        3: 'Сзади-справа (двери)',
-                        4: 'Сзади-слева (окна)',
-                        5: 'Вид строго спереди',
-                        6: 'Правый борт',
-                        7: 'Вид строго сзади',
-                        8: 'Левый борт',
-                        9: 'Салон, вид вперёд',
-                        10: 'Салон, вид назад',
-                        11: 'Кабина',
-                        12: 'Заводская табличка',
-                        13: 'Отдельные элементы ТС',
-                        14: 'Не определяется (двухстороннее ТС)',
-                        20: 'Вид сверху',
-                        40: 'Вид снизу'
-                    };
-
-                    var binds = [{
-                            value: 1,
-                            item: '<b>Основная — ТС на переднем плане</b>',
-                            label: '<b>Основная</b>'
-                        },
-                        {
-                            value: 0,
-                            item: 'Второстепенная — ТС на заднем плане',
-                            label: 'Второстепенная'
-                        },
-                        {
-                            value: 2,
-                            item: '<i>Условная — ТС указано предположительно</i>',
-                            label: '<i>Условная</i>'
-                        }
-                    ];
-                </script>
-
 
                 <div id="formtable">
+                    <?php
+                    if (NGALLERY['root']['photo']['upload']['premoderation'] === true) {
+                        if ($user->content('premoderation') === true) {
+                            echo ' <div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Поздравляем, ' . $user->i('username') . '!</b><br>Администрацией ' . NGALLERY['root']['title'] . ' была одобрена возможность прямой загрузки фотографий для Вас.<br>Вы можете моментально загрузить любую фотографию, минуя премодерацию. Enjoy!</div>';
+                        }
+                    }
+                    ?>
 
 
 
@@ -659,7 +603,7 @@ $user = new User(Auth::userid());
                                                 <td style="padding:0; vertical-align:middle">
                                                     <input type="text" name="place" id="place" maxlength="255" style="width:506px" onfocus="showHint('place')" onblur="hideHint('place')" value="">
                                                 </td>
-                                                
+
                                             </tr>
                                         </table>
                                     </td>
@@ -894,7 +838,9 @@ $user = new User(Auth::userid());
     </div>
     </td>
     </tr>
-
+    <tr>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
     </table>
     <script>
         $('#mform').submit(function(e) {

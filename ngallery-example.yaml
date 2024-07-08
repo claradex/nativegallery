@@ -30,6 +30,10 @@ ngallery:
     img:
       proxy: true
       percent: 50
+    registration:
+      prohibited_usernames: ''
+      access:
+        public: true
     photo:
       upload:
         allow: true
