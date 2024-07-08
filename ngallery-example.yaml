@@ -30,5 +30,11 @@ ngallery:
     img:
       proxy: true
       percent: 50
+    photo:
+      upload:
+        premoderation: true
+        defaultindex: 5.0
+    comments:
+      premoderation: false
 
  
