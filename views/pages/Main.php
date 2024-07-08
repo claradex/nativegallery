@@ -185,8 +185,16 @@ foreach ($photos as $pd) {
 
 
 
+                        <h4>Сейчас на сайте (<?=DB::query('SELECT COUNT(*) FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()))[0]['COUNT(*)']?>)</h4>
+                        <div>
+                        <?php
+                        $online = DB::query('SELECT * FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()));
+                        foreach ($online as $o) {
+                            echo '<a href="/author/'.$o['id'].'/">'.$o['username'].'</a>, ';
+                        }
+                        ?>
 
-
+                        </div>
                         </td>
                     </tr>
                 </table>
