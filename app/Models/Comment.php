@@ -40,7 +40,7 @@ class Comment {
                                 <div class="comment-votes-block">
                                     <div class="wvote" wid="'.$this->c['id'].'">
                                     <a href="#" vote="1" class="w-btn s2"><span>+</span></a>
-                                        <div class="w-rating '.$commclass.'">'.$symb.Vote::countcommrates($this->c['id'], -1).'</div>
+                                        <div class="w-rating '.$commclass.' active">'.$symb.Vote::countcommrates($this->c['id'], -1).'</div>
                                         <div class="w-rating-ext">
                                             <div><span class="pro">+'.Vote::countcommrates($this->c['id'], 1).'</span> / <span class="con">'.Vote::countcommrates($this->c['id'], 0).'</span></div>
                                         </div>

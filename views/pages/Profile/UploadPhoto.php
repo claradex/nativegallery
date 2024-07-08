@@ -852,7 +852,7 @@ $user = new User(Auth::userid());
             var percent = $('.percent');
             var status = $('#status');
             var continuepost = 0;
-
+            $('#submitbtn').prop("disabled", true);
 
 
 
@@ -891,6 +891,7 @@ $user = new User(Auth::userid());
                         Notify.noty('danger', escapeHtml(err.message));
                         $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
                         scrollProgressBarWidth(0);
+                        $('#submitbtn').prop("disabled", false);
                     }
 
                     if (jsonData.errorcode == "1") {
@@ -901,6 +902,7 @@ $user = new User(Auth::userid());
                         //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
                         Notify.noty('danger', 'В посте нет контента!');
                         scrollProgressBarWidth(0);
+                        $('#submitbtn').prop("disabled", false);
 
                     } else if (jsonData.errorcode == "101") {
                         $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
@@ -909,6 +911,7 @@ $user = new User(Auth::userid());
                         $("#prgrsg").html('');
                         //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
                         Notify.noty('danger', 'В посте больше 10 медиафайлов');
+                        $('#submitbtn').prop("disabled", false);
                         scrollProgressBarWidth(0);
                     } else if (jsonData.errorcode == "0") {
                         Notify.noty('success', 'Успешная публикация!');
@@ -945,6 +948,7 @@ $user = new User(Auth::userid());
                         //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
                         Notify.noty('danger', 'Неизвестная ошибка');
                         scrollProgressBarWidth(0);
+                        $('#submitbtn').prop("disabled", false);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -954,6 +958,7 @@ $user = new User(Auth::userid());
                     //$("#prgrsg").html('<div id="prgrs" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="100" aria-valuemax="100" style="width: 100%">100%</div>');
                     Notify.noty('danger', 'Не удалось опубликовать пост');
                     scrollProgressBarWidth(0);
+                    $('#submitbtn').prop("disabled", false);
                 },
                 cache: false,
                 contentType: false,

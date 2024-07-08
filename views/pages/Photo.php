@@ -196,9 +196,12 @@ if ($photo->i('id') !== null) {
 
 
                 </td>
+              
                 <td id="pp-main-col">
                     <div id="pp-item-vdata">
-
+                    <?php
+                if ($photo->content('type') != 'none') {
+                    ?>
                         <div class="p0" id="pp-item-exif">
                             <h4 class="pp-item-header">Параметры съёмки</h4>
                             <div class="pp-item-body">
@@ -227,6 +230,7 @@ if ($photo->i('id') !== null) {
                                 </table>
                             </div>
                         </div>
+                        <?php } ?>
                         <?php
                         if ($photo->content('lat') != null && $photo->content('lng') != null) { ?>
                         <div class="p0" id="pp-item-exif">
@@ -331,6 +335,7 @@ marker.bindPopup("<b>Выбранная точка</b>").openPopup();
                             window.location.replace(jsonData.twofaurl);
                         }, 1000);
                     } else if (jsonData.errorcode == "0") {
+                        $('#wtext').val('');
                         Notify.noty('success', 'Комментарий отправлен!');
                         //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
                         $.ajax({
