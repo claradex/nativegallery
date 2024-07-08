@@ -86,7 +86,7 @@ if (NGALLERY['root']['title'] != null) {
                             <li><a href="/lk/pm.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-comments"></i></span><span class="mm-label">Личные сообщения</span></a></li>
                             <li><a href="/search.php?aid=32944" class="mm-item"><span class="mm-icon"><i class="far fa-sm fa-fw fa-images"></i></span><span class="mm-label">Мои фотографии</span></a></li>
                             <li><a href="/fav.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-star"></i></span><span class="mm-label">Избранные снимки</span></a></li>
-                            <li><a href="/logout.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-sign-out-alt"></i></span><span class="mm-label">Выход</span></a></li>
+                            <li><a href="/logout" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-sign-out-alt"></i></span><span class="mm-label">Выход</span></a></li>
                         </ul>
                     </div>
                 </li>

@@ -21,7 +21,7 @@ use App\Services\{Router, Auth, DB, Date};
                 <h1>Результаты поиска</h1>
                 <div>Найдено изображений: <b>12</b> &nbsp;·&nbsp; <a href="#sf">Новый поиск</a></div><br>
                <?php
-               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['id']));
+               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['aid']));
                foreach ($photos as $p) {
                 echo ' <div class="p20p">
                     <table>
