@@ -175,7 +175,7 @@ foreach ($photos as $pd) {
                                     </div>
                                     '; ?>
                                     <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("<?= $p['photourl'] ?>")'></a>
-                            </div>';
+                            </div>
                         <?php }
                         ?>
 

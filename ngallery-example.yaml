@@ -1,12 +1,16 @@
 ngallery:
   root:
     title: "NativeGallery"
+    showtitle: false
     logo: "/static/img/logosmall.png"
     description: ""
     keywords: ""
     maintenance: false
     debug: true
     botkey: ''
+    access:
+      type: 'allow'
+      countries: ''
     cloudflare-caching: false
     db:
       name: ''

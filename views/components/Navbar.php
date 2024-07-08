@@ -11,8 +11,10 @@ if (NGALLERY['root']['logo'] != null) {
     $logo = '/static/img/logosmall.png';
 }
 
-if (NGALLERY['root']['title'] != null) {
+if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true) {
     $title = NGALLERY['root']['title'];
+} else if (NGALLERY['root']['showtitle'] === false) {
+    $title = '';
 } else {
     $title = 'NativeGallery';
 }
