@@ -190,6 +190,7 @@ $user = new User(Auth::userid());
                         <option value="79">Протекторат Богемии и Моравии</option>
                         <option value="102">РСФСР</option>
                         <option value="1">Россия</option>
+                        <option value="ex_1">Российская Империя</option>
                         <option value="40">Румыния</option>
                         <option value="77">Румынская Народная Республика</option>
                         <option value="10">СССР</option>
