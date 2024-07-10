@@ -56,8 +56,8 @@ use \App\Models\User;
                                         </a>
                                     </td>
                                     <td class="d">
-                                        <p><span style="word-spacing:-1px"><b>'.$p['place'].'</b></span></p>
-                                        <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.$author->i('username').'</a></p>
+                                        <p><span style="word-spacing:-1px"><b>'.htmlspecialchars($p['place']).'</b></span></p>
+                                        <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>
                                        
                                     </td>
                                     <td class="c" style="padding:10px">

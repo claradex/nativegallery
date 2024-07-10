@@ -105,7 +105,7 @@ foreach ($photos as $pd) {
                                 foreach ($photos as $p) {
                                     $bck = 'background-image:url("' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
-                                    <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . $p['place'] . '</b></span>
+                                    <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
                                         <div>' . Date::zmdate($p['posted_at']) . '</div>
                                     </div>
                                     '; ?>
@@ -128,7 +128,7 @@ foreach ($photos as $pd) {
                                 foreach ($photos as $p) {
                                     $bck = 'background-image:url("' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
-                                    <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . $p['place'] . '</b></span>
+                                    <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
                                         <div>' . Date::zmdate($p['posted_at']) . '</div>
                                     </div>
                                     '; ?>
@@ -148,7 +148,7 @@ foreach ($photos as $pd) {
                         <?php
                         $online = DB::query('SELECT * FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()));
                         foreach ($online as $o) {
-                            echo '<a href="/author/'.$o['id'].'/">'.$o['username'].'</a>, ';
+                            echo '<a href="/author/'.$o['id'].'/">'.htmlspecialchars($o['username']).'</a>, ';
                         }
                         ?>
 

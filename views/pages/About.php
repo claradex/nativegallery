@@ -36,7 +36,7 @@ use \App\Models\User;
                             <?php
                             $admins = DB::query('SELECT * FROM users WHERE admin=1');
                             foreach ($admins as $a) {
-                                echo '<li><b><a href="/author/'.$a['id'].'/"><img src="'.$a['photourl'].'" width="32" style="border-radius: 3px; margin-right: 5px;">'.$a['username'].'</a></b></li>';
+                                echo '<li><b><a href="/author/'.$a['id'].'/"><img src="'.$a['photourl'].'" width="32" style="border-radius: 3px; margin-right: 5px;">'.htmlspecialchars($a['username']).'</a></b></li>';
                             }
                             ?>
                         </ul>

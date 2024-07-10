@@ -23,7 +23,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
             <td class="main">
                 <?php
                 if ($userprofile->i('id') === explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
-                <h1><?= $userprofile->i('username') ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
+                <h1><?= htmlspecialchars($userprofile->i('username')) ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
                 
                 <?php
                 if ($userprofile->i('id') === Auth::userid()) { ?>
@@ -44,21 +44,21 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     if ($userprofile->content('location') !== null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
-                                            <td><?= $userprofile->content('location') ?></td>
+                                            <td><?= htmlspecialchars($userprofile->content('location')) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutlive']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutlive']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutbirthday']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">День рождения:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutbirthday']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutbirthday']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     </col></table>
@@ -69,63 +69,63 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     if (json_decode($userprofile->i('content'), true)['aboutlangs']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Владение языками:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutlangs']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlangs']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['abouttelegram']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Telegram:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['abouttelegram']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['abouttelegram']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutvk']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">ВКонтакте:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutvk']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutvk']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['abouttwitter']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Twitter/X:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['abouttwitter']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['abouttwitter']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutyoutube']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Twitter/X:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutyoutube']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutyoutube']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutemail']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Почта:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutemail']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutemail']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutinstagram']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Instagram:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutinstagram']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutinstagram']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['abouttransphoto']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">TransPhoto:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['abouttransphoto']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['abouttransphoto']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutwebsite']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Личный сайт:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutwebsite']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutwebsite']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     </table>
@@ -136,21 +136,21 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     if (json_decode($userprofile->i('content'), true)['aboutfavs_trains']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Любимые модели поездов:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_trains']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutfavs_trains']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutfavs_countries']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Любимые страны:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_countries']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutfavs_countries']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutfavs_cities']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Любимые города:</td>
-                                            <td><?= json_decode($userprofile->i('content'), true)['aboutfavs_cities']['value'] ?></td>
+                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutfavs_cities']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
                                     </table>

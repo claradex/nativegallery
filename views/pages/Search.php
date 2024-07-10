@@ -32,9 +32,9 @@ use App\Services\{Router, Auth, DB, Date};
                                     </a></td>
                                 <td class="pb_descr">
                                 
-                                    <p><b class="pw-place">'.$p['place'].'</b></p>
-                                    <span class="pw-descr">'.$p['postbody'].'</span>
-                                    <p class="sm"><b>'.Date::zmdate($p['timeupload']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.$p['username'].'</a></p>
+                                    <p><b class="pw-place">'.htmlspecialchars($p['place']).'</b></p>
+                                    <span class="pw-descr">'.htmlspecialchars($p['postbody']).'</span>
+                                    <p class="sm"><b>'.Date::zmdate($p['timeupload']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($p['username']).'</a></p>
                                 </td>
                             </tr>
                         </tbody>

@@ -20,7 +20,7 @@ $user = new User(Auth::userid());
         <tr>
             <td class="main">
                 <h1>Общая информация</h1>
-                <h4>Здравствуйте, <a href="/author/<?=Auth::userid()?>/"><?=$user->i('username')?></a>!</h4>
+                <h4>Здравствуйте, <a href="/author/<?=Auth::userid()?>/"><?=htmlspecialchars($user->i('username'))?></a>!</h4>
                 <p>
                     Количество ваших фотографий на сайте: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid', array(':uid'=>Auth::userid()))[0]['COUNT(*)']?></b></p>
                 <p>
