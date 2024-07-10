@@ -25,7 +25,7 @@ class MainController
 
     public static function logout()
     {
-        DB::query('DELETE FROM login_tokens WHERE servicekey=:userid', array(':userid'=>$_COOKIE['NGALLERYSERVICE']));
+        DB::query('DELETE FROM login_tokens WHERE token=:userid', array(':userid'=>$_COOKIE['NGALLERYSESS']));
         setcookie('NGALLERYSERVICE', '', 1);
         setcookie('NGALLERYSESS', '', 1);
         setcookie('NGALLERYSESS_', '', 1);
