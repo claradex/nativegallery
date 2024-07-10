@@ -34,7 +34,7 @@ use App\Services\{Router, Auth, DB, Date};
                                 
                                     <p><b class="pw-place">'.$p['place'].'</b></p>
                                     <span class="pw-descr">'.$p['postbody'].'</span>
-                                    <p class="sm"><b>'.Date::zmdate($p['timeupload']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">mohooks</a></p>
+                                    <p class="sm"><b>'.Date::zmdate($p['timeupload']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.$p['username'].'</a></p>
                                 </td>
                             </tr>
                         </tbody>
