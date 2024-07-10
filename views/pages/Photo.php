@@ -157,10 +157,13 @@ if ($photo->i('id') !== null) {
                             <img class="loader" pid="1361063" src="/img/loader.png">
                             <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
                             <div class="star" pid="1361063"></div>
+                            <?php
+                            if (Auth::userid() > 0) { ?>
                             <div class="vote" pid="<?= $id ?>">
                                 <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) { echo 'voted'; } ?>"><span>Интересная фотография!</span></a>
                                 <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) { echo 'voted'; } ?>"><span>Мне не&nbsp;нравится</span></a>
                             </div>
+                            <?php } ?>
                             <div id="votes" class="votes">
                                 <table class="vblock pro">
                                     <?php
