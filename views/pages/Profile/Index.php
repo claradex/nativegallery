@@ -21,6 +21,8 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">
+                <?php
+                if ($userprofile->i('id') === explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
                 <h1><?= $userprofile->i('username') ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
                 
                 <?php
@@ -209,6 +211,10 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                     </tr>
                 </table>
                 <div><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
+                <?php } else { ?>
+                    <center><h1>Пользователь не найден</h1></center>
+                    <center><img src="/static/img/404.jpg"></center>
+                <?php } ?>
             </td>
         </tr>
         <tr>
