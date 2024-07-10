@@ -98,7 +98,6 @@ $user = new User(Auth::userid());
 
                     <p>Ссылка на публичный профиль: <b><a href="/author/<?= Auth::userid() ?>/" class="nw"><?= $user->i('username') ?></a></b></p>
                     <form method="post" name="form" id="form" enctype="multipart/form-data" style="display:inline-block">
-                        <input type="hidden" name="MAX_FILE_SIZE" value="215040">
 
 
 
