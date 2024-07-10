@@ -37,12 +37,13 @@ class Update
         $existingArray = array_replace_recursive($content, $dataArray);
 
         $newJson = json_encode($existingArray, JSON_PRETTY_PRINT);
-
         if (isset($_FILES['userphoto'])) {
-            $upload = new UploadPhoto($_FILES['userphoto'], 'cdn/img/');
+            $upload = new UploadPhoto($_FILES['userphoto'], '/cdn/img/');
             if ($upload->getType() !== null) {
+                
                 $this->photourl = $upload->getSrc();
             } else {
+                
                 $this->photourl = $user->i('photourl');
             }
         } else {

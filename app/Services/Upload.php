@@ -24,7 +24,9 @@ class Upload
     }
     public function __construct($file, $location)
     {
-        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . pathinfo($file['name'])['extension'];
+
+        $cstrong = True;
+        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . 'jpeg';
         $folder = $location . $filecdn;
         $s3 = new \Aws\S3\S3Client([
             'region' => NGALLERY['root']['storage']['s3']['credentials']['region'],
@@ -35,10 +37,10 @@ class Upload
             ],
             'endpoint' => NGALLERY['root']['storage']['s3']['domains']['gateway'],
         ]);
-        $cstrong = True;
-        $result = $s3->putObject([
+        
+        $s3->putObject([
             'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
-            'Key' => $folder,
+            'Key' => 'cdn/img/'.$filecdn,
             'SourceFile' => $file['tmp_name']
         ]);
         $this->type = explode('/', $file['type'])[0];

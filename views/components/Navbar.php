@@ -78,6 +78,10 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                     <div>
                         <ul class="mm-level-2">
                             <li><a href="/lk/" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Общая информация</span></a></li>
+                            <?php
+                            if ($user->i('admin') === 1) { ?>
+                                <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span></a></li>
+                            <?php } ?>
                             <li><a href="/lk/upload" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-plus-square"></i></span><span class="mm-label"><b>Предложить фото</b></span></a></li>
                             <li><a href="/lk/history" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-images"></i></span><span class="mm-label">Журнал</span></a></li>
                             <li><a href="/lk/konkurs.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-compass"></i></span><span class="mm-label">Конкурс</span></a></li>
