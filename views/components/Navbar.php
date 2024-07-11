@@ -29,16 +29,11 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                         <li><a href="/news.php" class="mm-item"><span class="mm-label">Новости и хронология</span></a></li>
                         <li><a href="/misc/" class="mm-item"><span class="mm-label">Разные фотогалереи</span></a></li>
                         <li><a href="/voting.php" class="mm-item"><span class="mm-label">Фотоконкурс</span></a></li>
-                        <li><a href="/maps.php" class="mm-item"><span class="mm-label">Карты и схемы</span></a></li>
-                        <li><a href="/map/" class="mm-item"><span class="mm-label">Карта городов мира</span></a></li>
-                        <li><a href="/articles/4289/" class="mm-item"><span class="mm-label">Неопознанные фотографии</span></a></li>
                         <li><a href="/news2.php" class="mm-item"><span class="mm-label">Новости сайта</span></a></li>
-                        <li><a href="//sttsclub.ru" class="mm-item"><span class="mm-label">СТТС.Клуб</span></a></li>
                         <li><a href="/links.php" class="mm-item"><span class="mm-label">Ссылки</span></a></li>
                     </ul>
                 </div>
             </li>
-            <li><a href="/video.php" class="mm-item"><span class="mm-label">Видеокаталог</span></a></li>
             <li><a href="/comments.php" class="mm-item"><span class="mm-label">Комментарии</span></a></li>
             <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Обновления</span></a>
                 <div>
@@ -86,11 +81,9 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                             <li><a href="/lk/history" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-images"></i></span><span class="mm-label">Журнал</span></a></li>
                             <li><a href="/lk/konkurs.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-compass"></i></span><span class="mm-label">Конкурс</span></a></li>
                             <li><a href="/lk/vehicles.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-folder-plus"></i></span><span class="mm-label"><b>Правка БД</b></span></a></li>
-                            <li><a href="/lk/video.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-film"></i></span><span class="mm-label">Мои видео</span></a></li>
                             <li><a href="/lk/ticket.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-question-circle"></i></span><span class="mm-label">Мои заявки</span></a></li>
                             <li><a href="/lk/profile" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-cog"></i></span><span class="mm-label">Настройки профиля</span></a></li>
-                            <li><a href="/lk/pm.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-comments"></i></span><span class="mm-label">Личные сообщения</span></a></li>
-                            <li><a href="/search.php?aid=32944" class="mm-item"><span class="mm-icon"><i class="far fa-sm fa-fw fa-images"></i></span><span class="mm-label">Мои фотографии</span></a></li>
+                            <li><a href="/search?id=<?=Auth::userid()?>" class="mm-item"><span class="mm-icon"><i class="far fa-sm fa-fw fa-images"></i></span><span class="mm-label">Мои фотографии</span></a></li>
                             <li><a href="/fav.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-star"></i></span><span class="mm-label">Избранные снимки</span></a></li>
                             <li><a href="/logout" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-sign-out-alt"></i></span><span class="mm-label">Выход</span></a></li>
                         </ul>
