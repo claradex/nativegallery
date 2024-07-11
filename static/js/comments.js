@@ -151,15 +151,6 @@ $(document).ready(function()
 
 
 	// Отправка комментария
-	$('#f1').on('submit', function()
-	{
-		if ($('#wtext').val().trim() == '')
-		{
-			alert(_text['P_ENTERTEXT'] + '.');
-			return false;
-		}
-		else $('#sbmt').attr('disabled', true).val(_text['P_WAIT']);
-	});
 
 
 	// Окно ввода комментария
