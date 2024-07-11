@@ -30,7 +30,7 @@ class Comment {
                                     $symb = '+';
                                  } else if ((int)Vote::countcommrates($this->c['id'], -1) < 0) {
                                     $commclass = 'con';
-                                    $symb = '-';
+                                    $symb = '';
                                 } else if ((int)Vote::countcommrates($this->c['id'], -1) === 0) {
                                     $commclass = '';
                                  }
