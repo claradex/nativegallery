@@ -29,13 +29,13 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
+                <div class="p20" style="padding-right:12px">
                 <table width="100%">
                     <tr>
                     <?php if ($userprofile->content('badge') !== null) { ?>
                     <div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b><?=nl2br($userprofile->content('badge'))?></div><br>
                     <?php } ?>
                         <td style="vertical-align:top; width:100%" valign="top" width="100%">
-                            <div class="p20" style="padding-right:12px">
                                 <table style="margin-bottom: 15px;">
                                 <colgroup><col width="170px">
                                 </colgroup>
@@ -166,7 +166,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                         <td><span class="sm"><?= Date::zmdate($userprofile->i('online')) ?> <?php if (time() - 300 <= $userprofile->i('online')) { ?>(<b>online</b>)<?php } ?></span></td>
                                     </tr>
                                 </table>
-                            </div><br />
+                           <br />
                             <div class="sm" style="float:right"><a href="/lk/ticket.php?action=add&amp;aid=140"></a></div>
                             <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
@@ -175,7 +175,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
 <?=nl2br(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])?>
 </div>
 <?php } ?>
-                        
+                        </td>
                         
                         <td valign="top" align="right">
                             <script>
@@ -207,15 +207,16 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                             </div>
 
                             <a href="<?= $userprofile->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img onerror="this.src = '/static/img/avatar.png'; this.onerror = null;" src="<?= $userprofile->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
-                       
+                        </td>
                     </tr>
                 </table>
-                <div><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
+                            </div>
+                <div style="margin-top: 25px;"><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
                 <?php } else { ?>
                     <center><h1>Пользователь не найден</h1></center>
                     <center><img src="/static/img/404.jpg"></center>
                 <?php } ?>
-            
+            </td>
         </tr>
         <tr>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
