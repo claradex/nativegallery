@@ -22,6 +22,7 @@
     <script src="/static/js/notie.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/photo.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/comments.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/newcore.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <div class="progress-container fixed-top">
 <span class="progress-bard"></span>
 </div>
