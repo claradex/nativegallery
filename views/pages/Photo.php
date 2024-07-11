@@ -125,7 +125,10 @@ if ($photo->i('id') !== null) {
             <div style="line-height:15px; margin-bottom:10px">
                 <table class="pwrite">
                     <tr>
+                    <?php
+                    if ($photo->i('place') != null) { ?>
                         <td class="nw" valign="top" align="right"><b><?= $photo->i('place') ?></b></td>
+                        <?php } ?>
                         <td class="nw" align="left" valign="top"></td>
                     </tr>
 
@@ -133,7 +136,10 @@ if ($photo->i('id') !== null) {
             </div>
         </div>
         <div>
+            <?php
+            if ($photo->content('comment') != null) { ?>
             <div style="padding-top:8px"><?= $photo->content('comment') ?></div>
+            <?php } ?>
         </div><br>
         <?php
                     if ($photo->i('posted_at') === 943909200) {
