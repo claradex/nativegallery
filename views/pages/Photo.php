@@ -294,12 +294,14 @@ if ($photo->i('id') !== null) {
                             </div>
                         <?php } ?>
 
-
+                        <?php
+                        $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
+                        ?>
                         <div class="p0" id="pp-item-comments">
-                            <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> 1</span></h4>
+                            <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?=count($comments)?></span></h4>
                             <div id="posts">
                                 <?php
-                                $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
+                                
                                 foreach ($comments as $c) {
                                     $comm = new Comment($c);
                                     $comm->i();
