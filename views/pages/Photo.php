@@ -182,7 +182,7 @@ if ($photo->i('id') !== null) {
                             <div id="votes" class="votes">
                                 <table class="vblock pro">
                                     <?php
-                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1', array(':pid' => $id));
+                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 ORDER BY id DESC', array(':pid' => $id));
                                     foreach ($votespos as $ps) {
                                         $uservote = new User($ps['user_id']);
                                         echo ' <tr>
