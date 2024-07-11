@@ -1,64 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template Creator</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <title>Таймер до 12 июля</title>
+    <style>
+        @font-face {
+            font-family: 'Pepperscreen';
+            src: url('/static/PEPPERSCREEN.ttf') format('truetype');
+        }
+
+        body {
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: 'Pepperscreen', sans-serif;
+        }
+
+        #timer {
+            font-size: 100px;
+            color: #000000;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Создание шаблона</h1>
-        <div id="template-form">
-            <div class="mb-3">
-                <label for="key-name" class="form-label">Ключ</label>
-                <input type="text" class="form-control" id="key-name">
-            </div>
-            <button id="add-key" class="btn btn-primary">Добавить ключ</button>
-        </div>
-        <hr>
-        <h2 class="mt-4">Шаблоны</h2>
-        <ul id="template-list" class="list-group"></ul>
-        <button id="save-templates" class="btn btn-success mt-4">Сохранить шаблоны</button>
-        <pre id="json-output" class="mt-4"></pre>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <center><h1 style="color: #f40300; font-size: 65px;">сайт будет захвачен через</h1></center><br>
+    <center><div id="timer">Загрузка...</div></center><br>
+    <center><img width="750" src="/static/img/sttslogo.png"></center>
     <script>
-$(document).ready(function () {
-    const template = {};
+        function updateTimer() {
+            const now = new Date();
+            const targetDate = new Date(now.getFullYear(), 6, 12, 12, 0, 0); // 12 июля 12:00 по локальному времени
+            if (now > targetDate) {
+                targetDate.setFullYear(now.getFullYear() + 1); // если уже прошло, тогда следующее 12 июля
+            }
+            const remainingTime = targetDate - now;
 
-    $('#add-key').on('click', function () {
-        const key = $('#key-name').val();
+            const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-        if (key) {
-            template[key] = '';
-            addKeyToTemplateList(key);
-            $('#key-name').val('');
+            document.getElementById('timer').textContent = `${days}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
-    });
 
-    $('#save-templates').on('click', function () {
-        const json = JSON.stringify(template, null, 2);
-        $('#json-output').text(json);
-        saveTemplates(json);
-    });
-
-    function addKeyToTemplateList(key) {
-        const templateList = $('#template-list');
-        const listItem = `<li class="list-group-item">${key}</li>`;
-        templateList.append(listItem);
-    }
-
-    function saveTemplates(json) {
-        $.post('save_templates.php', { data: json }, function (response) {
-            alert('Шаблоны сохранены!');
-        });
-    }
-});
-
-
-
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Начальное обновление
     </script>
 </body>
 </html>

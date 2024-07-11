@@ -22,7 +22,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
         <tr>
             <td class="main">
                 <?php
-                if ($userprofile->i('id') === explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
+                if ((int)$userprofile->i('id') === (int)explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
                 <h1><?= htmlspecialchars($userprofile->i('username')) ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
                 
                 <?php
@@ -96,7 +96,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     <?php
                                     if (json_decode($userprofile->i('content'), true)['aboutyoutube']['value'] != null) { ?>
                                         <tr>
-                                            <td class="sm" style="padding:3px 10px 3px 0">Twitter/X:</td>
+                                            <td class="sm" style="padding:3px 10px 3px 0">YouTube:</td>
                                             <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutyoutube']['value']) ?></td>
                                         </tr>
                                     <?php } ?>
@@ -104,7 +104,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     if (json_decode($userprofile->i('content'), true)['aboutemail']['value'] != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Почта:</td>
-                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutemail']['value']) ?></td>
+                                            <td><a href="emailto:<?=htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutemail']['value'])?>"><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutemail']['value']) ?></a></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
@@ -206,7 +206,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 <div style="margin-top:8px"><a class="dot" href="#" onclick="hideUserPhoto(); return false">закрыть</a></div>
                             </div>
 
-                            <a href="<?= $userprofile->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img src="<?= $userprofile->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
+                            <a href="<?= $userprofile->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img onerror="this.src = '/static/img/avatar.png'; this.onerror = null;" src="<?= $userprofile->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
                         </td>
                     </tr>
                 </table>

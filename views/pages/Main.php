@@ -94,10 +94,7 @@ foreach ($photos as $pd) {
 </td>
                         <td style="vertical-align:top; width:100%; padding-top:4px">
 
-                            <div id="morerand">
-                                <a id="newrand" style="display:none" href="#">Показать другие</a>
-                                <span id="newrand-loader" style="color:#888">Загрузка...</span>
-                            </div>
+                          
                             <h4><a href="/photo/" target="_blank">Случайные фотографии</a></h4>
                             <div id="random-photos" class="ix-photos ix-photos-oneline">
                             <?php
