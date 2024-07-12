@@ -75,7 +75,7 @@ foreach ($photos as $pd) {
     foreach ($photo as $p) {
          $author = new User($p['user_id']);
          echo '<a href="/photo/'.$p['id'].'" target="_blank" class="prw pop-prw">
-   <img width="250" src="'.$p['photourl'].'">
+   <img width="250" src="/api/photo/compress?url='.$p['photourl'].'">
    <div class="hpshade">
       <div class="eye-icon">+'.$pd['view_count'].'</div>
    </div>
@@ -100,13 +100,13 @@ foreach ($photos as $pd) {
                             <?php
                                 $photos = DB::query('SELECT * FROM photos ORDER BY RAND() DESC LIMIT 7');
                                 foreach ($photos as $p) {
-                                    $bck = 'background-image:url("' . $p['photourl'] . '")';
+                                    $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
                                     <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
                                         <div>' . Date::zmdate($p['posted_at']) . '</div>
                                     </div>
                                     '; ?>
-                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("<?= $p['photourl'] ?>")'></a>
+                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
                                     <?php echo '
                                 </div>';
                                 }
@@ -123,13 +123,13 @@ foreach ($photos as $pd) {
                                 <?php
                                 $photos = DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 30');
                                 foreach ($photos as $p) {
-                                    $bck = 'background-image:url("' . $p['photourl'] . '")';
+                                    $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
                                     <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
                                         <div>' . Date::zmdate($p['posted_at']) . '</div>
                                     </div>
                                     '; ?>
-                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("<?= $p['photourl'] ?>")'></a>
+                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
                             </div>
                         <?php }
                         ?>

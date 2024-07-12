@@ -32,7 +32,7 @@ class Upload
         if ($_FILES['image']['error'] != 4) {
             $exif = new EXIF($_FILES['image']['tmp_name']);
             $exif = $exif->getData();
-            $upload = new UploadPhoto($_FILES['image'], 'cdn/img');
+            $upload = new UploadPhoto($_FILES['image'], 'cdn/img/');
             if ($exif === null) {
                 $exif = Json::return(
                     array(

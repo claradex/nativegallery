@@ -128,7 +128,7 @@ if ($photo->i('id') !== null) {
                     <tr>
                     <?php
                     if ($photo->i('place') != null) { ?>
-                        <td class="nw" valign="top" align="right"><b><?= $photo->i('place') ?></b></td>
+                        <td class="nw" valign="top" align="right"><b><?= $photo->i('postbody') ?></b></td>
                         <?php } ?>
                         <td class="nw" align="left" valign="top"></td>
                     </tr>

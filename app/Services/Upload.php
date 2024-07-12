@@ -40,7 +40,7 @@ class Upload
         
         $s3->putObject([
             'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
-            'Key' => 'cdn/img/'.$filecdn,
+            'Key' => $location.$filecdn,
             'SourceFile' => $file['tmp_name']
         ]);
         $this->type = explode('/', $file['type'])[0];
