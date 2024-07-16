@@ -99,8 +99,7 @@
 
 
 function errimg() {
-    // Create the HTML content
-    const content = <center>
+    const content = `<center>
                         <div class="p20 s5" style="border:none; margin:0 -20px; display:none;">
                             <b>Фото потеряно при крахе винчестера</b>
                             <div class="sm" style="margin-top:5px">
@@ -108,7 +107,7 @@ function errimg() {
                                 <a href="mailto:admin@transphoto.org?subject=Для восстановления фото 651731">admin@transphoto.org</a>
                             </div>
                         </div>
-                    </center>;
+                    </center>`;
     $('#err').html(content);
     $('#err .p20').slideDown(500);
 }
