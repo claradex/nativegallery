@@ -43,6 +43,7 @@ ngallery:
         allow: true
         premoderation: true
         defaultindex: 5.0
+        allowgif: true
     comments:
       premoderation: false
 

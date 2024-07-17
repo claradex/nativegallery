@@ -40,6 +40,19 @@ class Upload
     {   
 
         if ($_FILES['image']['error'] != 4) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $type = finfo_file($finfo, $_FILES['image']['tmp_name']);
+            if ($type === 'image/gif') {
+                if (NGALLERY['root']['photo']['upload']['allowgif'] === false) {
+                    echo json_encode(
+                        array(
+                            'errorcode' => 'FILE_NOTSUPPORTED',
+                            'error' => 1
+                        )
+                    );
+                    die();
+                }
+            }
             $exif = new EXIF($_FILES['image']['tmp_name']);
             $exif = $exif->getData();
             $upload = new UploadPhoto($_FILES['image'], 'cdn/img/');
