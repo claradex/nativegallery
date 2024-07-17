@@ -7,9 +7,19 @@ $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
 if ($photo->i('id') !== null) {
     $photouser = new \App\Models\User($photo->i('user_id'));
-    if (DB::query('SELECT * FROM photos_views WHERE user_id=:uid AND photo_id=:pid ORDER BY id DESC LIMIT 1', array(':uid' => Auth::userid(), ':pid' => $id))[0]['time'] <= time() - 86400) {
-        DB::query('INSERT INTO photos_views VALUES (\'0\', :uid, :pid, :time)', array(':uid' => Auth::userid(), ':pid' => $id, ':time' => time()));
+    if ($photo->i('moderated') === 0) {
+        if ($photo->i('user_id') === Auth::userid()) {
+            $moderated = true;
+        } else {
+            $moderated = false;
+        }
+    } else {
+        $moderated = true;
+        if (DB::query('SELECT * FROM photos_views WHERE user_id=:uid AND photo_id=:pid ORDER BY id DESC LIMIT 1', array(':uid' => Auth::userid(), ':pid' => $id))[0]['time'] <= time() - 86400) {
+            DB::query('INSERT INTO photos_views VALUES (\'0\', :uid, :pid, :time)', array(':uid' => Auth::userid(), ':pid' => $id, ':time' => time()));
+        }
     }
+   
 }
 
 ?>
@@ -65,7 +75,7 @@ if ($photo->i('id') !== null) {
             </style>
             <td class="main">
                 <?php
-                if ($photo->i('moderated') === 0) {
+                if ($photo->i('moderated') === 0 && $moderated === true) {
                     echo '<div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
 <h4 style="color:#fff; margin-bottom:3px">Это фото пока не опубликовано</h4>
 <div>Сейчас фотография рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
@@ -75,7 +85,7 @@ if ($photo->i('id') !== null) {
                 ?>
                 <div id="err"></div>
                 <?php
-                if ($photo->i('id') !== null) {
+                if ($photo->i('id') !== null && $moderated === true) {
                 ?>
                     <center>
 
