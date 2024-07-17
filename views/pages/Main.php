@@ -98,7 +98,7 @@ foreach ($photos as $pd) {
                             <h4><a href="/photo/" target="_blank">Случайные фотографии</a></h4>
                             <div id="random-photos" class="ix-photos ix-photos-oneline">
                             <?php
-                                $photos = DB::query('SELECT * FROM photos ORDER BY RAND() DESC LIMIT 7');
+                                $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY RAND() DESC LIMIT 7');
                                 foreach ($photos as $p) {
                                     $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
@@ -121,7 +121,7 @@ foreach ($photos as $pd) {
                             <h4 style="clear:both"><a href="/update.php?time=72">Недавно добавленные фотографии</a></h4>
                             <div id="recent-photos" class="ix-photos ix-photos-multiline" lastpid="1970527" firstpid="1970550">
                                 <?php
-                                $photos = DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 30');
+                                $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
                                 foreach ($photos as $p) {
                                     $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">

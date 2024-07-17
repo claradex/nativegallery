@@ -22,7 +22,7 @@ $user = new User(Auth::userid());
                 <h1>Общая информация</h1>
                 <h4>Здравствуйте, <a href="/author/<?=Auth::userid()?>/"><?=htmlspecialchars($user->i('username'))?></a>!</h4>
                 <p>
-                    Количество ваших фотографий на сайте: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid', array(':uid'=>Auth::userid()))[0]['COUNT(*)']?></b></p>
+                    Количество ваших фотографий на сайте: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid AND moderated=1', array(':uid'=>Auth::userid()))[0]['COUNT(*)']?></b></p>
                 <p>
                 <h4>Индекс загрузки</h4>
                 <p>Текущее значение <a href="/page/111" class="und">индекса загрузки</a>: <b><?=$user->i('uploadindex')?></b></p>

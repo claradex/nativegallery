@@ -19,9 +19,9 @@ use App\Services\{Router, Auth, DB, Date};
         <tr>
             <td class="main">
                 <h1>Результаты поиска</h1>
-                <div>Найдено изображений: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['id']))[0]['COUNT(*)']?></b> &nbsp;·&nbsp; <a href="#sf">Новый поиск</a></div><br>
+                <div>Найдено изображений: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid AND moderated=1 ORDER BY id DESC', array(':uid'=>$_GET['id']))[0]['COUNT(*)']?></b> &nbsp;·&nbsp; <a href="#sf">Новый поиск</a></div><br>
                <?php
-               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>$_GET['id']));
+               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid AND moderated=1 ORDER BY id DESC', array(':uid'=>$_GET['id']));
                foreach ($photos as $p) {
                 echo '<div class="p20p">
                     <table>

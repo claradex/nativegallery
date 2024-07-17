@@ -64,6 +64,15 @@ if ($photo->i('id') !== null) {
                 }
             </style>
             <td class="main">
+                <?php
+                if ($photo->i('moderated') === 0) {
+                    echo '<div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
+<h4 style="color:#fff; margin-bottom:3px">Это фото пока не опубликовано</h4>
+<div>Сейчас фотография рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
+<b>Здесь Вы можете увидеть, как будет выглядеть страница с фотографией после публикации.</b></div>
+</div>';
+                }
+                ?>
                 <div id="err"></div>
                 <?php
                 if ($photo->i('id') !== null) {
