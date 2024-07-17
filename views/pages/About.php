@@ -27,7 +27,8 @@ use \App\Models\User;
                         <h4><img src="/static/img/go-home.png">Общая информация</h4>
                         <ul class="straight">
                             <li>Зарегистрировано пользователей: <b><?=DB::query('SELECT COUNT(*) FROM users')[0]['COUNT(*)'];?></b></li>
-                            <li>Опубликовано фотографий: <b><?=DB::query('SELECT COUNT(*) FROM photos')[0]['COUNT(*)'];?></b></li>
+                            <li>Опубликовано фотографий: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE moderated=1')[0]['COUNT(*)'];?></b></li>
+                            <li>Пользователей онлайн: <b><?=DB::query('SELECT COUNT(*) FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()))[0]['COUNT(*)'];?></b></li>
                         </ul>
                     </div>
                     <div class="p20">

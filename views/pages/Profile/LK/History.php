@@ -49,6 +49,8 @@ use \App\Models\User;
                                foreach ($photos as $p) {
                                     if ($p['moderated'] === 0) {
                                         $color = 's0';
+                                    } else if ($p['moderated'] === 2) {
+                                        $color = 's15';
                                     } else {
                                         $color = 's12';
                                     }
