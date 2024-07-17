@@ -27,7 +27,7 @@ use \App\Models\User;
                                 <tr>
                                     <th width="100">Изображение</th>
                                     <th width="90%">Информация</th>
-                                    <th></th>
+                                    <th>Действия</th>
                                     <th class="c nw">Покинуло очередь</th>
                                 </tr>
                                 
@@ -54,9 +54,20 @@ use \App\Models\User;
                                         <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>
                                        
                                     </td>
-                                    <td class="c" style="padding:10px">
-                                    </td>
-                                    <td class="cs">'.Date::zmdate($p['timeupload']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>
+                                    <td class="c">
+                                   ';
+                                   if ($p['moderated'] === 0) {
+                                    echo ' <div class="cmt-submit"><input type="submit" value="Принять" id="sbmt"></div><div style="font-size: 11px;"><input style="background-color:red !important; margin-top: 15px;" type="submit" value="Отклонить" id="sbmt"></div>';
+                                   }
+                                   echo '
+                                    </td>';
+                                    if ($p['endmoderation'] === -1) {
+                                        $endm = 'На модерации';
+                                    } else {
+                                        $endm = Date::zmdate($p['endmoderation']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>';
+                                    }
+                                    echo '
+                                    <td class="cs">'.$endm.'
                                         
                                     </td>
                                 </tr>';
