@@ -149,7 +149,6 @@ if ($photo->i('id') !== null) {
                     if ($photo->i('postbody') != null) { ?>
                         <td class="nw" valign="top" align="right"><b><?= htmlspecialchars($photo->i('postbody')) ?></b></td>
                         <?php } ?>
-                        <td class="nw" align="left" valign="top"></td>
                     </tr>
 
                 </table>
@@ -162,7 +161,7 @@ if ($photo->i('id') !== null) {
             <?php } ?>
         </div><br>
         <?php
-                    if ($photo->i('posted_at') === 943909200) {
+                    if ($photo->i('posted_at') === 943909200 || Date::zmdate($photo->i('posted_at')) === '30 ноября 1999 в 00:00') {
                         $date = 'не указана';
                     } else {
                         $date = Date::zmdate($photo->i('posted_at'));
