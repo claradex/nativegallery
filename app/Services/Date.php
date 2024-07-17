@@ -7,7 +7,7 @@ class Date
     {
         $currentTime = time();
         $dateDiff = $currentTime - $date;
-
+        if ($date != null) {
         if ($dateDiff <= 1) {
             return "только что";
         } elseif ($dateDiff <= 60) {
@@ -21,6 +21,7 @@ class Date
         } else {
             return self::formatDate($date);
         }
+    }
     }
 
     private static function getAgoSuffix($value)

@@ -5,27 +5,15 @@ use \App\Models\User;
 
 //$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
 ?>
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
 
-</head>
-
-
-<body>
-    <div id="backgr"></div>
-    <table class="tmain">
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
-            <tr>
+<tr>
                 <td class="main">
                     <h1>Журнал</h1>
                     <script src="/js/diff.js"></script>
                     <script src="/js/pwrite-compare.js"></script>
                     <div class="sm">
-                        <div class="p20 s1" style="float:left; padding:1px 5px 2px; margin-right:15px">В рассмотрении</div>
+                        <div class="p20 s1" style="float:left; padding:1px 5px 2px; margin-right:15px">Требуют рассмотрения</div>
                         <div class="p20 s2" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято</div>
                         <div class="p20 s7" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято условно</div>
                         <div class="p20 s9" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято как временное</div>
@@ -33,7 +21,6 @@ use \App\Models\User;
                         <div class="p20 s5" style="float:left; padding:1px 5px 2px; margin-right:15px">Не подходит для сайта</div>
                         <div class="p20 s8" style="float:left; padding:1px 5px 2px; margin-right:15px">Удалено</div>
                     </div><br clear="all"><br>
-                    <div class="sm">Сортировка фотографий:&ensp;<b>в порядке загрузки</b>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=1">в порядке выхода из очереди</a>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=2">сначала неопубликованные (в порядке загрузки)</a></div><br>
                     <div class="p20w" style="display:block">
                         <table>
                             <tbody>
@@ -45,7 +32,7 @@ use \App\Models\User;
                                 </tr>
                                 
                                <?php
-                               $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>Auth::userid()));
+                               $photos = DB::query('SELECT * FROM photos ORDER BY id DESC');
                                foreach ($photos as $p) {
                                     if ($p['moderated'] === 0) {
                                         $color = 's0';
@@ -68,14 +55,8 @@ use \App\Models\User;
                                        
                                     </td>
                                     <td class="c" style="padding:10px">
-                                    </td>';
-                                    if ($p['endmoderation'] === -1) {
-                                        $endm = 'На модерации';
-                                    } else {
-                                        $endm = Date::zmdate($p['endmoderation']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>';
-                                    }
-                                    echo '
-                                    <td class="cs">'.$endm.'
+                                    </td>
+                                    <td class="cs">'.Date::zmdate($p['timeupload']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>
                                         
                                     </td>
                                 </tr>';
@@ -92,12 +73,3 @@ use \App\Models\User;
             <tr>
             <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
             </tr>
-           
-        </tbody>
-    </table>
-
-
-
-</body>
-
-</html>

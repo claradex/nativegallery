@@ -60,7 +60,7 @@
 }
 
 .progress-bard {
-  background-color: var(--theme-bg-color); 
+  background-color: #fff; 
   width: 0%;
   display: block;
   height: inherit;
