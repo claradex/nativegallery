@@ -47,8 +47,13 @@ use \App\Models\User;
                                <?php
                                $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid ORDER BY id DESC', array(':uid'=>Auth::userid()));
                                foreach ($photos as $p) {
+                                    if ($p['moderated'] === 0) {
+                                        $color = 's0';
+                                    } else {
+                                        $color = 's12';
+                                    }
                                     $author = new User($p['user_id']);
-                                    echo ' <tr class="s12">
+                                    echo ' <tr class="'.$color.'">
                                     <td class="pb-photo pb_photo">
                                         <a href="/photo/'.$p['id'].'/" target="_blank" class="prw">
                                             <img src="'.$p['photourl'].'" class="f">

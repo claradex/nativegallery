@@ -17,7 +17,17 @@ class Upload
 
     public static function create($postbody, $content, $exif)
     {
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :place, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup'=>time()));
+        $user = new \App\Models\User(Auth::userid());
+        if (NGALLERY['root']['photo']['upload']['premoderation'] === true) {
+            if ($user->content('premoderation') === true) {
+                $moderated = 1;
+            } else {
+                $moderated = 0;
+            }
+        } else {
+            $moderated = 1;
+        }
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup'=>time(), ':moderated'=>$moderated));
         echo json_encode(
             array(
                 'id' => DB::query('SELECT id FROM photos ORDER BY id DESC LIMIT 1')[0]['id'],
