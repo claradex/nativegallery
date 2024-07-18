@@ -27,6 +27,11 @@ class MainController
        Page::set('Rules');
        
     }
+    public static function update()
+    {
+       Page::set('Update');
+       
+    }
 
     public static function logout()
     {

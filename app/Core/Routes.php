@@ -20,6 +20,7 @@ class Routes
         Router::post('/api/register', 'ApiController@register');
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
+        Router::get('/update', 'MainController@update');
 
 
 
