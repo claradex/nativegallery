@@ -32,7 +32,7 @@ use \App\Models\User;
                                 </tr>
                                 
                                <?php
-                               $photos = DB::query('SELECT * FROM photos ORDER BY id DESC');
+                               $photos = DB::query('SELECT * FROM photos WHERE moderated=0 ORDER BY id DESC');
                                foreach ($photos as $p) {
                                     if ($p['moderated'] === 0) {
                                         $color = 's0';

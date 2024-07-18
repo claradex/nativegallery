@@ -64,6 +64,9 @@ class Compress {
         $quality = 40;
         $max_width = 400;
         $max_height = 400;
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/cdn/imgcache')) {
+            mkdir($_SERVER['DOCUMENT_ROOT'].'/cdn/imgcache', 0777, true);
+        }
 
         $cache_filename = self::generateCacheFilename($source_url, $quality, $max_width, $max_height);
 

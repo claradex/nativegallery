@@ -12,6 +12,7 @@ use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
+use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 class ApiController
 {
 
@@ -42,6 +43,9 @@ class ApiController
     }
     public static function photocompress() {
         return new PhotoCompress();
+    }
+    public static function adminsetvis() {
+        return new AdminPhotoSetVisibility();
     }
 
 

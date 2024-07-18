@@ -6,7 +6,6 @@ use \App\Services\{Router, Auth, DB};
 use \App\Core\{Page};
 
 
-
 class Routes
 {
     public static function init()
@@ -26,6 +25,7 @@ class Routes
 
 
         if (Auth::userid() > 0) {
+            $user = new \App\Models\User(Auth::userid());
             Router::get('/lk', 'ProfileController@lk');
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
@@ -40,9 +40,10 @@ class Routes
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
-
-            Router::any('/admin', 'AdminController@index');
-            
+            if ($user->i('admin') > 0) {
+                Router::any('/admin', 'AdminController@index');
+                Router::any('/api/admin/images/setvisibility', 'AdminController@adminsetvis');
+            }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
         } else {

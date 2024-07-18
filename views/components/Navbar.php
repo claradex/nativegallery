@@ -74,7 +74,7 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                         <ul class="mm-level-2">
                             <li><a href="/lk/" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Общая информация</span></a></li>
                             <?php
-                            if ($user->i('admin') === 1) { ?>
+                            if ($user->i('admin') > 0) { ?>
                                 <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span></a></li>
                             <?php } ?>
                             <li><a href="/lk/upload" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-plus-square"></i></span><span class="mm-label"><b>Предложить фото</b></span></a></li>
