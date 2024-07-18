@@ -44,7 +44,7 @@ $user = new User(Auth::userid());
                 <div id="formtable">
                     <?php
                     if (NGALLERY['root']['photo']['upload']['premoderation'] === true) {
-                        if ($user->content('premoderation') === true) {
+                        if ($user->content('premoderation') === "true") {
                             echo ' <div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Поздравляем, ' . $user->i('username') . '!</b><br>Администрацией ' . NGALLERY['root']['title'] . ' была одобрена возможность прямой загрузки фотографий для Вас.<br>Вы можете моментально загрузить любую фотографию, минуя премодерацию. Enjoy!</div>';
                         }
                     }

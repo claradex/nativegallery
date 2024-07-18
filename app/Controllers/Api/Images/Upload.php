@@ -19,7 +19,7 @@ class Upload
     {
         $user = new \App\Models\User(Auth::userid());
         if (NGALLERY['root']['photo']['upload']['premoderation'] === true) {
-            if ($user->content('premoderation') === true) {
+            if ($user->content('premoderation') === "true") {
                 $moderated = 1;
             } else {
                 $moderated = 0;

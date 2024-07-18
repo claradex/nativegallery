@@ -83,7 +83,7 @@ use \App\Models\User;
                                     <td class="c">
                                    ';
                                    if ($p['moderated'] === 0) {
-                                    echo ' <div class="cmt-submit"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" id="sbmt">Принять</a></div><div style="font-size: 11px;"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" style="background-color:red !important; margin-top: 15px;" type="submit" id="sbmt">Отклонить</a></div>';
+                                    echo ' <div class="cmt-submit"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" id="sbmt">Принять</a></div><div style="font-size: 11px;"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=2" style="background-color:red !important; margin-top: 15px;" type="submit" id="sbmt">Отклонить</a></div>';
                                    }
                                    echo '
                                     </td>';
