@@ -80,7 +80,6 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                                     $nonr = '<span class="mm-notify notify-count">'.$nonreviewedimgs.'</span>';
                                 }
                                 ?>
-                                ?>
                         
                                 <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span><?=$nonr?></a></li>
                             <?php } ?>
