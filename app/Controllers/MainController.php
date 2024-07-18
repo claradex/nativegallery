@@ -22,6 +22,11 @@ class MainController
        Page::set('About');
        
     }
+    public static function rules()
+    {
+       Page::set('Rules');
+       
+    }
 
     public static function logout()
     {

@@ -36,6 +36,7 @@ if (Auth::userid() > 0) {
                                 <div style="color:#e00" id="err_password"></div>
 
                                 <input type="button" id="regbtn" class="mf-button-wide" style="margin-top:15px" value="Зарегистрироваться">
+                                <p>Регистрируясь на сервере <?=NGALLERY['root']['title']?>, вы <a href="/rules">принимаете его правила.</a></p>
                             </form><br><br>
 
                             <br>
@@ -90,7 +91,7 @@ if (Auth::userid() > 0) {
                     </center>
                     <?php } else { ?>
                         <center>
-                        <h1>К сожалению, регистрация на сервере <?=$title?> запрещена.</h1>
+                        <h1>К сожалению, регистрация на сервере <?=NGALLERY['root']['title']?> запрещена.</h1>
                         </center?
                         <?php } ?>
                 </td>
