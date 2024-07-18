@@ -216,6 +216,46 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                 </table>
                             </div>
                 <div style="margin-top: 25px;"><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
+                
+                <?php
+                if ($userprofile->i('id') != Auth::userid()) { ?>
+                <script>
+
+
+$(document).ready(function()
+{
+	$('.toggle, .toggle-label').on('click', function()
+	{
+		var toggle = $('.toggle').toggleClass('on');
+
+		var subscr_cnt = $('#subscr_cnt');
+		var cnt = parseInt(subscr_cnt.text());
+		subscr_cnt.html(toggle.is('.on') ? cnt+1 : cnt-1);
+
+		$.get('/api/subscribe', { action: 'subscribe', id: <?=$userprofile->i('id')?>, subj: 'a' }, function (r)
+		{
+			if (r != 0 && r != 1)
+			{
+				toggle.toggleClass('on');
+				alert(r);
+			}
+			else toggle.attr('class', (r == 1) ? 'toggle on' : 'toggle');
+		});
+	});
+});
+
+
+</script>
+<?php
+if (DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userprofile->i('id'), ':followerid' => Auth::userid()))) {
+$class = 'on';
+                }
+                ?>
+                <div><div class="toggle <?=$class?>"><div class="handle"></div></div> &nbsp;<label class="toggle-label"><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt"><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b>)</label></div>
+
+                <?php } else { ?>
+                    <div>Пользователей, подписанных на мои фотографии: <b><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b></div>
+                <?php } ?>
                 <?php } else { ?>
                     <center><h1>Пользователь не найден</h1></center>
                     <center><img src="/static/img/404.jpg"></center>

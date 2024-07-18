@@ -5,6 +5,7 @@ use \App\Services\{Router, Auth, DB, Json};
 use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 use \App\Controllers\Api\{Login, Register};
+use \App\Controllers\Api\Subscribe as SubscribeUser;
 use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
@@ -46,6 +47,9 @@ class ApiController
     }
     public static function adminsetvis() {
         return new AdminPhotoSetVisibility();
+    }
+    public static function subscribeuser() {
+        return new SubscribeUser();
     }
 
 

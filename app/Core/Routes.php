@@ -38,6 +38,7 @@ class Routes
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
+            Router::get('/api/subscribe', 'ApiController@subscribeuser');
             Router::get('/api/photo/compress', 'ApiController@photocompress');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');

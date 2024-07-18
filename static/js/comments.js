@@ -158,21 +158,4 @@ $(document).ready(function()
 	.on('focus', function() { navLock = true; })
 	.on('blur', function() { navLock = false; });
 
-
-	// Переключатель подписки
-	$('.toggle, .toggle-label').on('click', function(e)
-	{
-		if (e.target.tagName == 'A') return;
-		var toggle = $('.toggle').toggleClass('on');
-
-		$.get('/api.php', { action: 'subscribe', id: $('#id').val(), subj: $('#subj').val() }, function (r)
-		{
-			if (r != 0 && r != 1)
-			{
-				toggle.toggleClass('on');
-				alert(r);
-			}
-			else toggle.attr('class', (r == 1) ? 'toggle on' : 'toggle');
-		});
-	});
 });
