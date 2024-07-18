@@ -8,7 +8,7 @@ $photo = new \App\Models\Photo($id);
 if ($photo->i('id') !== null) {
     $photouser = new \App\Models\User($photo->i('user_id'));
     if ($photo->i('moderated') === 0) {
-        if ($photo->i('user_id') === Auth::userid()) {
+        if ($photo->i('user_id') === Auth::userid() || $user->i('admin') > 0) {
             $moderated = true;
         } else {
             $moderated = false;
