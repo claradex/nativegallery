@@ -41,7 +41,7 @@ class Routes
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
 
-            Router::get('/admin', 'AdminController@index');
+            Router::any('/admin', 'AdminController@index');
             
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
