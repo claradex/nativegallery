@@ -25,6 +25,11 @@ class Comment {
                                  if (json_decode($user->i('content'), true)['aboutlive']['value'] != null) {
                                  echo ' '.htmlspecialchars(json_decode($user->i('content'), true)['aboutlive']['value']);
                                  }
+                                 if ($user->i('admin') === 1) {
+                                    $admintype = ' · Администратор сервера';
+                                 } else if ($user->i('admin') === 2) {
+                                    $admintype = ' · Фотомодератор';
+                                 }
                                  if ((int)Vote::countcommrates($this->c['id'], -1) >= 1) {
                                     $commclass = 'pro';
                                     $symb = '+';
@@ -35,7 +40,7 @@ class Comment {
                                     $commclass = '';
                                  }
                                  echo '</span></div>
-                                <div class="rank">Фото: '.Photo::fetchAll($this->c['user_id']).'</div>
+                                <div class="rank">Фото: '.Photo::fetchAll($this->c['user_id']).' '.$admintype.'</div>
                                 <div class="message-text">'.htmlspecialchars($this->c['body']).'</div>
                                 <div class="comment-votes-block">
                                     <div class="wvote" wid="'.$this->c['id'].'">
