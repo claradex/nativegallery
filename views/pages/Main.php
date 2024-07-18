@@ -100,10 +100,15 @@ foreach ($photos as $pd) {
                             <?php
                                 $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY RAND() DESC LIMIT 7');
                                 foreach ($photos as $p) {
+                                    if ($p['posted_at'] === 943909200 || Date::zmdate($p['posted_at']) === '30 ноября 1999 в 00:00') {
+                                        $date = 'дата не указана';
+                                    } else {
+                                        $date = Date::zmdate($p['posted_at']);
+                                    }
                                     $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
                                     <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
-                                        <div>' . Date::zmdate($p['posted_at']) . '</div>
+                                        <div>'.$date.'</div>
                                     </div>
                                     '; ?>
                                     <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
@@ -123,10 +128,15 @@ foreach ($photos as $pd) {
                                 <?php
                                 $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
                                 foreach ($photos as $p) {
+                                    if ($p['posted_at'] === 943909200 || Date::zmdate($p['posted_at']) === '30 ноября 1999 в 00:00') {
+                                        $date = 'дата не указана';
+                                    } else {
+                                        $date = Date::zmdate($p['posted_at']);
+                                    }
                                     $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
                                     <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
-                                        <div>' . Date::zmdate($p['posted_at']) . '</div>
+                                        <div>' . $date . '</div>
                                     </div>
                                     '; ?>
                                     <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
