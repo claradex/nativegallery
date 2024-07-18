@@ -24,8 +24,12 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                 <?php
                 if ((int)$userprofile->i('id') === (int)explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
                 <h1><?= htmlspecialchars($userprofile->i('username')) ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
-                
                 <?php
+                if ($userprofile->i('admin') === 1) {
+                    echo 'Администратор сервера';
+                } else if ($userprofile->i('admin') === 2) {
+                    echo 'Фотомодератор';
+                }
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
