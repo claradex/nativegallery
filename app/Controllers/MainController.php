@@ -37,6 +37,11 @@ class MainController
        Page::set('Top30');
        
     }
+    public static function favauthors()
+    {
+       Page::set('FavAuthors');
+       
+    }
 
     public static function logout()
     {

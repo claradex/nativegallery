@@ -33,6 +33,8 @@ class Routes
             Router::get('/lk/history', 'ProfileController@lkhistory');
             Router::get('/lk/profile', 'ProfileController@lkprofile');
 
+            Router::get('/fav_authors', 'MainController@favauthors');
+
             Router::get('/search', 'SearchController@i');
 
             Router::post('/api/upload', 'ApiController@upload');

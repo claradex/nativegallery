@@ -251,10 +251,10 @@ if (DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follo
 $class = 'on';
                 }
                 ?>
-                <div><div class="toggle <?=$class?>"><div class="handle"></div></div> &nbsp;<label class="toggle-label"><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt"><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b>)</label></div>
+                <div style="margin-top: 8px;"><div class="toggle <?=$class?>"><div class="handle"></div></div> &nbsp;<label class="toggle-label"><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt"><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b>)</label></div>
 
                 <?php } else { ?>
-                    <div>Пользователей, подписанных на мои фотографии: <b><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b></div>
+                    <div style="margin-top: 8px;">Пользователей, подписанных на мои фотографии: <b><?=DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid'=>$userprofile->i('id')))[0]['COUNT(*)'];?></b></div>
                 <?php } ?>
                 <?php } else { ?>
                     <center><h1>Пользователь не найден</h1></center>
