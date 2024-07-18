@@ -18,7 +18,7 @@ use \App\Models\User;
     $users = DB::query('SELECT * FROM users');
     foreach ($users as $u) {
         $user = new \App\Models\User($u['id']);
-        if ($user->content('premoderation') === true) {
+        if ($user->content('premoderation') === "true") {
             $prem = 'Да';
         } else {
             $prem = 'Нет';
