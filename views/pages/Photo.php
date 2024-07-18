@@ -28,14 +28,14 @@ if ($photo->i('id') !== null) {
 <html lang="ru">
 
 <head>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
-
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta name="description" content="<?= NGALLERY['root']['description'] ?>">
     <meta name="keywords" content="<?= NGALLERY['root']['keywords'] ?>">
     <meta property="og:title" content="<?= $photo->i('title') ?> — Фото">
     <link rel="alternate" hreflang="x-default" href="<?= $_SERVER['REQUEST_URI'] ?>">
     <meta property="og:image" content="<?= $photo->i('photourl') ?>">
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
+  
 </head>
 
 
