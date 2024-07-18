@@ -61,7 +61,7 @@ use App\Models\{User, Vote, Comment};
 
                         <td style="vertical-align:top; padding-right:20px">
 
-	<h4><a href="top30.php">Самые популярные за 24 часа</a></h4>
+	<h4><a href="/top30">Самые популярные за 24 часа</a></h4>
 	<div>
 		<?php
         $photos = DB::query('SELECT photo_id, COUNT(*) as view_count

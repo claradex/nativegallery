@@ -32,6 +32,11 @@ class MainController
        Page::set('Update');
        
     }
+    public static function top30()
+    {
+       Page::set('Top30');
+       
+    }
 
     public static function logout()
     {

@@ -21,6 +21,7 @@ class Routes
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
         Router::get('/update', 'MainController@update');
+        Router::get('/top30', 'MainController@top30');
 
 
 
