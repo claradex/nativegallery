@@ -78,7 +78,14 @@ class Compress {
             if ($compressed_image_data) {
                 file_put_contents($cache_filename, $compressed_image_data);
             } else {
-                echo "Произошла ошибка при сжатии изображения.";
+                $imageData = file_get_contents($_GET['url']);
+
+                $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->buffer($imageData);
+
+                header("Content-Type: $mimeType");
+
+                echo $imageData;
                 exit;
             }
         }
