@@ -8,6 +8,32 @@ use \App\Models\User;
 
 
 <tr>
+    <style>
+    #sbmt {
+        display: inline-block;
+    box-sizing: border-box;
+    vertical-align: middle;
+    cursor: pointer;
+    position: relative;
+    padding: 2px 15px 3px;
+    height: auto;
+    text-align: center;
+    font-family: var(--narrow-font);
+    font-size: 17px;
+    font-weight: bold;
+    color: var(--theme-fg-color);
+    background-color: #777;
+    background-color: var(--theme-bg-color);
+    transition: none;
+    border: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    }
+    </style>
                 <td class="main">
                     <h1>Журнал</h1>
                     <script src="/js/diff.js"></script>
@@ -57,7 +83,7 @@ use \App\Models\User;
                                     <td class="c">
                                    ';
                                    if ($p['moderated'] === 0) {
-                                    echo ' <div class="cmt-submit"><input type="submit" value="Принять" id="sbmt"></div><div style="font-size: 11px;"><input style="background-color:red !important; margin-top: 15px;" type="submit" value="Отклонить" id="sbmt"></div>';
+                                    echo ' <div class="cmt-submit"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" id="sbmt">Принять</a></div><div style="font-size: 11px;"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" style="background-color:red !important; margin-top: 15px;" type="submit" id="sbmt">Отклонить</a></div>';
                                    }
                                    echo '
                                     </td>';

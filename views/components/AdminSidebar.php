@@ -5,12 +5,12 @@ use \App\Core\Page;
 
 <ul class="list-unstyled fw-normal pb-1 small">
 
-    <li><a style="font-size: 17.2px; margin-bottom: 15px; color: <?php if (!Page::exists('Settings/' . $_GET['type']) || !isset($_GET['type'])) { ?> #3862eb <?php } else { ?> #aca8a9 <?php } ?> !important; font-weight: 500;" href="/settings" class="d-inline-flex align-items-center rounded active text-black" aria-current="page">
+    <li><a style="font-size: 17.2px; margin-bottom: 15px; color: <?php if (!Page::exists('Admin/' . $_GET['type']) || !isset($_GET['type'])) { ?> #3862eb <?php } else { ?> #aca8a9 <?php } ?> !important; font-weight: 500;" href="/admin" class="d-inline-flex align-items-center rounded active text-black" aria-current="page">
             <div style="border-left:3px solid #ffffff00; margin-left: -25px; margin-right: 20px; height:20px; border-radius: 500px;"></div>
 
 
 
-            <svg style="margin-right: 10px; margin-left: -12px; margin-bottom: -5px;" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="<?php if (!Page::exists('Settings/' . $_GET['type']) || !isset($_GET['type'])) { ?> #3862eb <?php } else { ?> #aca8a9 <?php } ?>">
+            <svg style="margin-right: 10px; margin-left: -12px; margin-bottom: -5px;" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="<?php if (!Page::exists('Admin/' . $_GET['type']) || !isset($_GET['type'])) { ?> #3862eb <?php } else { ?> #aca8a9 <?php } ?>">
                 <g>
                     <path d="M0,0h24v24H0V0z" fill="none" />
                 </g>

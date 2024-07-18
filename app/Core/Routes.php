@@ -42,7 +42,7 @@ class Routes
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');
-                Router::any('/api/admin/images/setvisibility', 'AdminController@adminsetvis');
+                Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');

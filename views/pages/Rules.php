@@ -25,7 +25,7 @@ use \App\Models\User;
 
                     <?php
                     $myfile = fopen($_SERVER['DOCUMENT_ROOT'].'/rules.txt', "r") or die("Unable to open file!");
-                    echo fread($myfile,filesize($_SERVER['DOCUMENT_ROOT'].'/rules.txt'));
+                    echo nl2br(fread($myfile,filesize($_SERVER['DOCUMENT_ROOT'].'/rules.txt')));
                     fclose($myfile);
                     ?>
                 </div>
