@@ -1,6 +1,6 @@
 <?php
 
-use \App\Services\Auth;
+use \App\Services\{Auth, DB};
 use \App\Models\User;
 
 $user = new \App\Models\User(Auth::userid());
@@ -74,8 +74,15 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                         <ul class="mm-level-2">
                             <li><a href="/lk/" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Общая информация</span></a></li>
                             <?php
-                            if ($user->i('admin') > 0) { ?>
-                                <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span></a></li>
+                            if ($user->i('admin') > 0) { 
+                                $nonreviewedimgs = DB::query('SELECT COUNT(*) FROM photos WHERE moderated=0')[0]['COUNT(*)'];
+                                if ($nonreviewedimgs > 0) {
+                                    $nonr = '<span class="mm-notify notify-count">'.$nonreviewedimgs.'</span>';
+                                }
+                                ?>
+                                ?>
+                        
+                                <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span><?=$nonr?></a></li>
                             <?php } ?>
                             <li><a href="/lk/upload" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-plus-square"></i></span><span class="mm-label"><b>Предложить фото</b></span></a></li>
                             <li><a href="/lk/history" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-images"></i></span><span class="mm-label">Журнал</span></a></li>
