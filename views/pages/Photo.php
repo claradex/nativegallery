@@ -314,6 +314,7 @@ if ($photo->i('id') !== null) {
                         <?php } ?>
 
                         <?php
+                        if ($photo->i('moderated') > 0) {
                         $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
                         ?>
                         <div class="p0" id="pp-item-comments">
@@ -343,6 +344,7 @@ if ($photo->i('id') !== null) {
 
                             </div>
                         </div>
+                        <?php } ?>
                 </td>
             </tr>
             </tbody>
