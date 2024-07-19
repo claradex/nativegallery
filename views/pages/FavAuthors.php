@@ -22,7 +22,7 @@ use \App\Models\{User, Photo};
             <td class="main">
                 <h1>Фотографии избранных авторов</h1>
                 <?php
-                $followimgs = DB::query('SELECT * FROM followers_notifications WHERE follower_id=:id', array(':id'=>Auth::userid()));
+                $followimgs = DB::query('SELECT * FROM followers_notifications WHERE follower_id=:id AND checked=1', array(':id'=>Auth::userid()));
                 foreach ($followimgs as $f) {
                     $author = new User($p['user_id']);
                     $p = new Photo($f['photo_id']);
