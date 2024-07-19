@@ -27,7 +27,7 @@ class Update
                 }
 
                 if (strpos($key, 'OnMain') === false) {
-                    $dataArray[$paramKey]['value'] = $value;
+                    $dataArray[$paramKey]['value'] = htmlentities($value);
                 }
             }
         }
