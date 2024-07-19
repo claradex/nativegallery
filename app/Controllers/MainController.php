@@ -24,8 +24,27 @@ class MainController
     }
     public static function rules()
     {
+      $_GLOBAL['rules'] = '/config/rules.html';
+      $_GLOBAL['title'] = 'Правила сайта';
        Page::set('Rules');
-       
+    }
+    public static function publicationRules()
+    {
+      $_GLOBAL['rules'] = '/config/publicationRules.html';
+      $_GLOBAL['title'] = 'Правила отбора фотографий';
+       Page::set('Rules');
+    }
+    public static function photoRules()
+    {
+      $_GLOBAL['rules'] = '/config/photoRules.html';
+      $_GLOBAL['title'] = 'Правила подписи фотографий';
+       Page::set('Rules');
+    }
+    public static function videoRules()
+    {
+      $_GLOBAL['rules'] = '/config/videoRules.html';
+      $_GLOBAL['title'] = 'Правила видеотеки';
+       Page::set('Rules');
     }
     public static function update()
     {

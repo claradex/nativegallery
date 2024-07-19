@@ -20,6 +20,9 @@ class Routes
         Router::post('/api/register', 'ApiController@register');
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
+        Router::get('/rules/pub', 'MainController@publicationRules');
+        Router::get('/rules/photo', 'MainController@photoRules');
+        Router::get('/rules/video', 'MainController@videoRules');
         Router::get('/update', 'MainController@update');
         Router::get('/top30', 'MainController@top30');
 
