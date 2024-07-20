@@ -595,19 +595,7 @@ $user = new User(Auth::userid());
                                     </td>
                                 </tr>
 
-                                <tr>
-                                    <td class="lcol">Место съёмки:</td>
-                                    <td style="padding-right:15px">
-                                        <table width="100%">
-                                            <tr>
-                                                <td style="padding:0; vertical-align:middle">
-                                                    <input type="text" name="place" id="place" maxlength="255" style="width:506px" onfocus="showHint('place')" onblur="hideHint('place')" value="">
-                                                </td>
-
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
+                              
                             </tbody>
 
 

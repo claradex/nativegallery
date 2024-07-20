@@ -13,6 +13,11 @@ class PhotoController
     {
        Page::set('Photo');
     }
+    public static function photoext()
+    {
+       Page::set('PhotoExt');
+       
+    }
 
 
 }

@@ -183,6 +183,9 @@ if ($photo->i('id') !== null) {
                         <div class="sm">
                             <div style="margin-bottom:10px">Лицензия: <b>BY-NC</b></div>
                             Опубликовано <b><?= Date::zmdate($photo->i('timeupload')) ?></b><br>
+                            Просмотров — <?=DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$id))[0]['COUNT(*)']?>
+                            <br><br>
+                            <a href="/photoext?id=<?=$id?>">Подробная информация</a>
                         </div>
                     </div>
 

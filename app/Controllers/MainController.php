@@ -62,6 +62,7 @@ class MainController
        
     }
 
+
     public static function logout()
     {
         DB::query('DELETE FROM login_tokens WHERE token=:userid', array(':userid'=>$_COOKIE['NGALLERYSESS']));

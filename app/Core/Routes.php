@@ -18,6 +18,7 @@ class Routes
         Router::get('/author/$id', 'ProfileController@i');
         Router::post('/api/login', 'ApiController@login');
         Router::post('/api/register', 'ApiController@register');
+        Router::get('/api/photo/stats', 'ApiController@photostats');
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
         Router::get('/rules/pub', 'MainController@publicationRules');
@@ -25,6 +26,7 @@ class Routes
         Router::get('/rules/video', 'MainController@videoRules');
         Router::get('/update', 'MainController@update');
         Router::get('/top30', 'MainController@top30');
+        Router::get('/photoext', 'PhotoController@photoext');
 
 
 

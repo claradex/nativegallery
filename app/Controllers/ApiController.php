@@ -10,6 +10,7 @@ use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
 use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
+use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
@@ -54,6 +55,9 @@ class ApiController
     }
     public static function checkallphotos() {
         return new PhotoCheckAll();
+    }
+    public static function photostats() {
+        return new PhotoStats();
     }
 
 
