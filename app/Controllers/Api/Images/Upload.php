@@ -98,9 +98,14 @@ class Upload
                 $upload = new UploadPhoto($outputImagePath, 'cdn/img/');
                 self::$vidpreview = $upload->getSrc();
                 $upload = new UploadPhoto($mp4File, 'cdn/video/');
+                echo explode($mp4File, '.')[1];
                 self::$videourl = $upload->getSrc();
+                $exif = Json::return(
+                    array(
+                        'type' => 'none',
+                    )
+                );
             } else if (explode($type, '/')[0] === 'image') {
-
 
 
                 $exif = new EXIF($_FILES['image']['tmp_name']);

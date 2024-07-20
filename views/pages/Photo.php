@@ -104,8 +104,16 @@ if ($photo->i('id') !== null) {
                             <div style="display:inline-block">
                                 <div id="underphoto_frame">
                                     <div id="ph_frame">
+                                        <?php
+                                        if ($photo->content('videourl') != null) { ?>
+                                        <video controls>
+ <source src="<?=$photo->content('videourl')?>">
+</video>
+                                        
+                                        <?php } else { ?>
                                         <img onerror="errimg(); this.onerror = null;" class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                         <?php
+                                        }
                                         if ($photo->i('priority') === 1) { ?>
                                             <div class="underphoto s17" style="cursor:help" title="Фотография не удовлетворяет действующим на момент публикации критериям качества снимков."><i style="position:relative; top:1px" class="fas fa-info-circle"></i>&ensp;<b class="dot">Условная публикация</b></div>
                                         <?php } else if ($photo->i('priority') === 2) {  ?>

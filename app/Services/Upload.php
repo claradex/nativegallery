@@ -24,9 +24,19 @@ class Upload
     }
     public function __construct($file, $location)
     {
-
+        if (is_array($file)) {
+            $tmpname = $file['tmp_name'];
+            $type = explode('/', $file['type'])[0];
+            $name = $file['name'];
+            $fileext = pathinfo($file['name']);
+        } else {
+            $tmpname = $file;
+            $type = filetype($file);
+            $name = basename($file);
+            $fileext = pathinfo($file, PATHINFO_EXTENSION);
+        }
         $cstrong = True;
-        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . 'jpeg';
+        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext;
         $folder = $location . $filecdn;
         $s3 = new \Aws\S3\S3Client([
             'region' => NGALLERY['root']['storage']['s3']['credentials']['region'],
@@ -37,16 +47,16 @@ class Upload
             ],
             'endpoint' => NGALLERY['root']['storage']['s3']['domains']['gateway'],
         ]);
-        
+       
         $s3->putObject([
             'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
             'Key' => $location.$filecdn,
-            'SourceFile' => $file['tmp_name']
+            'SourceFile' => $tmpname
         ]);
-        $this->type = explode('/', $file['type'])[0];
+        $this->type = $type;
         $this->src = NGALLERY['root']['storage']['s3']['domains']['public'] . '/' . $location . $filecdn;
-        $this->size = self::human_filesize(filesize($file['tmp_name']));
-        $this->name = $file['name'];
+        $this->size = self::human_filesize(filesize($tmpname));
+        $this->name = $name;
     }
     public function getType()
     {

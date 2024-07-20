@@ -807,14 +807,36 @@ $user = new User(Auth::userid());
                     </select> &nbsp; &nbsp;<a href="https://creativecommons.org/licenses/?lang=ru" target="_blank" class="und sm">Информация о лицензиях</a>
                 </td>
             </tr>
-
-
+            <style>
+                .w3-green, .w3-hover-green:hover {
+    color: #fff !important;
+    background-color: #000 !important;
+}
+.w3-center {
+    text-align: center !important;
+}
+.w3-container, .w3-panel {
+    padding: 0.01em 16px;
+}
+.w3-light-grey, .w3-hover-light-grey:hover, .w3-light-gray, .w3-hover-light-gray:hover {
+    color: #000 !important;
+    background-color: #f1f1f1 !important;
+}
+.w3-container:after, .w3-container:before, .w3-panel:after, .w3-panel:before, .w3-row:after, .w3-row:before, .w3-row-padding:after, .w3-row-padding:before, .w3-cell-row:before, .w3-cell-row:after, .w3-clear:after, .w3-clear:before, .w3-bar:before, .w3-bar:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+</style>
+           
             <tr>
                 <td></td>
                 <td style="padding:20px 2px 12px">
                     <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Опубликовать</button> &nbsp; &nbsp;&nbsp;
                     <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
                     <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
+                    <div style="margin-top: 20px; max-width: 50% !important;" id="prgb" class="w3-light-grey">
+</div>
                 </td>
             </tr>
         </tbody>
@@ -849,8 +871,9 @@ $user = new User(Auth::userid());
                 type: "POST",
                 url: '/api/upload',
                 data: formData,
-
+                
                 xhr: function() {
+                    $('#prgb').html('<div id="myBar" class="w3-container w3-green w3-center" style="width:0%">0%</div>');
                     // Добавляем спиннер и блокируем кнопку во время загрузки
                     //$("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3" disabled><div class="plus-button-reflection"></div>Опубликовать</button>');
 
@@ -860,7 +883,12 @@ $user = new User(Auth::userid());
                             var percentComplete = parseInt(((evt.loaded / evt.total) * 100));
                             console.log(evt.total);
 
-                            // Обновляем прогресс загрузки
+                              
+                            
+                            var elem = document.getElementById("myBar"); 
+                            elem.style.width = percentComplete + '%'; 
+                            elem.innerHTML = percentComplete  + '%';
+    
                             scrollProgressBarWidth(percentComplete);
                         }
                     }, false);
@@ -870,6 +898,7 @@ $user = new User(Auth::userid());
 
 
                 success: function(response) {
+                    $('#prgb').html('');
                     try {
                         var jsonData = JSON.parse(response);
                     } catch (err) {
@@ -941,6 +970,7 @@ $user = new User(Auth::userid());
                     }
                 },
                 error: function(xhr, status, error) {
+                    $('#prgb').html('');
                     $("#r").html('<button type="submit" id="register" name="loginaccount" class="btn btn-block btn-primary py-2 ripple-handler mt-1 mb-3">Опубликовать<span class="ripple-mask"><span class="ripple" style=""></span></span></button>');
                     $("#prgtd").html('');
                     $("#prgrsg").html('');
