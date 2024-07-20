@@ -176,7 +176,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
                             <div class="p20">
 <h4>О себе</h4>
-<?=nl2br(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])?>
+<?=nl2br(htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutmemo']['value']))?>
 </div>
 <?php } ?>
                         </td>
