@@ -13,7 +13,7 @@ if ($photo->i('id') !== null) {
         } else {
             $moderated = false;
         }
-    } else {
+    } else if ($photo->i('moderated') === 1)  {
         $moderated = true;
         if (DB::query('SELECT * FROM photos_views WHERE user_id=:uid AND photo_id=:pid ORDER BY id DESC LIMIT 1', array(':uid' => Auth::userid(), ':pid' => $id))[0]['time'] <= time() - 86400) {
             DB::query('INSERT INTO photos_views VALUES (\'0\', :uid, :pid, :time)', array(':uid' => Auth::userid(), ':pid' => $id, ':time' => time()));

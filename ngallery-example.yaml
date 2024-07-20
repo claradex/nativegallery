@@ -38,6 +38,9 @@ ngallery:
       prohibited_usernames: ''
       access:
         public: true
+    video:
+      upload:
+        allow: true
     photo:
       upload:
         allow: true
