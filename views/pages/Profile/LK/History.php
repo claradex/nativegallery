@@ -1,7 +1,7 @@
 <?php
 
 use \App\Services\{Auth, DB, Date};
-use \App\Models\User;
+use \App\Models\{User, Photo};
 
 //$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
 ?>
@@ -55,6 +55,7 @@ use \App\Models\User;
                                         $color = 's12';
                                     }
                                     $author = new User($p['user_id']);
+                                    $photo = new Photo($p['id']);
                                     echo ' <tr class="'.$color.'">
                                     <td class="pb-photo pb_photo">
                                         <a href="/photo/'.$p['id'].'/" target="_blank" class="prw">
@@ -64,7 +65,11 @@ use \App\Models\User;
                                     </td>
                                     <td class="d">
                                         <p><span style="word-spacing:-1px"><b>'.htmlspecialchars($p['place']).'</b></span></p>
-                                        <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>
+                                        <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>';
+                                        if ($p['moderated'] === 2) {
+                                            echo '<p class="sm"><b>Причина отклонения: '.$photo->declineReason($photo->content('declineReason')).'</b></p>';
+                                        }
+                                        echo '
                                        
                                     </td>
                                     <td class="c" style="padding:10px">

@@ -20,5 +20,27 @@ class Photo {
         $content = json_decode(self::i('content'), true);
         return $content[$table];
     }
+    public function declineReason($number) {
+        switch ($number) {
+            case 1:
+                return 'Малоинформативный бред';
+                break;
+            case 2:
+                return 'Не подходит для сайта';
+                break;
+            case 3:
+                return 'Порнография';
+                break;
+            case 4:
+                return 'Травля/Издевательство над человеком';
+                break;
+            case 5:
+                return 'Расчленёнка';
+                break;
+            default:
+                return 'Не подходит для сайта';
+                break;
+        }
+    }
 
 }
