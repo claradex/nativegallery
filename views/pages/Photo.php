@@ -82,6 +82,13 @@ if ($photo->i('id') !== null) {
 <b>Здесь Вы можете увидеть, как будет выглядеть страница с фотографией после публикации.</b></center></div>
 </div>';
                 }
+                if ($photo->i('moderated') === 2 && $moderated === true) {
+                    echo '<div class="label-red" style="padding:10px; margin:0 -20px; color:#fff">
+<h4 style="color:#fff; margin-bottom:3px">Фотография не принята к публикации</h4>
+<div></div>
+<div style="margin-top:7px">'.$photo->declineReason($photo->content('declineReason')).'</div>
+</div>';
+                }
                 ?>
                 <div id="err"></div>
                 <?php
