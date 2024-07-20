@@ -48,13 +48,12 @@ use \App\Models\User;
                         <div class="p20 s8" style="float:left; padding:1px 5px 2px; margin-right:15px">Удалено</div>
                     </div><br clear="all"><br>
                     <div class="p20w" style="display:block">
-                        <table>
+                        <table class="table">
                             <tbody>
                                 <tr>
                                     <th width="100">Изображение</th>
-                                    <th width="90%">Информация</th>
+                                    <th width="50%">Информация</th>
                                     <th>Действия</th>
-                                    <th class="c nw">Покинуло очередь</th>
                                 </tr>
                                 
                                <?php
@@ -69,13 +68,13 @@ use \App\Models\User;
                                     }
                                     $author = new User($p['user_id']);
                                     echo ' <tr class="'.$color.'">
-                                    <td class="pb-photo pb_photo">
+                                    <td>
                                         <a href="/photo/'.$p['id'].'/" target="_blank" class="prw">
                                             <img src="'.$p['photourl'].'" class="f">
                                             
                                         </a>
                                     </td>
-                                    <td class="d">
+                                    <td>
                                         <p><span style="word-spacing:-1px"><b>'.htmlspecialchars($p['place']).'</b></span></p>
                                         <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>
                                        
@@ -83,19 +82,15 @@ use \App\Models\User;
                                     <td class="c">
                                    ';
                                    if ($p['moderated'] === 0) {
-                                    echo ' <div class="cmt-submit"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" id="sbmt">Принять</a></div><div style="font-size: 11px;"><a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=2" style="background-color:red !important; margin-top: 15px;" type="submit" id="sbmt">Отклонить</a></div>';
+                                    echo '<a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" class="btn btn-primary">Принять</a>
+                                    <a  href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=2" class="btn btn-danger">Отклонить</a>';
                                    }
                                    echo '
                                     </td>';
                                     if ($p['endmoderation'] === -1) {
                                         $endm = 'На модерации';
-                                    } else {
-                                        $endm = Date::zmdate($p['endmoderation']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>';
                                     }
-                                    echo '
-                                    <td class="cs">'.$endm.'
-                                        
-                                    </td>
+                                   echo '
                                 </tr>';
                                }
                                ?>
@@ -107,6 +102,4 @@ use \App\Models\User;
 
                 </td>
             </tr>
-            <tr>
-            <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-            </tr>
+           
