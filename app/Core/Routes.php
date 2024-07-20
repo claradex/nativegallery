@@ -47,6 +47,7 @@ class Routes
             Router::get('/api/photo/compress', 'ApiController@photocompress');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
+            Router::get('/api/photo/checkall', 'ApiController@checkallphotos');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');

@@ -9,6 +9,7 @@ use \App\Controllers\Api\Subscribe as SubscribeUser;
 use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
+use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
@@ -50,6 +51,9 @@ class ApiController
     }
     public static function subscribeuser() {
         return new SubscribeUser();
+    }
+    public static function checkallphotos() {
+        return new PhotoCheckAll();
     }
 
 
