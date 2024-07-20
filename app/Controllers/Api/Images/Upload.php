@@ -28,6 +28,12 @@ class Upload
             $moderated = 1;
         }
         DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup'=>time(), ':moderated'=>$moderated));
+        if ($moderated === 1) {
+            $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid'=>Auth::userid()));
+            foreach ($followers as $f) {
+                DB::query('INSERT INTO followers_notifications VALUES (\'0\', :uid, :fid, :pid, 0)', array(':uid'=>Auth::userid(), ':fid'=>$f['follower_id'], ':pid'=>DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 1')[0]['id']));
+            }
+        }
         echo json_encode(
             array(
                 'id' => DB::query('SELECT id FROM photos ORDER BY id DESC LIMIT 1')[0]['id'],
