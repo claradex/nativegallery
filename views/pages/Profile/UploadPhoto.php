@@ -38,7 +38,7 @@ $user = new User(Auth::userid());
             <!-- Подключение плагина Leaflet-3d-model -->
             <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js"></script>
             <td class="main">
-                <h1>Предложить фото на публикацию</h1>
+                <h1>Предложить медиа на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?= $user->i('uploadindex') ?></b></p>
 
                 <div id="formtable">
@@ -242,7 +242,7 @@ $user = new User(Auth::userid());
                             <tbody class="p20">
                                 <tr>
                                     <td colspan="2" id="step1" class="narrow" style="font-size:20px; padding:10px 15px 7px">
-                                        Шаг 1. <b>Выберите фотографию для загрузки и укажите дату съёмки:</b> </td>
+                                        Шаг 1. <b>Выберите фотографию или видео для загрузки и укажите дату съёмки:</b> </td>
                                 </tr>
                                 <tr>
 
@@ -255,8 +255,9 @@ $user = new User(Auth::userid());
                                         </label>
                                         &nbsp; <span id="filename"></span>
                                         <div style="padding:5px 0 10px" class="sm">Принимаемые форматы:<br>
-                                            JPEG и WEBP — сумма ширины и высоты не более 2500 пикселей, файл не более 700 КБ<br>
-                                            GIF и PNG — только для чертежей и схем, без ограничения ширины и высоты, файл не более 20 МБ</div>
+                                            JPG, JPEG, PNG, GIF, WEBP, MP4, AVI, 3GP, MKV<br>
+                                            Для наибольшей совместимости, ваше видео будет обработано в формат MP4 в кодеке H264
+                                           </div>
                                         <div id="preview"></div>
                                     </td>
                                 </tr>
@@ -508,7 +509,7 @@ $user = new User(Auth::userid());
 
                             <tbody class="p20">
                                 <tr>
-                                    <td colspan="2" id="step3" class="narrow" style="font-size:20px; padding:10px 15px 7px">Шаг 2. <b>Введите подпись для фотографии:</b></td>
+                                    <td colspan="2" id="step3" class="narrow" style="font-size:20px; padding:10px 15px 7px">Шаг 2. <b>Введите подпись для медиафайла:</b></td>
                                 </tr>
                                 <tr>
                                     <td class="lcol">Место съёмки:</td>
@@ -563,7 +564,7 @@ $user = new User(Auth::userid());
 
                             <tbody class="p20">
                                 <tr>
-                                    <td colspan="2" id="step4" class="narrow" style="font-size:20px; padding:10px 15px 0">Шаг 3. <b>Отметьте точку, с которой вы делали кадр, на карте:</b></td>
+                                    <td colspan="2" id="step4" class="narrow" style="font-size:20px; padding:10px 15px 0">Шаг 3. <b>Отметьте точку, с которой было сделано медиа на карте:</b></td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -811,7 +812,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td></td>
                 <td style="padding:20px 2px 12px">
-                    <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Отправить фотографию</button> &nbsp; &nbsp;&nbsp;
+                    <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Опубликовать</button> &nbsp; &nbsp;&nbsp;
                     <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
                     <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
                 </td>
