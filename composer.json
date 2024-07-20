@@ -17,6 +17,7 @@
         "aws/aws-sdk-php": "^3.315",
         "tracy/tracy": "^2.10",
         "symfony/yaml": "^7.1",
-        "donatj/phpuseragentparser": "^1.8"
+        "donatj/phpuseragentparser": "^1.8",
+        "php-ffmpeg/php-ffmpeg": "^1.2"
     }
 }

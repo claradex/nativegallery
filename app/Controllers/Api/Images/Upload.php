@@ -14,6 +14,8 @@ class Upload
 {
     static $continue;
     static $photourl;
+    static $vidpreview;
+    static $videourl;
 
     public static function create($postbody, $content, $exif)
     {
@@ -27,11 +29,11 @@ class Upload
         } else {
             $moderated = 1;
         }
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup'=>time(), ':moderated'=>$moderated));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated));
         if ($moderated === 1) {
-            $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid'=>Auth::userid()));
+            $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid' => Auth::userid()));
             foreach ($followers as $f) {
-                DB::query('INSERT INTO followers_notifications VALUES (\'0\', :uid, :fid, :pid, 0)', array(':uid'=>Auth::userid(), ':fid'=>$f['follower_id'], ':pid'=>DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 1')[0]['id']));
+                DB::query('INSERT INTO followers_notifications VALUES (\'0\', :uid, :fid, :pid, 0)', array(':uid' => Auth::userid(), ':fid' => $f['follower_id'], ':pid' => DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 1')[0]['id']));
             }
         }
         echo json_encode(
@@ -43,7 +45,7 @@ class Upload
         );
     }
     public function __construct()
-    {   
+    {
 
         if ($_FILES['image']['error'] != 4) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -59,13 +61,63 @@ class Upload
                     die();
                 }
             }
-            $exif = new EXIF($_FILES['image']['tmp_name']);
-            $exif = $exif->getData();
-            $upload = new UploadPhoto($_FILES['image'], 'cdn/img/');
-            if ($exif === null) {
-                $exif = Json::return(
+            if (explode('/', $type)[0] === 'video') {
+                $newname = GenerateRandomStr::init(64);
+                $ffmpegPath = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'E:\Maksim\kandle\app\Controllers\Video\Exec\ffmpeg.exe' : 'ffmpeg';
+                $tempDir = $_SERVER['DOCUMENT_ROOT'] . '/cdn/temp/';
+                $mp4File = $tempDir . $newname . '.mp4';
+                $ffmpegCommand = "$ffmpegPath -i " . $_FILES['image']['tmp_name'] . " -c:v libx264 -crf 18 -fpsmax 60 -preset fast -c:a aac -ac 2 -codec:v copy -codec:a copy $mp4File";
+                exec($ffmpegCommand);
+
+                $thumbnailFile = $tempDir . $newname . '.jpg';
+
+                $ffmpegCommand = "$ffmpegPath -i " . $_FILES['image']['tmp_name'] . " -ss 00:00:00 -frames:v 1 -q:v 2 $thumbnailFile";
+                exec($ffmpegCommand);
+
+                $backgroundImagePath = $thumbnailFile;
+                $overlayImagePath = $_SERVER['DOCUMENT_ROOT'] . '/static/img/playic.png';
+
+                $background = imagecreatefromjpeg($backgroundImagePath);
+                $overlay = imagecreatefrompng($overlayImagePath);
+
+                $backgroundWidth = imagesx($background);
+                $backgroundHeight = imagesy($background);
+                $overlayWidth = imagesx($overlay);
+                $overlayHeight = imagesy($overlay);
+
+                $destX = ($backgroundWidth - $overlayWidth) / 2;
+                $destY = ($backgroundHeight - $overlayHeight) / 2;
+
+                imagecopy($background, $overlay, $destX, $destY, 0, 0, $overlayWidth, $overlayHeight);
+
+                $outputImagePath = $_SERVER['DOCUMENT_ROOT'] . '/cdn/temp/VIDPRV_' . $newname . '.jpg';
+                imagejpeg($background, $outputImagePath, 90);
+                imagedestroy($background);
+                imagedestroy($overlay);
+
+                $upload = new UploadPhoto($outputImagePath, 'cdn/img/');
+                self::$vidpreview = $upload->getSrc();
+                $upload = new UploadPhoto($mp4File, 'cdn/video/');
+                self::$videourl = $upload->getSrc();
+            } else if (explode($type, '/')[0] === 'image') {
+
+
+
+                $exif = new EXIF($_FILES['image']['tmp_name']);
+                $exif = $exif->getData();
+                $upload = new UploadPhoto($_FILES['image'], 'cdn/img/');
+                if ($exif === null) {
+                    $exif = Json::return(
+                        array(
+                            'type' => 'none',
+                        )
+                    );
+                }
+            } else {
+                echo json_encode(
                     array(
-                        'type' => 'none',
+                        'errorcode' => 'FILE_NOTSELECTED',
+                        'error' => 1
                     )
                 );
             }
@@ -76,23 +128,21 @@ class Upload
             if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
-                        'type' => 'none',
+                        'type' => explode('/', $type)[0],
+                        'videourl' => self::$videourl,
                         'copyright' => $_POST['license'],
                         'comment' => $_POST['descr'],
                         'lat' => $_POST['lat'],
                         'lng' => $_POST['lng']
                     )
                 );
-                self::$photourl = $upload->getSrc();
+                if (explode('/', $type)[0] === 'video') {
+                    self::$photourl = self::$vidpreview;
+                } else {
+                    self::$photourl = $upload->getSrc();
+                }
                 self::create($_POST['descr'], $content, $exif);
             }
-        } else {
-            echo json_encode(
-                array(
-                    'errorcode' => 'FILE_NOTSELECTED',
-                    'error' => 1
-                )
-            );
         }
     }
 }
