@@ -83,10 +83,10 @@ if ($photo->i('id') !== null) {
 </div>';
                 }
                 if ($photo->i('moderated') === 2 && $moderated === true) {
-                    echo '<div class="label-red" style="padding:10px; margin:0 -20px; color:#fff">
+                    echo '<div class="label-red" style="padding:10px; margin:0 -20px; color:#fff"><center>
 <h4 style="color:#fff; margin-bottom:3px">Фотография не принята к публикации</h4>
 <div></div>
-<div style="margin-top:7px">'.$photo->declineReason($photo->content('declineReason')).'</div>
+<div style="margin-top:7px">'.$photo->declineReason($photo->content('declineReason')).'</div></center>
 </div>';
                 }
                 ?>
@@ -186,7 +186,7 @@ if ($photo->i('id') !== null) {
                         </div>
                     </div>
 
-
+                    <?php if ($photo->i('moderated') === 1) { ?>
                     <div class="p20a" id="pp-item-vote">
                         <h4 class="pp-item-header">Оценка</h4>
                         <div class="sm">
@@ -234,6 +234,7 @@ if ($photo->i('id') !== null) {
                             </div>
                         </div>
                     </div>
+                    <?php } ?>
 
 
                     <div class="p20a" id="pp-item-link">
@@ -321,7 +322,7 @@ if ($photo->i('id') !== null) {
                         <?php } ?>
 
                         <?php
-                        if ($photo->i('moderated') > 0) {
+                        if ($photo->i('moderated') === 1) {
                         $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
                         ?>
                         <div class="p0" id="pp-item-comments">
