@@ -18,6 +18,11 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
 } else {
     $title = 'NativeGallery';
 }
+
+$noncheckedimgs = DB::query('SELECT COUNT(*) FROM followers_notifications WHERE checked=0 AND follower_id=:id', array(':id'=>Auth::userid()))[0]['COUNT(*)'];
+if ($noncheckedimgs > 0) {
+    $nonrw = '<span class="mm-notify notify-count">'.$noncheckedimgs.'</span>';
+}
     
 ?>
 <tr>
@@ -39,12 +44,12 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
                 </div>
             </li>
             <li><a href="/comments.php" class="mm-item"><span class="mm-label">Комментарии</span></a></li>
-            <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Обновления</span></a>
+            <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Обновления</span><?=$nonrw?></a>
                 <div>
                     <ul class="mm-level-2">
                         <li><a href="/update.php?time=24" class="mm-item"><span class="mm-label">Новые фотографии</span></a></li>
                         <li><a href="/feed.php" class="mm-item"><span class="mm-label">Лента обновлений</span></a></li>
-                        <li><a href="/fav_authors" class="mm-item"><span class="mm-label">Фотографии избранных авторов</span></a></li>
+                        <li><a href="/fav_authors" class="mm-item"><span class="mm-label">Фотографии избранных авторов</span><?=$nonrw?></a></li>
                         <li><a href="/update.php" class="mm-item"><span class="mm-label">Архив обновлений по датам</span></a></li>
                     </ul>
                 </div>
