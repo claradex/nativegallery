@@ -61,70 +61,13 @@ $photo = new \App\Models\Photo($_GET['id']);
                 </center>
             </td>
         </tr>
+      
         <tr>
-            <td id="adframe">
-                <!-- Yandex.RTB R-A-115118-1 -->
-                <div id="yandex_rtb_R-A-115118-1"></div>
-                <script>
-                    window.yaContextCb.push(() => {
-                        Ya.Context.AdvManager.render({
-                            renderTo: 'yandex_rtb_R-A-115118-1',
-                            blockId: 'R-A-115118-1'
-                        })
-                    })
-                </script>
-            </td>
-        </tr>
-        <tr>
-            <td class="footer"><b><a href="/">Главная</a> &nbsp; &nbsp; <a href="/lk/">Личный кабинет</a> &nbsp; &nbsp; <a href="https://forum.transphoto.org">Форум</a> &nbsp; &nbsp; <a href="/rules/">Правила</a> &nbsp; &nbsp; <a href="/admin/">Редколлегия</a></b><br>
-                <a href="/set.php?dark=0" style="display:inline-block; padding:1px 10px; margin-top:5px; background-color:#ddd; color:#333">Светлая тема</a>
-                <div class="sitecopy">&copy; Администрация ТрансФото и авторы материалов, 2002—2024<br>Использование фотографий и иных материалов, опубликованных на сайте, допускается только с разрешения их авторов.</div>
-                <div style="margin:15px 0">
-                    <noindex>
-
-                        <!-- Yandex.Metrika informer -->
-                        <a href="https://metrika.yandex.ru/stat/?id=73971775&amp;from=informer" target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/73971775/3_0_DDDDDDFF_DDDDDDFF_0_pageviews" style="width:88px; height:31px; border:0;" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="73971775" data-lang="ru" /></a>
-                        <!-- /Yandex.Metrika informer -->
-
-                    </noindex>
-                </div>
-
-            </td>
-        </tr>
+                <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+            </tr>
     </table>
 
-    <script>
-        (function() {
-            function c() {
-                var b = a.contentDocument || a.contentWindow.document;
-                if (b) {
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'8a660706db3f005f',t:'MTcyMTUxMDc2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d)
-                }
-            }
-            if (document.body) {
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if ('loading' !== document.readyState) c();
-                else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function() {};
-                    document.onreadystatechange = function(b) {
-                        e(b);
-                        'loading' !== document.readyState && (document.onreadystatechange = e, c())
-                    }
-                }
-            }
-        })();
-    </script>
+
 </body>
 
 </html>
