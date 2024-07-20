@@ -83,7 +83,7 @@ use \App\Models\User;
                                    ';
                                    if ($p['moderated'] === 0) {
                                     echo '<a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" class="btn btn-primary">Принять</a>
-                                    <a  href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=2" class="btn btn-danger">Отклонить</a>';
+                                    <a data-bs-toggle="modal" data-bs-target="#declinePhotoModal'.$p['id'].'" href="#" class="btn btn-danger">Отклонить</a>';
                                    }
                                    echo '
                                     </td>';
@@ -91,7 +91,57 @@ use \App\Models\User;
                                         $endm = 'На модерации';
                                     }
                                    echo '
-                                </tr>';
+                                </tr>
+                                
+                                <div class="modal fade" id="declinePhotoModal'.$p['id'].'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"><b>Причина отклонения</b></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Малоинформативный бред
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Не подходит для сайта
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Порнография
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Травля/издевательство над человеком
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Расчленёнка
+  </label>
+</div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+                                
+                                ';
                                }
                                ?>
                              
