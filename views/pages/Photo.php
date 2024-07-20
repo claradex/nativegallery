@@ -337,6 +337,7 @@ if ($photo->i('id') !== null) {
                                         <input type="hidden" name="id" id="id" value="<?= $id ?>">
                                         <input type="hidden" name="subj" id="subj" value="p">
                                         <textarea name="wtext" id="wtext"></textarea><br>
+                                        <p id="statusSend" style="display: none;">Ошибка</p>
                                         <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
                                         </div>
                                     </form>
@@ -376,16 +377,22 @@ if ($photo->i('id') !== null) {
                     success: function(response) {
                         var jsonData = JSON.parse(response);
                         if (jsonData.errorcode == "1") {
-                            Notify.noty('danger', 'Комментарий неккоректен');
+                            $('#statusSend').css({display: 'block', color: 'red'});
+                            $('#statusSend').text('Комментарий некорректен');
+                            //Notify.noty('danger', 'Комментарий неккоректен');
                             //$("#result").html("<div class='alert alert-dangernew container mt-5' role='alert'>Неправильная почта или пароль!</div>");
                         } else if (jsonData.errorcode == "2") {
-                            Notify.noty('warning', 'Пожалуйста, подождите...');
+                            $('#statusSend').css({display: 'block', color: 'yellow'});
+                            $('#statusSend').text('Пожалуйста, подождите...');
+                            //Notify.noty('warning', 'Пожалуйста, подождите...');
                             setTimeout(function() {
                                 window.location.replace(jsonData.twofaurl);
                             }, 1000);
                         } else if (jsonData.errorcode == "0") {
                             $('#wtext').val('');
-                            Notify.noty('success', 'Комментарий отправлен!');
+                            $('#statusSend').css({display: 'block', color: 'green'});
+                            $('#statusSend').text('Комментарий отправлен!');
+                            //Notify.noty('success', 'Комментарий отправлен!');
                             //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
                             $.ajax({
 
