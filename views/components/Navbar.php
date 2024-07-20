@@ -22,6 +22,10 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
 ?>
 <tr>
     <td class="mm-bar">
+        <?php
+        if (explode('/', $_SERVER['REQUEST_URI'])[1] === 'photo') { ?>
+    <a id="title-small" href="/"><img src="<?=$logo?>"><?=$title?></a>
+    <?php } ?>
         <ul class="mm mm-level-1">
             <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Дополнительно</span></a>
                 <div>
@@ -107,6 +111,9 @@ if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true)
         </ul>
     </td>
 </tr>
+<?php
+        if (explode('/', $_SERVER['REQUEST_URI'])[1] != 'photo') { ?>
 <tr>
     <td><a href="/" id="title"><img src="<?=$logo?>" alt="<?=$title?>"><span><?=$title?></span></a></td>
 </tr>
+<?php } ?>
