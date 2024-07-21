@@ -348,9 +348,17 @@ if ($photo->i('id') !== null) {
                             <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?=count($comments)?></span></h4>
                             <div id="posts">
                                 <?php
-                                
+                                $number = 1;
                                 foreach ($comments as $c) {
                                     $comm = new Comment($c);
+                                    
+                                    if ($number % 2 == 0) {
+                                        $class = 's11';
+                                    } else {
+                                        $class = 's1';
+                                    }
+                                    $comm->class($class);
+                                    $number++;
                                     $comm->i();
                                 }
                                 ?>

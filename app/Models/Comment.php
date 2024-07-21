@@ -7,14 +7,21 @@ class Comment {
 
     public $commentid;
     public $c;
+    public $class;
     function __construct($user_id) {
         $this->c = $user_id;
     }
+    public function class($class) {
+        $this->class = $class;
+    }
     public function i() {
         $user = new User($this->c['user_id']);
-        echo '<div class="s11 comment" wid="2681468">
+        echo '<div class="'.$this->class.' comment" wid="'.$this->c['id'].'">
                                 <div style="float:right; text-align:right" class="sm">
                                     <span class="message_date">'.Date::zmdate($this->c['posted_at']).'</span><br>
+                                    <a href="#" class="quoteLink dot">Цитировать</a>
+                                     · 
+                                     <a href="#'.$this->c['id'].'" class="cmLink dot">Ссылка</a>
                                 </div>
                                 <a name="2681468"></a><a name="last"></a>
                                 <div><img src="'.$user->i('photourl').'" width="32" style="border-radius: 3px; margin-right: 5px;"><b><a href="/author/'.$this->c['user_id'].'/" class="message_author">'.htmlspecialchars($user->i('username')).'</a></b> &middot; 
