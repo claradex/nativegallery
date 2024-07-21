@@ -19,12 +19,12 @@ use \App\Models\User;
     <table class="tmain">
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
             <td class="main">
-                <h1>Правила сайта</h1>
+                <h1>Правила отбора фотографий</h1>
             
                 <div class="p20" style="padding:20px">
                     <?php
-                    $myfile = fopen($_SERVER['DOCUMENT_ROOT'].'/config/rules.html', "r") or die("Unable to open file!");
-                    echo fread($myfile,filesize($_SERVER['DOCUMENT_ROOT'].'/config/rules.html'));
+                    $myfile = fopen($_SERVER['DOCUMENT_ROOT'].'/config/publicationRules.html', "r") or die("Unable to open file!");
+                    echo fread($myfile,filesize($_SERVER['DOCUMENT_ROOT'].'/config/publicationRules.html'));
                     fclose($myfile);
                     ?>
                 </div>
