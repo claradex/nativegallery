@@ -11,6 +11,7 @@ class Routes
     public static function init()
     {
         Router::get('/', 'MainController@i');
+        Router::get('/robots.txt', 'MainController@robots');
         Router::get('/t', 'MainController@t');
         Router::get('/login', 'LoginController@i');
         Router::get('/register', 'RegisterController@i');

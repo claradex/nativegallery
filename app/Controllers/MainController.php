@@ -61,6 +61,13 @@ class MainController
        Page::set('FavAuthors');
        
     }
+    public static function robots() {
+      echo 'User-Agent: *
+Disallow: /lk/
+Clean-Param: vid&gid&upd /photo/
+Host: https://'.$_SERVER['SERVER_NAME'];
+header("Content-Type: text/plain");
+    }
 
 
     public static function logout()
