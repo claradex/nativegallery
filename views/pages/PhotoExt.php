@@ -38,7 +38,7 @@ $photo = new \App\Models\Photo($_GET['id']);
                         </tr>
                         <tr class="s1 h21">
                             <td class="ds">Находится на сайте, дней:</td>
-                            <td class="ds"><b><?=floor((time() - $photo->i('timeupload')) / 8600)?></b></td>
+                            <td class="ds"><b><?=floor((time() - $photo->i('timeupload')) / 86400)?></b></td>
                         </tr>
                         <tr class="s11 h21">
                             <td class="ds">Уникальных просмотров:</td>
