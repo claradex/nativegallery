@@ -17,6 +17,7 @@ use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
+use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
 class ApiController
 {
 
@@ -62,6 +63,9 @@ class ApiController
     }
     public static function admincreatenews() {
         return new AdminCreateNews();
+    }
+    public static function adminloadnews() {
+        return new AdminLoadNews();
     }
 
 
