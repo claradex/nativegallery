@@ -20,20 +20,6 @@ class App
             }
             try {
                 if (NGALLERY['root']['maintenance'] === false) {
-                $userIP = $_SERVER['REMOTE_ADDR'];
-
-                    function getCountryCodeByIP($ip)
-                    {
-                        $url = "http://ip-api.com/json/{$ip}?fields=countryCode";
-                        $response = file_get_contents($url);
-                        $data = json_decode($response, true);
-                        return $data['countryCode'] ?? null;
-                    }
-                    $countryCode = getCountryCodeByIP($userIP);
-
-                    if (in_array(strtolower($countryCode), explode(',', NGALLERY['root']['access']['countries']))) {
-                        die(Page::set('Errors/ForbiddenCountry'));
-                    }
                     DB::connect();
                     Routes::init();
                 } else {

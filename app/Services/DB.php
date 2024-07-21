@@ -9,9 +9,9 @@ class DB {
 
     public static function connect() {
         if (self::$pdoInstance === null) {
-            $dsn = 'mysql:host=127.127.126.50;dbname=ngallery;charset=utf8mb4';
-            $username = 'root';
-            $password = '';
+            $dsn = 'mysql:host='.NGALLERY['root']['db']['host'].';dbname='.NGALLERY['root']['db']['name'].';charset=utf8mb4';
+            $username = NGALLERY['root']['db']['login'];
+            $password = NGALLERY['root']['db']['password'];
 
             try {
                 self::$pdoInstance = new PDO($dsn, $username, $password);
