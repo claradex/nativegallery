@@ -172,18 +172,6 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 </table>
                            <br />
                             <div class="sm" style="float:right"><a href="/lk/ticket.php?action=add&amp;aid=140"></a></div>
-                            <?php
-                                    if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
-                            <div class="p20">
-<h4>О себе</h4>
-<?php
-$bbcode= new ChrisKonnertz\BBCode\BBCode();
-
-$rendered = $bbcode->render(nl2br(htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])));
-echo $rendered;
-?>
-</div>
-<?php } ?>
                         </td>
                         
                         <td valign="top" align="right">
@@ -220,6 +208,19 @@ echo $rendered;
                     </tr>
                 </table>
                             </div>
+                <?php
+                    if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
+                    <div class="p20" style="margin-top: 25px;">
+                    <h4>О себе</h4>
+                    <?php
+                    $bbcode= new ChrisKonnertz\BBCode\BBCode();
+
+                    $rendered = $bbcode->render(nl2br(htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])));
+                    echo $rendered;
+                    ?>
+                    </div>
+                <?php } ?>
+
                 <div style="margin-top: 25px;"><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
                 
                 <?php
