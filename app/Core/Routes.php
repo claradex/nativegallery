@@ -55,6 +55,7 @@ class Routes
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');
                 Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');
+                Router::any('/api/admin/createnews', 'ApiController@admincreatenews');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');

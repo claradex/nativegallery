@@ -58,6 +58,10 @@ body {
                             <i class="bx bx-camera nav__icon"></i>
                             <span class="nav__name">Фотографии</span>
                         </a>
+                        <a href="/admin?type=News" class="nav__link">
+                            <i class="bx bx-news nav__icon"></i>
+                            <span class="nav__name">Новости сайта</span>
+                        </a>
 
                        
 

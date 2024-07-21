@@ -61,43 +61,44 @@ use App\Models\{User, Vote, Comment};
 
                         <td style="vertical-align:top; padding-right:20px">
 
-	<h4><a href="/top30">Самые популярные за 24 часа</a></h4>
-	<div>
-		<?php
-        $photos = DB::query('SELECT photo_id, COUNT(*) as view_count
+                            <h4><a href="/top30">Самые популярные за 24 часа</a></h4>
+                            <div>
+                                <?php
+                                $photos = DB::query('SELECT photo_id, COUNT(*) as view_count
 FROM photos_views
 WHERE time >= UNIX_TIMESTAMP(NOW()) - 86400
 GROUP BY photo_id
 ORDER BY view_count DESC
 LIMIT 10;');
-foreach ($photos as $pd) {
-    $photo = DB::query('SELECT * FROM photos WHERE id=:id', array(':id'=>$pd['photo_id']));
-    foreach ($photo as $p) {
-         $author = new User($p['user_id']);
-         echo '<a href="/photo/'.$p['id'].'" target="_blank" class="prw pop-prw">
-   <img width="250" src="/api/photo/compress?url='.$p['photourl'].'">
+                                foreach ($photos as $pd) {
+                                    $photo = DB::query('SELECT * FROM photos WHERE id=:id', array(':id' => $pd['photo_id']));
+                                    foreach ($photo as $p) {
+                                        $author = new User($p['user_id']);
+                                        echo '<a href="/photo/' . $p['id'] . '" target="_blank" class="prw pop-prw">
+   <img width="250" src="/api/photo/compress?url=' . $p['photourl'] . '">
    <div class="hpshade">
-      <div class="eye-icon">+'.$pd['view_count'].'</div>
+      <div class="eye-icon">+' . $pd['view_count'] . '</div>
    </div>
 </a>';
-    }
-}
-        ?>
-	</div>
-
-	
-	<div style="text-align:center; margin-bottom:20px">
-<div style="width: 250px;"></div></div>
+                                    }
+                                }
+                                ?>
+                            </div>
 
 
+                            <div style="text-align:center; margin-bottom:20px">
+                                <div style="width: 250px;"></div>
+                            </div>
 
-</td>
-                        <td style="vertical-align:top; width:100%; padding-top:4px">
 
-                          
+
+                        </td>
+                        <td style="vertical-align:top; width:70%; padding-top:4px">
+
+
                             <h4><a href="/photo/" target="_blank">Случайные фотографии</a></h4>
                             <div id="random-photos" class="ix-photos ix-photos-oneline">
-                            <?php
+                                <?php
                                 $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY RAND() DESC LIMIT 7');
                                 foreach ($photos as $p) {
                                     if ($p['posted_at'] === 943909200 || Date::zmdate($p['posted_at']) === '30 ноября 1999 в 00:00') {
@@ -108,11 +109,11 @@ foreach ($photos as $pd) {
                                     $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
                                     echo ' <div class="prw-grid-item">
                                     <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
-                                        <div>'.$date.'</div>
+                                        <div>' . $date . '</div>
                                     </div>
                                     '; ?>
                                     <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
-                                    <?php echo '
+                                <?php echo '
                                 </div>';
                                 }
                                 ?>
@@ -150,24 +151,38 @@ foreach ($photos as $pd) {
 
 
 
-                        <h4>Сейчас на сайте (<?=DB::query('SELECT COUNT(*) FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()))[0]['COUNT(*)']?>)</h4>
+                        <h4>Сейчас на сайте (<?= DB::query('SELECT COUNT(*) FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time' => time()))[0]['COUNT(*)'] ?>)</h4>
                         <div>
-                        <?php
-                        $online = DB::query('SELECT * FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time'=>time()));
-                        foreach ($online as $o) {
-                            echo '<a href="/author/'.$o['id'].'/">'.htmlspecialchars($o['username']).'</a>, ';
-                        }
-                        ?>
+                            <?php
+                            $online = DB::query('SELECT * FROM users WHERE online>=:time-300 ORDER BY online DESC', array(':time' => time()));
+                            foreach ($online as $o) {
+                                echo '<a href="/author/' . $o['id'] . '/">' . htmlspecialchars($o['username']) . '</a>, ';
+                            }
+                            ?>
 
                         </div>
+                        </td>
+                        <td style="padding-left:20px; width:254px; vertical-align:top">
+
+                            <h4>Новости сайта</h4>
+                            <div class="sm" style="margin-bottom:15px; line-height:13px; white-space:normal">
+                                <?php
+                                $news = DB::query('SELECT * FROM news ORDER BY id DESC LIMIT 10');
+                                foreach ($news as $n) {
+                                    echo '<div class="ix-news-item"><b>'.Date::zmdate($n['time']).'</b>
+                                    <div class="break-links" style="padding-top:3px">'.$n['body'].'</div>
+                                </div>';
+                                }
+                                ?>
+                            </div>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
         <tr>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-    </tr>
+            <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+        </tr>
     </table>
 
 
