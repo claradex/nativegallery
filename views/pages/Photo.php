@@ -6,6 +6,13 @@ use App\Models\{User, Vote, Comment};
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
 if ($photo->i('id') !== null) {
+    if ($photo->content('video') != 'null') {
+        $extname = 'видео';
+        $extnamef = 'видеоролик';
+    } else {
+        $extname = 'фото';
+        $extnamef = 'фотография';
+    }
     $photouser = new \App\Models\User($photo->i('user_id'));
     if ($photo->i('moderated') === 0) {
         if ($photo->i('user_id') === Auth::userid() || $user->i('admin') > 0) {
@@ -77,8 +84,8 @@ if ($photo->i('id') !== null) {
                 <?php
                 if ($photo->i('moderated') === 0 && $moderated === true) {
                     echo '<div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
-<center><h4 style="color:#fff; margin-bottom:3px">Это фото пока не опубликовано</h4>
-<div>Сейчас фотография рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
+<center><h4 style="color:#fff; margin-bottom:3px">Это '.$extname.' пока не опубликовано</h4>
+<div>Сейчас '.$extnamef.' рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
 <b>Здесь Вы можете увидеть, как будет выглядеть страница с фотографией после публикации.</b></center></div>
 </div>';
                 }
