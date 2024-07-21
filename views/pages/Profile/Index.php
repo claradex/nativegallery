@@ -33,7 +33,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
-                <div class="p20" style="padding-right:12px">
+                <div class="p20" style="padding-right:12px; background-color: white !important;">
                 <table width="100%">
                     <tr>
                     <?php if ($userprofile->content('badge') !== null) { ?>
@@ -210,7 +210,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                             </div>
                 <?php
                     if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
-                    <div class="p20" style="margin-top: 25px;">
+                    <div class="p20" style="margin-top: 25px; background-color: white !important;">
                     <h4>О себе</h4>
                     <?php
                     $bbcode= new ChrisKonnertz\BBCode\BBCode();
