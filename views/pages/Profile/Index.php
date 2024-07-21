@@ -210,7 +210,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                             </div>
                 <?php
                     if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
-                    <div class="p20" style="margin-top: 25px; background-color: white !important;">
+                    <div class="p20" style="margin-top: 8px; background-color: white !important;">
                     <h4>О себе</h4>
                     <?php
                     $bbcode= new ChrisKonnertz\BBCode\BBCode();
