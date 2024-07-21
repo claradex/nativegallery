@@ -14,6 +14,7 @@ if ($photo->i('id') !== null) {
         $extnamef = 'фотография';
     }
     $photouser = new \App\Models\User($photo->i('user_id'));
+    $user = new \App\Models\User(Auth::userid());
     if ($photo->i('moderated') === 0) {
         if ($photo->i('user_id') === Auth::userid() || $user->i('admin') > 0) {
             $moderated = true;

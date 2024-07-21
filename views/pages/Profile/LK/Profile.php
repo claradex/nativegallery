@@ -272,6 +272,7 @@ $user = new User(Auth::userid());
                                 <textarea name="aboutmemo" style="width:100%; height:200px"><?= json_decode($user->i('content'), true)['aboutmemo']['value'] ?></textarea>
 
                             </div>
+                            <div class="sm">BBcode: [b] [i] [u] [s] [sub] [sup] [size] [img] [url]</div>
                             <div style="margin-bottom:3px; margin-top:5px">Telegram</div>
                             <input type="text" name="abouttelegram" id="live" style="width:100%" maxlength="50" value="<?= json_decode($user->i('content'), true)['abouttelegram']['value'] ?>">
                             <div style="margin-bottom:3px; margin-top:5px">ВКонтакте</div>

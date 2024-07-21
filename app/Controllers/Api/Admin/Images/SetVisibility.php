@@ -5,14 +5,25 @@ namespace App\Controllers\Api\Admin\Images;
 
 
 use App\Services\{Auth, Router, GenerateRandomStr, DB, Json, EXIF};
-use App\Models\{User, Vote};
+use App\Models\{User, Vote, Photo};
 
 
 class SetVisibility
 {
     public function __construct()
     {
-        DB::query('UPDATE photos SET moderated=:mod, timeupload=:time WHERE id=:id', array(':id'=>$_GET['id'], ':mod'=>$_GET['mod'], ':time'=>time()));
+        $photo = new Photo($_GET['id']);
+        $data = json_decode($photo->i('content'), true);
+
+        if (!array_key_exists('declineReason', $data)) {
+            $data['declineReason'] = null;
+        }
+        $data['declineReason'] = $_GET['decline_reason'];
+
+        $updatedJsonString = json_encode($data);
+
+
+        DB::query('UPDATE photos SET moderated=:mod, timeupload=:time, content=:c WHERE id=:id', array(':id'=>$_GET['id'], ':mod'=>$_GET['mod'], ':time'=>time(), ':c'=>$updatedJsonString));
         $uid = DB::query('SELECT user_id FROM photos WHERE id=:id', array(':id'=>$_GET['id']))[0]['user_id'];
         if ($_GET['mod'] === 1) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid'=>$uid));

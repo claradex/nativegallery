@@ -35,18 +35,10 @@ use \App\Models\User;
     }
     </style>
                 <td class="main">
-                    <h1>Журнал</h1>
+                    <h1><b>Журнал</b></h1>
                     <script src="/js/diff.js"></script>
                     <script src="/js/pwrite-compare.js"></script>
-                    <div class="sm">
-                        <div class="p20 s1" style="float:left; padding:1px 5px 2px; margin-right:15px">Требуют рассмотрения</div>
-                        <div class="p20 s2" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято</div>
-                        <div class="p20 s7" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято условно</div>
-                        <div class="p20 s9" style="float:left; padding:1px 5px 2px; margin-right:15px">Принято как временное</div>
-                        <div class="p20 s3" style="float:left; padding:1px 5px 2px; margin-right:15px">Задержано до исправления замечаний</div>
-                        <div class="p20 s5" style="float:left; padding:1px 5px 2px; margin-right:15px">Не подходит для сайта</div>
-                        <div class="p20 s8" style="float:left; padding:1px 5px 2px; margin-right:15px">Удалено</div>
-                    </div><br clear="all"><br>
+                  <br clear="all"><br>
                     <div class="p20w" style="display:block">
                         <table class="table">
                             <tbody>
@@ -67,7 +59,7 @@ use \App\Models\User;
                                         $color = 's12';
                                     }
                                     $author = new User($p['user_id']);
-                                    echo ' <tr class="'.$color.'">
+                                    echo ' <tr id="pht'.$p['id'].'" class="'.$color.'">
                                     <td>
                                         <a href="/photo/'.$p['id'].'/" target="_blank" class="prw">
                                             <img src="'.$p['photourl'].'" class="f">
@@ -102,40 +94,41 @@ use \App\Models\User;
       </div>
       <div class="modal-body">
        <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
+  <input name="decline" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason1">
+  <label class="form-check-label" for="declineReason1">
     Малоинформативный бред
   </label>
 </div>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
+  <input name="decline'.$p['id'].'" checked value="2" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason2">
+  <label class="form-check-label" for="declineReason2">
     Не подходит для сайта
   </label>
 </div>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
+  <input name="decline'.$p['id'].'" value="3" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason3">
+  <label class="form-check-label" for="declineReason3">
     Порнография
   </label>
 </div>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
+  <input name="decline'.$p['id'].'" value="4" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason4">
+  <label class="form-check-label" for="declineReason4">
     Травля/издевательство над человеком
   </label>
 </div>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
+  <input name="decline'.$p['id'].'" value="5" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason5">
+  <label class="form-check-label" for="declineReason5">
     Расчленёнка
   </label>
 </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+        <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</a>'; ?>
+        <a href="#" onclick="photoAction(<?=$p['id']?>, document.querySelector(`input[name='decline<?=$p['id']?>']:checked`).value, 2); return false;" data-bs-dismiss="modal" class="btn btn-primary">Сохранить</a>
+        <?php echo '
       </div>
     </div>
   </div>
@@ -152,4 +145,21 @@ use \App\Models\User;
 
                 </td>
             </tr>
+            <script>
+function photoAction(photo_id, decline_reason, mod) {
+   $.ajax({
+                type: "GET",
+                url: '/api/admin/images/setvisibility?id='+photo_id+'&mod='+mod+'&decline_reason='+decline_reason,
+                data: $(this).serialize(),
+                success: function(response) {
+                $('#pht'+photo_id).remove();
+                        Notify.noty('success', 'OK!');
+                        //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
+                      
+                        
+                    }
+                
+            });
+}
+</script>
            

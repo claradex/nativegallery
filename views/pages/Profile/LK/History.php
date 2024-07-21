@@ -67,7 +67,7 @@ use \App\Models\{User, Photo};
                                         <p><span style="word-spacing:-1px"><b>'.htmlspecialchars($p['place']).'</b></span></p>
                                         <p class="sm"><b>'.Date::zmdate($p['posted_at']).'</b><br>Автор: <a href="/author/'.$p['user_id'].'/">'.htmlspecialchars($author->i('username')).'</a></p>';
                                         if ($p['moderated'] === 2) {
-                                            echo '<p class="sm"><b>Причина отклонения: '.$photo->declineReason($photo->content('declineReason')).'</b></p>';
+                                            echo '<p class="sm"><b>Причина отклонения: '.$photo->declineReason((int)$photo->content('declineReason')).'</b></p>';
                                         }
                                         echo '
                                        

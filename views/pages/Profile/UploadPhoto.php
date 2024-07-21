@@ -251,7 +251,7 @@ $user = new User(Auth::userid());
                                     <td style="padding:2px 15px 5px 2px">
 
                                         <label class="button">
-                                            Выбрать файл... <input type="file" name="image" id="image" accept="image/*">
+                                            Выбрать файл... <input type="file" name="image" id="image" accept="image/*, video/*">
                                         </label>
                                         &nbsp; <span id="filename"></span>
                                         <div style="padding:5px 0 10px" class="sm">Принимаемые форматы:<br>

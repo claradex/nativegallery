@@ -12,10 +12,24 @@ if (!isset($_GET['type']) || $_GET['type'] != 'Photo') {
 ?>
 <!DOCTYPE html>
 <html lang="ru">
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<link rel="stylesheet" href="/static/css/notie.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
+<script src="/static/js/notie.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
 
+<script>
+     notie.setOptions({
+    transitionCurve: 'cubic-bezier(0.2, 0, 0.2, 1)'
+});
+var Notify =  {
+    noty: function(status, text) {
 
+        if (status == 'danger') status = 'error';
 
+        return notie.alert({ type: status, text: text })
 
+    },
+}
+</script>
 <body>
 <div class="container">
 <?=\App\Controllers\AdminController::loadMenu();?>

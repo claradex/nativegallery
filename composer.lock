@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5d02d3389b70fa0d27b042ff4d6b096",
+    "content-hash": "a512719e60bd14a5a6c28c6f0ea14e46",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -154,6 +154,55 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.315.5"
             },
             "time": "2024-07-03T18:12:51+00:00"
+        },
+        {
+            "name": "chriskonnertz/bbcode",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chriskonnertz/bbcode.git",
+                "reference": "d3acd447ee11265d4ef38b9058cef32adcafa245"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chriskonnertz/bbcode/zipball/d3acd447ee11265d4ef38b9058cef32adcafa245",
+                "reference": "d3acd447ee11265d4ef38b9058cef32adcafa245",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ChrisKonnertz\\BBCode": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kai Mallea",
+                    "email": "kmallea@gmail.com"
+                },
+                {
+                    "name": "Chris Konnertz"
+                }
+            ],
+            "description": "A naive attempt at a BBCode 'parser' written in PHP. It uses regex and thus fails at complex, nested tags.",
+            "keywords": [
+                "bbcode"
+            ],
+            "support": {
+                "issues": "https://github.com/chriskonnertz/bbcode/issues",
+                "source": "https://github.com/chriskonnertz/bbcode/tree/master"
+            },
+            "time": "2018-06-17T13:58:51+00:00"
         },
         {
             "name": "donatj/phpuseragentparser",
