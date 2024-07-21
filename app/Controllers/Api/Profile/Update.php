@@ -27,7 +27,7 @@ class Update
                 }
 
                 if (strpos($key, 'OnMain') === false) {
-                    $dataArray[$paramKey]['value'] = htmlentities($value);
+                    $dataArray[$paramKey]['value'] = strip_tags($value, ['br']);
                 }
             }
         }
