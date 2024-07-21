@@ -22,7 +22,6 @@ use \App\Models\User;
                 <h1><?= $_GLOBAL['title'] ?></h1>
             
                 <div class="p20" style="padding:20px">
-
                     <?php
                     $myfile = fopen($_SERVER['DOCUMENT_ROOT'].$_GLOBAL['rules'], "r") or die("Unable to open file!");
                     echo fread($myfile,filesize($_SERVER['DOCUMENT_ROOT'].$_GLOBAL['rules']));

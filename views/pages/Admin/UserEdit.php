@@ -25,7 +25,7 @@ if (isset($_POST['subbtn'])) {
         $updatedJson = updateJson($currentJson, 'premoderation', $premoderation);
         $updatedJsonString = json_encode($updatedJson, JSON_PRETTY_PRINT);
 
-        if ($admin === 1 && Auth::userid() === 1) {
+        if (($admin === 1 && Auth::userid() === 1) || ($admin != 1 && Auth::userid() != 1)) {
             DB::query("UPDATE users SET status = ?, admin = ?, content = ? WHERE id = ?", [
                 $accountstatus,
                 $admin,
@@ -33,7 +33,7 @@ if (isset($_POST['subbtn'])) {
                 $userId
             ]);
             echo "Данные успешно обновлены.";
-        } else {
+        } else  {
             echo 'Не удалось обновить данные';
         }
        
