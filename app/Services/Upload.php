@@ -38,25 +38,39 @@ class Upload
         $cstrong = True;
         $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext;
         $folder = $location . $filecdn;
-        $s3 = new \Aws\S3\S3Client([
-            'region' => NGALLERY['root']['storage']['s3']['credentials']['region'],
-            'version' => NGALLERY['root']['storage']['s3']['credentials']['version'],
-            'credentials' => [
-                'key' => NGALLERY['root']['storage']['s3']['credentials']['key'],
-                'secret' => NGALLERY['root']['storage']['s3']['credentials']['secret'],
-            ],
-            'endpoint' => NGALLERY['root']['storage']['s3']['domains']['gateway'],
-        ]);
-       
-        $s3->putObject([
-            'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
-            'Key' => $location.$filecdn,
-            'SourceFile' => $tmpname
-        ]);
-        $this->type = $type;
-        $this->src = NGALLERY['root']['storage']['s3']['domains']['public'] . '/' . $location . $filecdn;
-        $this->size = self::human_filesize(filesize($tmpname));
-        $this->name = $name;
+
+        if (strtolower (NGALLERY['root']['storage']['type']) == "s3")
+        {
+            $s3 = new \Aws\S3\S3Client([
+                'region' => NGALLERY['root']['storage']['s3']['credentials']['region'],
+                'version' => NGALLERY['root']['storage']['s3']['credentials']['version'],
+                'credentials' => [
+                    'key' => NGALLERY['root']['storage']['s3']['credentials']['key'],
+                    'secret' => NGALLERY['root']['storage']['s3']['credentials']['secret'],
+                ],
+                'endpoint' => NGALLERY['root']['storage']['s3']['domains']['gateway'],
+            ]);
+           
+            $s3->putObject([
+                'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
+                'Key' => $location.$filecdn,
+                'SourceFile' => $tmpname
+            ]);
+            $this->type = $type;
+            $this->src = NGALLERY['root']['storage']['s3']['domains']['public'] . '/' . $location . $filecdn;
+            $this->size = self::human_filesize(filesize($tmpname));
+            $this->name = $name;
+        }
+        else
+        {
+            @mkdir ("{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}");
+            move_uploaded_file ($tmpname, "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$folder}");
+
+            $this->type = $type;
+            $this->src = "/uploads/{$folder}";
+            $this->size = self::human_filesize(filesize($tmpname));
+            $this->name = $name;
+        }
     }
     public function getType()
     {
