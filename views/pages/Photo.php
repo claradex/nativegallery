@@ -239,7 +239,7 @@ if ($photo->i('id') !== null) {
                                 </table>
                                 <table class="vblock coN">
                                     <?php
-                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0', array(':pid' => $id));
+                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 ORDER BY id DESC', array(':pid' => $id));
                                     foreach ($votespos as $ps) {
                                         $uservote = new User($ps['user_id']);
                                         echo ' <tr>
@@ -454,9 +454,24 @@ if ($photo->i('id') !== null) {
                 });
             });
         });
+
+        function errimg() {
+    const content = `<center>
+                        <div class="p20 s5" style="border:none; margin:0 -20px; display:none;">
+                            <b>Фото потеряно при крахе винчестера</b>
+                            <div class="sm" style="margin-top:5px">
+                                Если у вас есть это фото, пожалуйста, пришлите его на 
+                                <a href="mailto:<?=NGALLERY['root']['adminemail']?>?subject=Для восстановления фото <?=$id?>"><?=NGALLERY['root']['adminemail']?></a>
+                            </div>
+                        </div>
+                    </center>`;
+    $('#err').html(content);
+    $('#err .p20').slideDown(500);
+}
+
     </script>
     </div>
-
+    
 
 
 </html>

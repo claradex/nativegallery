@@ -48,7 +48,7 @@ class Comment {
                                  }
                                  echo '</span></div>
                                 <div class="rank">Фото: '.Photo::fetchAll($this->c['user_id']).' '.$admintype.'</div>
-                                <div class="message-text">'.htmlspecialchars($this->c['body']).'</div>
+                                <div class="message-text">'.preg_replace("~(?:[\p{M}]{1})([\p{M}])+?~uis","", htmlspecialchars($this->c['body'])).'</div>
                                 <div class="comment-votes-block">
                                     <div class="wvote" wid="'.$this->c['id'].'">
                                     <a href="#" vote="1" class="w-btn s2"><span>+</span></a>
