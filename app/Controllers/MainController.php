@@ -36,9 +36,7 @@ class MainController
     }
     public static function videoRules()
     {
-      $_GLOBAL['rules'] = '/config/videoRules.html';
-      $_GLOBAL['title'] = 'Правила видеотеки';
-       Page::set('Rules');
+       Page::set('VideoRules');
     }
     public static function update()
     {

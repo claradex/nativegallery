@@ -20,6 +20,10 @@ ngallery:
     websockets:
       messages: ""
     storage:
+
+      # type: 's3' - загрузка файлов в хранилище S3 (Amazon S3, Cloudflare, MinIO и т.д)
+      # type: 'server' - загрузка файлов в папку uploads (hardcode)
+
       type: 's3'
       s3:
         domains:

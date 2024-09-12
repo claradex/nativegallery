@@ -105,7 +105,7 @@ class Upload
                         'type' => 'none',
                     )
                 );
-            } else if (explode($type, '/')[0] === 'image') {
+            } else if (explode('/', $type)[0] === 'image') {
 
 
                 $exif = new EXIF($_FILES['image']['tmp_name']);
