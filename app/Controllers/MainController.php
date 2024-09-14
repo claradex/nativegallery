@@ -48,6 +48,11 @@ class MainController
        Page::set('Top30');
        
     }
+    public static function vehicle()
+    {
+       Page::set('Vehicle');
+       
+    }
     public static function favauthors()
     {
        Page::set('FavAuthors');

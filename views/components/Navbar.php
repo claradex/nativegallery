@@ -7,8 +7,10 @@ $user = new \App\Models\User(Auth::userid());
 
 if (NGALLERY['root']['logo'] != null) {
     $logo = NGALLERY['root']['logo'];
+    $width = '70px';
 } else {
     $logo = '/static/img/logosmall.png';
+    $width = '70px';
 }
 
 if (NGALLERY['root']['title'] != null && NGALLERY['root']['showtitle'] === true) {
@@ -119,6 +121,6 @@ if ($noncheckedimgs > 0) {
 <?php
         if (explode('/', $_SERVER['REQUEST_URI'])[1] != 'photo') { ?>
 <tr>
-    <td><a href="/" id="title"><img src="<?=$logo?>" alt="<?=$title?>"><span><?=$title?></span></a></td>
+    <td><a href="/" id="title"><img style="width: <?=$width?>;" src="<?=$logo?>" alt="<?=$title?>"><span><?=$title?></span></a></td>
 </tr>
 <?php } ?>

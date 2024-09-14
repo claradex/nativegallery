@@ -1,5 +1,7 @@
 <?php
+
 use App\Services\{Router, Auth};
+
 if (Auth::userid() > 0) {
     Router::redirect('/');
 }
@@ -8,43 +10,100 @@ if (Auth::userid() > 0) {
 
 
 <head>
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
-   
+
 </head>
-
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <body>
     <div id="backgr"></div>
     <table class="tmain">
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
-            <tr>
-                <td class="main">
-                    <?php
-                    if (NGALLERY['root']['registration']['access']['public'] === true) {  ?>
+        <style>
+            .styled-input {
+                position: relative;
+                margin: 20px 0;
+            }
+
+            .styled-input input {
+                width: 100%;
+                padding: 10px 10px 10px 0;
+                font-size: 16px;
+                border: none;
+                border-bottom: 2px solid #ccc;
+                background: transparent;
+                outline: none;
+            }
+
+            .styled-input input:focus {
+                border-bottom: 2px solid #000;
+            }
+
+            .styled-input label {
+                position: absolute;
+                top: 10px;
+                left: 0;
+                font-size: 16px;
+                color: #999;
+                pointer-events: none;
+                transition: 0.2s ease all;
+            }
+
+            .styled-input input:focus~label,
+            .styled-input input:valid~label {
+                top: -20px;
+                font-size: 12px;
+                color: #000;
+            }
+        </style>
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
+        <tr>
+            <td class="main">
+                <?php
+                if (NGALLERY['root']['registration']['access']['public'] === true) {  ?>
                     <center>
-                        <h1>Регистрация</h1>
+                        <h1><b>Регистрация</b></h1>
+                        <table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <img src="/static/img/logocube.png" style="width: 32px;" align="middle">
+                                    </td>
+                                    <td>
+                                        <b><?= NGALLERY['root']['title'] ?> — это универсальное средство для размещения своих фотографий и видеороликов, созданное на базе движка СТТС.</b><br>
+                                        Публикуйте свои самые лучшие фотографии и великолепные видео на наш портал, чтобы их увидели все желающие.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <div class="mf-center-block">
                             <form method="post" id="form" class="p20i mf-label mf-center-block-wide">
                                 <input type="hidden" name="accept" value="yes">
-
-                                <input type="text" name="username" id="username" class="mf-input-wide" style="margin-top:10px" maxlength="50" placeholder="Ваш никнейм" value="">
+                                <div class="styled-input">
+                                    <input type="text" name="username" id="username" required="">
+                                    <label for="username">Ваш никнейм</label>
+                                </div>
                                 <div style="color:#e00" id="err_username"></div>
-                                <input type="email" name="email" id="email" class="mf-input-wide" style="margin-top:10px" maxlength="50" placeholder="Ваш e-mail" value="">
+                                <div class="styled-input">
+                                    <input type="text" name="email" id="email" required="">
+                                    <label for="email">Ваш e-mail</label>
+                                </div>
                                 <div style="color:#e00" id="err_email"></div>
-                                <input type="password" name="password" id="password" class="mf-input-wide" style="margin-top:10px" maxlength="50" placeholder="Ваш пароль" value="">
+                                <div class="styled-input">
+                                    <input name="password" id="password" type="text" required="">
+                                    <label for="password">Ваш пароль</label>
+                                </div>
                                 <div style="color:#e00" id="err_password"></div>
 
+
                                 <input type="button" id="regbtn" class="mf-button-wide" style="margin-top:15px" value="Зарегистрироваться">
-                                <p>Регистрируясь на сервере <?=NGALLERY['root']['title']?>, вы <a href="/rules">принимаете его правила.</a></p>
+                                <p>Регистрируясь на сервере <?= NGALLERY['root']['title'] ?>, вы <a href="/rules">принимаете его правила.</a></p>
                             </form><br><br>
 
                             <br>
                         </div>
 
                         <script>
-
-
                             $(document).ready(function() {
                                 $('#email').on('input', function() {
                                     $('#err_email').html('');
@@ -58,11 +117,11 @@ if (Auth::userid() > 0) {
                                     var password = $('#password').val().trim();
                                     var err_password = $('#err_password').html('');
 
-                                    if (username == '') err_username.html('Поле не заполнено');
-                                    if (password == '') err_password.html('Поле не заполнено');
-                                    if (email == '') err_email.html('Поле не заполнено');
+                                    if (username == '') err_username.html('<i style="color:#e00" class="bx bx-error"></i> Поле не заполнено');
+                                    if (password == '') err_password.html('<i style="color:#e00" class="bx bx-error"></i> Поле не заполнено');
+                                    if (email == '') err_email.html('<i style="color:#e00" class="bx bx-error"></i> Поле не заполнено');
                                     else
-                                    if (!email.match(/^[0-9a-z_\-.]+@[0-9a-z_\-^.]+\.[a-z]{2,4}$/i)) err_email.html('Некорректный адрес');
+                                    if (!email.match(/^[0-9a-z_\-.]+@[0-9a-z_\-^.]+\.[a-z]{2,4}$/i)) err_email.html('<i style="color:#e00" class="bx bx-error"></i> Некорректный адрес');
 
 
                                     if (err_email.html() == '') {
@@ -75,7 +134,7 @@ if (Auth::userid() > 0) {
                                             }, function(r) {
                                                 r = JSON.parse(r);
                                                 if (r.errorcode > 0) {
-                                                    $('#err_email').html(r.errortitle);
+                                                    $('#err_email').html('<i class=`bx bx-error`></i>' + r.errortitle);
                                                     $('#regbtn').prop('disabled', false).val('Зарегистрироваться');
                                                 } else {
                                                     window.location.href = "/"
@@ -89,17 +148,17 @@ if (Auth::userid() > 0) {
                             });
                         </script>
                     </center>
-                    <?php } else { ?>
-                        <center>
-                        <h1>К сожалению, регистрация на сервере <?=NGALLERY['root']['title']?> запрещена.</h1>
+                <?php } else { ?>
+                    <center>
+                        <h1>К сожалению, регистрация на сервере <?= NGALLERY['root']['title'] ?> запрещена.</h1>
                         </center?
-                        <?php } ?>
-                </td>
-            </tr>
-            <tr>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-    </tr>
-                        
+                            <?php } ?>
+                            </td>
+        </tr>
+        <tr>
+            <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+        </tr>
+
         </tbody>
     </table>
 
