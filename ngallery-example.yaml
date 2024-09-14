@@ -1,6 +1,7 @@
 ngallery:
   root:
     title: "NativeGallery"
+    adminemail: "example@example.com"
     showtitle: false
     logo: "/static/img/logosmall.png"
     description: ""
