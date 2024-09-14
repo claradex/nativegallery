@@ -36,7 +36,7 @@ class Upload
             $fileext = pathinfo($file, PATHINFO_EXTENSION);
         }
         $cstrong = True;
-        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext;
+        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext['extension'];
         $folder = $location . $filecdn;
 
         if (strtolower (NGALLERY['root']['storage']['type']) == "s3")

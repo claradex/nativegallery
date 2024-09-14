@@ -62,6 +62,10 @@ body {
                             <i class="bx bx-news nav__icon"></i>
                             <span class="nav__name">Новости сайта</span>
                         </a>
+                        <a href="/admin?type=Entities" class="nav__link">
+                            <i class="bx bx-package nav__icon"></i>
+                            <span class="nav__name">Сущности</span>
+                        </a>
 
                        
 

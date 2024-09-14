@@ -28,6 +28,7 @@ class Routes
         Router::get('/update', 'MainController@update');
         Router::get('/top30', 'MainController@top30');
         Router::get('/photoext', 'PhotoController@photoext');
+        Router::get('/api/photo/compress', 'ApiController@photocompress');
 
 
 
@@ -47,7 +48,6 @@ class Routes
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
             Router::get('/api/subscribe', 'ApiController@subscribeuser');
-            Router::get('/api/photo/compress', 'ApiController@photocompress');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');
             Router::get('/api/photo/checkall', 'ApiController@checkallphotos');
