@@ -1,8 +1,34 @@
 <?php
+if (isset($_POST['create'])) {
+    $postData = $_POST;
 
+    $result = [];
+
+    foreach ($postData as $key => $value) {
+        if (strpos($key, 'variable') === 0) {
+            preg_match('/_(\d+)$/', $key, $matches);
+            if (isset($matches[1])) {
+                $index = $matches[1];
+    
+                if (!isset($result[$index])) {
+                    $result[$index] = [];
+                }
+                $newKey = preg_replace('/^variable/', '', $key);
+                $newKey = preg_replace('/_\d+$/', '', $newKey);
+    
+                $result[$index][$newKey] = $value;
+            }
+        }
+    }
+
+    $jsonResult = json_encode($result, JSON_PRETTY_PRINT);
+    
+    header('Content-Type: application/json');
+    echo $jsonResult;
+}
 ?>
 <h1><b>Создание сущности</b></h1>
-<form action="/admin?type=UserEdit&user_id=<?= $_GET['user_id'] ?>" method="post" name="form" id="form" enctype="multipart/form-data" style="display:inline-block; min-width:500px;">
+<form action="/admin?type=EntityCreate" method="post" name="form" id="form" enctype="multipart/form-data" style="display:inline-block; min-width:500px;">
 
     <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Название</label>
@@ -45,9 +71,10 @@
         </div>
     </div>
     <button id="addButton" type="button" class="btn btn-outline-primary">Добавить ещё</button>
+    <button id="addButton" type="submit" name="create" class="btn btn-primary">Создать сущность</button>
     </div>
     
-
+   
 </form>
 
 <script>

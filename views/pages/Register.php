@@ -134,7 +134,7 @@ if (Auth::userid() > 0) {
                                             }, function(r) {
                                                 r = JSON.parse(r);
                                                 if (r.errorcode > 0) {
-                                                    $('#err_email').html('<i class=`bx bx-error`></i>' + r.errortitle);
+                                                    $('#err_email').html('<i class="bx bx-error"></i>' + r.errortitle);
                                                     $('#regbtn').prop('disabled', false).val('Зарегистрироваться');
                                                 } else {
                                                     window.location.href = "/"
