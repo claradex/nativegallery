@@ -1,4 +1,8 @@
 <?php
+
+use \App\Services\{Auth, DB};
+use \App\Models\User;
+
 if (isset($_POST['create'])) {
     $postData = $_POST;
 
@@ -9,22 +13,22 @@ if (isset($_POST['create'])) {
             preg_match('/_(\d+)$/', $key, $matches);
             if (isset($matches[1])) {
                 $index = $matches[1];
-    
+
                 if (!isset($result[$index])) {
                     $result[$index] = [];
                 }
                 $newKey = preg_replace('/^variable/', '', $key);
                 $newKey = preg_replace('/_\d+$/', '', $newKey);
-    
+
                 $result[$index][$newKey] = $value;
             }
         }
     }
 
     $jsonResult = json_encode($result, JSON_PRETTY_PRINT);
-    
-    header('Content-Type: application/json');
-    echo $jsonResult;
+
+    DB::query('INSERT INTO entities VALUES (\'0\', :title, :createdate, :sampledata, :color)', array(':title' => $_POST['title'], ':createdate' => time(), ':sampledata' => $jsonResult, ':color' => $_POST['color']));
+    header('Location: /admin?type=Entities');
 }
 ?>
 <h1><b>Создание сущности</b></h1>
@@ -32,11 +36,11 @@ if (isset($_POST['create'])) {
 
     <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Название</label>
-        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Вагон метро">
+        <input type="text" name="title" class="form-control" id="exampleFormControlInput1" placeholder="Вагон метро">
     </div>
     <div class="mb-3">
         <label for="exampleFormControlInput1" class="form-label">Цвет</label>
-        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="#FFFFFF">
+        <input type="text" name="color" class="form-control" id="exampleFormControlInput1" placeholder="#FFFFFF">
     </div>
     <p>Вводимые переменные</p>
     <div class="alert alert-dark" role="alert">
@@ -56,14 +60,14 @@ if (isset($_POST['create'])) {
             </div>
         </div>
         <div class="col-md-3">
-        <label for="exampleFormControlInput1" class="form-label">Тип</label>
+            <label for="exampleFormControlInput1" class="form-label">Тип</label>
             <select name="variabletype_1" class="form-select" aria-label="Default select example">
                 <option value="1">Строка</option>
                 <option value="2">Число</option>
             </select>
         </div>
         <div class="col-md-3">
-        <label for="exampleFormControlInput1" class="form-label">Обязателен?</label>
+            <label for="exampleFormControlInput1" class="form-label">Обязателен?</label>
             <select name="variableimportant_1" class="form-select" aria-label="Default select example">
                 <option value="1">Да</option>
                 <option value="2">Нет</option>
@@ -73,19 +77,19 @@ if (isset($_POST['create'])) {
     <button id="addButton" type="button" class="btn btn-outline-primary">Добавить ещё</button>
     <button id="addButton" type="submit" name="create" class="btn btn-primary">Создать сущность</button>
     </div>
-    
-   
+
+
 </form>
 
 <script>
-       let count = 1; // Начальное значение для номера переменной
+    let count = 1; // Начальное значение для номера переменной
 
-document.getElementById('addButton').addEventListener('click', function() {
-    count++; // Увеличиваем номер переменной
+    document.getElementById('addButton').addEventListener('click', function() {
+        count++; // Увеличиваем номер переменной
 
-    // Создаем новый элемент
-    const newElement = 
-        `<div class="col-md-3">
+        // Создаем новый элемент
+        const newElement =
+            `<div class="col-md-3">
             <div class="mb-3">
                 <label for="exampleFormControlInput${count}" class="form-label">Название переменной</label>
                 <input name="variablename_${count}" type="text" class="form-control" id="exampleFormControlInput${count}" placeholder="#FFFFFF">
@@ -110,10 +114,9 @@ document.getElementById('addButton').addEventListener('click', function() {
                 <option value="1">Да</option>
                 <option value="2">Нет</option>
             </select>
-        </div>`
-    ;
+        </div>`;
 
-    // Добавляем новый элемент в #entityform
-    document.getElementById('entityform').insertAdjacentHTML('beforeend', newElement);
-});
+        // Добавляем новый элемент в #entityform
+        document.getElementById('entityform').insertAdjacentHTML('beforeend', newElement);
+    });
 </script>

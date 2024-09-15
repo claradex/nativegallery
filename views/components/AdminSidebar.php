@@ -66,6 +66,10 @@ body {
                             <i class="bx bx-package nav__icon"></i>
                             <span class="nav__name">Сущности</span>
                         </a>
+                        <a href="/admin?type=Models" class="nav__link">
+                            <i class="bx bx-data nav__icon"></i>
+                            <span class="nav__name">База моделей</span>
+                        </a>
 
                        
 
