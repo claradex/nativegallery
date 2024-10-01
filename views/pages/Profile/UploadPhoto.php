@@ -805,8 +805,14 @@ $user = new User(Auth::userid());
                         <option value="8">Передача в общественное достояние (Zero)</option>
                         <option value="9">Нет авторских прав (Mark)</option>
                     </select> &nbsp; &nbsp;<a href="https://creativecommons.org/licenses/?lang=ru" target="_blank" class="und sm">Информация о лицензиях</a>
-                </td>
+                </td><br>
+                
             </tr>
+            <tr>
+            <td style="padding:7px 2px">
+                                        <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
+                                    </td>
+                                    </tr>
             <style>
                 .w3-green, .w3-hover-green:hover {
     color: #fff !important;

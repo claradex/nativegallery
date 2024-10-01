@@ -269,7 +269,7 @@ if ($photo->i('id') !== null) {
                 <td id="pp-main-col">
                     <div id="pp-item-vdata">
                         <?php
-                        if ($photo->content('type') != 'none') {
+                        if ($photo->content('type') != 'none' && json_decode($photo->i('exif'), true)['type'] != 'none') {
                         ?>
                             <div class="p0" id="pp-item-exif">
                                 <h4 class="pp-item-header">Параметры съёмки</h4>

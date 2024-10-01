@@ -23,6 +23,7 @@
     <script src="/static/js/photo.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/comments.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/newcore.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/act.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <div class="progress-container fixed-top">

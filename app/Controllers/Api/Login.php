@@ -16,7 +16,7 @@ class Login
         $username = $_POST['username'];
         $password = $_POST['password'];
         if (DB::query('SELECT email FROM users WHERE email=:username OR username=:username', array(':username' => $username))) {
-            $email = DB::query('SELECT email FROM users WHERE email=:username OR username=:username', array(':username'=>$username))[0]['email'];
+            $email = DB::query('SELECT email FROM users WHERE email=:username OR username=:username', array(':username' => $username))[0]['email'];
             if (password_verify($password, DB::query('SELECT password FROM users WHERE email=:username', array(':username' => $email))[0]['password'])) {
                 $cstrong = True;
                 $token = GenerateRandomStr::gen_uuid();
@@ -30,55 +30,51 @@ class Login
                 } else {
                     $ip = $_SERVER['REMOTE_ADDR'];
                 }
-                
+
                 $parser = new UserAgentParser();
-        
+
                 $ua = $parser->parse();
                 $ua = $parser();
 
-                    $servicekey = GenerateRandomStr::gen_uuid();
-                    $url = 'http://ip-api.com/json/'.$ip;
+                $servicekey = GenerateRandomStr::gen_uuid();
+                $url = 'http://ip-api.com/json/' . $ip;
 
-                    $response = file_get_contents($url);
-                
-                    $data = json_decode($response, true);
-                    $loc = $data['country'].', '.$data['city'];
-                    DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
-                        ':token' => $token,
-                        ':user_id' => $user_id,
-                    ));
+                $response = file_get_contents($url);
 
-                    setcookie("NGALLERYSESS", $token, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
-                    setcookie("NGALLERYSERVICE", $servicekey, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
-                    setcookie("NGALLERYSESS_", '1', time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
-                    setcookie("NGALLERYID", $user_id, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
+                $data = json_decode($response, true);
+                $loc = $data['country'] . ', ' . $data['city'];
+                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
+                    ':token' => $token,
+                    ':user_id' => $user_id,
+                ));
 
-                echo Json::return (
+                setcookie("NGALLERYSESS", $token, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
+                setcookie("NGALLERYSERVICE", $servicekey, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
+                setcookie("NGALLERYSESS_", '1', time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
+                setcookie("NGALLERYID", $user_id, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
+
+                echo Json::return(
                     array(
                         'errorcode' => '0',
-                        'error' => 0
+                        'error' => 0,
+                        'token' => $token
                     )
                 );
-
-
-
             } else {
-                echo Json::return (
+                echo Json::return(
                     array(
                         'errorcode' => '1',
                         'error' => 1
                     )
                 );
             }
-
         } else {
-            echo Json::return (
+            echo Json::return(
                 array(
                     'errorcode' => '1',
                     'error' => 1
                 )
             );
-
         }
     }
 }
