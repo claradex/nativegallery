@@ -1,9 +1,23 @@
 <?php
 
 use \App\Services\{Auth, DB, Date};
-use \App\Models\User;
+use \App\Models\{User, UserCTTC};
 
-$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
+
+
+if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
+    $userprofile = new UserCTTC((int)explode('/', explode('@', $_SERVER['REQUEST_URI'])[0])[2]);
+    $usercttc = True;
+    $city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
+    $regdate = $userprofile->i('regdate');
+    $photourl = $userprofile->i('photourl');
+} else {
+    $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
+    $usercttc = False;
+    $city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
+    $photourl = $userprofile->i('photourl');
+    $regdate = Date::zmdate($userprofile->content('regdate'));
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -21,15 +35,22 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">
+                
                 <?php
-                if ((int)$userprofile->i('id') === (int)explode('/', $_SERVER['REQUEST_URI'])[2]) { ?>
+
+                if (((int)$userprofile->i('id') === (int)explode('/', $_SERVER['REQUEST_URI'])[2]) || $usercttc === True) { ?>
                 <h1><?= htmlspecialchars($userprofile->i('username')) ?><?php if ($userprofile->i('admin') === 1) { echo '<img width="32" src="/static/img/star.png">'; } ?></h1>
+                
                 <?php
+                if ($usercttc === True) {
+                    echo '<div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Профиль на transphoto.org</b><br>Пользователь не зарегистрирован на сервере '.NGALLERY['root']['title'].'. Информация может быть неполной.<br><a href="https://transphoto.org/author/'.$id.'" target="_blank">Открыть на transphoto.org</a></div>';
+                }
                 if ($userprofile->i('admin') === 1) {
                     echo 'Администратор сервера';
                 } else if ($userprofile->i('admin') === 2) {
                     echo 'Фотомодератор';
                 }
+               
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
@@ -44,18 +65,12 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 <colgroup><col width="170px">
                                 </colgroup>
                                     <col width="170px">
+                        
                                     <?php
-                                    if ($userprofile->content('location') !== null) { ?>
+                                    if ($city != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
-                                            <td><?= htmlspecialchars($userprofile->content('location')) ?></td>
-                                        </tr>
-                                    <?php } ?>
-                                    <?php
-                                    if (json_decode($userprofile->i('content'), true)['aboutlive']['value'] != null) { ?>
-                                        <tr>
-                                            <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
-                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']) ?></td>
+                                            <td><?= $city ?></td>
                                         </tr>
                                     <?php } ?>
                                     <?php
@@ -163,7 +178,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                     </colgroup>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Дата регистрации:</td>
-                                        <td><span class="sm"><?= Date::zmdate($userprofile->content('regdate')) ?></span></td>
+                                        <td><span class="sm"><?=$regdate?></span></td>
                                     </tr>
                                     <tr>
                                         <td class="sm" style="padding:3px 10px 3px 0">Был на сайте:</td>
@@ -203,7 +218,7 @@ $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
                                 <div style="margin-top:8px"><a class="dot" href="#" onclick="hideUserPhoto(); return false">закрыть</a></div>
                             </div>
 
-                            <a href="<?= $userprofile->i('photourl') ?>" onclick="showUserPhoto(); return false;"><img onerror="this.src = '/static/img/avatar.png'; this.onerror = null;" src="<?= $userprofile->i('photourl') ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
+                            <a href="<?=$photourl?>" onclick="showUserPhoto(); return false;"><img onerror="this.src = '/static/img/avatar.png'; this.onerror = null;" src="<?= $photourl ?>" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
                         </td>
                     </tr>
                 </table>

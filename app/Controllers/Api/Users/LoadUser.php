@@ -81,10 +81,6 @@ class LoadUser
                 $languages = $xpath->query('.//tr[td[contains(text(),"Владение языками:")]]/td[2]/span', $mainNode)->item(0)->textContent;
             
 
-
-               
-          
-
               
                 $response[] = [
                     'id' => $id,
