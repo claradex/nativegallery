@@ -6,7 +6,7 @@ use App\Models\{User, Vote, Comment};
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
 if ($photo->i('id') !== null) {
-    if ($photo->content('video') != 'null') {
+    if ($photo->content('video') != null) {
         $extname = 'видео';
         $extnamef = 'видеоролик';
     } else {
