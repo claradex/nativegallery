@@ -1,12 +1,20 @@
 
 
-function createModal(id, type) {
+function createModal(id, type, value) {
     if (type === 'EDIT_COMMENT') {
         var modal = `
         <div id="modal`+id+`" class="modal" style="display: block;">
   <div class="modal-content">
     <span data-modal-id="`+id+`" class="close">&times;</span>
-    <p>Some text in the Modal..</p>
+    <h3><b>Отредактировать комментарий</b></h3>
+    <div style="padding:0 11px 11px">
+                                  
+                                      
+                                        <textarea name="wtext" id="wtext">`+value+`</textarea><br>
+                                        <p id="statusSend" style="display: none;">Ошибка</p>
+                                        <div class="cmt-submit"><input type="submit" value="Отредактировать" id="sbmt">&ensp;&emsp;Ctrl + Enter
+                                        </div>
+                                </div>
   </div>
 
 </div>`;
