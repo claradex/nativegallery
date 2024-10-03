@@ -31,7 +31,7 @@ class Routes
         Router::get('/photoext', 'PhotoController@photoext');
         Router::get('/api/photo/compress', 'ApiController@photocompress');
         Router::get('/api/photo/loadrecent', 'ApiController@recentphotos');
-
+        Router::get('/api/users/load/$id', 'ApiController@loaduser');
 
 
         if (Auth::userid() > 0) {

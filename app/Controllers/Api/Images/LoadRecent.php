@@ -12,7 +12,7 @@ class LoadRecent
     {
         $response = [];
 
-        if ($_POST['serverhost'] === 'transphoto.org') {
+        if ($_POST['serverhost'] != 'transphoto.org') {
             $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
 
 
@@ -45,7 +45,7 @@ class LoadRecent
             if (curl_errno($ch)) {
                 $response = [
                    'error' => 1,
-                   'errorcode' => 'СТТС не отвечает. Попробуйте позже'
+                   'errorcode' => 'СТТС не отвечает. Попробуйте позже',
                 ];
             } else {
                 $data = json_decode($responsed, true);

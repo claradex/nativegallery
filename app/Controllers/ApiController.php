@@ -16,6 +16,7 @@ use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
+use \App\Controllers\Api\Users\LoadUser as UserLoad;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
 use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
@@ -61,6 +62,9 @@ class ApiController
     }
     public static function recentphotos() {
         return new PhotoLoadRecent();
+    }
+    public static function loaduser() {
+        return new UserLoad();
     }
     public static function photostats() {
         return new PhotoStats();
