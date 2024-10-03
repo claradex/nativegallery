@@ -8,15 +8,19 @@ use \App\Models\{User, UserCTTC};
 if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
     $userprofile = new UserCTTC((int)explode('/', explode('@', $_SERVER['REQUEST_URI'])[0])[2]);
     $usercttc = True;
-    $city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
+    $city = $userprofile->i('city');
     $regdate = $userprofile->i('regdate');
     $photourl = $userprofile->i('photourl');
+    $about = $userprofile->i('about');
+    $birthdate = $userprofile->i('birthdate');
 } else {
     $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
     $usercttc = False;
     $city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
     $photourl = $userprofile->i('photourl');
     $regdate = Date::zmdate($userprofile->content('regdate'));
+    $about = json_decode($userprofile->i('content'), true)['aboutmemo']['value'];
+    $birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['value'];
 }
 ?>
 <!DOCTYPE html>
@@ -43,7 +47,7 @@ if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
                 
                 <?php
                 if ($usercttc === True) {
-                    echo '<div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Профиль на transphoto.org</b><br>Пользователь не зарегистрирован на сервере '.NGALLERY['root']['title'].'. Информация может быть неполной.<br><a href="https://transphoto.org/author/'.$id.'" target="_blank">Открыть на transphoto.org</a></div>';
+                    echo '<div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Профиль на transphoto.org</b><br>Пользователь не зарегистрирован на сервере '.NGALLERY['root']['title'].'. Информация может быть неполной.<br><a href="https://transphoto.org/author/'.(int)explode('/', explode('@', $_SERVER['REQUEST_URI'])[0])[2].'" target="_blank">Открыть на transphoto.org</a></div>';
                 }
                 if ($userprofile->i('admin') === 1) {
                     echo 'Администратор сервера';
@@ -73,11 +77,12 @@ if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
                                             <td><?= $city ?></td>
                                         </tr>
                                     <?php } ?>
+                                    
                                     <?php
-                                    if (json_decode($userprofile->i('content'), true)['aboutbirthday']['value'] != null) { ?>
+                                    if ($birthdate != null) { ?>
                                         <tr>
                                             <td class="sm" style="padding:3px 10px 3px 0">День рождения:</td>
-                                            <td><?= htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutbirthday']['value']) ?></td>
+                                            <td><?= $birthdate ?></td>
                                         </tr>
                                     <?php } ?>
                                     </col></table>
@@ -224,17 +229,18 @@ if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
                 </table>
                             </div>
                 <?php
-                    if (json_decode($userprofile->i('content'), true)['aboutmemo']['value'] != null) { ?>
+
+                    if (($about != null) && $usercttc === False) { ?>
                     <div class="p20" style="margin-top: 8px; background-color: white !important;">
                     <h4>О себе</h4>
-                    <?php
-                    $bbcode= new ChrisKonnertz\BBCode\BBCode();
-
-                    $rendered = $bbcode->render(nl2br(htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutmemo']['value'])));
-                    echo $rendered;
+                    <?=
+                   $about
                     ?>
                     </div>
-                <?php } ?>
+                <?php } else if ($usercttc === True) { 
+                    echo $about;
+                    } ?>
+
 
                 <div style="margin-top: 25px;"><b><a href="/search?id=<?=$userprofile->i('id')?>">Найти все фотографии, сделанные этим пользователем</a></b></div>
                 

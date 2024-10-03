@@ -19,6 +19,7 @@
         "symfony/yaml": "^7.1",
         "donatj/phpuseragentparser": "^1.8",
         "php-ffmpeg/php-ffmpeg": "^1.2",
-        "chriskonnertz/bbcode": "^1.1"
+        "chriskonnertz/bbcode": "^1.1",
+        "paquettg/php-html-parser": "^2.2"
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Models;
 use \App\Services\DB;
 use DOMDocument, DOMXPath;
+use PHPHtmlParser\Dom;
 
 class UserCTTC {
 
@@ -10,13 +11,12 @@ class UserCTTC {
     function __construct(int $user_id) {
         $this->userid = $user_id;
         $url = "https://transphoto.org/author/".$user_id;
-
         $dataarray = [];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Cookie: '.NGALLERY['transphoto']['cookie']
+            'Cookie: '.NGALLERY['transphotoapi']['cookie']
         ));
         
 
@@ -30,6 +30,10 @@ class UserCTTC {
         
         $xpath = new DOMXPath($dom);
         $mainNode = $xpath->query('//td[@class="main"]')->item(0);
+
+        $dom = new Dom;
+        $dom->loadStr($html);
+        $contents = $dom->find('.p20');
 
         if ($mainNode) {
            
@@ -60,13 +64,23 @@ class UserCTTC {
 
 
 
+        
+
+
+
+
             $dataarray['username'] = $title;
+            $dataarray['realname'] = $realName;
+            $dataarray['birthdate'] = $birthDate;
             $dataarray['city'] = $city;
             $dataarray['regdate'] = $regDate;
             $dataarray['photourl'] = "https://transphoto.org/_update_temp/userphotos/".$user_id.".jpg";
+            $dataarray['about'] = $contents[1];
                         
             $this->dataarray = $dataarray;
         }
+
+       
 
 
     }
