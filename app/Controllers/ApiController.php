@@ -11,6 +11,7 @@ use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
 use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\LoadRecent as PhotoLoadRecent;
+use \App\Controllers\Api\Images\Favorite as PhotoFavorite;
 use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Edit as PhotoCommentEdit;
@@ -36,6 +37,9 @@ class ApiController
     }
     public static function photovote() {
         return new PhotoVote();
+    }
+    public static function photofavorite() {
+        return new PhotoFavorite();
     }
     public static function photocomment() {
         return new PhotoComment();

@@ -209,11 +209,14 @@ $(document).ready(function()
 	// Избранное
 	$('#favLink').click(function()
 	{
+		const url = window.location.pathname;
+		const segments = url.split('/'); 
+		const id = segments[segments.length - 1];
 		var faved = parseInt($(this).attr('faved'));
-		$(this).html(_text[faved ? 'P_ADDFAV' : 'P_DELFAV']).attr('faved', faved ? 0 : 1);
-		if (!faved && subscr_fav) $('.toggle').attr('class', 'toggle on');
+		$(this).html(faved ? 'Добавить фото в Избранное' : 'Удалить фото из Избранного').attr('faved', faved ? 0 : 1);
+		if (!faved) $('.toggle').attr('class', 'toggle on');
 
-		$.get('/api.php', { action: 'fav-photo', pid : pid }, function (r) { if (r != 0 && r != 1) alert(r); }).fail(function(jx) { if (jx.responseText != '') alert(jx.responseText); });
+		$.get('/api/photo/'+id+'/favorite', function (r) { if (r != 0 && r != 1) alert(r); }).fail(function(jx) { if (jx.responseText != '') alert(jx.responseText); });
 		return false;
 	});
 

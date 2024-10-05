@@ -46,9 +46,12 @@ class Routes
 
             Router::get('/search', 'SearchController@i');
 
+            Router::get('/fav', 'MainController@fav');
+
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
+            Router::get('/api/photo/$id/favorite', 'ApiController@photofavorite');
             Router::get('/api/subscribe', 'ApiController@subscribeuser');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
             Router::get('/api/photo/vote', 'ApiController@photovote');

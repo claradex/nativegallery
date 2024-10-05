@@ -58,6 +58,11 @@ class MainController
        Page::set('Feed');
        
     }
+    public static function fav()
+    {
+       Page::set('Fav');
+       
+    }
     public static function favauthors()
     {
        Page::set('FavAuthors');

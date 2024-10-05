@@ -21,13 +21,12 @@ if ($photo->i('id') !== null) {
         } else {
             $moderated = false;
         }
-    } else if ($photo->i('moderated') === 1)  {
+    } else if ($photo->i('moderated') === 1) {
         $moderated = true;
         if (DB::query('SELECT * FROM photos_views WHERE user_id=:uid AND photo_id=:pid ORDER BY id DESC LIMIT 1', array(':uid' => Auth::userid(), ':pid' => $id))[0]['time'] <= time() - 86400) {
             DB::query('INSERT INTO photos_views VALUES (\'0\', :uid, :pid, :time)', array(':uid' => Auth::userid(), ':pid' => $id, ':time' => time()));
         }
     }
-   
 }
 
 ?>
@@ -43,7 +42,7 @@ if ($photo->i('id') !== null) {
     <link rel="alternate" hreflang="x-default" href="<?= $_SERVER['REQUEST_URI'] ?>">
     <meta property="og:image" content="<?= $photo->i('photourl') ?>">
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
-  
+
 </head>
 
 
@@ -85,8 +84,8 @@ if ($photo->i('id') !== null) {
                 <?php
                 if ($photo->i('moderated') === 0 && $moderated === true) {
                     echo '<div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
-<center><h4 style="color:#fff; margin-bottom:3px">Это '.$extname.' пока не опубликовано</h4>
-<div>Сейчас '.$extnamef.' рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
+<center><h4 style="color:#fff; margin-bottom:3px">Это ' . $extname . ' пока не опубликовано</h4>
+<div>Сейчас ' . $extnamef . ' рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
 <b>Здесь Вы можете увидеть, как будет выглядеть страница с фотографией после публикации.</b></center></div>
 </div>';
                 }
@@ -94,7 +93,7 @@ if ($photo->i('id') !== null) {
                     echo '<div class="label-red" style="padding:10px; margin:0 -20px; color:#fff"><center>
 <h4 style="color:#fff; margin-bottom:3px">Фотография не принята к публикации</h4>
 <div></div>
-<div style="margin-top:7px">'.$photo->declineReason($photo->content('declineReason')).'</div></center>
+<div style="margin-top:7px">' . $photo->declineReason($photo->content('declineReason')) . '</div></center>
 </div>';
                 }
                 ?>
@@ -114,12 +113,12 @@ if ($photo->i('id') !== null) {
                                     <div id="ph_frame">
                                         <?php
                                         if ($photo->content('videourl') != null) { ?>
-                                        <video controls>
- <source src="<?=$photo->content('videourl')?>">
-</video>
-                                        
+                                            <video controls>
+                                                <source src="<?= $photo->content('videourl') ?>">
+                                            </video>
+
                                         <?php } else { ?>
-                                        <img onerror="errimg(); this.onerror = null;" class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
+                                            <img onerror="errimg(); this.onerror = null;" class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                         <?php
                                         }
                                         if ($photo->i('priority') === 1) { ?>
@@ -168,9 +167,9 @@ if ($photo->i('id') !== null) {
             <div style="line-height:15px; margin-bottom:10px">
                 <table class="pwrite">
                     <tr>
-                    <?php
-                    if ($photo->i('postbody') != null) { ?>
-                        <td class="nw" valign="top" align="right"><b><?= htmlspecialchars($photo->i('postbody')) ?></b></td>
+                        <?php
+                        if ($photo->i('postbody') != null) { ?>
+                            <td class="nw" valign="top" align="right"><b><?= htmlspecialchars($photo->i('postbody')) ?></b></td>
                         <?php } ?>
                     </tr>
 
@@ -179,8 +178,8 @@ if ($photo->i('id') !== null) {
         </div>
         <div>
             <?php
-            if ($photo->content('comment') != null) { ?>
-            <div style="padding-top:8px"><?= htmlspecialchars($photo->content('comment')) ?></div>
+                    if ($photo->content('comment') != null) { ?>
+                <div style="padding-top:8px"><?= htmlspecialchars($photo->content('comment')) ?></div>
             <?php } ?>
         </div><br>
         <?php
@@ -199,60 +198,76 @@ if ($photo->i('id') !== null) {
                         <div class="sm">
                             <div style="margin-bottom:10px">Лицензия: <b>BY-NC</b></div>
                             Опубликовано <b><?= Date::zmdate($photo->i('timeupload')) ?></b><br>
-                            Просмотров — <?=DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$id))[0]['COUNT(*)']?>
+                            Просмотров — <?= DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id' => $id))[0]['COUNT(*)'] ?>
                             <br><br>
-                            <a href="/photoext?id=<?=$id?>">Подробная информация</a>
+                            <a href="/photoext?id=<?= $id ?>">Подробная информация</a>
                         </div>
                     </div>
-
-                    <?php if ($photo->i('moderated') === 1) { ?>
-                    <div class="p20a" id="pp-item-vote">
-                        <h4 class="pp-item-header">Оценка</h4>
-                        <div class="sm">
-                            <img class="loader" pid="1361063" src="/img/loader.png">
-                            <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
-                            <div class="star" pid="1361063"></div>
-                            <?php
-                            if (Auth::userid() > 0) { ?>
-                                <div class="vote" pid="<?= $id ?>">
-                                    <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) {
-                                                                                echo 'voted';
-                                                                            } ?>"><span>Интересная фотография!</span></a>
-                                    <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) {
-                                                                                echo 'voted';
-                                                                            } ?>"><span>Мне не&nbsp;нравится</span></a>
-                                </div>
-                            <?php } ?>
-                            <div id="votes" class="votes">
-                                <table class="vblock pro">
-                                    <?php
-                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 ORDER BY id DESC', array(':pid' => $id));
-                                    foreach ($votespos as $ps) {
-                                        $uservote = new User($ps['user_id']);
-                                        echo ' <tr>
-                                        <td><a href="/author/' . $ps['user_id'] . '/">' . htmlspecialchars($uservote->i('username')) . '</a></td>
-                                        <td class="vv">+1</td>
-                                    </tr>';
-                                    }
-                                    ?>
-
-                                </table>
-                                <table class="vblock coN">
-                                    <?php
-                                    $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 ORDER BY id DESC', array(':pid' => $id));
-                                    foreach ($votespos as $ps) {
-                                        $uservote = new User($ps['user_id']);
-                                        echo ' <tr>
-                                        <td><a href="/author/' . $ps['user_id'] . '/">' . htmlspecialchars($uservote->i('username')) . '</a></td>
-                                        <td class="vv">-1</td>
-                                    </tr>';
-                                    }
-                                    ?>
-
-                                </table>
+                    <div class="p0" id="pp-item-tools">
+                        <h4 class="pp-item-header">Инструменты</h4>
+                        <div class="pp-item-body" style="margin:7px 5px">
+                            <div class="sm">
+                                <?php
+                                if (DB::query('SELECT user_id FROM photos_favorite WHERE photo_id=:pid AND user_id=:uid', array(':uid'=>Auth::userid(), ':pid'=>$id))) {
+                                    $fav = 1;
+                                    $textfav = 'Удалить фото из Избранного';
+                                } else {
+                                    $fav = 0;
+                                    $textfav = 'Добавить фото в Избранное';
+                                }
+                                ?>
+                                <a class="tool-link" href="#" id="favLink" faved="<?=$fav?>"><?=$textfav?></a>
                             </div>
                         </div>
                     </div>
+                    <?php if ($photo->i('moderated') === 1) { ?>
+                        <div class="p20a" id="pp-item-vote">
+                            <h4 class="pp-item-header">Оценка</h4>
+                            <div class="sm">
+                                <img class="loader" pid="1361063" src="/img/loader.png">
+                                <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
+                                <div class="star" pid="1361063"></div>
+                                <?php
+                                if (Auth::userid() > 0) { ?>
+                                    <div class="vote" pid="<?= $id ?>">
+                                        <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) {
+                                                                                    echo 'voted';
+                                                                                } ?>"><span>Интересная фотография!</span></a>
+                                        <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) {
+                                                                                    echo 'voted';
+                                                                                } ?>"><span>Мне не&nbsp;нравится</span></a>
+                                    </div>
+                                <?php } ?>
+                                <div id="votes" class="votes">
+                                    <table class="vblock pro">
+                                        <?php
+                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 ORDER BY id DESC', array(':pid' => $id));
+                                        foreach ($votespos as $ps) {
+                                            $uservote = new User($ps['user_id']);
+                                            echo ' <tr>
+                                        <td><a href="/author/' . $ps['user_id'] . '/">' . htmlspecialchars($uservote->i('username')) . '</a></td>
+                                        <td class="vv">+1</td>
+                                    </tr>';
+                                        }
+                                        ?>
+
+                                    </table>
+                                    <table class="vblock coN">
+                                        <?php
+                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 ORDER BY id DESC', array(':pid' => $id));
+                                        foreach ($votespos as $ps) {
+                                            $uservote = new User($ps['user_id']);
+                                            echo ' <tr>
+                                        <td><a href="/author/' . $ps['user_id'] . '/">' . htmlspecialchars($uservote->i('username')) . '</a></td>
+                                        <td class="vv">-1</td>
+                                    </tr>';
+                                        }
+                                        ?>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     <?php } ?>
 
 
@@ -342,44 +357,44 @@ if ($photo->i('id') !== null) {
 
                         <?php
                         if ($photo->i('moderated') === 1) {
-                        $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
+                            $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
                         ?>
-                        <div class="p0" id="pp-item-comments">
-                            <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?=count($comments)?></span></h4>
-                            <div id="posts">
-                                <?php
-                                $number = 1;
-                                foreach ($comments as $c) {
-                                    $comm = new Comment($c);
-                                    
-                                    if ($number % 2 == 0) {
-                                        $class = 's11';
-                                    } else {
-                                        $class = 's1';
-                                    }
-                                    $comm->class($class);
-                                    $number++;
-                                    $comm->i();
-                                }
-                                ?>
-                            </div>
-                            <div class="cmt-write s1">
-                                <h4 class="pp-item-header">Ваш комментарий</h4>
-                                <div style="padding:0 11px 11px">
-                                    <form action="/comment.php" method="post" id="f1">
-                                        <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
-                                        <input type="hidden" name="last_comment_rand" value="893329610">
-                                        <input type="hidden" name="id" id="id" value="<?= $id ?>">
-                                        <input type="hidden" name="subj" id="subj" value="p">
-                                        <textarea name="wtext" id="wtext"></textarea><br>
-                                        <p id="statusSend" style="display: none;">Ошибка</p>
-                                        <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
-                                        </div>
-                                    </form>
-                                </div>
+                            <div class="p0" id="pp-item-comments">
+                                <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= count($comments) ?></span></h4>
+                                <div id="posts">
+                                    <?php
+                                    $number = 1;
+                                    foreach ($comments as $c) {
+                                        $comm = new Comment($c);
 
+                                        if ($number % 2 == 0) {
+                                            $class = 's11';
+                                        } else {
+                                            $class = 's1';
+                                        }
+                                        $comm->class($class);
+                                        $number++;
+                                        $comm->i();
+                                    }
+                                    ?>
+                                </div>
+                                <div class="cmt-write s1">
+                                    <h4 class="pp-item-header">Ваш комментарий</h4>
+                                    <div style="padding:0 11px 11px">
+                                        <form action="/comment.php" method="post" id="f1">
+                                            <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
+                                            <input type="hidden" name="last_comment_rand" value="893329610">
+                                            <input type="hidden" name="id" id="id" value="<?= $id ?>">
+                                            <input type="hidden" name="subj" id="subj" value="p">
+                                            <textarea name="wtext" id="wtext"></textarea><br>
+                                            <p id="statusSend" style="display: none;">Ошибка</p>
+                                            <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
                         <?php } ?>
                 </td>
             </tr>
@@ -412,12 +427,18 @@ if ($photo->i('id') !== null) {
                     success: function(response) {
                         var jsonData = JSON.parse(response);
                         if (jsonData.errorcode == "1") {
-                            $('#statusSend').css({display: 'block', color: 'red'});
+                            $('#statusSend').css({
+                                display: 'block',
+                                color: 'red'
+                            });
                             $('#statusSend').text('Комментарий некорректен');
                             //Notify.noty('danger', 'Комментарий неккоректен');
                             //$("#result").html("<div class='alert alert-dangernew container mt-5' role='alert'>Неправильная почта или пароль!</div>");
                         } else if (jsonData.errorcode == "2") {
-                            $('#statusSend').css({display: 'block', color: 'yellow'});
+                            $('#statusSend').css({
+                                display: 'block',
+                                color: 'yellow'
+                            });
                             $('#statusSend').text('Пожалуйста, подождите...');
                             //Notify.noty('warning', 'Пожалуйста, подождите...');
                             setTimeout(function() {
@@ -425,7 +446,10 @@ if ($photo->i('id') !== null) {
                             }, 1000);
                         } else if (jsonData.errorcode == "0") {
                             $('#wtext').val('');
-                            $('#statusSend').css({display: 'block', color: 'green'});
+                            $('#statusSend').css({
+                                display: 'block',
+                                color: 'green'
+                            });
                             $('#statusSend').text('Комментарий отправлен!');
                             //Notify.noty('success', 'Комментарий отправлен!');
                             //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
@@ -456,22 +480,21 @@ if ($photo->i('id') !== null) {
         });
 
         function errimg() {
-    const content = `<center>
+            const content = `<center>
                         <div class="p20 s5" style="border:none; margin:0 -20px; display:none;">
                             <b>Фото потеряно при крахе винчестера</b>
                             <div class="sm" style="margin-top:5px">
                                 Если у вас есть это фото, пожалуйста, пришлите его на 
-                                <a href="mailto:<?=NGALLERY['root']['adminemail']?>?subject=Для восстановления фото <?=$id?>"><?=NGALLERY['root']['adminemail']?></a>
+                                <a href="mailto:<?= NGALLERY['root']['adminemail'] ?>?subject=Для восстановления фото <?= $id ?>"><?= NGALLERY['root']['adminemail'] ?></a>
                             </div>
                         </div>
                     </center>`;
-    $('#err').html(content);
-    $('#err .p20').slideDown(500);
-}
-
+            $('#err').html(content);
+            $('#err .p20').slideDown(500);
+        }
     </script>
     </div>
-    
+
 
 
 </html>

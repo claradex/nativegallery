@@ -108,7 +108,7 @@ if ($noncheckedimgs > 0) {
                             <li><a href="/lk/ticket.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-question-circle"></i></span><span class="mm-label">Мои заявки</span></a></li>
                             <li><a href="/lk/profile" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-cog"></i></span><span class="mm-label">Настройки профиля</span></a></li>
                             <li><a href="/search?id=<?=Auth::userid()?>" class="mm-item"><span class="mm-icon"><i class="far fa-sm fa-fw fa-images"></i></span><span class="mm-label">Мои фотографии</span></a></li>
-                            <li><a href="/fav.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-star"></i></span><span class="mm-label">Избранные снимки</span></a></li>
+                            <li><a href="/fav" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-star"></i></span><span class="mm-label">Избранные снимки</span></a></li>
                             <li><a href="/logout" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-sign-out-alt"></i></span><span class="mm-label">Выход</span></a></li>
                         </ul>
                     </div>
