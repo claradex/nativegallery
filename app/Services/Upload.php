@@ -63,7 +63,7 @@ class Upload
         }
         else
         {
-            @mkdir ("{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}");
+            mkdir("{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}", 0777, true);
             move_uploaded_file ($tmpname, "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$folder}");
 
             $this->type = $type;
