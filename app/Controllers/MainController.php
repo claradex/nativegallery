@@ -63,6 +63,11 @@ class MainController
        Page::set('Fav');
        
     }
+    public static function gallery()
+    {
+       Page::set('Gallery');
+       
+    }
     public static function favauthors()
     {
        Page::set('FavAuthors');

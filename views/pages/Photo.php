@@ -174,6 +174,11 @@ if ($photo->i('id') !== null) {
                     </tr>
 
                 </table>
+                <?php
+                if ($photo->i('gallery_id') != 0 || $photo->i('gallery_id') != null) {
+                    echo '<div><a href="/articles/'.$photo->i('gallery_id').'/">'.DB::query('SELECT title FROM galleries WHERE id=:id', array(':id'=>$photo->i('gallery_id')))[0]['title'].'</a></div>';
+                }
+                ?>
             </div>
         </div>
         <div>
