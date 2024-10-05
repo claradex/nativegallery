@@ -76,8 +76,8 @@ class Comment {
                                 <div class="dropdown">
                                 <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
                                  <div class="dropdown-content">'; ?>
-    <a href="#" onclick="createModal(100, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>'); return false;">Редактировать</a><br>
-    <a href="#" onclick="createModal(100, 'DELETE_COMMENT'); return false;">Удалить</a>
+    <a href="#" onclick="createModal(<?=$this->c['id']?>, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>'); return false;">Редактировать</a><br>
+    <a href="#" onclick="createModal(<?=$this->c['id']?>, 'DELETE_COMMENT'); return false;">Удалить</a>
     <?php
     echo '
   </div>

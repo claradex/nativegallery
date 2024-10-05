@@ -13,6 +13,7 @@ use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\LoadRecent as PhotoLoadRecent;
 use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
+use \App\Controllers\Api\Images\Comments\Edit as PhotoCommentEdit;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
@@ -38,6 +39,9 @@ class ApiController
     }
     public static function photocomment() {
         return new PhotoComment();
+    }
+    public static function photocommentedit() {
+        return new PhotoCommentEdit();
     }
     public static function photocommentvote() {
         return new PhotoCommentVote();
