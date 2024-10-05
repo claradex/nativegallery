@@ -89,11 +89,7 @@ if (!isset($_GET['type']) || $_GET['type'] != 'Photo') {
                 </tbody>
             </table>
         </div><br>
-        <?php
-        $entities = DB::query('SELECT * FROM entities');
-        foreach ($entities as $e) {
-        }
-        ?>
+     
 
 
     </div>

@@ -27,7 +27,7 @@ class Comment {
                                 <div><img src="'.$user->i('photourl').'" width="32" style="border-radius: 3px; margin-right: 5px;"><b><a href="/author/'.$this->c['user_id'].'/" class="message_author">'.htmlspecialchars($user->i('username')).'</a></b> &middot; 
                                 <span class="flag">';
                                 if (json_decode($user->i('content'), true)['aboutrid']['value'] != null) {
-                                    echo '<img src="https://kamenphoto.ru/img/r/'.json_decode($user->i('content'), true)['aboutrid']['value'].'.gif">';
+                                    echo '<img src="/static/img/flags/'.json_decode($user->i('content'), true)['aboutrid']['value'].'.gif">';
                                  }
                                  if (json_decode($user->i('content'), true)['aboutlive']['value'] != null) {
                                  echo ' '.htmlspecialchars(json_decode($user->i('content'), true)['aboutlive']['value']);

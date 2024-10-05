@@ -22,7 +22,7 @@ class Routes
         Router::get('/api/photo/stats', 'ApiController@photostats');
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
-        Router::get('/vehicle', 'MainController@vehicle');
+        Router::get('/vehicle/$id', 'MainController@vehicle');
         Router::get('/rules/pub', 'MainController@publicationRules');
         Router::get('/rules/photo', 'MainController@photoRules');
         Router::get('/rules/video', 'MainController@videoRules');

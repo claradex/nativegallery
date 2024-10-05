@@ -1,8 +1,18 @@
+<?php
+
+use \App\Services\{Auth, DB, Date};
+use \App\Models\Vehicle;
+
+$id = explode('/', $_SERVER['REQUEST_URI'])[2];
+$vehicle = new Vehicle($id);
+
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
 
 
 </head>
@@ -19,27 +29,13 @@
                 <table class="horlines">
                     <col width="150">
                     <col>
-                    <tr class="h21">
-                        <td class="ds nw">Город:</td>
-                        <td class="d"><b><a href="/city/30/">Пиксельск</a></b></td>
-                    </tr>
-                    <tr class="h21">
-                        <td class="ds nw">Адрес:</td>
-                        <td class="d"><b><a href="/list.php?did=66">ул. Пушкина дом Колотушкина</a></b></td>
-                    </tr>
-                    <tr class="h21">
-                        <td class="ds nw">Модель:</td>
-                        <td class="d"><b><a href="/model/887/">pepsi</b></td>
-                    </tr>
-                    <tr class="h21">
-                        <td class="ds nw">Построен:</td>
-                        <td class="d"><b>Завтра</b></td>
-                    </tr>
-                   
-                    <tr class="h21">
-                        <td class="ds nw">Текущее состояние:</td>
-                        <td class="d" style="padding-left:2px">Опустошена</td>
-                    </tr>
+                    <?php
+                    $vehiclevariables = json_decode($vehicle->getvehicle('sampledata'), true);
+                    foreach ($vehiclevariables as $vb) {
+                        echo '<tr class="h21"><td class="ds nw">'.$vb['name'].':</td><td class="d"><b>1975</b></td></tr>';
+                    }
+                    ?>
+
                    
                 </table><br>
                 

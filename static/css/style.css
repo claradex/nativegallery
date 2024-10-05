@@ -60,7 +60,7 @@ img { border:0; vertical-align:middle; }
 	font-size:35px;
 }
 
-#title img { width:54px; height:47px; margin:0 12px 0 -7px; }
+#title img { width:54px; margin:0 12px 0 -7px; }
 #title span { margin-bottom:5px; }
 
 #title-small:hover, a#title:hover { background-color:var(--theme-bg-hover-color); }
