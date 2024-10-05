@@ -26,6 +26,7 @@ class Routes
         Router::get('/rules/pub', 'MainController@publicationRules');
         Router::get('/rules/photo', 'MainController@photoRules');
         Router::get('/rules/video', 'MainController@videoRules');
+        Router::get('/feed', 'MainController@feed');
         Router::get('/update', 'MainController@update');
         Router::get('/top30', 'MainController@top30');
         Router::get('/photoext', 'PhotoController@photoext');

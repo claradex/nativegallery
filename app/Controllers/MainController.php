@@ -53,6 +53,11 @@ class MainController
        Page::set('Vehicle');
        
     }
+    public static function feed()
+    {
+       Page::set('Feed');
+       
+    }
     public static function favauthors()
     {
        Page::set('FavAuthors');
