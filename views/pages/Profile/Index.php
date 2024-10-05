@@ -5,23 +5,14 @@ use \App\Models\{User, UserCTTC};
 
 
 
-if (explode('@', $_SERVER['REQUEST_URI'])[1] === 'transphoto.org') {
-    $userprofile = new UserCTTC((int)explode('/', explode('@', $_SERVER['REQUEST_URI'])[0])[2]);
-    $usercttc = True;
-    $city = $userprofile->i('city');
-    $regdate = $userprofile->i('regdate');
-    $photourl = $userprofile->i('photourl');
-    $about = $userprofile->i('about');
-    $birthdate = $userprofile->i('birthdate');
-} else {
-    $userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
-    $usercttc = False;
-    $city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
-    $photourl = $userprofile->i('photourl');
-    $regdate = Date::zmdate($userprofile->content('regdate'));
-    $about = json_decode($userprofile->i('content'), true)['aboutmemo']['value'];
-    $birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['value'];
-}
+$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
+$usercttc = False;
+$city = htmlspecialchars(json_decode($userprofile->i('content'), true)['aboutlive']['value']);
+$photourl = $userprofile->i('photourl');
+$regdate = Date::zmdate($userprofile->content('regdate'));
+$about = json_decode($userprofile->i('content'), true)['aboutmemo']['value'];
+$birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['value'];
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
