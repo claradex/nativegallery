@@ -6,7 +6,8 @@ function createModal(id, type, value) {
               <span data-modal-id="`+id+`" class="close">&times;</span>
               <h3><b>Отредактировать комментарий</b></h3>
               <div style="padding:0 11px 11px">
-                  <textarea name="wtext" id="bodypost__commedit`+id+`">`+value+`</textarea><br>
+                  <textarea style="    width: 100%;
+    height: 200px;" name="wtext" id="bodypost__commedit`+id+`">`+value+`</textarea><br>
                   <p id="statusSend" style="display: none;">Ошибка</p>
                   <div class="cmt-submit">
                       <button type="submit" onclick="editComment('` + id + `', document.getElementById('bodypost__commedit` + id + `').value)" id="sbmt">Отредактировать</button>&ensp;&emsp;Ctrl + Enter

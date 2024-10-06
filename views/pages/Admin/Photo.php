@@ -94,7 +94,7 @@ use \App\Models\User;
       </div>
       <div class="modal-body">
        <div class="form-check">
-  <input name="decline" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason1">
+  <input name="decline'.$p['id'].'" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason1">
   <label class="form-check-label" for="declineReason1">
     Малоинформативный бред
   </label>

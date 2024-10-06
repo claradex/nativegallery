@@ -42,7 +42,8 @@ class Routes
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
             Router::get('/lk/profile', 'ProfileController@lkprofile');
-
+            Router::get('/lk/pday', 'ProfileController@photoindexhistory');
+            
             Router::get('/fav_authors', 'MainController@favauthors');
 
             Router::get('/search', 'SearchController@i');

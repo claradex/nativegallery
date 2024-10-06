@@ -47,6 +47,11 @@ ngallery:
       upload:
         allow: true
     photo:
+      uploadindex:
+        enabled: false
+        default: 5
+        acceptvalue: 1
+        declinevalue: 2
       upload:
         allow: true
         premoderation: true

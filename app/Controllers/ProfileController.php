@@ -17,6 +17,11 @@ class ProfileController
     {
        Page::set('Profile/Index');
     }
+    public static function photoindexhistory()
+    {
+       Page::set('Profile/LK/PhotoIndexHistory');
+       
+    }
     public static function upload()
     {
        Page::set('Profile/UploadPhoto');
