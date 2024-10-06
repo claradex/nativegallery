@@ -65,6 +65,7 @@ class Routes
                 Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');
                 Router::any('/api/admin/createnews', 'ApiController@admincreatenews');
                 Router::any('/api/admin/loadnews', 'ApiController@adminloadnews');
+                Router::any('/api/admin/getvehicleinputs/$id', 'ApiController@admingetvehicleinputs');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');

@@ -22,6 +22,7 @@ use \App\Controllers\Api\Users\LoadUser as UserLoad;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
 use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
+use \App\Controllers\Api\Admin\GetVehicleInputs as AdminGetVehicleInputs;
 class ApiController
 {
 
@@ -82,6 +83,9 @@ class ApiController
     }
     public static function adminloadnews() {
         return new AdminLoadNews();
+    }
+    public static function admingetvehicleinputs() {
+        return new AdminGetVehicleInputs();
     }
 
 

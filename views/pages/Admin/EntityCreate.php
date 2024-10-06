@@ -38,10 +38,11 @@ if (isset($_POST['create'])) {
         <label for="exampleFormControlInput1" class="form-label">Название</label>
         <input type="text" name="title" class="form-control" id="exampleFormControlInput1" placeholder="Вагон метро">
     </div>
-    <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">Цвет</label>
-        <input type="text" name="color" class="form-control" id="exampleFormControlInput1" placeholder="#FFFFFF">
-    </div>
+   <div class="mb-3">
+   <label for="exampleColorInput" class="form-label">Цвет</label>
+   <input name="color" type="color" class="form-control form-control-color" id="exampleColorInput" value="#563d7c" title="Choose your color">
+   </div>
+  
     <p>Вводимые переменные</p>
     <div class="alert alert-dark" role="alert">
         Добавляйте и регулируйте поля ввода, которые будут являться шаблонной формой для создания моделей к сущности.
