@@ -16,12 +16,16 @@ class Comment {
     }
     public function i() {
         $user = new User($this->c['user_id']);
+        $content = json_decode($this->c['content'], true);
         echo '<div class="'.$this->class.' comment" wid="'.$this->c['id'].'">
                                 <div style="float:right; text-align:right" class="sm">
                                     <span class="message_date">'.Date::zmdate($this->c['posted_at']).'</span><br>
                                     <a href="#" class="quoteLink dot">Цитировать</a>
                                      · 
                                      <a href="#'.$this->c['id'].'" class="cmLink dot">Ссылка</a>
+                                     ';
+                                     
+                                     echo '
                                 </div>
                                 <a name="2681468"></a><a name="last"></a>
                                 <div><img src="'.$user->i('photourl').'" width="32" style="border-radius: 3px; margin-right: 5px;"><b><a href="/author/'.$this->c['user_id'].'/" class="message_author">'.htmlspecialchars($user->i('username')).'</a></b> &middot; 
@@ -31,6 +35,9 @@ class Comment {
                                  }
                                  if (json_decode($user->i('content'), true)['aboutlive']['value'] != null) {
                                  echo ' '.htmlspecialchars(json_decode($user->i('content'), true)['aboutlive']['value']);
+                                 }
+                                 if ($content['edited'] === 'true') {
+                                    echo '<br>(отредактировано)';
                                  }
                                  if ($user->i('admin') === 1) {
                                     $admintype = ' · Администратор сервера';
