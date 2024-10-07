@@ -27,7 +27,7 @@ class Rate
             }
             if (Vote::comment(Auth::userid(), $_GET['wid']) === 1) {
                 $pos = true;
-                $neg = true;
+                $neg = false;
             } else if (Vote::comment(Auth::userid(), $_GET['wid']) === 0) {
                 $pos = false;
                 $neg = true;
