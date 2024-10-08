@@ -257,7 +257,7 @@ $user = new User(Auth::userid());
                                         <div style="padding:5px 0 10px" class="sm">Принимаемые форматы:<br>
                                             JPG, JPEG, PNG, GIF, WEBP, MP4, AVI, 3GP, MKV<br>
                                             Для наибольшей совместимости, ваше видео будет обработано в формат MP4 в кодеке H264
-                                           </div>
+                                        </div>
                                         <div id="preview"></div>
                                     </td>
                                 </tr>
@@ -488,9 +488,17 @@ $user = new User(Auth::userid());
                                                 <option value="1852">1852</option>
                                                 <option value="1851">1851</option>
                                                 <option value="1850">1850</option>
-                                            </select>&nbsp; </span>&nbsp; <span id="dateLoaded" style="position:relative; top:2px; padding:2px 6px; display:none" class="nw label-green">Установлена дата из EXIF</span><span id="dateAbsent" style="position:relative; top:2px; padding:2px 6px; display:none" class="nw label-orange">Укажите дату съёмки (нет в EXIF)</span>&nbsp; <span class="sm nw"><a href="#" class="dot" onclick="setDate(<?=(new DateTime())->format('d,m,Y');?>); return false">Сегодня</a> &middot; <a href="#" class="dot" onclick="setDate(<?=(new DateTime('yesterday'))->format('d,m,Y');?>); return false">Вчера</a> &middot; <a href="#" class="dot" onclick="setDate(0,0,0); return false">Неизвестно</a></span>
+                                            </select>&nbsp; </span>&nbsp; <span id="dateLoaded" style="position:relative; top:2px; padding:2px 6px; display:none" class="nw label-green">Установлена дата из EXIF</span><span id="dateAbsent" style="position:relative; top:2px; padding:2px 6px; display:none" class="nw label-orange">Укажите дату съёмки (нет в EXIF)</span>&nbsp; <span class="sm nw"><a href="#" class="dot" onclick="setDate(<?= (new DateTime())->format('d,m,Y'); ?>); return false">Сегодня</a> &middot; <a href="#" class="dot" onclick="setDate(<?= (new DateTime('yesterday'))->format('d,m,Y'); ?>); return false">Вчера</a> &middot; <a href="#" class="dot" onclick="setDate(0,0,0); return false">Неизвестно</a></span>
                                     </td>
                                 </tr>
+                                <tr class="lnk-gallery">
+                                    <td class="lcol">Галерея:</td>
+                                    <td style="padding-right:15px"><select name="search_gid" id="search_gid"></select></td>
+                                </tr>
+                                <tr class="lnk-gallery" style="display:none">
+                                    <td></td>
+                                    <td style="padding-right:15px"><input type="button" id="addGalleryBtn" value="Добавить"></td>
+                                </tr><br>
                             </tbody>
 
                             <tbody>
@@ -500,7 +508,48 @@ $user = new User(Auth::userid());
                             </tbody>
 
 
+                            <tbody class="p20">
+                                <tr>
+                                    <td colspan="2" id="step2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 2. <b>Укажите объект, присутствующие на медиа</b></td>
+                                </tr>
 
+                                <tr class="lnk-vehicle">
+                                    <td class="lcol">Вид сущности:</td>
+                                    <td style="padding-right:15px"><select name="search_type" id="search_type" class="s5">
+                                            <?php
+                                            $entities = DB::query('SELECT * FROM entities');
+                                            foreach ($entities as $e) {
+                                                echo ' <option value="' . $e['id'] . '" style="background-color: ' . $e['color'] . '">' . $e['title'] . '</option>';
+                                            }
+                                            ?>
+                                        </select></td>
+                                </tr>
+                                <tr class="lnk-vehicle">
+                                    <td class="lcol">ID/Название модели:</td>
+                                    <td style="padding-right:15px">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding:0; vertical-align:middle">
+                                                        <input type="text" name="search_num" id="search_num" maxlength="15" style="width:150px; height:22px" onfocus="showHint('num')" onblur="hideHint('num')"><input type="button" id="searchVehiclesByNumBtn" class="searchVehiclesBtn" style="height:22px; padding-top:0; position:relative; left:-1px" onclick="searchVehicles(0)" value="Найти в БД" disabled="">
+                                                    </td>
+                                                    <td style="padding:0; position:relative; vertical-align:top">
+                                                        <div style="border: 1px dashed rgb(255, 151, 151); color: red; background-color: rgb(255, 255, 153); padding: 2px 4px 3px; margin: 0px 5px; white-space: nowrap; position: absolute; display: none;" id="num_hint"><small>Введите название модели, или её уникальный ID на сервере <?= NGALLERY['root']['title'] ?>.</small></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+
+
+
+
+                                <tr>
+                                    <td></td>
+                                    <td class="sm" style="padding:14px 15px 21px 2px; color:#888">Совет: модель сущности не обязательно привязывать, если она не учавствует в главном лице Фотографии или Видео.</td>
+                                </tr>
+                            </tbody>
                             <tbody>
                                 <tr>
                                     <td colspan="2" style="height:10px"></td>
@@ -509,7 +558,7 @@ $user = new User(Auth::userid());
 
                             <tbody class="p20">
                                 <tr>
-                                    <td colspan="2" id="step3" class="narrow" style="font-size:20px; padding:10px 15px 7px">Шаг 2. <b>Введите подпись для медиафайла:</b></td>
+                                    <td colspan="2" id="step3" class="narrow" style="font-size:20px; padding:10px 15px 7px">Шаг 3. <b>Введите подпись для медиафайла:</b></td>
                                 </tr>
                                 <tr>
                                     <td class="lcol">Место съёмки:</td>
@@ -564,7 +613,7 @@ $user = new User(Auth::userid());
 
                             <tbody class="p20">
                                 <tr>
-                                    <td colspan="2" id="step4" class="narrow" style="font-size:20px; padding:10px 15px 0">Шаг 3. <b>Отметьте точку, с которой было сделано медиа на карте:</b></td>
+                                    <td colspan="2" id="step4" class="narrow" style="font-size:20px; padding:10px 15px 0">Шаг 4. <b>Отметьте точку, с которой было сделано медиа на карте:</b></td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -596,7 +645,7 @@ $user = new User(Auth::userid());
                                     </td>
                                 </tr>
 
-                              
+
                             </tbody>
 
 
@@ -778,7 +827,7 @@ $user = new User(Auth::userid());
         </script>
         <tbody class="p20">
             <tr>
-                <td colspan="2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 4. <b>Выберите опции загрузки:</b></td>
+                <td colspan="2" class="narrow" style="font-size:20px; padding:10px 15px 5px">Шаг 5. <b>Выберите опции загрузки:</b></td>
             </tr>
             <tr>
 
@@ -806,35 +855,106 @@ $user = new User(Auth::userid());
                         <option value="9">Нет авторских прав (Mark)</option>
                     </select> &nbsp; &nbsp;<a href="https://creativecommons.org/licenses/?lang=ru" target="_blank" class="und sm">Информация о лицензиях</a>
                 </td><br>
-                
+
             </tr>
             <tr>
-            <td style="padding:7px 2px">
-                                        <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
-                                    </td>
-                                    </tr>
-            <style>
-                .w3-green, .w3-hover-green:hover {
-    color: #fff !important;
-    background-color: #000 !important;
-}
-.w3-center {
-    text-align: center !important;
-}
-.w3-container, .w3-panel {
-    padding: 0.01em 16px;
-}
-.w3-light-grey, .w3-hover-light-grey:hover, .w3-light-gray, .w3-hover-light-gray:hover {
-    color: #000 !important;
-    background-color: #f1f1f1 !important;
-}
-.w3-container:after, .w3-container:before, .w3-panel:after, .w3-panel:before, .w3-row:after, .w3-row:before, .w3-row-padding:after, .w3-row-padding:before, .w3-cell-row:before, .w3-cell-row:after, .w3-clear:after, .w3-clear:before, .w3-bar:before, .w3-bar:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-</style>
+                <td class="lcol"></td>
+                <td style="padding:7px 2px">
+                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
+
+                </td>
+
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888">Комментирование Вашего медиа будет ограничено, однако Вы сможете добавлять к нему свои аннотации вне зависимости от настройки.</td>
+
+            </tr>
            
+            <tr>
+                <td class="lcol"></td>
+                <td style="padding:7px 2px">
+                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить оценку фотографии</label>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888">Никто не сможет оценивать Ваше медиа, однако оно не сможет продвинуться в конкурс.</td>
+
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td style="padding:7px 2px">
+                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не продвигать в общем топе</label>
+                    
+                </td>
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888">Медиа не будет отображаться в следующих топах: <br>Самые популярные за 24 часа<br>30 самых просматриваемых фото за 24 часа<br>Случайные фотографии<br>Лента фотография</td>
+
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td style="padding:7px 2px">
+                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не уведомлять подписчиков о новом медиа</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888">Ваши подписчики не получат уведомление о публикации Медиа, но они всегда смогут его увидеть из общих топов (если таковая настройка не была отключена</td>
+
+            </tr> <br>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888"><b>Вы можете всегда в любое время изменить эти настройки.</b></td>
+
+            </tr>
+            <style>
+                .w3-green,
+                .w3-hover-green:hover {
+                    color: #fff !important;
+                    background-color: #000 !important;
+                }
+
+                .w3-center {
+                    text-align: center !important;
+                }
+
+                .w3-container,
+                .w3-panel {
+                    padding: 0.01em 16px;
+                }
+
+                .w3-light-grey,
+                .w3-hover-light-grey:hover,
+                .w3-light-gray,
+                .w3-hover-light-gray:hover {
+                    color: #000 !important;
+                    background-color: #f1f1f1 !important;
+                }
+
+                .w3-container:after,
+                .w3-container:before,
+                .w3-panel:after,
+                .w3-panel:before,
+                .w3-row:after,
+                .w3-row:before,
+                .w3-row-padding:after,
+                .w3-row-padding:before,
+                .w3-cell-row:before,
+                .w3-cell-row:after,
+                .w3-clear:after,
+                .w3-clear:before,
+                .w3-bar:before,
+                .w3-bar:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+            </style>
+
             <tr>
                 <td></td>
                 <td style="padding:20px 2px 12px">
@@ -842,7 +962,7 @@ $user = new User(Auth::userid());
                     <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
                     <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
                     <div style="margin-top: 20px; max-width: 50% !important;" id="prgb" class="w3-light-grey">
-</div>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -856,7 +976,7 @@ $user = new User(Auth::userid());
     </td>
     </tr>
     <tr>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
     </tr>
     </table>
     <script>
@@ -877,7 +997,7 @@ $user = new User(Auth::userid());
                 type: "POST",
                 url: '/api/upload',
                 data: formData,
-                
+
                 xhr: function() {
                     $('#prgb').html('<div id="myBar" class="w3-container w3-green w3-center" style="width:0%">0%</div>');
                     // Добавляем спиннер и блокируем кнопку во время загрузки
@@ -889,12 +1009,12 @@ $user = new User(Auth::userid());
                             var percentComplete = parseInt(((evt.loaded / evt.total) * 100));
                             console.log(evt.total);
 
-                              
-                            
-                            var elem = document.getElementById("myBar"); 
-                            elem.style.width = percentComplete + '%'; 
-                            elem.innerHTML = percentComplete  + '%';
-    
+
+
+                            var elem = document.getElementById("myBar");
+                            elem.style.width = percentComplete + '%';
+                            elem.innerHTML = percentComplete + '%';
+
                             scrollProgressBarWidth(percentComplete);
                         }
                     }, false);
