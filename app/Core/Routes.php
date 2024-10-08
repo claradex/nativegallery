@@ -60,6 +60,7 @@ class Routes
             Router::get('/api/photo/checkall', 'ApiController@checkallphotos');
             Router::get('/api/photo/comment/rate', 'ApiController@photocommentvote');
             Router::post('/api/photo/comment/$id/edit', 'ApiController@photocommentedit');
+            Router::post('/api/photo/comment/$id/delete', 'ApiController@photocommentdelete');
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');
                 Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');

@@ -12,7 +12,7 @@ class Create
 
     private static function create($content, $id)
     {
-        DB::query('INSERT INTO photos_comments VALUES (\'0\', :userid, :postid, :postbody, :time)', array('postid' => $_POST['id'], ':postbody' => $_POST['wtext'], ':userid' => Auth::userid(), ':time' => time()));
+        DB::query('INSERT INTO photos_comments VALUES (\'0\', :userid, :postid, :postbody, :time, :content)', array('postid' => $_POST['id'], ':postbody' => $_POST['wtext'], ':userid' => Auth::userid(), ':time' => time(), ':content'=>''));
     }
     public function __construct()
     {

@@ -363,15 +363,21 @@ if ($photo->i('id') !== null) {
                         <?php
                         if ($photo->i('moderated') === 1) {
                             $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
+                            $commcount = 0;
+                            foreach ($comments as $c) {
+                                if (json_decode($c['content'], true)['deleted'] != 'true') {
+                                    $commcount++;
+                                }
+                            }
                         ?>
                             <div class="p0" id="pp-item-comments">
-                                <h4 class="pp-item-header">Комментарии<span style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= count($comments) ?></span></h4>
+                                <h4 class="pp-item-header">Комментарии<span id="commcount" style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= $commcount ?></span></h4>
                                 <div id="posts">
                                     <?php
                                     $number = 1;
                                     foreach ($comments as $c) {
                                         $comm = new Comment($c);
-
+                                        if ($comm->content('deleted') != 'true') {
                                         if ($number % 2 == 0) {
                                             $class = 's11';
                                         } else {
@@ -380,6 +386,7 @@ if ($photo->i('id') !== null) {
                                         $comm->class($class);
                                         $number++;
                                         $comm->i();
+                                        }
                                     }
                                     ?>
                                 </div>

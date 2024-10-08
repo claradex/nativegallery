@@ -13,13 +13,16 @@ class GetVehicleInputs
     public function __construct()
     {
         $id = explode('/', $_SERVER['REQUEST_URI'])[4];
-        $vehicle = DB::query('SELECT * FROM entities WHERE id=:id', array(':id'=>$id))[0];
+        $vehicle = DB::query('SELECT * FROM entities WHERE id=:id', array(':id' => $id))[0];
         $data = json_decode($vehicle['sampledata'], true);
         foreach ($data as $d) {
+            if ($d['important'] === "1") {
+                $imp = 'required';
+            }
             echo '
         <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">'.$d['name'].'</label>
-            <input type="text" name="title" class="form-control" id="exampleFormControlInput1" placeholder="Вагон метро">
+            <label for="exampleFormControlInput1" class="form-label">' . $d['name'] . '</label>
+            <input type="text" name="title" class="form-control" id="exampleFormControlInput1" placeholder="'.$d['name'].'" '.$imp.'>
         </div>';
         }
     }

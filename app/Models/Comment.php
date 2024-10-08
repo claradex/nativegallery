@@ -14,6 +14,10 @@ class Comment {
     public function class($class) {
         $this->class = $class;
     }
+    public function content($table) {
+        $content = json_decode($this->c['content'], true);
+        return $content[$table];
+    }
     public function i() {
         $user = new User($this->c['user_id']);
         $content = json_decode($this->c['content'], true);
@@ -83,7 +87,7 @@ class Comment {
                                 <div class="dropdown">
                                 <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
                                  <div class="dropdown-content">'; ?>
-    <a href="#" onclick="createModal(<?=$this->c['id']?>, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>'); return false;">Редактировать</a><br>
+    <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?=$this->c['id']?>, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>'); return false;">Редактировать</a><br>
     <a href="#" onclick="createModal(<?=$this->c['id']?>, 'DELETE_COMMENT'); return false;">Удалить</a>
     <?php
     echo '
@@ -105,6 +109,7 @@ class Comment {
                                 </div>
                             </div>';
     }
+    
 
 
 }

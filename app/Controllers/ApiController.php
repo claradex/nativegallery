@@ -15,6 +15,7 @@ use \App\Controllers\Api\Images\Favorite as PhotoFavorite;
 use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Edit as PhotoCommentEdit;
+use \App\Controllers\Api\Images\Comments\Delete as PhotoCommentDelete;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
@@ -47,6 +48,9 @@ class ApiController
     }
     public static function photocommentedit() {
         return new PhotoCommentEdit();
+    }
+    public static function photocommentdelete() {
+        return new PhotoCommentDelete();
     }
     public static function photocommentvote() {
         return new PhotoCommentVote();
