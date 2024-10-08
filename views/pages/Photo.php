@@ -371,7 +371,10 @@ if ($photo->i('id') !== null) {
                             }
                         ?>
                             <div class="p0" id="pp-item-comments">
+                                <?php
+                                if ($commcount > 0) { ?>
                                 <h4 class="pp-item-header">Комментарии<span id="commcount" style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= $commcount ?></span></h4>
+                                <?php } ?>
                                 <div id="posts">
                                     <?php
                                     $number = 1;
