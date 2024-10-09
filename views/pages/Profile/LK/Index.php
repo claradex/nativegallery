@@ -24,6 +24,7 @@ $user = new User(Auth::userid());
                 <p>
                     Количество ваших фотографий на сайте: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE user_id=:uid AND moderated=1', array(':uid'=>Auth::userid()))[0]['COUNT(*)']?></b></p>
                 <p>
+                <p>Всего фотографий в очереди на публикацию: <b><?=DB::query('SELECT COUNT(*) FROM photos WHERE moderated=0')[0]['COUNT(*)']?></b></p><br>
                 <?php
 
                 if (NGALLERY['root']['photo']['uploadindex']['enabled'] === true) { 

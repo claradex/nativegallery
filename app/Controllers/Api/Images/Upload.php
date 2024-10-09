@@ -16,6 +16,10 @@ class Upload
     static $photourl;
     static $vidpreview;
     static $videourl;
+    static $comments = 'allowed';
+    static $rating = 'allowed';
+    static $showtop = 'allowed';
+    static $subsnotify = 'allowed';
 
     public static function create($postbody, $content, $exif)
     {
@@ -30,7 +34,7 @@ class Upload
             $moderated = 1;
         }
         DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated));
-        if ($moderated === 1) {
+        if (($moderated === 1) && (self::$subsnotify != 'disabled')) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid' => Auth::userid()));
             foreach ($followers as $f) {
                 DB::query('INSERT INTO followers_notifications VALUES (\'0\', :uid, :fid, :pid, 0)', array(':uid' => Auth::userid(), ':fid' => $f['follower_id'], ':pid' => DB::query('SELECT * FROM photos ORDER BY id DESC LIMIT 1')[0]['id']));
@@ -130,6 +134,18 @@ class Upload
                 $_POST['lat'] = null;
                 $_POST['lng'] = null;
             }
+            if ($_POST['disablecomments'] === 1) {
+                self::$comments = 'disabled';
+            }
+            if ($_POST['disablerating'] === 1) {
+                self::$rating = 'disabled';
+            }
+            if ($_POST['disableshowtop'] === 1) {
+                self::$showtop = 'disabled';
+            }
+            if ($_POST['disablesubsnotify'] === 1) {
+                self::$subsnotify = 'disabled';
+            }
             if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
@@ -138,7 +154,10 @@ class Upload
                         'copyright' => $_POST['license'],
                         'comment' => $_POST['descr'],
                         'lat' => $_POST['lat'],
-                        'lng' => $_POST['lng']
+                        'lng' => $_POST['lng'],
+                        'comments' => self::$comments,
+                        'rating' => self::$rating,
+                        'showtop' => self::$showtop,
                     )
                 );
                 if (explode('/', $type)[0] === 'video') {

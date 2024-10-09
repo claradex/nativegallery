@@ -860,8 +860,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
-
+                    <input type="checkbox" name="disablecomments" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
                 </td>
 
             </tr>
@@ -874,7 +873,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить оценку фотографии</label>
+                    <input type="checkbox" name="disablerating" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить оценку фотографии</label>
 
                 </td>
             </tr>
@@ -886,7 +885,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не продвигать в общем топе</label>
+                    <input type="checkbox" name="disableshowtop" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не продвигать в общем топе</label>
                     
                 </td>
             </tr>
@@ -898,7 +897,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="nomap" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не уведомлять подписчиков о новом медиа</label>
+                    <input type="checkbox" name="disablesubsnotify" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не уведомлять подписчиков о новом медиа</label>
                 </td>
             </tr>
             <tr>
