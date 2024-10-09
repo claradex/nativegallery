@@ -493,7 +493,17 @@ $user = new User(Auth::userid());
                                 </tr>
                                 <tr class="lnk-gallery">
                                     <td class="lcol">Галерея:</td>
-                                    <td style="padding-right:15px"><select name="search_gid" id="search_gid"></select></td>
+                                    <td style="padding-right:15px">
+                                        <select name="gallery" id="search_gid">
+                                            <option value="0">Общая</option>
+                                            <?php
+                                            $galleries = DB::query('SELECT * FROM galleries');
+                                            foreach ($galleries as $g) {
+                                                echo '<option value="'.$g['id'].'">'.$g['title'].'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr class="lnk-gallery" style="display:none">
                                     <td></td>
@@ -860,7 +870,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="disablecomments" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить комментарии</label>
+                    <input type="checkbox" name="disablecomments" id="disablecomments" value="1"> <label for="disablecomments">Отключить комментарии</label>
                 </td>
 
             </tr>
@@ -873,7 +883,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="disablerating" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Отключить оценку фотографии</label>
+                    <input type="checkbox" name="disablerating" id="disablerating" value="1"> <label for="disablerating">Отключить оценку фотографии</label>
 
                 </td>
             </tr>
@@ -885,7 +895,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="disableshowtop" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не продвигать в общем топе</label>
+                    <input type="checkbox" name="disableshowtop" id="disableshowtop" value="1"> <label for="disableshowtop">Не продвигать в общем топе</label>
                     
                 </td>
             </tr>
@@ -897,7 +907,7 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
-                    <input type="checkbox" name="disablesubsnotify" id="nomap" value="1" onclick="switchMap()"> <label for="nomap">Не уведомлять подписчиков о новом медиа</label>
+                    <input type="checkbox" name="disablesubsnotify" id="disablesubsnotify" value="1"> <label for="disablesubsnotify">Не уведомлять подписчиков о новом медиа</label>
                 </td>
             </tr>
             <tr>

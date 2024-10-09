@@ -225,7 +225,7 @@ if ($photo->i('id') !== null) {
                             </div>
                         </div>
                     </div>
-                    <?php if ($photo->i('moderated') === 1 && json_decode($c['content'], true)['rating'] != 'disabled') { ?>
+                    <?php if ($photo->i('moderated') === 1 && $photo->content('rating') != 'disabled') { ?>
                         <div class="p20a" id="pp-item-vote">
                             <h4 class="pp-item-header">Оценка</h4>
                             <div class="sm">
@@ -369,7 +369,7 @@ if ($photo->i('id') !== null) {
                                     $commcount++;
                                 }
                             }
-                        if (json_decode($c['content'], true)['comments'] != 'disabled') { ?>
+                        if ($photo->content('comments') != 'disabled') { ?>
                             <div class="p0" id="pp-item-comments">
                                 <?php
                                 if ($commcount > 0) { ?>

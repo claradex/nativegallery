@@ -33,7 +33,7 @@ class Upload
         } else {
             $moderated = 1;
         }
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :gallery, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated, ':gallery'=>$_POST['gallery']));
         if (($moderated === 1) && (self::$subsnotify != 'disabled')) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid' => Auth::userid()));
             foreach ($followers as $f) {
@@ -134,16 +134,16 @@ class Upload
                 $_POST['lat'] = null;
                 $_POST['lng'] = null;
             }
-            if ($_POST['disablecomments'] === 1) {
+            if ((int)$_POST['disablecomments'] === 1) {
                 self::$comments = 'disabled';
             }
-            if ($_POST['disablerating'] === 1) {
+            if ((int)$_POST['disablerating'] === 1) {
                 self::$rating = 'disabled';
             }
-            if ($_POST['disableshowtop'] === 1) {
+            if ((int)$_POST['disableshowtop'] === 1) {
                 self::$showtop = 'disabled';
             }
-            if ($_POST['disablesubsnotify'] === 1) {
+            if ((int)$_POST['disablesubsnotify'] === 1) {
                 self::$subsnotify = 'disabled';
             }
             if ($upload->getType() !== null) {

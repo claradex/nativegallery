@@ -68,10 +68,10 @@ if (isset($_POST['subbtn'])) {
     </select>
     <div style="margin-bottom:3px; margin-top:5px">Статус аккаунта</div>
     <select name="admin" style="width:100%">
-        <option value="0" <?php if ($user->i('admin') === 0) { echo 'selected'; } ?>>Пользователь</option>
-        <option value="1" <?php if ($user->i('admin') === 1) { echo 'selected'; } if (Auth::userid() != 1) { echo 'disabled'; } ?>>Администратор</option>
-        <option value="2" <?php if ($user->i('admin') === 2) { echo 'selected'; } ?>>Фотомодератор</option>
-        <option value="3" <?php if ($user->i('admin') === 3) { echo 'selected'; } ?>>Модератор</option>
+        <option value="0" <?php if ((int)$user->i('admin') === 0) { echo 'selected'; } ?>>Пользователь</option>
+        <option value="1" <?php if ((int)$user->i('admin') === 1) { echo 'selected'; } if (Auth::userid() === 1) { echo 'disabled'; } ?>>Администратор</option>
+        <option value="2" <?php if ((int)$user->i('admin') === 2) { echo 'selected'; } ?>>Фотомодератор</option>
+        <option value="3" <?php if ((int)$user->i('admin') === 3) { echo 'selected'; } ?>>Модератор</option>
     </select>
        
     </div>
