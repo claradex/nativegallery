@@ -1,15 +1,15 @@
-function createModal(id, type, value) {
+function createModal(id, type, value, modalid) {
   if (type === 'EDIT_COMMENT') {
       var modal = `
-      <div id="modal`+id+`" class="modal" style="display: block;">
+      <div id="`+modalid+`" class="modal" style="display: block;">
           <div class="modal-content">
-              <span data-close-modal-id="`+id+`" class="close">&times;</span>
+              <span data-close-modal-id="`+modalid+`" class="close">&times;</span>
               <h3><b>Отредактировать комментарий</b></h3>
               <div style="padding:0 11px 11px">
                   <textarea style="    width: 100%;
     height: 200px;" name="wtext" id="bodypost__commedit`+id+`">`+value+`</textarea><br>
                   <div class="cmt-submit">
-                      <button type="submit" onclick="editComment('` + id + `', document.getElementById('bodypost__commedit` + id + `').value)" id="sbmt">Отредактировать</button>&ensp;&emsp;Ctrl + Enter
+                      <button type="submit" onclick="editComment('` + id + `', document.getElementById('bodypost__commedit` + id + `').value, , '`+modalid+`')" id="sbmt">Отредактировать</button>&ensp;&emsp;Ctrl + Enter
                   </div>
               </div>
           </div>
@@ -17,16 +17,16 @@ function createModal(id, type, value) {
   }
   if (type === 'DELETE_COMMENT') {
     var modal = `
-    <div id="modal`+id+`" class="modal" style="display: block;">
+    <div id="`+modalid+`" class="modal" style="display: block;">
         <div class="modal-content">
-            <span data-close-modal-id="`+id+`" class="close">&times;</span>
+            <span data-close-modal-id="`+modalid+`" class="close">&times;</span>
             <h3><b>Удалить комментарий</b></h3>
             Вы действительно хотите удалить комментарий? Действие необратимо.
             <div style="margin-top: 35px;">
                 
                 <div class="cmt-submit">
-                    <button type="submit" onclick="deleteComment('` + id + `')" id="sbmt">Удалить</button>
-                    <button data-close-modal-id="`+id+`"  type="submit" id="sbmt">Отмена</button>
+                    <button type="submit" onclick="deleteComment('` + id + `', '`+modalid+`')" id="sbmt">Удалить</button>
+                    <button data-close-modal-id="`+modalid+`"  type="submit" id="sbmt">Отмена</button>
                 </div>
             </div>
         </div>
@@ -37,21 +37,30 @@ function createModal(id, type, value) {
 
 
 document.addEventListener("click", function(event) {
+    // Получаем ID модального окна, которое нужно закрыть
     var modalId = event.target.getAttribute("data-close-modal-id");
-    document.getElementById("modal" + modalId).style.display = "none";
 
-  var modals = document.querySelectorAll(".modal");
-  modals.forEach(function(modal) {
-      if (event.target == modal) {
-          modal.style.display = "none";
-      }
-  });
+    // Удаляем модальное окно по его ID
+    if (modalId) {
+        var modalToClose = document.getElementById(modalId);
+        if (modalToClose) {
+            modalToClose.remove(); // Удаляем модальное окно из DOM
+        }
+    }
+
+    // Проверяем, кликнули ли мы на само модальное окно
+    var modals = document.querySelectorAll(".modal");
+    modals.forEach(function(modal) {
+        if (event.target === modal) {
+            modal.remove(); // Удаляем модальное окно из DOM
+        }
+    });
 });
 
 
 
 
-const editComment = (postId, body) => {
+const editComment = (postId, body, modalid) => {
   $(document).ready(function() {
           $.ajax({
               type: "POST",
@@ -64,7 +73,7 @@ const editComment = (postId, body) => {
                   if (jsonData.errorcode == "1") {
                       Notify.noty('danger', JSON.stringify(response));
                   } else {
-                      document.getElementById("modal" + postId).style.display = "none";
+                      document.getElementById(modalid).style.display = "none";
                       
                       Notify.noty('success', 'Успешно отредактировано!');
                       const url = window.location.pathname;
@@ -95,7 +104,7 @@ const editComment = (postId, body) => {
 
 
 
-const deleteComment = (postId) => {
+const deleteComment = (postId, modalid) => {
     $(document).ready(function() {
             $.ajax({
                 type: "POST",
@@ -107,7 +116,7 @@ const deleteComment = (postId) => {
                     if (jsonData.errorcode == "1") {
                         Notify.noty('danger', JSON.stringify(response));
                     } else {
-                        document.getElementById("modal" + postId).style.display = "none";
+                        document.getElementById(modalid).style.display = "none";
                         
                         Notify.noty('success', 'Успешно удалено!');
                         const url = window.location.pathname;

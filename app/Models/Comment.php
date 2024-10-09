@@ -87,8 +87,8 @@ class Comment {
                                 <div class="dropdown">
                                 <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
                                  <div class="dropdown-content">'; ?>
-    <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?=$this->c['id']?>, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>'); return false;">Редактировать</a><br>
-    <a href="#" onclick="createModal(<?=$this->c['id']?>, 'DELETE_COMMENT'); return false;">Удалить</a>
+    <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?=$this->c['id']?>, 'EDIT_COMMENT', '<?=htmlspecialchars($this->c['body'])?>', 'modaledit<?=$this->c['id']?>'); return false;">Редактировать</a><br>
+    <a href="#" onclick="createModal(<?=$this->c['id']?>, 'DELETE_COMMENT', '', 'modaldel<?=$this->c['id']?>'); return false;">Удалить</a>
     <?php
     echo '
   </div>
