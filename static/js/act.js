@@ -9,7 +9,7 @@ function createModal(id, type, value, modalid) {
                   <textarea style="    width: 100%;
     height: 200px;" name="wtext" id="bodypost__commedit`+id+`">`+value+`</textarea><br>
                   <div class="cmt-submit">
-                      <button type="submit" onclick="editComment('` + id + `', document.getElementById('bodypost__commedit` + id + `').value, , '`+modalid+`')" id="sbmt">Отредактировать</button>&ensp;&emsp;Ctrl + Enter
+                      <button type="submit" onclick="editComment('` + id + `', document.getElementById('bodypost__commedit` + id + `').value, '`+modalid+`')" id="sbmt">Отредактировать</button>&ensp;&emsp;Ctrl + Enter
                   </div>
               </div>
           </div>

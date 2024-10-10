@@ -14,7 +14,6 @@ class Compress {
         $height = $info[1];
         $aspect_ratio = $width / $height;
 
-        // Вычисляем новые размеры, сохраняя соотношение сторон
         if ($width > $height) {
             $new_width = $max_width;
             $new_height = $max_width / $aspect_ratio;
@@ -64,8 +63,20 @@ class Compress {
         $quality = 40;
         $max_width = 400;
         $max_height = 400;
+
         if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/cdn/imgcache')) {
             mkdir($_SERVER['DOCUMENT_ROOT'].'/cdn/imgcache', 0777, true);
+        }
+
+        $parsed_url = parse_url($source_url);
+        if (!isset($parsed_url['scheme'])) {
+            $local_file_path = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($source_url, '/');
+            if (file_exists($local_file_path)) {
+                $source_url = $local_file_path;
+            } else {
+                header("HTTP/1.0 404 Not Found");
+                exit;
+            }
         }
 
         $cache_filename = self::generateCacheFilename($source_url, $quality, $max_width, $max_height);
@@ -78,7 +89,7 @@ class Compress {
             if ($compressed_image_data) {
                 file_put_contents($cache_filename, $compressed_image_data);
             } else {
-                $imageData = file_get_contents($_GET['url']);
+                $imageData = file_get_contents($source_url);
 
                 $finfo = new \finfo(FILEINFO_MIME_TYPE);
                 $mimeType = $finfo->buffer($imageData);

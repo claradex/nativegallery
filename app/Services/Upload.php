@@ -46,7 +46,6 @@ class Upload
                     if (filesize($_SERVER['DOCUMENT_ROOT'].'/'.$location.$filecdn) >= 94371840) {
                         mkdir("{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}", 0777, true);
                         move_uploaded_file ($tmpname, "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$folder}");
-            
                         $this->type = $type;
                         $this->src = "/uploads/{$folder}";
                         $this->size = self::human_filesize(filesize($tmpname));
