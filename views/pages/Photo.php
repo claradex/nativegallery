@@ -175,9 +175,9 @@ if ($photo->i('id') !== null) {
 
                 </table>
                 <?php
-                if ($photo->i('gallery_id') != 0 || $photo->i('gallery_id') != null) {
-                    echo '<div><a href="/articles/'.$photo->i('gallery_id').'/">'.DB::query('SELECT title FROM galleries WHERE id=:id', array(':id'=>$photo->i('gallery_id')))[0]['title'].'</a></div>';
-                }
+                    if ($photo->i('gallery_id') != 0 || $photo->i('gallery_id') != null) {
+                        echo '<div><a href="/articles/' . $photo->i('gallery_id') . '/">' . DB::query('SELECT title FROM galleries WHERE id=:id', array(':id' => $photo->i('gallery_id')))[0]['title'] . '</a></div>';
+                    }
                 ?>
             </div>
         </div>
@@ -213,7 +213,7 @@ if ($photo->i('id') !== null) {
                         <div class="pp-item-body" style="margin:7px 5px">
                             <div class="sm">
                                 <?php
-                                if (DB::query('SELECT user_id FROM photos_favorite WHERE photo_id=:pid AND user_id=:uid', array(':uid'=>Auth::userid(), ':pid'=>$id))) {
+                                if (DB::query('SELECT user_id FROM photos_favorite WHERE photo_id=:pid AND user_id=:uid', array(':uid' => Auth::userid(), ':pid' => $id))) {
                                     $fav = 1;
                                     $textfav = 'Удалить фото из Избранного';
                                 } else {
@@ -221,7 +221,7 @@ if ($photo->i('id') !== null) {
                                     $textfav = 'Добавить фото в Избранное';
                                 }
                                 ?>
-                                <a class="tool-link" href="#" id="favLink" faved="<?=$fav?>"><?=$textfav?></a>
+                                <a class="tool-link" href="#" id="favLink" faved="<?= $fav ?>"><?= $textfav ?></a>
                             </div>
                         </div>
                     </div>
@@ -285,26 +285,99 @@ if ($photo->i('id') !== null) {
 
 
                 </td>
+                <style>
+                    .header-container {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
 
+                    .pp-item-header {
+                        margin: 0;
+                    }
+
+                    .header-container img {
+                        margin-right: 5px;
+                        height: 20px;
+                    }
+                </style>
                 <td id="pp-main-col">
                     <div id="pp-item-vdata">
                         <?php
                         if ($photo->content('type') != 'none' && json_decode($photo->i('exif'), true)['type'] != 'none') {
                         ?>
                             <div class="p0" id="pp-item-exif">
-                                <h4 class="pp-item-header">Параметры съёмки</h4>
+                                <div class="header-container">
+                                    <h4 class="pp-item-header">Параметры съёмки</h4>
+                                    <!--img src="/static/img/flex_arrow_open2.png" height="100%"-->
+                                </div>
                                 <div class="pp-item-body">
                                     <table class="linetable" id="exif">
                                         <?php
                                         $data = json_decode($photo->i('exif'), true);
-
+                                        $exif_translations = [
+                                            'FILE.FileName' => 'Имя файла',
+                                            'FILE.FileSize' => 'Размер файла',
+                                            'FILE.FileDateTime' => 'Дата и время файла',
+                                            'COMPUTED.MimeType' => 'Тип MIME',
+                                            'IFD0.Make' => 'Производитель камеры',
+                                            'IFD0.Model' => 'Модель камеры',
+                                            'IFD0.Orientation' => 'Ориентация',
+                                            'IFD0.XResolution' => 'Разрешение по X',
+                                            'IFD0.YResolution' => 'Разрешение по Y',
+                                            'IFD0.ResolutionUnit' => 'Единица разрешения',
+                                            'IFD0.Software' => 'Программное обеспечение',
+                                            'IFD0.DateTime' => 'Дата и время',
+                                            'IFD0.Artist' => 'Автор',
+                                            'IFD0.Copyright' => 'Авторские права',
+                                            'EXIF.ExposureTime' => 'Время экспозиции',
+                                            'EXIF.FNumber' => 'Диафрагма',
+                                            'EXIF.ExposureProgram' => 'Программа экспозиции',
+                                            'EXIF.ISOSpeedRatings' => 'ISO',
+                                            'EXIF.ExifVersion' => 'Версия EXIF',
+                                            'EXIF.DateTimeOriginal' => 'Дата и время оригинала',
+                                            'EXIF.DateTimeDigitized' => 'Дата и время оцифровки',
+                                            'EXIF.ShutterSpeedValue' => 'Значение выдержки',
+                                            'EXIF.ApertureValue' => 'Значение диафрагмы',
+                                            'EXIF.BrightnessValue' => 'Значение яркости',
+                                            'EXIF.ExposureBiasValue' => 'Экспокоррекция',
+                                            'EXIF.MaxApertureValue' => 'Максимальная диафрагма',
+                                            'EXIF.MeteringMode' => 'Режим экспозамера',
+                                            'EXIF.LightSource' => 'Источник света',
+                                            'EXIF.Flash' => 'Вспышка',
+                                            'EXIF.FocalLength' => 'Фокусное расстояние',
+                                            'EXIF.SubjectArea' => 'Область объекта',
+                                            'EXIF.FlashpixVersion' => 'Версия Flashpix',
+                                            'EXIF.ColorSpace' => 'Цветовое пространство',
+                                            'EXIF.PixelXDimension' => 'Размер изображения по X',
+                                            'EXIF.PixelYDimension' => 'Размер изображения по Y',
+                                            'EXIF.SensingMethod' => 'Метод съёмки',
+                                            'EXIF.SceneType' => 'Тип сцены',
+                                            'EXIF.ExposureMode' => 'Режим экспозиции',
+                                            'EXIF.WhiteBalance' => 'Баланс белого',
+                                            'EXIF.FocalLengthIn35mmFilm' => 'Фокусное расстояние для 35мм плёнки',
+                                            'EXIF.SceneCaptureType' => 'Тип съёмки',
+                                            'EXIF.GainControl' => 'Регулировка усиления',
+                                            'EXIF.Contrast' => 'Контрастность',
+                                            'EXIF.Saturation' => 'Насыщенность',
+                                            'EXIF.Sharpness' => 'Резкость',
+                                            'GPS.GPSLatitude' => 'Широта',
+                                            'GPS.GPSLongitude' => 'Долгота',
+                                            'GPS.GPSAltitude' => 'Высота',
+                                            'GPS.GPSTimeStamp' => 'Время GPS',
+                                            'GPS.GPSDateStamp' => 'Дата GPS'
+                                        ];
                                         foreach ($data as $key => $value) {
                                             if ($key === 'FILE.FileDateTime') {
                                                 $value = Date::zmdate($value);
                                             }
-                                            if (is_array($value)) {
-                                                $value = implode(', ', $value); // Convert array to a comma-separated string
+                                            if (!isset($exif_translations[$key])) {
+                                                continue;
                                             }
+                                            if (is_array($value)) {
+                                                $value = implode(', ', $value);
+                                            }
+                                            $key = $exif_translations[$key] ?? $key;
 
                                             echo '
                                             <tr class="s11 h21">
@@ -369,54 +442,58 @@ if ($photo->i('id') !== null) {
                                     $commcount++;
                                 }
                             }
-                        if ($photo->content('comments') != 'disabled') { ?>
-                            <div class="p0" id="pp-item-comments">
-                                <?php
-                                if ($commcount > 0) { ?>
-                                <h4 class="pp-item-header">Комментарии<span id="commcount" style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= $commcount ?></span></h4>
-                                <?php } ?>
-                                <div id="posts">
+                            if ($photo->content('comments') != 'disabled') { ?>
+                                <div class="p0" id="pp-item-comments">
                                     <?php
-                                    $number = 1;
-                                    foreach ($comments as $c) {
-                                        $comm = new Comment($c);
-                                        if ($comm->content('deleted') != 'true') {
-                                        if ($number % 2 == 0) {
-                                            $class = 's11';
-                                        } else {
-                                            $class = 's1';
+                                    if ($commcount > 0) { ?>
+                                        <h4 class="pp-item-header">Комментарии<span id="commcount" style="font-weight:normal"> <span style="color:#aaa">&middot;</span> <?= $commcount ?></span></h4>
+                                    <?php } ?>
+                                    <div id="posts">
+                                        <?php
+                                        $number = 1;
+                                        foreach ($comments as $c) {
+                                            $comm = new Comment($c);
+                                            if ($comm->content('deleted') != 'true') {
+                                                if ($number % 2 == 0) {
+                                                    $class = 's11';
+                                                } else {
+                                                    $class = 's1';
+                                                }
+                                                $comm->class($class);
+                                                $number++;
+                                                $comm->i();
+                                            }
                                         }
-                                        $comm->class($class);
-                                        $number++;
-                                        $comm->i();
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                                <div class="cmt-write s1">
-                                    <h4 class="pp-item-header">Ваш комментарий</h4>
-                                    <div style="padding:0 11px 11px">
-                                        <form action="/comment.php" method="post" id="f1">
-                                            <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
-                                            <input type="hidden" name="last_comment_rand" value="893329610">
-                                            <input type="hidden" name="id" id="id" value="<?= $id ?>">
-                                            <input type="hidden" name="subj" id="subj" value="p">
-                                            <textarea name="wtext" id="wtext"></textarea><br>
-                                            <p id="statusSend" style="display: none;">Ошибка</p>
-                                            <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
-                                            </div>
-                                        </form>
+                                        ?>
                                     </div>
+                                    <div class="cmt-write s1">
+                                        <h4 class="pp-item-header">Ваш комментарий</h4>
+                                        <div style="padding:0 11px 11px">
+                                            <form action="/comment.php" method="post" id="f1">
+                                                <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
+                                                <input type="hidden" name="last_comment_rand" value="893329610">
+                                                <input type="hidden" name="id" id="id" value="<?= $id ?>">
+                                                <input type="hidden" name="subj" id="subj" value="p">
+                                                <textarea name="wtext" id="wtext"></textarea><br>
+                                                <p id="statusSend" style="display: none;">Ошибка</p>
+                                                <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
+                                                </div>
+                                            </form>
+                                        </div>
 
+                                    </div>
                                 </div>
-                            </div>
-                        <?php } else { ?>
-                            <div class="p0" id="pp-item-comments">
-                               
-                              <center><p>Комментарии отключены пользователем или по усмотрению Администрации.</p></center></div>
-                              
+                            <?php } else { ?>
+                                <div class="p0" id="pp-item-comments">
 
-                        <?php } } ?>
+                                    <center>
+                                        <p>Комментарии отключены пользователем или по усмотрению Администрации.</p>
+                                    </center>
+                                </div>
+
+
+                        <?php }
+                        } ?>
                 </td>
             </tr>
             </tbody>

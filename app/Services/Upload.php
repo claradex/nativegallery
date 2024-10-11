@@ -36,11 +36,12 @@ class Upload
             $fileext = pathinfo($file, PATHINFO_EXTENSION);
         }
         $cstrong = True;
-        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext['extension'];
+        $filecdn = bin2hex(openssl_random_pseudo_bytes(64, $cstrong)) . '.' . $fileext;
         $folder = $location . $filecdn;
 
         if (strtolower (NGALLERY['root']['storage']['type']) == "s3")
         {
+
             if (NGALLERY['root']['video']['upload']['cloudflare-bypass'] === true) {
                 if ($location === 'cdn/video') {
                     if (filesize($_SERVER['DOCUMENT_ROOT'].'/'.$location.$filecdn) >= 94371840) {
@@ -76,8 +77,26 @@ class Upload
         }
         else
         {
-            mkdir("{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}", 0777, true);
-            move_uploaded_file ($tmpname, "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$folder}");
+            echo $tmpname;
+            $location = "your-location"; // Название локации
+            $folder = "{$location}/" . basename($tmpname); // Создаем корректное имя для папки с файлом
+            
+            $uploadDir = "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}"; // Полный путь к директории
+            
+            // Создание директории, если она не существует
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            // Путь к файлу, куда он должен быть перемещен
+            $destination = "{$uploadDir}/" . basename($tmpname);
+            
+            // Перемещение файла
+            if (move_uploaded_file($tmpname, $destination)) {
+                echo "Файл успешно перемещен!";
+            } else {
+                echo "Ошибка при перемещении файла.";
+            }
 
             $this->type = $type;
             $this->src = "/uploads/{$folder}";

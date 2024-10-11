@@ -37,6 +37,9 @@ $user = new User(Auth::userid());
 
             <!-- Подключение плагина Leaflet-3d-model -->
             <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js"></script>
+            <script>
+                var pub_pid = 0;
+                </script>
             <td class="main">
                 <h1>Предложить медиа на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?= $user->i('uploadindex') ?></b></p>
