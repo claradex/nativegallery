@@ -20,6 +20,7 @@ class Upload
     static $rating = 'allowed';
     static $showtop = 'allowed';
     static $subsnotify = 'allowed';
+    static $exif = 'exif';
 
     public static function create($postbody, $content, $exif)
     {
@@ -145,6 +146,9 @@ class Upload
             }
             if ((int)$_POST['disablesubsnotify'] === 1) {
                 self::$subsnotify = 'disabled';
+            }
+            if ((int)$_POST['disableexif'] === 1) {
+                self::$exif = 'disabled';
             }
             if ($upload->getType() !== null) {
                 $content = Json::return(

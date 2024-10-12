@@ -118,7 +118,7 @@ if ($photo->i('id') !== null) {
                                             </video>
 
                                         <?php } else { ?>
-                                            <img onerror="errimg(); this.onerror = null;" class="nozoom" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
+                                            <img onerror="errimg(); this.onerror = null;" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                         <?php
                                         }
                                         if ($photo->i('priority') === 1) { ?>
@@ -304,7 +304,7 @@ if ($photo->i('id') !== null) {
                 <td id="pp-main-col">
                     <div id="pp-item-vdata">
                         <?php
-                        if ($photo->content('type') != 'none' && json_decode($photo->i('exif'), true)['type'] != 'none') {
+                        if (($photo->content('type') != 'none') && (json_decode($photo->i('exif'), true)['type'] != 'none') && ($photo->content('rating') != 'disabled')) {
                         ?>
                             <div class="p0" id="pp-item-exif">
                                 <div class="header-container">
@@ -367,24 +367,122 @@ if ($photo->i('id') !== null) {
                                             'GPS.GPSTimeStamp' => 'Время GPS',
                                             'GPS.GPSDateStamp' => 'Дата GPS'
                                         ];
-                                        foreach ($data as $key => $value) {
-                                            if ($key === 'FILE.FileDateTime') {
-                                                $value = Date::zmdate($value);
-                                            }
-                                            if (!isset($exif_translations[$key])) {
-                                                continue;
-                                            }
-                                            if (is_array($value)) {
-                                                $value = implode(', ', $value);
-                                            }
-                                            $key = $exif_translations[$key] ?? $key;
+                                        function translate_flash_value($flash_value) {
+                                            $flash_descriptions = [
+                                                0 => 'Выключена',
+                                                1 => 'Включена',
+                                                2 => 'Сработала с подавлением эффекта красных глаз',
+                                                3 => 'Сработала в принудительном режиме',
+                                                4 => 'Выключена в принудительном режиме',
+                                                5 => 'Автоматический режим',
+                                                6 => 'Автоматический режим'
+                                            ];
+                                            
+                                            return $flash_descriptions[$flash_value] ?? 'Неизвестное значение вспышки';
+                                        }
 
-                                            echo '
+                            function translate_orientation($orientation)
+                            {
+                                $orientation_descriptions = [
+                                    1 => '0° (По умолчанию)',
+                                    3 => '180°',
+                                    6 => '90° по часовой стрелке',
+                                    8 => '270° по часовой стрелке'
+                                ];
+
+                                return $orientation_descriptions[$orientation] ?? 'Не определена';
+                            }
+
+
+                            function translate_resolution_unit($unit)
+                            {
+                                $resolution_units = [
+                                    1 => 'Дюймы',
+                                    2 => 'Сантиметры'
+                                ];
+
+                                return $resolution_units[$unit] ?? 'Неизвестная единица';
+                            }
+
+                            function translate_light_source($source)
+                            {
+                                $light_sources = [
+                                    0 => 'Неизвестный источник',
+                                    1 => 'Дневной свет',
+                                    2 => 'Лампа накаливания',
+                                    3 => 'Лампа флуоресцентная',
+                                    4 => 'Лампа с высоким давлением',
+                                    5 => 'Лампа с низким давлением',
+                                    255 => 'Другой источник'
+                                ];
+
+                                return $light_sources[$source] ?? 'Неизвестный источник света';
+                            }
+
+                            function translate_white_balance($balance)
+                            {
+                                $white_balances = [
+                                    0 => 'Автоматический',
+                                    1 => 'Ручной'
+                                ];
+
+                                return $white_balances[$balance] ?? 'Неизвестный баланс белого';
+                            }
+
+                            function translate_color_space($space)
+                            {
+                                $color_spaces = [
+                                    1 => 'sRGB',
+                                    2 => 'Adobe RGB',
+                                    3 => 'Uncalibrated'
+                                ];
+
+                                return $color_spaces[$space] ?? 'Неизвестное цветовое пространство';
+                            }
+
+                            function translate_scene_type($type)
+                            {
+                                $scene_types = [
+                                    0 => 'Неизвестный тип',
+                                    1 => 'Сцена с обычным светом',
+                                    2 => 'Сцена с высоким контрастом',
+                                    3 => 'Сцена с низким контрастом',
+                                    4 => 'Сцена с движением'
+                                ];
+
+                                return $scene_types[$type] ?? 'Неизвестный тип съёмки';
+                            }
+                            foreach ($data as $key => $value) {
+                                if ($key === 'EXIF.Flash') {
+                                    $value = translate_flash_value($value);
+                                } elseif ($key === 'IFD0.Orientation') {
+                                    $value = translate_orientation($value);
+                                } elseif ($key === 'IFD0.ResolutionUnit') {
+                                    $value = translate_resolution_unit($value);
+                                } elseif ($key === 'EXIF.WhiteBalance') {
+                                    $value = translate_white_balance($value);
+                                } elseif ($key === 'IFD0.LightSource') {
+                                    $value = translate_light_source((int)$value);
+                                } elseif ($key === 'EXIF.ColorSpace') {
+                                    $value = translate_color_space($value);
+                                } elseif ($key === 'EXIF.SceneType') {
+                                    $value = translate_scene_type($value);
+                                }
+                                if (!isset($exif_translations[$key])) {
+                                    continue;
+                                }
+                                if (is_array($value)) {
+                                    $value = implode(', ', $value);
+                                }
+                                $key = $exif_translations[$key] ?? $key;
+
+
+                                echo '
                                             <tr class="s11 h21">
                                                 <td class="ds nw" width="30%">' . htmlspecialchars($key) . ':</td>
                                                 <td class="ds">' . htmlspecialchars($value) . '</td>
                                             </tr>';
-                                        }
+                            }
 
 
                                         ?>

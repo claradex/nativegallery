@@ -910,14 +910,27 @@ $user = new User(Auth::userid());
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
+                    <input type="checkbox" name="disableexif" id="disableexif" value="1"> <label for="disableexif">Скрыть EXIF</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td class="sm" style="color:#888">EXIF (параметры съёмки) фотографии будет скрыт на странице.</td>
+
+            </tr>
+            <tr>
+                <td class="lcol"></td>
+                <td style="padding:7px 2px">
                     <input type="checkbox" name="disablesubsnotify" id="disablesubsnotify" value="1"> <label for="disablesubsnotify">Не уведомлять подписчиков о новом медиа</label>
                 </td>
             </tr>
+
             <tr>
                 <td class="lcol"></td>
                 <td class="sm" style="color:#888">Ваши подписчики не получат уведомление о публикации Медиа, но они всегда смогут его увидеть из общих топов (если таковая настройка не была отключена</td>
 
             </tr> <br>
+            
             <tr>
                 <td class="lcol"></td>
                 <td class="sm" style="color:#888"><b>Вы можете всегда в любое время изменить эти настройки.</b></td>

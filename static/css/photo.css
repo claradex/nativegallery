@@ -1,7 +1,7 @@
 #photobar { margin:0 -20px; position:relative; background-color:#333; }
 #underphoto_frame { display:inline-block; }
 
-#ph { max-width:70%; cursor:zoom-in; }
+#ph { max-width:50%; cursor:zoom-in; }
 #ph.v-zoom { max-height:calc(100vh - 30px); }
 #ph.zoomed { max-width:none; max-height:none; cursor:zoom-out; }
 #ph.nozoom { cursor:default; }
