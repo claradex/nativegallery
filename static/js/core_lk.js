@@ -1,7 +1,86 @@
 var gal_cid = -1;
 var new_vehicle_idx = 0;
 var modified = false;
+var cnames = {2: 'Санкт-Петербург'};
+var binds = [
+	{ value: 1, item: '<b>Основная — ТС на переднем плане</b>', label: '<b>Основная</b>' },
+{ value: 0, item: 'Второстепенная — ТС на заднем плане', label: 'Второстепенная' },
+{ value: 2, item: '<i>Условная — ТС указано предположительно</i>', label: '<i>Условная</i>' }
+];
 
+addTexts({
+	'UP_WRONGTYPE': 'Недопустимый тип файла',
+	'UP_TOOSMALL': 'Выбранное изображение слишком маленькое — его длина по широкой стороне составляет %d пикселей. Для загрузки на сайт она должна быть не менее %d пикселей',
+	'UP_OVERSIZE_JPG': 'Выбранное изображение слишком большое — сумма его ширины и высоты составляет %d пикселей. Для изображений JPEG и WEBP она не должна превышать %d пикселей',
+	'UP_OVERSIZE_PNG': 'Выбранное изображение слишком большое — его длина по широкой стороне составляет %d пикселей. Для изображений GIF и PNG она не должна превышать %d пикселей',
+	'UP_LARGEFILE_JPG': 'Этот файл слишком большой — %d КБ. Вы можете загружать файлы JPEG и WEBP объёмом до %d КБ',
+	'UP_LARGEFILE_PNG': 'Этот файл слишком большой — %d МБ. Вы можете загружать файлы GIF и PNG объёмом до %d МБ',
+	'UP_NEEDRESIZE': 'Выбранное фото превышает %d пикселей по сумме ширины и высоты,<br />поэтому оно будет уменьшено до %d пикселей по широкой стороне',
+	'UP_NULART': '(подходящей галереи нет в списке, требуется создать новую)',
+	'UP_LOADING': 'Загрузка...',
+	'UP_SEARCHING': 'Идёт поиск...',
+	'UP_OTHER': 'Новая',
+	'UP_NOFILE': 'Не выбран файл для загрузки',
+	'UP_NOCOORDS': 'Поместите маркер на карте в точку, с которой вы производили съёмку. Для установки маркера достаточно кликнуть по карте в нужном месте.',
+	'UP_NODIR': 'Укажите направление съёмки.',
+	'UP_NOCITY': 'Вы не указали город. Нажмите кнопку подтверждения для отправки фотографии, если города съемки нет в списке. Нажмите кнопку отмены, если Вы забыли указать город.',
+	'UP_OTHERCITY': 'Город съёмки не соответствует привязанным ТС и/или галереям. Продолжить отправку фото?',
+	'UP_ERROR': 'Фото не было загружено :-(',
+	'UP_SUCCESS': 'Фотография успешно загружена!',
+	'UP_NOTHING': 'К сожалению, ничего подходящего найти не удалось',
+	'UP_V_LINKED': 'Это ТС уже привязано к данному фото',
+	'UP_G_LINKED': 'Эта галерея уже привязана к данному фото',
+	'UP_CREATIVE': 'Фотография, загружаемая в «Фотозарисовки» или «Художественную галерею», не может быть привязана к ТС и другим галереям.',
+	'UP_NOLINKS': 'Фотография ни к чему не привязана',
+	'UP_NO_PRI': 'Фотография не может иметь только второстепенные привязки.',
+	'UP_NODATE': 'Вы не указали дату снимка. Нажмите «OK», если так и должно быть, или «Отмена», если хотите добавить дату съёмки',
+	'UP_NOPLACE': 'Вы не указали место съёмки. Нажмите «OK», если так и должно быть, или «Отмена», если хотите добавить место съёмки',
+	'UP_ARTICLE': 'Галерея',
+	'UP_LIMITEXC': 'Сегодня Вы уже загрузили максимально возможное число фотографий. Следующие фотографии Вы можете загрузить завтра',
+	'UP_ROUTE': 'Маршрут',
+	'UP_NOTES': 'примечание',
+	'VIEW': 'Ракурс',
+	'UP_NOVIEW': 'Не для всех ТС указан ракурс съёмки.',
+	'UP_TOQUEUE': 'Это фото не может быть опубликовано без модерации, поэтому оно было помещено в очередь',
+	'UP_BIND': 'Привязка',
+	'UP_BIND_PRI': 'Основная — ТС на переднем плане',
+	'UP_BIND_SEC': 'Второстепенная — ТС на заднем плане',
+	'UP_BIND_CON': 'Условная — ТС указано предположительно',
+	'UP_NAA_ALLOW_NO': 'Не указано разрешение на публикацию.',
+	'UP_TWOSIDE': 'Вы выбрали тип ПС (двухсторонний/односторонний),  не совпадающий с указанным для данной модели. Так и должно быть?',
+	'MAP_SEARCH': 'Адрес или объект...',
+	'MAP_NOTFOUND': 'На карте не удалось найти указанное место.',
+	'MAP_OSM': 'Карта OpenStreetMap',
+	'MAP_OSM_BW': 'Чёрно-белая карта OpenStreetMap',
+	'MAP_OSM_HOT': 'Карта Humanitarian OpenStreetMap Team',
+	'MAP_TOPO': 'Карта OpenTopoMap',
+	'MAP_WIKIMEDIA': 'Карта Wikimedia',
+	'MAP_OPNV': 'Карта ÖPNVKarte',
+	'MAP_OPENPTMAP': 'Общественный транспорт от OpenPtMap',
+	'MAP_RAILWAY': 'Железная дорога от OpenRailwayMap',
+	'MAP_BING': 'Спутник Bing',
+	'MAP_YANDEX': 'Карта Яндекс',
+	'MAP_YANDSAT': 'Спутник Яндекс'
+});
+
+var views = {
+	0: '<span class="s5">&nbsp;Не указан&nbsp;</span>',
+1: 'Спереди-справа (двери)',
+2: 'Спереди-слева (окна)',
+3: 'Сзади-справа (двери)',
+4: 'Сзади-слева (окна)',
+5: 'Вид строго спереди',
+6: 'Правый борт',
+7: 'Вид строго сзади',
+8: 'Левый борт',
+9: 'Салон, вид вперёд',
+10: 'Салон, вид назад',
+11: 'Кабина',
+12: 'Заводская табличка',
+13: 'Отдельные элементы ТС',
+14: 'Не определяется (двухстороннее ТС)',
+20: 'Вид сверху',
+40: 'Вид снизу'};
 
 $(document).ready(function()
 {
@@ -42,29 +121,21 @@ $(document).ready(function()
 		var html = '<tbody data-nid="' + nid + '" data-vid="' + vid + '" data-twoside="' + $(this).data('twoside') + '" class="s' + $(this).data('state') + '">\n';
 
 		html += '<tr>\n';
-		html += '<td style="padding:3px 10px 5px"><input type="hidden" name="nids[]" value="' + nid + '"><input type="hidden" name="cids[]" value="' + cid + '"><a href="' + (nid > 0 ? '/vehicle/' + vid + '/#n' + nid : '/lk/vehicles.php?action=edit&amp;vid=' + (-nid)) + '" target="_blank" class="num pcnt">' + $('.num', this).html() + '</a></td>\n';
+		html += '<td style="padding:3px 10px 5px"><input type="hidden" name="nids[]" value="' + nid + '"><input type="hidden" name="cids[]" value="' + cid + '"><a href="' + (nid > 0 ? '/vehicle/' + vid : '/lk/vehicles.php?action=edit&amp;vid=' + (-nid)) + '" target="_blank" class="num pcnt">' + $('.num', this).html() + '</a></td>\n';
 		html += '<td style="padding:3px 10px 6px">' + $('.mname', this).html() + '</td>\n';
 		html += '<td style="padding:3px 0 6px 10px; color:#777" class="r">' + _text['UP_ROUTE'] + ':</td>\n';
 		html += '<td style="padding:3px 7px" class="nw"><input type="text" class="route" name="route[' + nid + ']" style="width:40px; font-weight:bold; text-align:center" maxlength="7" value="">, <input type="text" class="notes" name="notes[' + nid + ']" style="width:170px" maxlength="100" value="" placeholder="' + _text['UP_NOTES'] + '"></td>\n';
 		html += '<td class="r"><a href="#" class="delLink" style="font-size:16px">&times;</a></td>\n';
 		html += '</tr>\n';
 
-		html += '<tr>\n';
-		html += '<td style="padding:0 12px 7px" colspan="2"><a href="/city/' + cid + '/" target="_blank">' + cname + '</a></td>\n';
-		html += '<td style="padding:0 0 7px; color:#777" class="r">' + _text['VIEW'] + ':</td>\n';
-		html += '<td style="padding:0 7px 7px" colspan="2"><input type="hidden" class="view" name="view[' + nid + ']" value="0"><a href="#" class="view_link dot">' + views[0] + '</a></td>\n';
-		html += '</tr>\n';
+		
 
-		html += '<tr>\n';
-		html += '<td colspan="2"></td>\n';
-		html += '<td style="padding:0 0 7px; color:#777" class="r">' + _text['UP_BIND'] + ':</td>\n';
-		html += '<td style="padding:0 7px 7px" colspan="2"><input type="hidden" name="pri[' + nid + ']" class="pri-value" value="1"><a class="pri-label dot" href="#">' + binds[0].label + '</a></td>\n';
-		html += '</tr>\n';
+	
 
 		html += '</tbody>\n';
 
 		var row = $(html);
-		$('#conn_veh').append(row).show().tablesort('recountRows');
+		$('#conn_veh').append(row).show();
 		$('.pri-label', row).selector2(binds);
 
 		$('.no-links').hide();
@@ -84,6 +155,11 @@ $(document).ready(function()
 
 		setTimeout(function() { $('#conn_veh tbody[data-nid="' + nid + '"] .view_link').click(); }, 100);
 	});
+	$('#vlist').on('mouseenter mouseleave', '#add_new_vehicle', function()
+	{
+		var state = parseInt($(this).data('state'));
+		$(this).toggleClass('s' + state + ' s' + (state+10));
+	})
 
 
 	
@@ -225,18 +301,29 @@ function searchVehicles(by_gos)
 	$('#search_cid, #search_type, #search_num, #search_gos').prop('disabled', true);
 	$('#vlist').html('<div class="nw" style="padding:6px 10px">' + _text['UP_SEARCHING'] + '</div>').show();
 
-	var data = { cid: $('#search_cid').val(), type: $('#search_type').val(), pub_pid: pub_pid };
+	var data = { cid: $('#search_cid').val(), type: $('#search_type').val() };
 	if (!by_gos)
 		 data.num = $('#search_num').val().trim();
 	else data.gos = $('#search_gos').val().trim();
 
-	$.get('/api.php?action=upload-search-vehicles', data, function (r)
+	$.get('/api/vehicles/load', data, function (r)
 	{
 		$('#vlist').html(r);
 		$('#search_cid, #search_type, #search_num, #search_gos').prop('disabled', false);
 	});
     return false;
 }
+
+document.onclick = function(e)
+{
+	e = e || window.event;
+	E = e.target || e.srcElement;
+	if (E.id != 'phint' && E.parentNode.id != 'phint' && E != _getID('mform').place) $('#phint').slideUp();
+
+	if (E.className != 'searchVehiclesBtn' && E.id != 'vlist_table' && E.className != 'num' && $('#vlist').css('display') == 'block') $('#vlist').hide().html('');
+
+	if ($(E).closest('#views-selector').length == 0) $('#views-selector').hide();
+};
 
 
 
@@ -300,7 +387,6 @@ function showDefaultCity()
 			keys = Object.keys(cnames);
 			$('#main-cid').val(keys[0]);
 			$('#main-cname').val(cnames[keys[0]]);
-			selectCity(keys[0]);
 		}
 	}
 }

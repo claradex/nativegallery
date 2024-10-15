@@ -13,7 +13,6 @@ class Vote
             if ($type < 0) {
                 $type = -1;
             }
-
             return $type;
         } else {
             return -1;

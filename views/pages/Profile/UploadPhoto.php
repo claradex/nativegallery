@@ -20,6 +20,8 @@ $user = new User(Auth::userid());
     <table class="tmain">
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
             <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
             <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
@@ -39,7 +41,7 @@ $user = new User(Auth::userid());
             <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js"></script>
             <script>
                 var pub_pid = 0;
-                </script>
+            </script>
             <td class="main">
                 <h1>Предложить медиа на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?= $user->i('uploadindex') ?></b></p>
@@ -261,9 +263,124 @@ $user = new User(Auth::userid());
                                             JPG, JPEG, PNG, GIF, WEBP, MP4, AVI, 3GP, MKV<br>
                                             Для наибольшей совместимости, ваше видео будет обработано в формат MP4 в кодеке H264
                                         </div>
-                                        <div id="preview"></div>
+
                                     </td>
                                 </tr>
+
+
+                                <tr id="tableFaces" style="display: none;">
+
+
+                                    <td></td>
+                                    <td style="padding:2px 15px 5px 2px">
+                                        <div id="faceNotify">
+
+                                        </div>
+
+
+                                    </td>
+                                </tr>
+
+
+                                <tr id="tableFaces2" style="display: none;">
+
+
+                                    <td></td>
+                                    <td style="padding:2px 15px 5px 2px">
+                                        <br>
+                                        <div id="facesCanvas"></div>
+                                        <br><br>
+                                        <div id="inputFields"></div>
+
+
+
+                                    </td>
+                                </tr>
+
+                               
+
+
+
+
+
+
+
+
+
+                                <script>
+                                    const imageUpload = document.getElementById('image');
+
+                                    const inputFieldsContainer = document.getElementById('inputFields');
+
+                                    let model;
+
+                                    async function loadModel() {
+                                        model = await blazeface.load();
+                                        console.log("BlazeFace model loaded");
+                                    }
+
+                                    async function detectFaces(image) {
+                                        const predictions = await model.estimateFaces(image, false);
+                                        return predictions;
+                                    }
+
+
+                                    loadModel();
+
+                                    imageUpload.addEventListener('change', async () => {
+
+                                        const file = imageUpload.files[0];
+                                        const img = new Image();
+                                        img.src = URL.createObjectURL(file);
+                                        img.onload = async () => {
+
+
+                                            inputFieldsContainer.innerHTML = '';
+                                            const predictions = await detectFaces(img);
+
+                                            if (predictions.length > 0) {
+                                                const facesTable = document.getElementById('tableFaces');
+                                                const facesTable2 = document.getElementById('tableFaces2');
+                                                if (facesTable) {
+                                                    facesTable.removeAttribute('style');
+                                                }
+                                                if (facesTable2) {
+                                                    facesTable2.removeAttribute('style');
+                                                }
+
+                                                $('#faceNotify').html(' <div style="float:left; border:solid 1px #8C4800; padding:6px 10px 7px; margin-bottom:13px; background-color:#FADD90"><b>Обнаружены лица на фотографии</b><br>Будьте внимательны, фотография будет отклонена, если: <br>· Она нацелена на травлю, буллинг<br>· Ведёт в заблуждение пользователей<br>· Содержит в себе оскорбления<br><br><b>В случае намеренной публикации фотографий, нарушающих правила портала,<br> администрация оставляет за собой право в выдачи ограничений<br> вплоть до полной блокировки аккаунта. Спасибо за понимание</b></div>');
+                                                $('#facesCanvas').html('<canvas style="width: 500px;" id="canvas"></canvas>');
+                                                const canvas = document.getElementById('canvas');
+                                                const ctx = canvas.getContext('2d');
+                                                canvas.width = img.width;
+                                                canvas.height = img.height;
+                                                ctx.drawImage(img, 0, 0);
+                                                predictions.forEach((prediction, index) => {
+                                                    const [x, y, width, height] = prediction.topLeft.concat(prediction.bottomRight).flat();
+
+                                                    ctx.beginPath();
+                                                    ctx.rect(x, y, width - x, height - y);
+                                                    ctx.lineWidth = 3;
+                                                    ctx.strokeStyle = 'white';
+                                                    ctx.stroke();
+
+                                                    ctx.fillStyle = 'white';
+                                                    ctx.font = '16px Arial';
+                                                    ctx.fillText(`Лицо ${index + 1}`, x, y > 10 ? y - 10 : 10);
+                                                    const inputField = document.createElement('input');
+                                                    inputField.type = 'text';
+                                                    inputField.name = `facename_${index + 1}`; // Добавляем динамический name
+                                                    inputField.placeholder = `Имя участника №${index + 1}`;
+                                                    inputFieldsContainer.appendChild(inputField);
+                                                    inputFieldsContainer.appendChild(document.createElement('br'));
+                                                });
+                                            } else {
+                                                $('#faceNotify').html('');
+                                                $('#facesCanvas').html('');
+                                            }
+                                        };
+                                    });
+                                </script>
                                 <tr>
                                     <td class="lcol">Дата съёмки:</td>
                                     <td style="padding-bottom:12px">
@@ -502,7 +619,7 @@ $user = new User(Auth::userid());
                                             <?php
                                             $galleries = DB::query('SELECT * FROM galleries');
                                             foreach ($galleries as $g) {
-                                                echo '<option value="'.$g['id'].'">'.$g['title'].'</option>';
+                                                echo '<option value="' . $g['id'] . '">' . $g['title'] . '</option>';
                                             }
                                             ?>
                                         </select>
@@ -544,7 +661,7 @@ $user = new User(Auth::userid());
                                             <tbody>
                                                 <tr>
                                                     <td style="padding:0; vertical-align:middle">
-                                                        <input type="text" name="search_num" id="search_num" maxlength="15" style="width:150px; height:22px" onfocus="showHint('num')" onblur="hideHint('num')"><input type="button" id="searchVehiclesByNumBtn" class="searchVehiclesBtn" style="height:22px; padding-top:0; position:relative; left:-1px" onclick="searchVehicles(0)" value="Найти в БД" disabled="">
+                                                        <input type="text" name="search_num" id="search_num" maxlength="15" style="width:150px; height:22px" onfocus="showHint('num')" onblur="hideHint('num')"><input type="button" id="searchVehiclesByNumBtn" class="searchVehiclesBtn" style="height:22px; padding-top:0; position:relative; left:-1px" onclick="searchVehicles(0)" value="Найти в БД">
                                                     </td>
                                                     <td style="padding:0; position:relative; vertical-align:top">
                                                         <div style="border: 1px dashed rgb(255, 151, 151); color: red; background-color: rgb(255, 255, 153); padding: 2px 4px 3px; margin: 0px 5px; white-space: nowrap; position: absolute; display: none;" id="num_hint"><small>Введите название модели, или её уникальный ID на сервере <?= NGALLERY['root']['title'] ?>.</small></div>
@@ -552,8 +669,141 @@ $user = new User(Auth::userid());
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <div style="position:relative; z-index:2000; padding-top:4px"><div id="vlist" class="shadow"></div></div>
                                     </td>
                                 </tr>
+                                <tr>
+		<td style="padding-top:15px; width:200px" class="lcol">Привязка:</td>
+		<td style="width:90%; padding:13px 15px 8px 2px">
+			<div id="views-selector" style="position:absolute; z-index:2000; padding:7px; display:none" class="p20 shadow">
+				<table id="views">
+	<tbody><tr>
+		<td colspan="3" style="text-align:center"><input type="checkbox" name="view_top" value="20" id="v20"> <label for="v20">Вид сверху</label></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><input type="radio" name="view_s" value="4" title="Сзади-слева (окна)" class="views-radio-single" style="position:relative; top:7px; left:7px"></td>
+		<td style="text-align:center">
+			<input type="radio" name="view_s" value="8" title="Левый борт" class="views-radio-single">
+		</td>
+		<td><input type="radio" name="view_s" value="2" title="Спереди-слева (окна)" style="position:relative; top:7px; left:-7px"></td>
+		<td style="padding:0 35px; line-height:23px" rowspan="3">
+            <div><input type="radio" name="view_s" value="12" id="v12"> <label for="v12">Заводская табличка</label></div>
+            <div><input type="radio" name="view_s" value="13" id="v13"> <label for="v13">Отдельные элементы ТС</label></div>
+            <div class="twoside-old"><input type="radio" name="view_s" value="14" id="v14"> <label for="v14">Не определяется (двухстороннее ТС)</label></div>
+			<div><input type="radio" name="view_s" value="0" id="v0"> <label for="v0"><span class="s5">&nbsp;Не указан&nbsp;</span></label></div>
+			            <div class="sm" style="margin-top:15px"><a href="#" class="views-toggle-link dot">Переключить на: <span class="twoside-single">Одностороннее ТС</span><span class="twoside-twoside">Двухстороннее ТС</span></a></div>
+		</td>
+	</tr>
+	<tr>
+		<td style="padding:0 2px"><input type="radio" name="view_s" value="7" title="Вид строго сзади" class="views-radio-single"></td>
+		<td class="views-image">
+			<table style="width:138px; height:82px">
+				<tbody><tr>
+					<td style="text-align:left; padding-left:25px">
+						<input type="radio" name="view_s" value="9" title="Салон, вид вперёд">
+					</td>
+					<td style="text-align:right; padding:0">
+						<input type="radio" name="view_s" value="10" title="Салон, вид назад" class="views-radio-single">
+						<input type="radio" name="view_s" value="11" title="Кабина" style="position:relative; top:-7px">
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+		<td style="padding:0 2px"><input type="radio" name="view_s" value="5" title="Вид строго спереди"></td>
+	</tr>
+	<tr>
+		<td><input type="radio" name="view_s" value="3" title="Сзади-справа (двери)" class="views-radio-single" style="position:relative; top:-7px; left:7px"></td>
+		<td style="text-align:center">
+			<input type="radio" name="view_s" value="6" title="Правый борт">
+		</td>
+		<td><input type="radio" name="view_s" value="1" title="Спереди-справа (двери)" style="position:relative; top:-7px; left:-7px"></td>
+	</tr>
+	<tr>
+		<td colspan="3" style="text-align:center"><input type="checkbox" name="view_bottom" value="40" id="v40"> <label for="v40">Вид снизу</label></td>
+		<td></td>
+	</tr>
+</tbody></table>
+<script>
+
+function openViewSelector(val, el, twoside)
+{
+    var selector = $('#views-selector');
+
+    var view = val % 20;
+    var modifier = val - view;
+
+    $('input[value="' + view + '"]', selector).prop('checked', true);
+    $('#v20').prop('checked', modifier == 20);
+    $('#v40').prop('checked', modifier == 40);
+
+    if (view != 14)
+    {
+        selector.attr('data-twoside', twoside);
+        $('.twoside-old').hide();
+    }
+    else
+    {
+        selector.attr('data-twoside', 1);
+        $('.twoside-old').show();
+    }
+
+
+    var p = el.offset();
+    selector.css('left', p.left + 'px').css('top', (p.top + el.height() + 3) + 'px').show();
+}
+
+
+function setViewSelectorCallback(func)
+{
+    var selector = $('#views-selector');
+
+    $('input[type="radio"]', selector).on('click', function(e)
+    {
+        var view = parseInt($('input[type="radio"]:checked', selector).val());
+        var modifier = parseInt($('input[type="checkbox"]:checked', selector).val());
+        if (isNaN(modifier)) modifier = 0;
+
+        var label = view || !modifier ? views[view] : '';
+        if (label != '' && modifier) label += ' + ';
+        if (modifier) label += views[modifier];
+
+        func(e, view, modifier, label);
+
+        selector.hide();
+    });
+
+    $('input[type="checkbox"]', selector).on('click', function()
+   	{
+   		if ($(this).is('#v20:checked')) $('#v40').prop('checked', false); else
+   		if ($(this).is('#v40:checked')) $('#v20').prop('checked', false);
+   	});
+}
+
+
+$(document).ready(function()
+{
+	$('.views-toggle-link').on('click', function()
+	{
+	    var selector = $('#views-selector');
+	    var twoside = selector.attr('data-twoside');
+
+	    selector.attr('data-twoside', twoside == 1 ? 0 : 1);
+		return false;
+	});
+});
+
+</script>
+			</div>
+			<div class="no-links" style="padding-top:2px; margin-bottom:7px"><i>Фотография ни к чему не привязана.</i></div>
+			<div id="links">
+				<table id="conn_veh" style="margin-bottom:7px; display:none">
+									</table>
+				<table id="conn_gid" style="margin-bottom:7px; display:none">
+									</table>
+			</div>
+		</td>
+	</tr>
 
 
 
@@ -882,7 +1132,7 @@ $user = new User(Auth::userid());
                 <td class="sm" style="color:#888">Комментирование Вашего медиа будет ограничено, однако Вы сможете добавлять к нему свои аннотации вне зависимости от настройки.</td>
 
             </tr>
-           
+
             <tr>
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
@@ -899,7 +1149,7 @@ $user = new User(Auth::userid());
                 <td class="lcol"></td>
                 <td style="padding:7px 2px">
                     <input type="checkbox" name="disableshowtop" id="disableshowtop" value="1"> <label for="disableshowtop">Не продвигать в общем топе</label>
-                    
+
                 </td>
             </tr>
             <tr>
@@ -930,7 +1180,7 @@ $user = new User(Auth::userid());
                 <td class="sm" style="color:#888">Ваши подписчики не получат уведомление о публикации Медиа, но они всегда смогут его увидеть из общих топов (если таковая настройка не была отключена</td>
 
             </tr> <br>
-            
+
             <tr>
                 <td class="lcol"></td>
                 <td class="sm" style="color:#888"><b>Вы можете всегда в любое время изменить эти настройки.</b></td>

@@ -18,6 +18,7 @@ use \App\Controllers\Api\Images\Comments\Edit as PhotoCommentEdit;
 use \App\Controllers\Api\Images\Comments\Delete as PhotoCommentDelete;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
+use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 use \App\Controllers\Api\Users\LoadUser as UserLoad;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
@@ -90,6 +91,9 @@ class ApiController
     }
     public static function admingetvehicleinputs() {
         return new AdminGetVehicleInputs();
+    }
+    public static function vehiclesload() {
+        return new VehiclesLoad();
     }
 
 
