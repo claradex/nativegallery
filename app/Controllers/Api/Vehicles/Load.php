@@ -27,7 +27,7 @@ class Load
                 <tr>
                     <td style="padding:10px"><a href="/vehicle/'.$e['id'].'" target="_blank" class="num pcnt">'.$e['id'].'</a>
                     </td>
-                    <td style="padding:10px; font-size:16px" class="mname">hhhhh</td>
+                    <td style="padding:10px; font-size:16px" class="mname">'.$e['title'].'</td>
                     <td style="padding:10px" class="d">
                        '.$e['comment'].'
                     </td>

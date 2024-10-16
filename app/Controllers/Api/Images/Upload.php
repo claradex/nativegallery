@@ -21,6 +21,9 @@ class Upload
     static $showtop = 'allowed';
     static $subsnotify = 'allowed';
     static $exif = 'exif';
+    static $entitydata_id = 0;
+    static $entityroute = NULL;
+    static $entitycomment = NULL;
 
     public static function create($postbody, $content, $exif)
     {
@@ -34,7 +37,7 @@ class Upload
         } else {
             $moderated = 1;
         }
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :gallery, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated, ':gallery'=>$_POST['gallery']));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :gallery, :entityid, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated, ':gallery'=>$_POST['gallery'], ':entityid'=>self::$entitydata_id));
         if (($moderated === 1) && (self::$subsnotify != 'disabled')) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid' => Auth::userid()));
             foreach ($followers as $f) {
@@ -150,6 +153,15 @@ class Upload
             if ((int)$_POST['disableexif'] === 1) {
                 self::$exif = 'disabled';
             }
+            if ((int)$_POST['nid'] >= 1) {
+                if (DB::query('SELECT id FROM entities_data WHERE id=:id', array(':id'=>$_POST['nid']))[0]['id']) {
+                    self::$entitydata_id = $_POST['nid'];
+                    self::$entityroute = $_POST["route[".$_POST['nid']."]"];
+                    self::$entitycomment = $_POST["notes[".$_POST['nid']."]"];
+                } else {
+                    return;
+                }
+            }
             if ($upload->getType() !== null) {
                 $content = Json::return(
                     array(
@@ -162,6 +174,8 @@ class Upload
                         'comments' => self::$comments,
                         'rating' => self::$rating,
                         'showtop' => self::$showtop,
+                        'entityroute' => self::$entityroute,
+                        'entitycomment' => self::$entitycomment
                     )
                 );
                 if (explode('/', $type)[0] === 'video') {

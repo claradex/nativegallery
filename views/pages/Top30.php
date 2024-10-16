@@ -39,7 +39,7 @@ foreach ($photos as $pd) {
                                     <td style="text-align:center; padding:10px"><b style="font-size:25px">'.$top.'</b><br><br><small>Новых просмотров:</small><br><b>+'.$pd['view_count'].'</b><br><br>
                                         
                                     </td>
-                                    <td class="pb_photo" id="p1977446"><a href="/photo/1977446/" target="_blank" class="prw"><img class="f" src="'.$p['photourl'].'" alt="347 КБ">
+                                    <td class="pb_photo" id="p1977446"><a href="/photo/'.$p['id'].'/" target="_blank" class="prw"><img class="f" src="'.$p['photourl'].'" alt="347 КБ">
                                             
                                         </a></td>
                                     <td class="pb_descr">

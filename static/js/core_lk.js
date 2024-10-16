@@ -121,10 +121,10 @@ $(document).ready(function()
 		var html = '<tbody data-nid="' + nid + '" data-vid="' + vid + '" data-twoside="' + $(this).data('twoside') + '" class="s' + $(this).data('state') + '">\n';
 
 		html += '<tr>\n';
-		html += '<td style="padding:3px 10px 5px"><input type="hidden" name="nids[]" value="' + nid + '"><input type="hidden" name="cids[]" value="' + cid + '"><a href="' + (nid > 0 ? '/vehicle/' + vid : '/lk/vehicles.php?action=edit&amp;vid=' + (-nid)) + '" target="_blank" class="num pcnt">' + $('.num', this).html() + '</a></td>\n';
+		html += '<td style="padding:3px 10px 5px"><input type="hidden" name="nid" value="' + vid + '"><input type="hidden" name="cids[]" value="' + cid + '"><a href="' + (nid > 0 ? '/vehicle/' + vid : '/lk/vehicles.php?action=edit&amp;vid=' + (-nid)) + '" target="_blank" class="num pcnt">' + $('.num', this).html() + '</a></td>\n';
 		html += '<td style="padding:3px 10px 6px">' + $('.mname', this).html() + '</td>\n';
 		html += '<td style="padding:3px 0 6px 10px; color:#777" class="r">' + _text['UP_ROUTE'] + ':</td>\n';
-		html += '<td style="padding:3px 7px" class="nw"><input type="text" class="route" name="route[' + nid + ']" style="width:40px; font-weight:bold; text-align:center" maxlength="7" value="">, <input type="text" class="notes" name="notes[' + nid + ']" style="width:170px" maxlength="100" value="" placeholder="' + _text['UP_NOTES'] + '"></td>\n';
+		html += '<td style="padding:3px 7px" class="nw"><input type="text" class="route" name="route[' + vid + ']" style="width:40px; font-weight:bold; text-align:center" maxlength="7" value="">, <input type="text" class="notes" name="notes[' + vid + ']" style="width:170px" maxlength="100" value="" placeholder="' + _text['UP_NOTES'] + '"></td>\n';
 		html += '<td class="r"><a href="#" class="delLink" style="font-size:16px">&times;</a></td>\n';
 		html += '</tr>\n';
 

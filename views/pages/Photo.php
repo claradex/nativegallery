@@ -1,7 +1,7 @@
 <?php
 
 use App\Services\{DB, Auth, Date, Json};
-use App\Models\{User, Vote, Comment};
+use App\Models\{User, Vote, Comment, Vehicle};
 
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $photo = new \App\Models\Photo($id);
@@ -15,6 +15,10 @@ if ($photo->i('id') !== null) {
     }
     $photouser = new \App\Models\User($photo->i('user_id'));
     $user = new \App\Models\User(Auth::userid());
+    if ($photo->i('entitydata_id') >= 1) {
+        $entitydata = DB::query('SELECT * FROM entities_data WHERE id=:id', array(':id' => $photo->i('entitydata_id')))[0];
+        $vehicle = new Vehicle($entitydata['entityid']);
+    }
     if ($photo->i('moderated') === 0) {
         if ($photo->i('user_id') === Auth::userid() || $user->i('admin') > 0) {
             $moderated = true;
@@ -181,6 +185,16 @@ if ($photo->i('id') !== null) {
                 ?>
             </div>
         </div>
+        <?php
+                    if ((int)$photo->i('entitydata_id') >= 1) { ?>
+
+            <tr>
+
+                <td class="nw" valign="top" align="right"><a href="/vehicle/<?= $photo->i('entitydata_id') ?>"><?= $entitydata['title'] ?></a></td>
+                <td class="nw" align="left" valign="top">&nbsp;— &nbsp;маршрут <b><?= $photo->content('entityroute') ?></b></td>
+            </tr>
+
+        <?php } ?>
         <div>
             <?php
                     if ($photo->content('comment') != null) { ?>
@@ -194,7 +208,7 @@ if ($photo->i('id') !== null) {
                         $date = Date::zmdate($photo->i('posted_at'));
                     }
         ?>
-        <div>Прислал <a href="/author/<?= $photo->i('user_id') ?>/"><?= $photouser->i('username') ?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b><?= $date ?></b></div>
+        <div>Автор: <a href="/author/<?= $photo->i('user_id') ?>/"><?= $photouser->i('username') ?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b><?= $date ?></b></div>
         <table id="pp-items">
             <tr>
                 <td id="pp-left-col">
@@ -241,8 +255,8 @@ if ($photo->i('id') !== null) {
                                         <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Мне не&nbsp;нравится</span></a>
-                                        <a class="konk_btn" vote="1" href="#" ><span>Красиво, на&nbsp;конкурс!</span></a>
-                                        <a href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a>
+                                        <!--a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></!--a>
+                                        <a-- href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a-->
                                     </div>
                                 <?php } ?>
                                 <div id="votes" class="votes">
@@ -304,9 +318,41 @@ if ($photo->i('id') !== null) {
                     }
                 </style>
                 <td id="pp-main-col">
+                <?php
+                if ($photo->i('entitydata_id') >= 1) { ?>
+                    <div id="pp-item-vdata">
+                        <div class="p0">
+                            <h4 class="pp-item-header"><b><a href="/vehicle/<?= $photo->i('entitydata_id') ?>"><?= $entitydata['title'] ?></a></b></h4>
+                            <div class="pp-item-body">
+                                <table class="linetable">
+                                    <colgroup>
+                                        <col width="25%">
+                                    </colgroup>
+                                    <tbody>
+                                        <?php
+                                        $vehiclevariables = json_decode($vehicle->i('sampledata'), true);
+                                        $vehicledatavariables = json_decode($vehicle->i('content'), true);
+                                        $num = 1;
+                                        foreach ($vehiclevariables as $vb) {
+                                            echo ' <tr class="s11 h21">
+                                            <td class="ds nw">' . $vb['name'] . ':</td>
+                                            <td class="ds"><b>' . $vehicledatavariables[$num]['value'] . '</b></td>
+                                        </tr>';
+                                          
+                                            $num++;
+                                        }
+                                        ?>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <?php } ?>
                     <div id="pp-item-vdata">
                         <?php
-                        if (($photo->content('type') != 'none') && (json_decode($photo->i('exif'), true)['type'] != 'none') && ($photo->content('rating') != 'disabled')) {
+                        if (($photo->content('type') != 'none') && (json_decode($photo->i('exif'), true)['type'] != 'none') && ($photo->content('rating') != 'disabled') && ($photo->i('exif') != NULL)) {
                         ?>
                             <div class="p0" id="pp-item-exif">
                                 <div class="header-container">
@@ -369,7 +415,8 @@ if ($photo->i('id') !== null) {
                                             'GPS.GPSTimeStamp' => 'Время GPS',
                                             'GPS.GPSDateStamp' => 'Дата GPS'
                                         ];
-                                        function translate_flash_value($flash_value) {
+                                        function translate_flash_value($flash_value)
+                                        {
                                             $flash_descriptions = [
                                                 0 => 'Выключена',
                                                 1 => 'Включена',
@@ -379,112 +426,112 @@ if ($photo->i('id') !== null) {
                                                 5 => 'Автоматический режим',
                                                 6 => 'Автоматический режим'
                                             ];
-                                            
+
                                             return $flash_descriptions[$flash_value] ?? 'Неизвестное значение вспышки';
                                         }
 
-                            function translate_orientation($orientation)
-                            {
-                                $orientation_descriptions = [
-                                    1 => '0° (По умолчанию)',
-                                    3 => '180°',
-                                    6 => '90° по часовой стрелке',
-                                    8 => '270° по часовой стрелке'
-                                ];
+                                        function translate_orientation($orientation)
+                                        {
+                                            $orientation_descriptions = [
+                                                1 => '0° (По умолчанию)',
+                                                3 => '180°',
+                                                6 => '90° по часовой стрелке',
+                                                8 => '270° по часовой стрелке'
+                                            ];
 
-                                return $orientation_descriptions[$orientation] ?? 'Не определена';
-                            }
-
-
-                            function translate_resolution_unit($unit)
-                            {
-                                $resolution_units = [
-                                    1 => 'Дюймы',
-                                    2 => 'Сантиметры'
-                                ];
-
-                                return $resolution_units[$unit] ?? 'Неизвестная единица';
-                            }
-
-                            function translate_light_source($source)
-                            {
-                                $light_sources = [
-                                    0 => 'Неизвестный источник',
-                                    1 => 'Дневной свет',
-                                    2 => 'Лампа накаливания',
-                                    3 => 'Лампа флуоресцентная',
-                                    4 => 'Лампа с высоким давлением',
-                                    5 => 'Лампа с низким давлением',
-                                    255 => 'Другой источник'
-                                ];
-
-                                return $light_sources[$source] ?? 'Неизвестный источник света';
-                            }
-
-                            function translate_white_balance($balance)
-                            {
-                                $white_balances = [
-                                    0 => 'Автоматический',
-                                    1 => 'Ручной'
-                                ];
-
-                                return $white_balances[$balance] ?? 'Неизвестный баланс белого';
-                            }
-
-                            function translate_color_space($space)
-                            {
-                                $color_spaces = [
-                                    1 => 'sRGB',
-                                    2 => 'Adobe RGB',
-                                    3 => 'Uncalibrated'
-                                ];
-
-                                return $color_spaces[$space] ?? 'Неизвестное цветовое пространство';
-                            }
-
-                            function translate_scene_type($type)
-                            {
-                                $scene_types = [
-                                    0 => 'Неизвестный тип',
-                                    1 => 'Сцена с обычным светом',
-                                    2 => 'Сцена с высоким контрастом',
-                                    3 => 'Сцена с низким контрастом',
-                                    4 => 'Сцена с движением'
-                                ];
-
-                                return $scene_types[$type] ?? 'Неизвестный тип съёмки';
-                            }
-                            foreach ($data as $key => $value) {
-                                if ($key === 'EXIF.Flash') {
-                                    $value = translate_flash_value($value);
-                                } elseif ($key === 'IFD0.Orientation') {
-                                    $value = translate_orientation($value);
-                                } elseif ($key === 'IFD0.ResolutionUnit') {
-                                    $value = translate_resolution_unit($value);
-                                } elseif ($key === 'EXIF.WhiteBalance') {
-                                    $value = translate_white_balance($value);
-                                } elseif ($key === 'IFD0.LightSource') {
-                                    $value = translate_light_source((int)$value);
-                                } elseif ($key === 'EXIF.ColorSpace') {
-                                    $value = translate_color_space($value);
-                                } elseif ($key === 'EXIF.SceneType') {
-                                    $value = translate_scene_type($value);
-                                }
-                                if (!isset($exif_translations[$key])) {
-                                    continue;
-                                }
-                                if (is_array($value)) {
-                                    $value = implode(', ', $value);
-                                }
-                                $key = $exif_translations[$key] ?? $key;
+                                            return $orientation_descriptions[$orientation] ?? 'Не определена';
+                                        }
 
 
-                                echo '
+                                        function translate_resolution_unit($unit)
+                                        {
+                                            $resolution_units = [
+                                                1 => 'Дюймы',
+                                                2 => 'Сантиметры'
+                                            ];
+
+                                            return $resolution_units[$unit] ?? 'Неизвестная единица';
+                                        }
+
+                                        function translate_light_source($source)
+                                        {
+                                            $light_sources = [
+                                                0 => 'Неизвестный источник',
+                                                1 => 'Дневной свет',
+                                                2 => 'Лампа накаливания',
+                                                3 => 'Лампа флуоресцентная',
+                                                4 => 'Лампа с высоким давлением',
+                                                5 => 'Лампа с низким давлением',
+                                                255 => 'Другой источник'
+                                            ];
+
+                                            return $light_sources[$source] ?? 'Неизвестный источник света';
+                                        }
+
+                                        function translate_white_balance($balance)
+                                        {
+                                            $white_balances = [
+                                                0 => 'Автоматический',
+                                                1 => 'Ручной'
+                                            ];
+
+                                            return $white_balances[$balance] ?? 'Неизвестный баланс белого';
+                                        }
+
+                                        function translate_color_space($space)
+                                        {
+                                            $color_spaces = [
+                                                1 => 'sRGB',
+                                                2 => 'Adobe RGB',
+                                                3 => 'Uncalibrated'
+                                            ];
+
+                                            return $color_spaces[$space] ?? 'Неизвестное цветовое пространство';
+                                        }
+
+                                        function translate_scene_type($type)
+                                        {
+                                            $scene_types = [
+                                                0 => 'Неизвестный тип',
+                                                1 => 'Сцена с обычным светом',
+                                                2 => 'Сцена с высоким контрастом',
+                                                3 => 'Сцена с низким контрастом',
+                                                4 => 'Сцена с движением'
+                                            ];
+
+                                            return $scene_types[$type] ?? 'Неизвестный тип съёмки';
+                                        }
+                                        foreach ($data as $key => $value) {
+                                            if ($key === 'EXIF.Flash') {
+                                                $value = translate_flash_value($value);
+                                            } elseif ($key === 'IFD0.Orientation') {
+                                                $value = translate_orientation($value);
+                                            } elseif ($key === 'IFD0.ResolutionUnit') {
+                                                $value = translate_resolution_unit($value);
+                                            } elseif ($key === 'EXIF.WhiteBalance') {
+                                                $value = translate_white_balance($value);
+                                            } elseif ($key === 'IFD0.LightSource') {
+                                                $value = translate_light_source((int)$value);
+                                            } elseif ($key === 'EXIF.ColorSpace') {
+                                                $value = translate_color_space($value);
+                                            } elseif ($key === 'EXIF.SceneType') {
+                                                $value = translate_scene_type($value);
+                                            }
+                                            if (!isset($exif_translations[$key])) {
+                                                continue;
+                                            }
+                                            if (is_array($value)) {
+                                                $value = implode(', ', $value);
+                                            }
+                                            $key = $exif_translations[$key] ?? $key;
+
+
+                                            echo '
                                             <tr class="s11 h21">
                                                 <td class="ds nw" width="30%">' . htmlspecialchars($key) . ':</td>
                                                 <td class="ds">' . htmlspecialchars($value) . '</td>
                                             </tr>';
-                            }
+                                        }
 
 
                                         ?>
@@ -493,6 +540,7 @@ if ($photo->i('id') !== null) {
                                 </div>
                             </div>
                         <?php } ?>
+
                         <?php
                         if ($photo->content('lat') != null && $photo->content('lng') != null) { ?>
                             <div class="p0" id="pp-item-exif">

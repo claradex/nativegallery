@@ -9,7 +9,7 @@ class Vehicle {
         $this->userid = $user_id;
     }
     public function i($table) {
-        return DB::query("SELECT * FROM entities_data WHERE id=:id", array(':id'=>$this->userid))[0][$table];
+        return DB::query("SELECT * FROM entities WHERE id=:id", array(':id'=>$this->userid))[0][$table];
     }
     public function getvehicle($table) {
         return DB::query("SELECT * FROM entities WHERE id=:id", array(':id'=>self::i('entityid')))[0][$table];

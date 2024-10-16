@@ -1,7 +1,7 @@
 <?php
 
 use \App\Services\{Auth, DB, Date};
-use \App\Models\Vehicle;
+use \App\Models\{Vehicle, User};
 
 $id = explode('/', $_SERVER['REQUEST_URI'])[2];
 $data = DB::query('SELECT * FROM entities_data WHERE id=:id', array(':id' => $id))[0];
@@ -34,7 +34,7 @@ $vehicledatavariables = json_decode($data['content'], true);
                     <col width="150">
                     <col>
                     <?php
-                    $vehiclevariables = json_decode($vehicle->getvehicle('sampledata'), true);
+                    $vehiclevariables = json_decode($vehicle->i('sampledata'), true);
                     $num = 1;
                     foreach ($vehiclevariables as $vb) {
                         echo '<tr class="h21"><td class="ds nw">' . $vb['name'] . ':</td><td class="d"><b>' . $vehicledatavariables[$num]['value'] . '</b></td></tr>';
@@ -44,6 +44,28 @@ $vehicledatavariables = json_decode($data['content'], true);
 
 
                 </table><br>
+                <?php
+                $photos = DB::query('SELECT * FROM photos WHERE entitydata_id=:id', array(':id'=>$id));
+                foreach ($photos as $p) {
+                    $author = new User($p['user_id']);
+                    echo '<div class="p20p s11"><table><tbody><tr>
+<td class="pb_photo" id="p1987895"><a href="/photo/1987895/ target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$p['photourl'].'" alt="678 КБ">
+<div class="hpshade">';
+ if (DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'] >= 1) {
+                                            echo '<div class="com-icon">'.DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div>';
+                                        }
+                                        echo '
+                                        <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div></div>
+
+</div></a></td>
+<td class="pb_descr">
+ <p><b class="pw-place">'.htmlspecialchars($p['place']).'</b></p>
+                                    <span class="pw-descr">'.htmlspecialchars($p['postbody']).'</span>
+                                    <p class="sm"><b>'.Date::zmdate($p['timeupload']).'</b><br>Автор: <a href="/author/'.$author->i('user_id').'/">'.htmlspecialchars($author->i('username')).'</a></p>
+</td>
+</tr></tbody></table></div>';
+                }
+                ?>
 
 
 

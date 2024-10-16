@@ -77,26 +77,18 @@ class Upload
         }
         else
         {
-            echo $tmpname;
-            $location = "your-location"; // Название локации
-            $folder = "{$location}/" . basename($tmpname); // Создаем корректное имя для папки с файлом
+            $location = "your-location"; 
+            $folder = "{$location}/" . basename($tmpname);
             
-            $uploadDir = "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}"; // Полный путь к директории
-            
-            // Создание директории, если она не существует
+            $uploadDir = "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}"; 
+
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            
-            // Путь к файлу, куда он должен быть перемещен
+
             $destination = "{$uploadDir}/" . basename($tmpname);
             
-            // Перемещение файла
-            if (move_uploaded_file($tmpname, $destination)) {
-                echo "Файл успешно перемещен!";
-            } else {
-                echo "Ошибка при перемещении файла.";
-            }
+         
 
             $this->type = $type;
             $this->src = "/uploads/{$folder}";
