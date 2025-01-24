@@ -1,6 +1,9 @@
 # NativeGallery
+# Проект закрыт. Дальнейшая поддержка по нему не производится.
 ![](https://raw.githubusercontent.com/claradex/nativegallery/main/static/img/banner.png)
-NativeGallery - это реверсивный open-source движок популярного сайта transphoto.org (СТТС), RailGallery, Fotobus и ему подобных.\
+NativeGallery - это реверсивный open-source движок популярного сайта transphoto.org (СТТС), RailGallery, Fotobus и ему подобных.
+
+
 
 
 # Почему я должен использовать ваш движок?
