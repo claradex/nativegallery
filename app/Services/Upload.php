@@ -28,7 +28,7 @@ class Upload
             $tmpname = $file['tmp_name'];
             $type = explode('/', $file['type'])[0];
             $name = $file['name'];
-            $fileext = pathinfo($file['name']);
+            $fileext = pathinfo($file['name'], PATHINFO_EXTENSION);
         } else {
             $tmpname = $file;
             $type = filetype($file);
@@ -64,7 +64,7 @@ class Upload
                 ],
                 'endpoint' => NGALLERY['root']['storage']['s3']['domains']['gateway'],
             ]);
-           
+
             $s3->putObject([
                 'Bucket' => NGALLERY['root']['storage']['s3']['credentials']['bucket'],
                 'Key' => $location.$filecdn,
@@ -77,18 +77,16 @@ class Upload
         }
         else
         {
-            $location = "your-location"; 
+            $location = "your-location";
             $folder = "{$location}/" . basename($tmpname);
-            
-            $uploadDir = "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}"; 
+
+            $uploadDir = "{$_SERVER['DOCUMENT_ROOT']}/uploads/{$location}";
 
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
 
             $destination = "{$uploadDir}/" . basename($tmpname);
-            
-         
 
             $this->type = $type;
             $this->src = "/uploads/{$folder}";

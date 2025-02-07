@@ -43,6 +43,9 @@ $user = new User(Auth::userid());
                 var pub_pid = 0;
             </script>
             <td class="main">
+            <?php if (NGALLERY['root']['registration']['emailverify'] != true || $user->i('status') === 3) {
+                die('Чтобы публиковать Фотографии и Видео, нужно подтвердить почту.');
+            } ?>
                 <h1>Предложить медиа на публикацию</h1>
                 <p>Ваш текущий индекс загрузки: <b><?= $user->i('uploadindex') ?></b></p>
 

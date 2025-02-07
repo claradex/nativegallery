@@ -98,6 +98,7 @@ if (Auth::userid() > 0) {
 
                                 <input type="button" id="regbtn" class="mf-button-wide" style="margin-top:15px" value="Зарегистрироваться">
                                 <p>Регистрируясь на сервере <?= NGALLERY['root']['title'] ?>, вы <a href="/rules">принимаете его правила.</a></p>
+                                <p><b><a href="/tour">Вы можете пройти экскурсию по сайту.</a></b></p>
                             </form><br><br>
 
                             <br>

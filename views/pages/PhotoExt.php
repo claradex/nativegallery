@@ -15,6 +15,8 @@ $photo = new \App\Models\Photo($_GET['id']);
     <div id="backgr"></div>
     <table class="tmain">
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
+        <?php
+        if ($photo->i('moderated') === 1) { ?>
         <tr>
             <td class="main">
                 <center>
@@ -61,7 +63,19 @@ $photo = new \App\Models\Photo($_GET['id']);
                 </center>
             </td>
         </tr>
-      
+      <?php } else { ?>
+        <tr>
+        <td class="main">
+        <center>
+            <h1>Изображение не найдено</h1>
+            <div class="p20w" style="margin-bottom:20px; padding:10px 30px">
+                <img src="/static/img/pnp.jpg" alt="Пусто" width="400" height="205" border="0">
+                <p>Изображения с таким номером нет на сайте.<br />Может быть, его здесь никогда и не было.<br />Если Вы уверены, что что-то здесь всё-таки было, значит, администратор по каким-то причинам это удалил.</p>
+            </div>
+        </center>
+        </td>
+        </tr>
+        <?php } ?>
         <tr>
                 <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
             </tr>

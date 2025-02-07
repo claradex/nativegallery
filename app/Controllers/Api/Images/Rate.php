@@ -15,7 +15,7 @@ class Rate
 
         if (isset($_GET['vote']) && isset($_GET['pid'])) {
             if (Vote::photo(Auth::userid(), $_GET['pid']) === -1) {
-                DB::query('INSERT INTO photos_rates VALUES (\'0\', :id, :pid, :type)', array(':id'=>Auth::userid(), ':pid' => $_GET['pid'], ':type'=>$_GET['vote']));
+                DB::query('INSERT INTO photos_rates VALUES (\'0\', :id, :pid, :type, 0)', array(':id'=>Auth::userid(), ':pid' => $_GET['pid'], ':type'=>$_GET['vote']));
                 if (Vote::photo(Auth::userid(), $_GET['pid']) != $_GET['vote']) {
                     DB::query('DELETE FROM photos_rates WHERE user_id=:id AND photo_id=:pid AND type=:type', array(':id'=>Auth::userid(), ':pid' => $_GET['pid'], ':type'=>Vote::photo(Auth::userid(), $_GET['pid'])));
                 }

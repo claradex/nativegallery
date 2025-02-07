@@ -7,7 +7,9 @@ use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 
 use donatj\UserAgent\UserAgentParser;
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use Beeyev\DisposableEmailFilter\DisposableEmailFilter;
 
 class Register
 {
@@ -294,6 +296,7 @@ class Register
         $password = $_POST['password'];
         $email = $_POST['email'];
         $forbusernames = explode(',', NGALLERY['root']['registration']['prohibited_usernames']);
+        $status = 0;
         if (!self::checkforb($_POST['username'], $forbusernames)) {
 
             if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false) {
@@ -315,11 +318,107 @@ class Register
                                         'regdate' => time()
                                     )
                                 );
+                                if (NGALLERY['root']['registration']['emailverify'] == 'true') {
+                                    $status === 3;
+                                }
+                                DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :online, 0, :status, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl' => '/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online' => time(), ':status'=>$status));
+                                if (NGALLERY['root']['registration']['emailverify'] == 'true') {
+                                    $disposableEmailFilter = new DisposableEmailFilter();
+                                    if ($disposableEmailFilter->isDisposableEmailAddress($_POST['email'])) {
+                                        echo json_encode(
+                                            array(
+                                                'errorcode' => '9',
+                                                'errortitle' => 'Почта запрещена для регистрации',
+                                                'error' => 1
+                                            )
+                                        );
+                                        die();
+                                    }
+                                    $token = GenerateRandomStr::gen_uuid();
+                                    $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
+                                    $key = GenerateRandomStr::gen_uuid();
+                                    $content = Json::return(
+                                        array(
+                                            'user_id' => $user_id
+                                        )
+                                    );
+                                    $mail = new PHPMailer(true);
+                                    DB::query('INSERT INTO servicekeys VALUES (\'0\', :token, :type, 1, :content)', array(':token'=>$key, ':type'=>'EMAILVERIFY', ':content'=>$content));
+                                    try {
+                                        $mail->isSMTP();
+                                        $mail->Host = NGALLERY['root']['email']['credentials']['host'];
+                                        $mail->SMTPAuth = true;
+                                        $mail->CharSet = "UTF-8";
+                                        $mail->Username = NGALLERY['root']['email']['credentials']['username'];
+                                        $mail->Password = NGALLERY['root']['email']['credentials']['password'];
+                                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                                        $mail->Port = NGALLERY['root']['email']['credentials']['port'];
 
-                                DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :online, 0, 0, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl' => '/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online' => time()));
-                                $cstrong = True;
-                                $token = GenerateRandomStr::gen_uuid();
-                                $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
+                                        $mail->setFrom(NGALLERY['root']['email']['from']['address'], NGALLERY['root']['title']);
+                                        $mail->addAddress($_POST['email']);
+
+                                        $mail->isHTML(true);
+                                        $mail->Subject = 'Подтверждение регистрации | '.NGALLERY['root']['title'];
+
+                                        $mail->Body = '
+                                        <!DOCTYPE html>
+                                        <html lang="ru">
+                                        <head>
+                                            <meta charset="UTF-8">
+                                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                            <style>
+                                                body {
+                                                    font-family: Arial, sans-serif;
+                                                    background-color: #f4f4f4;
+                                                    margin: 0;
+                                                    padding: 20px;
+                                                }
+                                                .container {
+                                                    background-color: #ffffff;
+                                                    border-radius: 8px;
+                                                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                                    padding: 20px;
+                                                    max-width: 600px;
+                                                    margin: auto;
+                                                }
+                                                h1 {
+                                                    color: #333;
+                                                }
+                                                .code {
+                                                    font-size: 24px;
+                                                    font-weight: bold;
+                                                    color: #007bff;
+                                                    margin: 20px 0;
+                                                }
+                                                .footer {
+                                                    margin-top: 20px;
+                                                    font-size: 12px;
+                                                    color: #777;
+                                                }
+                                            </style>
+                                        </head>
+                                        <body>
+                                           <div class="container">
+                                            <h1>Подтверждение регистрации</h1>
+                                            <p>Это письмо было отправлено на ваш почтовый ящик, так как оно было указано при регистрации на '.NGALLERY['root']['title'].' ('.$_SERVER['HTTP_HOST'].')<br>Если вы его не запрашивали, проигнорируйте его.</p><br><br>Ссылка для подтверждения адреса: <a href="https://'.$_SERVER['HTTP_HOST'].'/api/users/emailverify?token='.$key.'">https://'.$_SERVER['HTTP_HOST'].'/api/users/emailverify?token='.$key.'</a>
+                                        </div>
+                                        </body>
+                                        </html>';
+                                    
+                                        
+                                        $mail->send();
+                                    } catch (Exception $e) {
+                                        echo json_encode(
+                                            array(
+                                                'errorcode' => '8',
+                                                'errortitle' => 'Не удалось отправить письмо: '.$mail->ErrorInfo,
+                                                'error' => 1,
+                                            )
+                                        );
+                                        die();
+                                    }
+                                }
+                              
 
                                 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
                                     $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -328,19 +427,11 @@ class Register
                                 } else {
                                     $ip = $_SERVER['REMOTE_ADDR'];
                                 }
-
-                                $parser = new UserAgentParser();
-
-                                $ua = $parser->parse();
-                                $ua = $parser();
-
-                                $servicekey = GenerateRandomStr::gen_uuid();
                                 $url = 'http://ip-api.com/json/' . $ip;
 
                                 $response = file_get_contents($url);
 
                                 $data = json_decode($response, true);
-                                $loc = $data['country'] . ', ' . $data['city'];
                                 DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
                                     ':token' => $token,
                                     ':user_id' => $user_id,
@@ -350,7 +441,6 @@ class Register
                                 setcookie("NGALLERYSESS", $token, time() + 120 * 180 * 240 * 720, '/', NULL, NULL, TRUE);
                                 setcookie("NGALLERYSESS_", '1', time() + 120 * 180 * 240 * 360, '/', NULL, NULL, TRUE);
                                 setcookie("NGALLERYID", $user_id, time() + 10 * 10 * 24 * 72, '/', NULL, NULL, TRUE);
-
                                 echo json_encode(
                                     array(
                                         'errorcode' => '0',

@@ -21,6 +21,7 @@ use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 use \App\Controllers\Api\Users\LoadUser as UserLoad;
+use \App\Controllers\Api\Users\EmailVerify as EmailVerify;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
 use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
@@ -37,6 +38,9 @@ class ApiController
     }
     public static function upload() {
         return new Upload();
+    }
+    public static function emailverify() {
+        return new EmailVerify();
     }
     public static function photovote() {
         return new PhotoVote();

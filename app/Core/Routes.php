@@ -27,12 +27,14 @@ class Routes
         Router::get('/rules/photo', 'MainController@photoRules');
         Router::get('/rules/video', 'MainController@videoRules');
         Router::get('/feed', 'MainController@feed');
+        Router::get('/tour', 'MainController@tour');
         Router::get('/update', 'MainController@update');
         Router::get('/top30', 'MainController@top30');
         Router::get('/photoext', 'PhotoController@photoext');
         Router::get('/api/photo/compress', 'ApiController@photocompress');
         Router::get('/api/photo/loadrecent', 'ApiController@recentphotos');
         Router::get('/api/users/load/$id', 'ApiController@loaduser');
+        Router::get('/api/users/emailverify', 'ApiController@emailverify');
         Router::get('/article/$id', 'MainController@gallery');
 
 
@@ -43,7 +45,6 @@ class Routes
             Router::get('/lk/history', 'ProfileController@lkhistory');
             Router::get('/lk/profile', 'ProfileController@lkprofile');
             Router::get('/lk/pday', 'ProfileController@photoindexhistory');
-            
             Router::get('/fav_authors', 'MainController@favauthors');
 
             Router::get('/search', 'SearchController@i');

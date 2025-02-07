@@ -247,7 +247,7 @@ if ($photo->i('id') !== null) {
                                 <div class="rtext">Рейтинг: <b id="rating"><?= Vote::count($id) ?></b></div>
                                 <div class="star" pid="1361063"></div>
                                 <?php
-                                if (Auth::userid() > 0) { ?>
+                                if (Auth::userid() > 0 && (NGALLERY['root']['registration']['emailverify'] != true || $user->i('status') != 3)) { ?>
                                     <div class="vote" pid="<?= $id ?>">
                                         <a href="#" vote="1" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 1) {
                                                                                     echo 'voted';
@@ -255,8 +255,9 @@ if ($photo->i('id') !== null) {
                                         <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Мне не&nbsp;нравится</span></a>
-                                        <!--a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></!--a>
-                                        <a-- href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a-->
+                                                                    
+                                        <a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></a>
+                                        <a href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a>
                                     </div>
                                 <?php } ?>
                                 <div id="votes" class="votes">
@@ -616,21 +617,100 @@ if ($photo->i('id') !== null) {
                                     </div>
                                     <div class="cmt-write s1">
                                         <h4 class="pp-item-header">Ваш комментарий</h4>
+                                       
                                         <div style="padding:0 11px 11px">
-                                            <form action="/comment.php" method="post" id="f1">
+                                        <?php
+                                        if (Auth::userid() > 0) {
+                                            if (NGALLERY['root']['registration']['emailverify'] != true || $user->i('status') != 3) { ?>
+                                            <form action="/comment.php" method="post" id="f1" enctype="multipart/form-data">
                                                 <input type="hidden" name="sid" value="hgdl6old9r9qodmvkn1r4t7d6h">
                                                 <input type="hidden" name="last_comment_rand" value="893329610">
                                                 <input type="hidden" name="id" id="id" value="<?= $id ?>">
                                                 <input type="hidden" name="subj" id="subj" value="p">
                                                 <textarea name="wtext" id="wtext"></textarea><br>
+                                                <div id="fileList" class="mt-3"></div>
                                                 <p id="statusSend" style="display: none;">Ошибка</p>
-                                                <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt">&ensp;&emsp;Ctrl + Enter
+                                                <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt"><button style="display: inline;" type="button" id="attachFile"><i class='bx bx-paperclip bx-rotate-90' ></i></button>
+                                               
                                                 </div>
+                                                
                                             </form>
+
+                                            <?php } else {
+                                                echo 'Комментарии могут оставлять только пользователи с подтверждённой почтой.';
+                                            }
+                                            } else {
+                                            echo 'Комментарии могут оставлять только зарегистрированные пользователи.';
+                                        }
+                                        ?>
                                         </div>
+                                       
 
                                     </div>
                                 </div>
+                                <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("f1");
+    if (!form) {
+        console.error("Форма #f1 не найдена!");
+        return;
+    }
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.name = "filebody"; // Устанавливаем имя filebody
+    fileInput.style.display = "none";
+
+    form.appendChild(fileInput); // Добавляем input внутрь формы
+
+    const button = document.getElementById("attachFile");
+    const fileList = document.getElementById("fileList");
+
+    button.addEventListener("click", function () {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", function () {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const maxSize = 100 * 1024 * 1024; // 100 MB
+        const forbiddenExtensions = [".html", ".php", ".htm", ".exe", ".com", ".cmd", ".bash", ".sh"];
+
+        const fileName = file.name.toLowerCase();
+        const fileSize = file.size;
+
+        if (fileSize > maxSize) {
+            alert("Файл превышает 100 МБ.");
+            return;
+        }
+
+        if (forbiddenExtensions.some(ext => fileName.endsWith(ext))) {
+            alert("Расширение не поддерживается.");
+            return;
+        }
+
+        const fileItem = document.createElement("div");
+        fileItem.setAttribute("style", "border:solid 1px #bbb; width:max-content; font-size: 12px; padding:3px 10px 3px; margin-bottom:13px; background-color:#e2e2e2");
+        fileItem.textContent = file.name;
+
+        const removeBtn = document.createElement("a");
+        removeBtn.classList.add("compl");
+        removeBtn.setAttribute("style", "display: inline-block; margin-left: 5px; color:#292929; cursor: pointer;");
+        removeBtn.textContent = "✖";
+        removeBtn.addEventListener("click", function () {
+            fileItem.remove();
+            fileInput.value = "";
+        });
+
+        fileItem.appendChild(removeBtn);
+        fileList.appendChild(fileItem);
+    });
+});
+
+
+
+                                </script>
                             <?php } else { ?>
                                 <div class="p0" id="pp-item-comments">
 
@@ -663,67 +743,64 @@ if ($photo->i('id') !== null) {
         </tbody>
     </table>
     <script>
-        $(document).ready(function() {
-            $('#f1').submit(function(e) {
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: '/api/photo/comment',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        var jsonData = JSON.parse(response);
-                        if (jsonData.errorcode == "1") {
-                            $('#statusSend').css({
-                                display: 'block',
-                                color: 'red'
-                            });
-                            $('#statusSend').text('Комментарий некорректен');
-                            //Notify.noty('danger', 'Комментарий неккоректен');
-                            //$("#result").html("<div class='alert alert-dangernew container mt-5' role='alert'>Неправильная почта или пароль!</div>");
-                        } else if (jsonData.errorcode == "2") {
-                            $('#statusSend').css({
-                                display: 'block',
-                                color: 'yellow'
-                            });
-                            $('#statusSend').text('Пожалуйста, подождите...');
-                            //Notify.noty('warning', 'Пожалуйста, подождите...');
-                            setTimeout(function() {
-                                window.location.replace(jsonData.twofaurl);
-                            }, 1000);
-                        } else if (jsonData.errorcode == "0") {
-                            $('#wtext').val('');
-                            $('#statusSend').css({
-                                display: 'block',
-                                color: 'green'
-                            });
-                            $('#statusSend').text('Комментарий отправлен!');
-                            //Notify.noty('success', 'Комментарий отправлен!');
-                            //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
-                            $.ajax({
+       $(document).ready(function() {
+    $('#f1').submit(function(e) {
+        e.preventDefault();
 
+        var formData = new FormData(this); // Собираем данные из формы, включая filebody
 
-                                type: "POST",
-                                url: "/api/photo/getcomments/<?= $id ?>",
-                                processData: false,
-                                async: true,
-                                success: function(r) {
-                                    $('#posts').html(r)
+        $.ajax({
+            type: "POST",
+            url: "/api/photo/comment",
+            data: formData,
+            processData: false, // Не обрабатывать данные (важно для файлов)
+            contentType: false, // Не устанавливать заголовок Content-Type (браузер сделает сам)
+            success: function(response) {
+                var jsonData = JSON.parse(response);
 
+                if (jsonData.errorcode == "1") {
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'red'
+                    }).text('Комментарий некорректен');
+                } else if (jsonData.errorcode == "2") {
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'yellow'
+                    }).text('Пожалуйста, подождите...');
+                    setTimeout(function() {
+                        window.location.replace(jsonData.twofaurl);
+                    }, 1000);
+                } else if (jsonData.errorcode == "0") {
+                    $('#wtext').val('');
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'green'
+                    }).text('Комментарий отправлен!');
 
-                                },
-                                error: function(r) {
-                                    console.log(r)
-                                }
-
-                            });
-
-                        } else {
-                            Notify.noty('danger', 'Неизвестная ошибка');
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/photo/getcomments/<?= $id ?>",
+                        processData: false,
+                        async: true,
+                        success: function(r) {
+                            $('#posts').html(r);
+                        },
+                        error: function(r) {
+                            console.log(r);
                         }
-                    }
-                });
-            });
+                    });
+                } else {
+                    alert('Неизвестная ошибка');
+                }
+            },
+            error: function(err) {
+                console.error("Ошибка при отправке формы", err);
+            }
         });
+    });
+});
+
 
         function errimg() {
             const content = `<center>

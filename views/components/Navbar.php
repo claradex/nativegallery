@@ -28,6 +28,12 @@ if ($noncheckedimgs > 0) {
     
 ?>
 <tr>
+<?php
+if (NGALLERY['root']['registration']['emailverify'] === true && $user->i('status') === 3) { ?>
+<div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
+<center><h4 style="color:#fff; margin-bottom:3px">Пожалуйста, подтвердите свою почту</h4>
+<div>Так мы сможем убедиться, что Вы настоящий человек. После подтверждения, Вам будет доступен полностью функционал сайта.<br><br><b>Письмо с ссылкой для подтверждения почты была отправлена на Ваш ящик, указанный при регистрации.</b></div></center></div>
+<?php } ?>
     <td class="mm-bar">
         <?php
         if (explode('/', $_SERVER['REQUEST_URI'])[1] === 'photo') { ?>
@@ -100,8 +106,10 @@ if ($noncheckedimgs > 0) {
                                 ?>
                         
                                 <li><a href="/admin" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-info-circle"></i></span><span class="mm-label">Admin</span><?=$nonr?></a></li>
-                            <?php } ?>
+                            <?php }
+                            if (NGALLERY['root']['registration']['emailverify'] != true || $user->i('status') != 3) { ?>
                             <li><a href="/lk/upload" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-plus-square"></i></span><span class="mm-label"><b>Предложить медиа</b></span></a></li>
+                            <?php } ?>
                             <li><a href="/lk/history" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-images"></i></span><span class="mm-label">Журнал</span></a></li>
                             <li><a href="/lk/konkurs.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-compass"></i></span><span class="mm-label">Конкурс</span></a></li>
                             <li><a href="/lk/vehicles.php" class="mm-item"><span class="mm-icon"><i class="fas fa-sm fa-fw fa-folder-plus"></i></span><span class="mm-label"><b>Правка БД</b></span></a></li>

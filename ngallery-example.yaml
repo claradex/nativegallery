@@ -13,6 +13,14 @@ ngallery:
       type: 'allow'
       countries: ''
     cloudflare-caching: false
+    email:
+      credentials:
+        host: 'example@mail.com'
+        username: ''
+        password: ''
+        port: 465
+      from:
+        address:
     db:
       name: ''
       host: ''
@@ -40,6 +48,7 @@ ngallery:
       proxy: true
       percent: 50
     registration:
+      emailverify: false
       prohibited_usernames: ''
       access:
         public: true
@@ -59,5 +68,3 @@ ngallery:
         allowgif: true
     comments:
       premoderation: false
-
- 

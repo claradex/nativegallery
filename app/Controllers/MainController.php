@@ -73,6 +73,16 @@ class MainController
        Page::set('FavAuthors');
        
     }
+    public static function emailverify()
+    {
+       Page::set('Errors/EmailVerify');
+       
+    }
+    public static function tour()
+    {
+       Page::set('Tour');
+       
+    }
     public static function robots() {
       echo 'User-Agent: *
 Disallow: /lk/
