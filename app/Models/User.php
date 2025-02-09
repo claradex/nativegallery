@@ -5,7 +5,7 @@ use \App\Services\DB;
 class User {
 
     public $userid;
-    function __construct(int $user_id) {
+    function __construct($user_id) {
         $this->userid = $user_id;
     }
     public function i($table) {

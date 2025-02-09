@@ -5,7 +5,7 @@ use \App\Services\DB;
 class Photo {
 
     public $photoid;
-    function __construct(int $user_id) {
+    function __construct($user_id) {
         $this->photoid = $user_id;
     }
     public function i($table) {

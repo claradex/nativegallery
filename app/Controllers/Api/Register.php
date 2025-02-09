@@ -318,11 +318,11 @@ class Register
                                         'regdate' => time()
                                     )
                                 );
-                                if (NGALLERY['root']['registration']['emailverify'] == 'true') {
+                                if (NGALLERY['root']['registration']['emailverify'] === true) {
                                     $status === 3;
                                 }
                                 DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :online, 0, :status, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl' => '/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online' => time(), ':status'=>$status));
-                                if (NGALLERY['root']['registration']['emailverify'] == 'true') {
+                                if (NGALLERY['root']['registration']['emailverify'] === true) {
                                     $disposableEmailFilter = new DisposableEmailFilter();
                                     if ($disposableEmailFilter->isDisposableEmailAddress($_POST['email'])) {
                                         echo json_encode(

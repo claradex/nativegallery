@@ -28,7 +28,15 @@ class Comment
     {
         $user = new User($this->c['user_id']);
         $content = json_decode($this->c['content'], true);
-        echo '<div class="' . $this->class . ' comment" wid="' . $this->c['id'] . '">
+        $photo = new \App\Models\Photo($this->c['photo_id']);
+
+        $pinc = 'Закрепить';
+        echo '<div class="' . $this->class . ' comment" wid="' . $this->c['id'] . '">';
+        if ($photo->i('pinnedcomment_id') === $this->c['id']) {
+            echo '<i style="padding-bottom: 15px;">Комментарий закреплён</i>';
+            $pinc = 'Открепить';
+        }
+        echo '
                                 <div style="float:right; text-align:right" class="sm">
                                     <span class="message_date">' . Date::zmdate($this->c['posted_at']) . '</span><br>
                                     <a href="#" class="quoteLink dot">Цитировать</a>
@@ -97,12 +105,13 @@ class Comment
   display: block;
 }
 </style>';
-        if ($this->c['user_id'] === Auth::userid()) {
+        if ($this->c['user_id'] === Auth::userid() || $photo->i('user_id') === Auth::userid()) {
             echo '
                                 <div class="dropdown">
                                 <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
                                  <div class="dropdown-content">'; ?>
             <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?= $this->c['id'] ?>, 'EDIT_COMMENT', '<?= htmlspecialchars($this->c['body']) ?>', 'modaledit<?= $this->c['id'] ?>'); return false;">Редактировать</a><br>
+            <a href="#" onclick="pinComment(<?= $this->c['id'] ?>); return false;"><?=$pinc?></a><br>
             <a href="#" onclick="createModal(<?= $this->c['id'] ?>, 'DELETE_COMMENT', '', 'modaldel<?= $this->c['id'] ?>'); return false;">Удалить</a>
 <?php
             echo '

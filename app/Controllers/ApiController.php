@@ -16,6 +16,7 @@ use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
 use \App\Controllers\Api\Images\Comments\Edit as PhotoCommentEdit;
 use \App\Controllers\Api\Images\Comments\Delete as PhotoCommentDelete;
+use \App\Controllers\Api\Images\Comments\Pin as PhotoCommentPin;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
@@ -56,6 +57,9 @@ class ApiController
     }
     public static function photocommentdelete() {
         return new PhotoCommentDelete();
+    }
+    public static function photocommentpin() {
+        return new PhotoCommentPin();
     }
     public static function photocommentvote() {
         return new PhotoCommentVote();

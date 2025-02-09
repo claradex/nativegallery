@@ -222,6 +222,8 @@ if ($photo->i('id') !== null) {
                             <a href="/photoext?id=<?= $id ?>">Подробная информация</a>
                         </div>
                     </div>
+                    <?php
+                    if (Auth::userid() > 0) { ?>
                     <div class="p0" id="pp-item-tools">
                         <h4 class="pp-item-header">Инструменты</h4>
                         <div class="pp-item-body" style="margin:7px 5px">
@@ -239,6 +241,7 @@ if ($photo->i('id') !== null) {
                             </div>
                         </div>
                     </div>
+                    <?php } ?>
                     <?php if ($photo->i('moderated') === 1 && $photo->content('rating') != 'disabled') { ?>
                         <div class="p20a" id="pp-item-vote">
                             <h4 class="pp-item-header">Оценка</h4>

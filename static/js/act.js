@@ -31,7 +31,7 @@ function createModal(id, type, value, modalid) {
             </div>
         </div>
     </div>`;
-}
+    }
   document.body.innerHTML += modal;
 }
 
@@ -59,6 +59,49 @@ document.addEventListener("click", function(event) {
 
 
 
+const pinComment = (postId) => {
+    $(document).ready(function() {
+            $.ajax({
+                type: "POST",
+                url: '/api/photo/comment/'+postId+'/pin',
+                success: function(response) {
+                    var jsonData = JSON.parse(response);
+  
+                    console.log(response);
+                    if (jsonData.errorcode == "1") {
+                        Notify.noty('danger', JSON.stringify(response));
+                    } else {
+                        if (jsonData.action == "pin") {
+                            Notify.noty('success', 'Успешно закреплено!');
+                        } else {
+                            Notify.noty('success', 'Успешно откреплено!');
+                        }
+                        
+                        const url = window.location.pathname;
+                        const segments = url.split('/'); 
+                        const id = segments[segments.length - 1];
+                        $.ajax({
+  
+  
+                          type: "POST",
+                          url: "/api/photo/getcomments/"+id,
+                          processData: false,
+                          async: true,
+                          success: function(r) {
+                              $('#posts').html(r)
+  
+  
+                          },
+                          error: function(r) {
+                              console.log(r)
+                          }
+  
+                      });
+                    }
+                }
+            });
+        });
+  }
 
 const editComment = (postId, body, modalid) => {
   $(document).ready(function() {

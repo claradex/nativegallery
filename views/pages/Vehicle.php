@@ -49,7 +49,7 @@ $vehicledatavariables = json_decode($data['content'], true);
                 foreach ($photos as $p) {
                     $author = new User($p['user_id']);
                     echo '<div class="p20p s11"><table><tbody><tr>
-<td class="pb_photo" id="p1987895"><a href="/photo/1987895/ target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$p['photourl'].'" alt="678 КБ">
+<td class="pb_photo" id="p1987895"><a href="/photo/'.$p['id'].'/ target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$p['photourl'].'" alt="678 КБ">
 <div class="hpshade">';
  if (DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'] >= 1) {
                                             echo '<div class="com-icon">'.DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div>';
