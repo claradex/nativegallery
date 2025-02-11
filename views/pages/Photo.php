@@ -334,8 +334,9 @@ if ($photo->i('id') !== null) {
                                     </colgroup>
                                     <tbody>
                                         <?php
+                                        $entity = DB::query('SELECT * FROM entities_data WHERE id=:id', array(':id'=>$photo->i('entitydata_id')))[0];
                                         $vehiclevariables = json_decode($vehicle->i('sampledata'), true);
-                                        $vehicledatavariables = json_decode($vehicle->i('content'), true);
+                                        $vehicledatavariables = json_decode($entity['content'], true);
                                         $num = 1;
                                         foreach ($vehiclevariables as $vb) {
                                             echo ' <tr class="s11 h21">
