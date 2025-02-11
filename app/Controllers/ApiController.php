@@ -19,6 +19,7 @@ use \App\Controllers\Api\Images\Comments\Delete as PhotoCommentDelete;
 use \App\Controllers\Api\Images\Comments\Pin as PhotoCommentPin;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
+use \App\Controllers\Api\GeoDB\Search as GeoDBSearch;
 use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 use \App\Controllers\Api\Users\LoadUser as UserLoad;
@@ -27,6 +28,8 @@ use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
 use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
 use \App\Controllers\Api\Admin\GetVehicleInputs as AdminGetVehicleInputs;
+use \App\Controllers\Api\Admin\GeoDB\Create as AdminGeoDBCreate;
+use \App\Controllers\Api\Admin\GeoDB\Load as AdminGeoDBLoad;
 class ApiController
 {
 
@@ -73,6 +76,9 @@ class ApiController
     public static function photocompress() {
         return new PhotoCompress();
     }
+    public static function geodbsearch() {
+        return new GeoDBSearch();
+    }
     public static function adminsetvis() {
         return new AdminPhotoSetVisibility();
     }
@@ -99,6 +105,12 @@ class ApiController
     }
     public static function admingetvehicleinputs() {
         return new AdminGetVehicleInputs();
+    }
+    public static function admingeodbcreate() {
+        return new AdminGeoDBCreate();
+    }
+    public static function admingeodbload() {
+        return new AdminGeoDBLoad();
     }
     public static function vehiclesload() {
         return new VehiclesLoad();

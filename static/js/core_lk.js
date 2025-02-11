@@ -166,7 +166,16 @@ $(document).ready(function()
 
 
 
-
+	$('#place').autocompleteHL({
+		minLength: 3,
+		source:	function(request, response)
+		{
+			var cid = $('#search_cid').val();
+			if (cid != 0)
+				 $.getJSON('/api/geodb/search', { place: request.term }, response).fail(function(jx) { alert(jx.responseText); });
+			else response(null);
+		}
+	});
 
 
 	$('#image').click(function()
@@ -223,7 +232,6 @@ $(document).ready(function()
 	$('#day, #month, #year').on('change', function() { $('#dateAbsent').hide(); });
 
 
-	$('#search_type').on('change', function() { changeColor(this); }).change();
 
 
 	// Комментарий
@@ -415,7 +423,6 @@ function setDate(d, m, y)
 function showHint(id) { $('#'+id+'_hint').fadeIn() }
 function hideHint(id) { $('#'+id+'_hint').fadeOut() }
 
-function changeColor(sel) {	sel.className = sel.options[sel.selectedIndex].className }
 
 
 

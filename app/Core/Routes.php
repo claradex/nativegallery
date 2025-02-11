@@ -65,12 +65,15 @@ class Routes
             Router::post('/api/photo/comment/$id/delete', 'ApiController@photocommentdelete');
             Router::post('/api/photo/comment/$id/pin', 'ApiController@photocommentpin');
             Router::get('/api/vehicles/load', 'ApiController@vehiclesload');
+            Router::get('/api/geodb/search', 'ApiController@geodbsearch');
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');
                 Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');
                 Router::any('/api/admin/createnews', 'ApiController@admincreatenews');
                 Router::any('/api/admin/loadnews', 'ApiController@adminloadnews');
                 Router::any('/api/admin/getvehicleinputs/$id', 'ApiController@admingetvehicleinputs');
+                Router::any('/api/admin/geodb/create', 'ApiController@admingeodbcreate');
+                Router::any('/api/admin/geodb/load', 'ApiController@admingeodbload');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
