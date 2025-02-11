@@ -587,7 +587,7 @@ if ($photo->i('id') !== null) {
 
                         <?php
                         if ($photo->i('moderated') === 1) {
-                            $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid', array(':pid' => $id));
+                            $comments = DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid ORDER BY CASE WHEN id = :pinnedid THEN 0 ELSE 1 END, id ASC', array(':pid' => $id, ':pinnedid' => $photo->i('pinnedcomment_id')));
                             $commcount = 0;
                             foreach ($comments as $c) {
                                 if (json_decode($c['content'], true)['deleted'] != 'true') {

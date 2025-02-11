@@ -78,8 +78,9 @@ const pinComment = (postId) => {
                         }
                         
                         const url = window.location.pathname;
-                        const segments = url.split('/'); 
-                        const id = segments[segments.length - 1];
+                        const segments = url.split('/');
+                        const id = segments[2];
+                        console.log(segments);
                         $.ajax({
   
   
@@ -121,7 +122,7 @@ const editComment = (postId, body, modalid) => {
                       Notify.noty('success', 'Успешно отредактировано!');
                       const url = window.location.pathname;
                       const segments = url.split('/'); 
-                      const id = segments[segments.length - 1];
+                      const id = segments[2];
                       $.ajax({
 
 

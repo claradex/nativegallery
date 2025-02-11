@@ -165,17 +165,20 @@ $(document).ready(function()
 	
 
 
-
-	$('#place').autocompleteHL({
-		minLength: 3,
-		source:	function(request, response)
-		{
-			var cid = $('#search_cid').val();
-			if (cid != 0)
-				 $.getJSON('/api/geodb/search', { place: request.term }, response).fail(function(jx) { alert(jx.responseText); });
-			else response(null);
-		}
-	});
+	var placeElement = document.getElementById('place');
+	if (placeElement) {
+		$('#place').autocompleteHL({
+			minLength: 3,
+			source:	function(request, response)
+			{
+				var cid = $('#search_cid').val();
+				if (cid != 0)
+					 $.getJSON('/api/geodb/search', { place: request.term }, response).fail(function(jx) { alert(jx.responseText); });
+				else response(null);
+			}
+		});
+	}
+	
 
 
 	$('#image').click(function()
