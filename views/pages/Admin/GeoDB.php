@@ -17,10 +17,10 @@ use \App\Models\User;
         <?php
         $geodb = DB::query('SELECT * FROM geodb');
         foreach ($geodb as $u) {
-            echo '<tr>
+            echo '<tr id="geodb'.$u['id'].'">
       <th>' . $u['id'] . '</th>
       <td>' . $u['title'] . '</td>
-      <td><div class="cmt-submit"><a class="btn btn-sm btn-primary" href="/admin?type=UserEdit&user_id=' . $u['id'] . '">Редактировать</a><a style="margin-left: 15px;" class="btn btn-sm btn-danger" href="/admin?type=UserEdit&user_id=' . $u['id'] . '">Удалить</a></div></td>
+      <td><div class="cmt-submit"><a style="margin-left: 15px;" class="btn btn-sm btn-danger" onclick="deleteGeoDB(`'.$u['id'].'`); return false;">Удалить</a></div></td>
     </tr>';
         }
         ?>
@@ -68,4 +68,20 @@ use \App\Models\User;
 
         });
     }
+
+function deleteGeoDB(id) {
+   $.ajax({
+                type: "POST",
+                url: '/api/admin/geodb/delete?id='+id,
+                data: $(this).serialize(),
+                success: function(response) {
+                $('#geodb'+id).remove();
+                        Notify.noty('success', 'OK!');
+                        //$("#result").html("<div class='alert alert-successnew container mt-5' role='alert'>Успешный вход!</div>");
+                      
+                        
+                    }
+                
+            });
+}
 </script>

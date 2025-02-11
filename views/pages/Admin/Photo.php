@@ -47,6 +47,7 @@ use \App\Models\User;
                                     <th width="50%">Информация</th>
                                     <th>Действия</th>
                                 </tr>
+                               
                                 
                                <?php
                                $photos = DB::query('SELECT * FROM photos WHERE moderated=0 ORDER BY id DESC');
@@ -118,18 +119,6 @@ use \App\Models\User;
   </label>
 </div>
 <h6 class="mt-3">Другие действия</h6>
-<div class="form-check">
-  <input name="anotheraccept'.$p['id'].'[]" class="form-check-input" type="checkbox" value="1" id="flexCheckDefault">
-  <label class="form-check-label" for="flexCheckDefault">
-    Отключить комментарии
-  </label>
-</div>
-<div class="form-check">
-  <input name="anotheraccept'.$p['id'].'[]" class="form-check-input" type="checkbox" value="2" id="flexCheckDefault">
-  <label class="form-check-label" for="flexCheckDefault">
-    Отключить рейтинг
-  </label>
-</div>
 <div class="mb-3">
   <label for="exampleFormControlTextarea1" class="form-label">Дополнительный комментарий</label>
   <textarea class="form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>

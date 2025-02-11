@@ -259,8 +259,8 @@ if ($photo->i('id') !== null) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Мне не&nbsp;нравится</span></a>
                                                                     
-                                        <a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></a>
-                                        <a href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a>
+                                        <!--a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></!--a>
+                                        <a-- href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a-->
                                     </div>
                                 <?php } ?>
                                 <div id="votes" class="votes">

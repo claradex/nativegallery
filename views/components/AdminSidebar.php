@@ -4,7 +4,7 @@ use \App\Core\Page;
 use \App\Services\DB;
 $nonreviewedimgs = DB::query('SELECT COUNT(*) FROM photos WHERE moderated=0')[0]['COUNT(*)'];
                                 if ($nonreviewedimgs > 0) {
-                                    $nonr = '<span class="mm-notify notify-count">'.$nonreviewedimgs.'</span>';
+                                    $nonr = '<span class="badge text-bg-danger">'.$nonreviewedimgs.'</span>';
                                 }
 ?>
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -37,7 +37,7 @@ body {
 
         <nav class="nav__container">
             <div>
-                <a href="#" class="nav__link nav__logo">
+                <a href="/admin" class="nav__link nav__logo">
                     <h5><b><?=NGALLERY['root']['title']?></b></h5>
                 </a>
 
@@ -56,7 +56,7 @@ body {
                         </a>
                         <a href="/admin?type=Photo" class="nav__link">
                             <i class="bx bx-camera nav__icon"></i>
-                            <span class="nav__name">Фотографии</span>
+                            <span class="nav__name">Фотографии<?=$nonr?></span>
                         </a>
                         <a href="/admin?type=Galleries" class="nav__link">
                             <i class="bx bx-images nav__icon"></i>
@@ -66,6 +66,10 @@ body {
                             <i class="bx bx-news nav__icon"></i>
                             <span class="nav__name">Новости сайта</span>
                         </a>
+                        <!--a href="/admin?type=Contests" class="nav__link">
+                            <i class="bx bx-party nav__icon"></i>
+                            <span class="nav__name">Фотоконкурсы <span class="badge text-bg-warning">BETA</span></span>
+                        <-->
                         <a href="/admin?type=Entities" class="nav__link">
                             <i class="bx bx-package nav__icon"></i>
                             <span class="nav__name">Сущности</span>
@@ -74,7 +78,14 @@ body {
                             <i class="bx bx-data nav__icon"></i>
                             <span class="nav__name">База моделей</span>
                         </a>
-
+                        <a href="/admin?type=GeoDB" class="nav__link">
+                            <i class="bx bx-world nav__icon"></i>
+                            <span class="nav__name">GeoDB<span class="badge text-bg-warning">BETA</span></span>
+                        </a>
+                        <!--a href="/admin?type=Settings" class="nav__link">
+                            <i class="bx bx-cog nav__icon"></i>
+                            <span class="nav__name">Настройки<span class="badge text-bg-warning">BETA</span></span>
+                        <-->
                        
 
                     </div>

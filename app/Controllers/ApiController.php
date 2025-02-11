@@ -30,6 +30,8 @@ use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
 use \App\Controllers\Api\Admin\GetVehicleInputs as AdminGetVehicleInputs;
 use \App\Controllers\Api\Admin\GeoDB\Create as AdminGeoDBCreate;
 use \App\Controllers\Api\Admin\GeoDB\Load as AdminGeoDBLoad;
+use \App\Controllers\Api\Admin\GeoDB\Delete as AdminGeoDBDelete;
+
 class ApiController
 {
 
@@ -111,6 +113,9 @@ class ApiController
     }
     public static function admingeodbload() {
         return new AdminGeoDBLoad();
+    }
+    public static function admingeodbdelete() {
+        return new AdminGeoDBDelete();
     }
     public static function vehiclesload() {
         return new VehiclesLoad();
