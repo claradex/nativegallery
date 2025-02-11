@@ -1,8 +1,5 @@
 -- Migration script to update database schema
 
--- Drop tables that are no longer needed
--- (No tables to drop as all tables in 111.sql exist in 222.sql)
-
 -- Add new tables from 222.sql that don't exist in 111.sql
 CREATE TABLE IF NOT EXISTS `contests` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -29,8 +26,8 @@ CREATE TABLE IF NOT EXISTS `servicekeys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Modify existing tables to add new columns
-ALTER TABLE `photos`
-  ADD COLUMN IF NOT EXISTS `pinnedcomment_id` int(10) NOT NULL DEFAULT 0 AFTER `entitydata_id`;
+-- Using proper ALTER TABLE syntax for MySQL
+ALTER TABLE `photos` ADD COLUMN `pinnedcomment_id` int(10) NOT NULL DEFAULT 0 AFTER `entitydata_id`;
 
 -- Set AUTO_INCREMENT values for the new tables
 ALTER TABLE `contests` AUTO_INCREMENT = 1;
