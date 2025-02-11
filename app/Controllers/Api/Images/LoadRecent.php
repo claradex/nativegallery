@@ -13,7 +13,7 @@ class LoadRecent
         $response = [];
 
         if ($_POST['serverhost'] != 'transphoto.org') {
-            $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
+            $photos = DB::query('SELECT * FROM photos WHERE moderated=1 AND id<:id ORDER BY id DESC LIMIT 30', array(':id'=>$_GET['lastpid']));
 
 
             foreach ($photos as $p) {
@@ -23,7 +23,7 @@ class LoadRecent
                     $date = Date::zmdate($p['posted_at']);
                 }
                 $user = DB::query('SELECT * FROM users WHERE id=:id', array(':id' => $p['user_id']))[0];
-
+                $comments = DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:pid', array(':pid'=>$p['id']))[0]['COUNT(*)'];
                 $response[] = [
                     'id' => $p['id'],
                     'place' => htmlspecialchars($p['place']),
@@ -31,7 +31,8 @@ class LoadRecent
                     'user_name' => $user['username'],
                     'user_id' => $p['user_id'],
                     'photourl' => $p['photourl'],
-                    'photourl_small' => 'https://' . $_SERVER['SERVER_NAME'] . '/api/photo/compress?url=' . $p['photourl']
+                    'photourl_small' => 'https://' . $_SERVER['SERVER_NAME'] . '/api/photo/compress?url=' . $p['photourl'],
+                    'ccnt' => $comments
                 ];
             }
         } else {

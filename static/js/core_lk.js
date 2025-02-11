@@ -318,7 +318,7 @@ document.onclick = function(e)
 {
 	e = e || window.event;
 	E = e.target || e.srcElement;
-	if (E.id != 'phint' && E.parentNode.id != 'phint' && E != _getID('mform').place) $('#phint').slideUp();
+
 
 	if (E.className != 'searchVehiclesBtn' && E.id != 'vlist_table' && E.className != 'num' && $('#vlist').css('display') == 'block') $('#vlist').hide().html('');
 
@@ -346,6 +346,7 @@ function artClick()
 
 	$('#lnk_cid_tr')[art == 2 ? 'hide' : 'show']();
 }
+
 
 
 

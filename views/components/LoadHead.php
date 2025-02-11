@@ -16,6 +16,7 @@
     <script src="/static/js/jquery-ui.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/jquery.form.min.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/core.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
+    <script src="/static/js/index.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/core_lk.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/imageupload.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
     <script src="/static/js/progress.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>

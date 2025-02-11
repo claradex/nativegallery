@@ -78,7 +78,11 @@ LIMIT 10;');
    <img width="250" src="/api/photo/compress?url=' . $p['photourl'] . '">
    <div class="hpshade">
       <div class="eye-icon">+' . $pd['view_count'] . '</div>
-   </div>
+   </div>';
+   if ((int)$p['priority'] === 1) {
+    echo '<div class="temp" style="background-image:url(/static/img/cond.png)"></div>';
+   }
+   echo '
 </a>';
                                     }
                                 }
@@ -125,27 +129,17 @@ LIMIT 10;');
 
 
                             <h4 style="clear:both"><a href="/update">Недавно добавленные фотографии</a></h4>
-                            <div id="recent-photos" class="ix-photos ix-photos-multiline" lastpid="1970527" firstpid="1970550">
-                                <?php
-                                $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
-                                foreach ($photos as $p) {
-                                    if ($p['posted_at'] === 943909200 || Date::zmdate($p['posted_at']) === '30 ноября 1999 в 00:00') {
-                                        $date = 'дата не указана';
-                                    } else {
-                                        $date = Date::zmdate($p['posted_at']);
-                                    }
-                                    $bck = 'background-image:url("/api/photo/compress?url=' . $p['photourl'] . '")';
-                                    echo ' <div class="prw-grid-item">
-                                    <div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars($p['place']) . '</b></span>
-                                        <div>' . $date . '</div>
-                                    </div>
-                                    '; ?>
-                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
-                            </div>
-                        <?php }
-                        ?>
+                            <?php
+                            $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY id DESC LIMIT 30');
 
+                            $first_id = $photos[0]['id'];
+                            $last_id = end($photos)['id'];
+                            ?>
+                            <div id="recent-photos" class="ix-photos ix-photos-multiline" lastpid="<?=$first_id?>" firstpid="<?=$last_id?>">
+                              
                         </div>
+                        </div>
+                        <div style="text-align:center; margin:10px 0"><input type="button" name="button" id="loadmore" class="" value="Загрузить ещё"></div>
 
 
 

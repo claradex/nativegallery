@@ -121,7 +121,7 @@ function searchVehicles()
 
 function AddPhotoToBlock(block, arr, prepend)
 {
-	block[prepend ? 'prepend' : 'append']('<div class="prw-grid-item"><div class="prw-wrapper">' + arr.links + '<div>' + arr.pdate + '</div></div><a href="/photo/' + arr.pid + '/" target="_blank" class="prw-animate" style="background-image:url(\'' + arr.prw + '\')">' + (arr.ccnt != 0 ? '<div class="hdshade"><div class="com-icon">' + arr.ccnt + '</div></div>' : '') + '</a></div>');
+	block[prepend ? 'prepend' : 'append']('<div class="prw-grid-item"><div class="prw-wrapper">' + arr.place + '<div>' + arr.date + '</div></div><a href="/photo/' + arr.id + '/" target="_blank" class="prw-animate" style="background-image:url(\'' + arr.photourl_small + '\')">' + (arr.ccnt != 0 ? '<div class="hdshade"><div class="com-icon">' + arr.ccnt + '</div></div>' : '') + '</a></div>');
 }
 
 
@@ -166,19 +166,19 @@ function LoadRecentPhotos()
 
 	loadmore.prop('disabled', true).addClass('loader-button').val(' ');
 
-	$.getJSON('/api.php', { action: 'get-recent-photos', width: width, lastpid: lastpid, hidden: hidden.length }, function(data)
+	$.getJSON('/api/photo/loadrecent', { lastpid: lastpid }, function(data)
 	{
 		if (data)
 		{
-			if (lastpid == 0) recent.attr('firstpid', data[0].pid);
+			if (lastpid == 0) recent.attr('firstpid', data[0].id);
 			hidden.show();
 
 			for (var i = 0; i < data.length; i++) AddPhotoToBlock(recent, data[i]);
-			recent.attr('lastpid', data[i-1].pid);
+			recent.attr('lastpid', data[i-1].id);
 		}
 		else recent.append('Load error');
 
-		loadmore.prop('disabled', false).removeClass('loader-button').val(_text['IX_LOADMORE']);
+		loadmore.prop('disabled', false).removeClass('loader-button').val('Загрузить ещё');
 	})
 	.fail(function(jx) { if (jx.responseText != '') console.log(jx.responseText); });
 }

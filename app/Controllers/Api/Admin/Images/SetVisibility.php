@@ -12,6 +12,7 @@ class SetVisibility
 {
     public function __construct()
     {
+        $priority = 0;
         $photo = new Photo($_GET['id']);
         $data = json_decode($photo->i('content'), true);
 
@@ -21,12 +22,17 @@ class SetVisibility
         if ($_POST['comment'] != null) {
             $data['declineComment'] = $_POST['comment'];
         }
-        $data['declineReason'] = $_GET['decline_reason'];
+        if ($_GET['mod'] != 1) {
+            $data['declineReason'] = $_GET['reason'];
+        } else {
+            $priority = $_GET['reason'];
+        }
+
 
         $updatedJsonString = json_encode($data);
 
 
-        DB::query('UPDATE photos SET moderated=:mod, timeupload=:time, content=:c WHERE id=:id', array(':id'=>$_GET['id'], ':mod'=>$_GET['mod'], ':time'=>time(), ':c'=>$updatedJsonString));
+        DB::query('UPDATE photos SET moderated=:mod, timeupload=:time, priority=:pr, content=:c WHERE id=:id', array(':id'=>$_GET['id'], ':mod'=>$_GET['mod'], ':time'=>time(), ':pr'=>$priority, ':c'=>$updatedJsonString));
         $uid = DB::query('SELECT user_id FROM photos WHERE id=:id', array(':id'=>$_GET['id']))[0]['user_id'];
         if ($_GET['mod'] === 1) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid'=>$uid));

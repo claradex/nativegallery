@@ -35,7 +35,7 @@ use \App\Models\User;
     }
     </style>
                 <td class="main">
-                    <h1><b>Журнал</b></h1>
+                    <h1><b>Фотографии</b></h1>
                     <script src="/js/diff.js"></script>
                     <script src="/js/pwrite-compare.js"></script>
                   <br clear="all"><br>
@@ -74,7 +74,7 @@ use \App\Models\User;
                                     <td class="c">
                                    ';
                                    if ($p['moderated'] === 0) {
-                                    echo '<a href="/api/admin/images/setvisibility?id='.$p['id'].'&mod=1" class="btn btn-primary">Принять</a>
+                                    echo '<a data-bs-toggle="modal" data-bs-target="#acceptPhotoModal'.$p['id'].'" href="#" class="btn btn-primary">Принять</a>
                                     <a data-bs-toggle="modal" data-bs-target="#declinePhotoModal'.$p['id'].'" href="#" class="btn btn-danger">Отклонить</a>';
                                    }
                                    echo '
@@ -84,6 +84,68 @@ use \App\Models\User;
                                     }
                                    echo '
                                 </tr>
+
+   <div class="modal fade" id="acceptPhotoModal'.$p['id'].'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"><b>Принятие фотографии</b></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <div class="form-check">
+  <input name="accept'.$p['id'].'" value="0" class="form-check-input" type="radio" name="flexRadioDefault" id="acceptReason1" checked>
+  <label class="form-check-label" for="acceptReason1">
+    Нормальная публикация
+  </label>
+</div>
+<div class="form-check">
+  <input name="accept'.$p['id'].'" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="acceptReason3">
+  <label class="form-check-label" for="acceptReason3">
+    Условная публикация
+  </label>
+</div>
+<div class="form-check">
+  <input name="accept'.$p['id'].'" value="2" class="form-check-input" type="radio" name="flexRadioDefault" id="acceptReason2">
+  <label class="form-check-label" for="acceptReason2">
+    Временная публикация
+  </label>
+</div>
+<div class="form-check">
+  <input name="accept'.$p['id'].'" value="3" class="form-check-input" type="radio" name="flexRadioDefault" id="acceptReason4">
+  <label class="form-check-label" for="acceptReason4">
+    Техническая публикация
+  </label>
+</div>
+<h6 class="mt-3">Другие действия</h6>
+<div class="form-check">
+  <input name="anotheraccept'.$p['id'].'[]" class="form-check-input" type="checkbox" value="1" id="flexCheckDefault">
+  <label class="form-check-label" for="flexCheckDefault">
+    Отключить комментарии
+  </label>
+</div>
+<div class="form-check">
+  <input name="anotheraccept'.$p['id'].'[]" class="form-check-input" type="checkbox" value="2" id="flexCheckDefault">
+  <label class="form-check-label" for="flexCheckDefault">
+    Отключить рейтинг
+  </label>
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Дополнительный комментарий</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
+</div>
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</a>'; ?>
+        <a href="#" onclick="photoAction(<?=$p['id']?>, document.querySelector(`input[name='accept<?=$p['id']?>']:checked`).value, 1); return false;" data-bs-dismiss="modal" class="btn btn-primary">Сохранить</a>
+        <?php echo '
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
                                 
                                 <div class="modal fade" id="declinePhotoModal'.$p['id'].'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -159,7 +221,7 @@ use \App\Models\User;
 function photoAction(photo_id, decline_reason, mod) {
    $.ajax({
                 type: "GET",
-                url: '/api/admin/images/setvisibility?id='+photo_id+'&mod='+mod+'&decline_reason='+decline_reason,
+                url: '/api/admin/images/setvisibility?id='+photo_id+'&mod='+mod+'&reason='+decline_reason,
                 data: $(this).serialize(),
                 success: function(response) {
                 $('#pht'+photo_id).remove();
