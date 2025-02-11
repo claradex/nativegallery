@@ -123,7 +123,17 @@ use \App\Models\User;
     Расчленёнка
   </label>
 </div>
+<div class="form-check">
+  <input name="decline'.$p['id'].'" value="6" class="form-check-input" type="radio" name="flexRadioDefault" id="declineReason6">
+  <label class="form-check-label" for="declineReason6">
+    Файл сломан
+  </label>
+</div>
 
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Дополнительный комментарий</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" name="comment" rows="3"></textarea>
+</div>
       </div>
       <div class="modal-footer">
         <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</a>'; ?>

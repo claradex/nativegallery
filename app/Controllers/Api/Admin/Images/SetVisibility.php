@@ -18,6 +18,9 @@ class SetVisibility
         if (!array_key_exists('declineReason', $data)) {
             $data['declineReason'] = null;
         }
+        if ($_POST['comment'] != null) {
+            $data['declineComment'] = $_POST['comment'];
+        }
         $data['declineReason'] = $_GET['decline_reason'];
 
         $updatedJsonString = json_encode($data);

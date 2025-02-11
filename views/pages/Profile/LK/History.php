@@ -69,6 +69,9 @@ use \App\Models\{User, Photo};
                                         if ($p['moderated'] === 2) {
                                             echo '<p class="sm"><b>Причина отклонения: '.$photo->declineReason((int)$photo->content('declineReason')).'</b></p>';
                                         }
+                                        if ($photo->content('declineComment') != null) {
+                                            echo '<p class="sm"><b>Комментарий: </b> '.$photo->content('declineComment').'</p>';
+                                        }
                                         echo '
                                        
                                     </td>

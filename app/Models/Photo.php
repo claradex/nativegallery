@@ -37,6 +37,9 @@ class Photo {
             case 5:
                 return 'Расчленёнка';
                 break;
+            case 6:
+                return 'Файл сломан';
+                break;
             default:
                 return 'Не подходит для сайта';
                 break;
