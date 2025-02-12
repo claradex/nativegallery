@@ -9,7 +9,7 @@ class SearchController
 {
     public static function i()
     {
-       Page::set('Search');
+       Page::set('Search/Index');
        
     }
 

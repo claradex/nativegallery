@@ -172,8 +172,8 @@ if ($photo->i('id') !== null) {
                 <table class="pwrite">
                     <tr>
                         <?php
-                        if ($photo->i('postbody') != null) { ?>
-                            <td class="nw" valign="top" align="right"><b><?= htmlspecialchars($photo->i('postbody')) ?></b></td>
+                        if ($photo->i('place') != null) { ?>
+                            <td class="nw" valign="top" align="right"><b><?= htmlspecialchars($photo->i('place')) ?></b></td>
                         <?php } ?>
                     </tr>
 
@@ -197,7 +197,7 @@ if ($photo->i('id') !== null) {
         <?php } ?>
         <div>
             <?php
-                    if ($photo->content('comment') != null) { ?>
+            if ($photo->content('comment') != null) { ?>
                 <div style="padding-top:8px"><?= htmlspecialchars($photo->content('comment')) ?></div>
             <?php } ?>
         </div><br>
