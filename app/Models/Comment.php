@@ -108,7 +108,7 @@ class Comment
         if ($this->c['user_id'] === Auth::userid() || $photo->i('user_id') === Auth::userid()) {
             echo '
                                 <div class="dropdown">
-                                <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
+                                <a style="color: #000" class="compl" href="#">...</a>
                                  <div class="dropdown-content">';
                                 
                                  
