@@ -109,11 +109,18 @@ class Comment
             echo '
                                 <div class="dropdown">
                                 <a style="color: #000" class="compl" href="/lk/ticket.php?action=add&amp;wid=3252565">...</a>
-                                 <div class="dropdown-content">'; ?>
-            <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?= $this->c['id'] ?>, 'EDIT_COMMENT', '<?= htmlspecialchars($this->c['body']) ?>', 'modaledit<?= $this->c['id'] ?>'); return false;">Редактировать</a><br>
+                                 <div class="dropdown-content">';
+                                
+                                 
+                                 ?>
+                
             <a href="#" onclick="pinComment(<?= $this->c['id'] ?>); return false;"><?=$pinc?></a><br>
+            <?php
+            if ($this->c['user_id'] === Auth::userid()) { ?>
+            <a style="margin-bottom: 10px;" href="#" onclick="createModal(<?= $this->c['id'] ?>, 'EDIT_COMMENT', '<?= htmlspecialchars($this->c['body']) ?>', 'modaledit<?= $this->c['id'] ?>'); return false;">Редактировать</a><br>
             <a href="#" onclick="createModal(<?= $this->c['id'] ?>, 'DELETE_COMMENT', '', 'modaldel<?= $this->c['id'] ?>'); return false;">Удалить</a>
-<?php
+            <?php }
+
             echo '
   </div>
   </div>
