@@ -78,6 +78,11 @@ class MainController
        Page::set('Errors/EmailVerify');
        
     }
+    public static function comments()
+    {
+       Page::set('Comments/Index');
+       
+    }
     public static function tour()
     {
        Page::set('Tour');

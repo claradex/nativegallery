@@ -51,7 +51,7 @@ if (NGALLERY['root']['registration']['emailverify'] === true && $user->i('status
                     </ul>
                 </div>
             </li>
-            <li><a href="/comments.php" class="mm-item"><span class="mm-label">Комментарии</span></a></li>
+            <li><a href="/comments" class="mm-item"><span class="mm-label">Комментарии</span></a></li>
             <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Обновления</span><?=$nonrw?></a>
                 <div>
                     <ul class="mm-level-2">

@@ -38,7 +38,7 @@ class Routes
         Router::get('/article/$id', 'MainController@gallery');
         Router::get('/voting', 'ContestsController@index');
         Router::get('/voting/results', 'ContestsController@results');
-
+        Router::get('/comments', 'MainController@comments');
         if (Auth::userid() > 0) {
             $user = new \App\Models\User(Auth::userid());
             Router::get('/lk', 'ProfileController@lk');
