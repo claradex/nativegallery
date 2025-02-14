@@ -321,7 +321,9 @@ class Register
                                 if (NGALLERY['root']['registration']['emailverify'] === true) {
                                     $status === 3;
                                 }
+                                $token = GenerateRandomStr::gen_uuid();
                                 DB::query('INSERT INTO users VALUES (\'0\', :username, :email, :password, :photourl, 5, :online, 0, :status, :content)', array(':username' => ltrim($username), ':password' => password_hash(ltrim($password), PASSWORD_BCRYPT), ':photourl' => '/static/img/avatar.png', ':email' => $email, ':content' => $content, ':online' => time(), ':status'=>$status));
+                                $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
                                 if (NGALLERY['root']['registration']['emailverify'] === true) {
                                     $disposableEmailFilter = new DisposableEmailFilter();
                                     if ($disposableEmailFilter->isDisposableEmailAddress($_POST['email'])) {
@@ -334,8 +336,6 @@ class Register
                                         );
                                         die();
                                     }
-                                    $token = GenerateRandomStr::gen_uuid();
-                                    $user_id = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
                                     $key = GenerateRandomStr::gen_uuid();
                                     $content = Json::return(
                                         array(
