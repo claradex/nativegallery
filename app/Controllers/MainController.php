@@ -17,6 +17,11 @@ class MainController
        Page::set('Main');
        
     }
+    public static function page()
+    {
+       Page::set('Page');
+       
+    }
     public static function about()
     {
        Page::set('About');
@@ -46,11 +51,6 @@ class MainController
     public static function top30()
     {
        Page::set('Top30');
-       
-    }
-    public static function vehicle()
-    {
-       Page::set('Vehicle');
        
     }
     public static function feed()

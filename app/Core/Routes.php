@@ -17,12 +17,12 @@ class Routes
         Router::get('/register', 'RegisterController@i');
         Router::get('/photo/$id', 'PhotoController@i');
         Router::get('/author/$id', 'ProfileController@i');
+        Router::get('/page/$id', 'MainController@page');
         Router::post('/api/login', 'ApiController@login');
         Router::post('/api/register', 'ApiController@register');
         Router::get('/api/photo/stats', 'ApiController@photostats');
         Router::get('/about', 'MainController@about');
         Router::get('/rules', 'MainController@rules');
-        Router::get('/vehicle/$id', 'MainController@vehicle');
         Router::get('/rules/pub', 'MainController@publicationRules');
         Router::get('/rules/photo', 'MainController@photoRules');
         Router::get('/rules/video', 'MainController@videoRules');
@@ -41,6 +41,7 @@ class Routes
         Router::get('/comments', 'MainController@comments');
         if (Auth::userid() > 0) {
             $user = new \App\Models\User(Auth::userid());
+
             Router::get('/lk', 'ProfileController@lk');
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
@@ -52,6 +53,8 @@ class Routes
 
             Router::get('/fav', 'MainController@fav');
 
+            Router::get('/vehicle/edit', 'VehicleController@iedit');
+            Router::get('/vehicle/dbedit', 'VehicleController@dbedit');
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
@@ -80,5 +83,6 @@ class Routes
         } else {
             Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }
+        Router::get('/vehicle/$id', 'VehicleController@i');
     }
 }
