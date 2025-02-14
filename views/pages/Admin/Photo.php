@@ -36,9 +36,25 @@ use \App\Models\User;
     </style>
                 <td class="main">
                     <h1><b>Фотографии</b></h1>
+                    <div class="v-header__tabs">
+                <div class="v-tabs">
+                    <div class="v-tabs__scroll">
+                        <div class="v-tabs__content"><a href="#" onclick="changeTab('full')" id="full" class="v-tab v-tab--active"><span class="v-tab__label">
+                                    Полный список
+
+                                    </span></a><a href="#" onclick="changeTab('moderate')" id="moderate" class="v-tab"><span class="v-tab__label">
+                                    Ожидают модерации
+
+                                    </span></a>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
                     <script src="/js/diff.js"></script>
                     <script src="/js/pwrite-compare.js"></script>
-                  <br clear="all"><br>
+                 <div style="display: none;" id="moderate__block">
                     <div class="p20w" style="display:block">
                         <table class="table">
                             <tbody>
@@ -202,7 +218,10 @@ use \App\Models\User;
 
                             </tbody>
                         </table>
-                    </div><br>
+                    </div></div>
+                    <div style="display: none;" class="active__block" id="full__block">
+                      fgdfg
+                    </div>
 
                 </td>
             </tr>

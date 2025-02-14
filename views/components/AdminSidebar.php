@@ -15,11 +15,13 @@ body {
 }
 
 </style>
+<script src="/static/js/changeTab.js" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/static/css/header.admin.css">
+<link rel="stylesheet" href="/static/css/tabs.css">
 <div class="layout__left-column layout__sticky">
  <header style="background-color: #0d1012;" class="header">
             <div class="header__container">
@@ -81,6 +83,10 @@ body {
                         <a href="/admin?type=GeoDB" class="nav__link">
                             <i class="bx bx-world nav__icon"></i>
                             <span class="nav__name">GeoDB<span class="badge text-bg-warning">BETA</span></span>
+                        </a>
+                        <a href="/admin?type=Pages" class="nav__link">
+                            <i class="bx bx-file-blank nav__icon"></i>
+                            <span class="nav__name">Страницы</span>
                         </a>
                         <!--a href="/admin?type=Settings" class="nav__link">
                             <i class="bx bx-cog nav__icon"></i>
