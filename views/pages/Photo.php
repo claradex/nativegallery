@@ -258,15 +258,24 @@ if ($photo->i('id') !== null) {
                                         <a href="#" vote="0" class="vote_btn <?php if (Vote::photo(Auth::userid(), $id) === 0) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Мне не&nbsp;нравится</span></a>
-                                                                    
-                                        <!--a class="konk_btn" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></!--a>
-                                        <a-- href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a-->
+                                        <?php
+                                        if ($photo->content('video') === null && $photo->i('user_id') != Auth::userid()) { ?>
+                                        <a class="konk_btn  <?php if (Vote::photoContest(Auth::userid(), $id) === 1) {
+                                                                                    echo 'voted';
+                                                                                } ?>" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></a>
+                                        <a href="#" vote="0" class="konk_btn  <?php if (Vote::photoContest(Auth::userid(), $id) === 0) {
+                                                                                    echo 'voted';
+                                                                                } ?>"><span>Неконкурсное фото</span></a>
+                                        <?php } else if ($photo->i('user_id') === Auth::userid()) { ?>
+                                            
+                                    <a href="#" vote="1" class="konk_btn"><span>Выставить на&nbsp;конкурс</span></a><a href="#" vote="0" class="konk_btn"><span>Не участвовать в&nbsp;конкурсе</span></a></div>
+                                            <?php } ?>
                                     </div>
                                 <?php } ?>
                                 <div id="votes" class="votes">
                                     <table class="vblock pro">
                                         <?php
-                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 ORDER BY id DESC', array(':pid' => $id));
+                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 AND contest=0 ORDER BY id DESC', array(':pid' => $id));
                                         foreach ($votespos as $ps) {
                                             $uservote = new User($ps['user_id']);
                                             echo ' <tr>
@@ -279,7 +288,7 @@ if ($photo->i('id') !== null) {
                                     </table>
                                     <table class="vblock coN">
                                         <?php
-                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 ORDER BY id DESC', array(':pid' => $id));
+                                        $votespos = DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 AND contest=0 ORDER BY id DESC', array(':pid' => $id));
                                         foreach ($votespos as $ps) {
                                             $uservote = new User($ps['user_id']);
                                             echo ' <tr>

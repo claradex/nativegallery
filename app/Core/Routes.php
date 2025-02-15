@@ -38,6 +38,7 @@ class Routes
         Router::get('/article/$id', 'MainController@gallery');
         Router::get('/voting', 'ContestsController@index');
         Router::get('/voting/results', 'ContestsController@results');
+        Router::get('/voting/waiting', 'ContestsController@waiting');
         Router::get('/comments', 'MainController@comments');
         if (Auth::userid() > 0) {
             $user = new \App\Models\User(Auth::userid());
@@ -52,6 +53,7 @@ class Routes
             Router::get('/search', 'SearchController@i');
 
             Router::get('/fav', 'MainController@fav');
+            Router::get('/voting/sendpretend', 'ContestsController@sendpretend');
 
             Router::get('/vehicle/edit', 'VehicleController@iedit');
             Router::get('/vehicle/dbedit', 'VehicleController@dbedit');
@@ -77,6 +79,8 @@ class Routes
                 Router::any('/api/admin/getvehicleinputs/$id', 'ApiController@admingetvehicleinputs');
                 Router::any('/api/admin/geodb/create', 'ApiController@admingeodbcreate');
                 Router::any('/api/admin/geodb/load', 'ApiController@admingeodbload');
+                Router::any('/api/admin/contests/createtheme', 'ApiController@admincontestscreatetheme');
+                Router::any('/api/admin/contests/create', 'ApiController@admincontestscreate');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
