@@ -17,5 +17,15 @@ class ContestsController
        Page::set('Contests/VotingIndex');
        
     }
+    public static function waiting()
+    {
+       Page::set('Contests/VotingWaiting');
+       
+    }
+    public static function sendpretend()
+    {
+       Page::set('Contests/VotingSendPretend');
+       
+    }
 
 }

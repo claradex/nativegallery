@@ -31,6 +31,8 @@ use \App\Controllers\Api\Admin\GetVehicleInputs as AdminGetVehicleInputs;
 use \App\Controllers\Api\Admin\GeoDB\Create as AdminGeoDBCreate;
 use \App\Controllers\Api\Admin\GeoDB\Load as AdminGeoDBLoad;
 use \App\Controllers\Api\Admin\GeoDB\Delete as AdminGeoDBDelete;
+use \App\Controllers\Api\Admin\Contests\CreateTheme as AdminContestsCreateTheme;
+use \App\Controllers\Api\Admin\Contests\Create as AdminContestsCreate;
 
 class ApiController
 {
@@ -107,6 +109,12 @@ class ApiController
     }
     public static function admingetvehicleinputs() {
         return new AdminGetVehicleInputs();
+    }
+    public static function admincontestscreatetheme() {
+        return new AdminContestsCreateTheme();
+    }
+    public static function admincontestscreate() {
+        return new AdminContestsCreate();
     }
     public static function admingeodbcreate() {
         return new AdminGeoDBCreate();

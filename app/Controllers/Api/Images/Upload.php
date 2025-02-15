@@ -37,7 +37,7 @@ class Upload
         } else {
             $moderated = 1;
         }
-        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :gallery, :entityid, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated, ':gallery'=>$_POST['gallery'], ':entityid'=>self::$entitydata_id));
+        DB::query('INSERT INTO photos VALUES (\'0\', :userid, :postbody, :photourl, :time, :timeup, :exif, 0, :moderated, :place, 0, :gallery, :entityid, 0, 0, :content)', array(':postbody' => $postbody, ':userid' => Auth::userid(), ':time' =>  mktime(0, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']), ':content' => $content, ':photourl' => self::$photourl, ':exif' => $exif, ':place' => $_POST['place'], ':timeup' => time(), ':moderated' => $moderated, ':gallery'=>$_POST['gallery'], ':entityid'=>self::$entitydata_id));
         if (($moderated === 1) && (self::$subsnotify != 'disabled')) {
             $followers = DB::query('SELECT * FROM followers WHERE user_id=:uid', array(':uid' => Auth::userid()));
             foreach ($followers as $f) {
