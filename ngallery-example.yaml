@@ -68,3 +68,5 @@ ngallery:
         allowgif: true
     comments:
       premoderation: false
+    contests:
+      enabled: true

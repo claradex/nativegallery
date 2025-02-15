@@ -371,10 +371,10 @@ table.nospaces > tbody > tr > td.lcol { padding:2px 6px 0; }
 .flag-left { padding-left:26px !important; }
 .input-flag { margin:-2px -26px 0 5px; position:relative; z-index:11; }
 
-.contestBtn { display:block; cursor:pointer; width:56px; height:28px; margin:10px; background:url('/img/vote_contest.gif') no-repeat; opacity:0.7; }
+.contestBtn { display:block; cursor:pointer; width:56px; height:28px; margin:10px; background:url('/static/img/vote_contest.gif') no-repeat; opacity:0.7; }
 .contestBtn:hover { opacity:1; }
-.contestBtn.voted { opacity:1; background:url('/img/vote_contest_pressed.gif') no-repeat; }
-.contestBtn.loading { opacity:1; background:url('/img/vote_contest_loading.gif') no-repeat; }
+.contestBtn.voted { opacity:1; background:url('/static/img/vote_contest_pressed.gif') no-repeat; }
+.contestBtn.loading { opacity:1; background:url('/static/img/vote_contest_loading.gif') no-repeat; }
 
 .died { border:solid 1px black; padding:0 2px; }
 

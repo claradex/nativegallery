@@ -87,9 +87,8 @@ $(document).ready(function()
 				}
 
 				$('#votes').html(html)[html == '' ? 'hide' : 'show']();
-
-				$('.vote_btn[vote="1"]')[data.buttons[1] ? 'addClass' : 'removeClass']('voted');
-				$('.vote_btn[vote="0"]')[data.buttons[0] ? 'addClass' : 'removeClass']('voted');
+				$('.vote[pid="' + pid + '"][vote="1"]')[data.buttons.posbtn ? 'addClass' : 'removeClass']('voted');
+				$('.vote[pid="' + pid + '"][vote="0"]')[data.buttons.negbtn ? 'addClass' : 'removeClass']('voted')
 
 				var rating = parseInt(data.rating);
 				if (rating > 0) $('#rating').html('+' + rating); else
@@ -127,19 +126,19 @@ $(document).ready(function()
 
 		$(this).toggleClass('voted');
 		if ($(this).is('.voted')) $('.vote[pid="' + pid + '"] .konk_btn[vote="' + Number(!Number(vote)) + '"]').removeClass('voted');
-
+		var self_p = 0;
 		if (!self_p) // Чужие фото
 		{
 			$(this).closest('.p20p').removeAttr('class').css('padding', '6px 6px 5px');
 
-			$.getJSON('/api.php', { action: 'vote-konk', pid: pid, vote: vote }, function (data)
+			$.getJSON('/api/photo/vote', { action: 'vote-konk', pid: pid, vote: vote }, function (data)
 			{
 				if (data && !data.errors)
 				{
 					$('.star[pid="' + pid + '"]').html(data.star ? '<img src="/img/star_' + data.star + '.png" alt="" />' : '');
+					$('.vote[pid="' + pid + '"] .konk_btn[vote="1"]')[data.buttons.posbtn_contest ? 'addClass' : 'removeClass']('voted');
+					$('.vote[pid="' + pid + '"] .konk_btn[vote="0"]')[data.buttons.negbtn_contest ? 'addClass' : 'removeClass']('voted');
 
-					$('.vote[pid="' + pid + '"] .konk_btn[vote="1"]')[data.buttons[1] ? 'addClass' : 'removeClass']('voted');
-					$('.vote[pid="' + pid + '"] .konk_btn[vote="0"]')[data.buttons[0] ? 'addClass' : 'removeClass']('voted');
 
 					var rat = $('.s_rating[pid="' + pid + '"]');
 					if (rat.length)
@@ -164,14 +163,14 @@ $(document).ready(function()
 		}
 		else // Свои фото
 		{
-			$.getJSON('/api.php', { action: 'vote-author', pid: pid, vote: vote }, function (data)
+			$.getJSON('/api/photo/vote', { action: 'vote-author', pid: pid, vote: vote }, function (data)
 			{
 				if (data && !data.errors)
 				{
 					$('#star[pid="' + pid + '"]').html(data.star ? '<img src="/img/star_' + data.star + '.png" alt="" />' : '');
 
-					$('.konk_btn[vote="1"]')[data.buttons[1] ? 'addClass' : 'removeClass']('voted');
-					$('.konk_btn[vote="0"]')[data.buttons[0] ? 'addClass' : 'removeClass']('voted');
+					$('.vote[pid="' + pid + '"] .konk_btn[vote="1"]')[data.buttons.posbtn_contest ? 'addClass' : 'removeClass']('voted');
+					$('.vote[pid="' + pid + '"] .konk_btn[vote="0"]')[data.buttons.negbtn_contest ? 'addClass' : 'removeClass']('voted');
 				}
 				else
 				{
