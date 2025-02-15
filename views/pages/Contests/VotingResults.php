@@ -22,7 +22,7 @@ use \App\Models\User;
             <td class="main">
                 <center>
                     <h1>Победители фотоконкурса</h1>
-                    <p class="narrow" style="font-size:19px"><a href="/voting.php">Голосование</a> &nbsp;&middot;&nbsp; <b>Победители</b> &nbsp;&middot;&nbsp; <a href="?show=rating">Рейтинг</a> &nbsp;&middot;&nbsp; <a href="?show=waiting">Претенденты</a></p>
+                    <p class="narrow" style="font-size:19px"><a href="/voting">Голосование</a> &nbsp;&middot;&nbsp; <b>Победители</b> &nbsp;&middot;&nbsp; <a href="/voting/rating">Рейтинг</a> &nbsp;&middot;&nbsp; <a href="/voting/waiting">Претенденты</a></p>
                     <div style="margin:20px">Для вывода подробного отчёта о конкурсе нажмите на интересующую вас дату.</div>
                     <div class="pages"><span class="pg">&laquo;&laquo;</span><span class="ps">1</span><a href="?show=results&amp;st=10" class="pg">2</a><a href="?show=results&amp;st=20" class="pg">3</a><a href="?show=results&amp;st=30" class="pg">4</a> &middot;&middot;&middot; <a href="?show=results&amp;st=2090" class="pg">210</a><a href="?show=results&amp;st=10" class="pg" id="NextLink">&raquo;&raquo;</a></div>
                     <p><span class="narrow" style="font-size:21px"><b><a href="?show=table&amp;date=2025-02-04" title="Подробный отчёт о конкурсе">04.02.2025</a></b></span><br><span class="sm">Линии и пейзажи</span></p>
