@@ -90,7 +90,7 @@ if (Auth::userid() > 0) {
                                 </div>
                                 <div style="color:#e00" id="err_email"></div>
                                 <div class="styled-input">
-                                    <input name="password" id="password" type="text" required="">
+                                    <input name="password" id="password" type="password" required="">
                                     <label for="password">Ваш пароль</label>
                                 </div>
                                 <div style="color:#e00" id="err_password"></div>
