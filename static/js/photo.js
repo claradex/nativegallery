@@ -118,7 +118,7 @@ $(document).ready(function()
 		if (vote != 0 && vote != 1 || $(this).is('.locked')) return false;
 
 		var pid = $(this).closest('.vote').attr('pid');
-
+		var cid = $(this).closest('.vote').attr('cid');
 		var savedClass1 = $('.vote[pid="' + pid + '"] .konk_btn[vote="1"]').attr('class');
 		var savedClass0 = $('.vote[pid="' + pid + '"] .konk_btn[vote="0"]').attr('class');
 
@@ -131,7 +131,7 @@ $(document).ready(function()
 		{
 			$(this).closest('.p20p').removeAttr('class').css('padding', '6px 6px 5px');
 
-			$.getJSON('/api/photo/vote', { action: 'vote-konk', pid: pid, vote: vote }, function (data)
+			$.getJSON('/api/photo/vote', { action: 'vote-konk', pid: pid, vote: vote, cid: cid }, function (data)
 			{
 				if (data && !data.errors)
 				{

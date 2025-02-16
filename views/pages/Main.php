@@ -128,44 +128,7 @@ LIMIT 10;');
                                     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 550 211.2" width="550" height="211.2" style="opacity: 0.3; filter: grayscale(0);"><text x="0em" y="1em" font-size="88" transform="rotate(17 55 52.8)">🎁</text><text x="1.25em" y="2em" font-size="88" transform="rotate(17 165 140.8)">🎈</text><text x="2.5em" y="1em" font-size="88" transform="rotate(17 275 52.8)">🎀</text><text x="3.75em" y="2em" font-size="88" transform="rotate(17 385 140.8)">🎊</text><text x="5em" y="1em" font-size="88" transform="rotate(17 495 52.8)">🎉</text></svg>');
                                 }
                             </style>
-                            <script>
-                                function startCountdown(unixTimestamp) {
-                                    function padZero(num) {
-                                        return num < 10 ? '0' + num : num;
-                                    }
-
-                                    function getWord(num, words) {
-                                        if (num % 10 === 1 && num % 100 !== 11) return words[0];
-                                        if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20)) return words[1];
-                                        return words[2];
-                                    }
-
-                                    function updateTimer() {
-                                        const now = Math.floor(Date.now() / 1000);
-                                        const diff = unixTimestamp - now;
-
-                                        if (diff <= 0) {
-                                            clearInterval(interval);
-                                            document.getElementById('countdown').textContent = "00 дней 00 часов 00 минут 00 секунд";
-                                            return;
-                                        }
-
-                                        const days = Math.floor(diff / 86400);
-                                        const hours = Math.floor((diff % 86400) / 3600);
-                                        const minutes = Math.floor((diff % 3600) / 60);
-                                        const seconds = diff % 60;
-
-                                        document.getElementById('countdown').textContent =
-                                            `${padZero(days)} ${getWord(days, ['день', 'дня', 'дней'])} ` +
-                                            `${padZero(hours)} ${getWord(hours, ['час', 'часа', 'часов'])} ` +
-                                            `${padZero(minutes)} ${getWord(minutes, ['минута', 'минуты', 'минут'])} ` +
-                                            `${padZero(seconds)} ${getWord(seconds, ['секунда', 'секунды', 'секунд'])}`;
-                                    }
-
-                                    updateTimer(); // сразу обновляем отображение
-                                    const interval = setInterval(updateTimer, 1000);
-                                }
-                            </script>
+                            
                             <?php
                             if (DB::query('SELECT status FROM contests WHERE status=2')[0]['status'] === 2) {
                                 $contest = DB::query('SELECT * FROM contests WHERE status=2')[0];
@@ -183,7 +146,7 @@ LIMIT 10;');
                                 Начнётся через: <b id="countdown"></b><br>
                                 Тематика: <b>' . $theme['title'] . '</b><br>
                                 <b style="color: #412378;">Лучшие фотографии по мнению сообщества ' . NGALLERY['root']['title'] . ' будут отмечены</b><br><br>
-                                <a href="/voting/sendpretend" style="background-color: #37009D; color: #fff;" type="button">Участвовать!</a>
+                                <a href="/voting/sendpretend" style="background-color: #37009D; color: #fff;" type="button">Участвовать!</a> <a href="/voting/waiting" style="background-color: #37009D; color: #fff;" type="button">Голосовать за претендентов</a>
                                 <script>startCountdown(' . $contest['closepretendsdate'] . ');</script>';
                             }
 
