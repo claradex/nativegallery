@@ -70,3 +70,4 @@ ngallery:
       premoderation: false
     contests:
       enabled: true
+      autonew: true

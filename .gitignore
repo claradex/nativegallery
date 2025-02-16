@@ -6,7 +6,6 @@
 /ngallery.yaml
 ngallery.yaml
 /cdn/
-*.yaml
 ngallery.yaml
 /views/pages/t.php
 views/pages/t.php
@@ -14,3 +13,5 @@ rules.txt
 rules.txt
 /uploads/*
 t.php
+logs
+.txt

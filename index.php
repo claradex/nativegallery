@@ -15,6 +15,7 @@ class App
 
         if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/ngallery.yaml')) {
             define("NGALLERY", Yaml::parse(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/ngallery.yaml'))['ngallery']);
+            define("NGALLERY_TASKS", Yaml::parse(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/app/Controllers/Exec/Tasks/ngallery-tasks.yaml'))['tasks']);
             if (NGALLERY['root']['debug'] === true) {
                 Debugger::enable();
             }
