@@ -1,0 +1,4 @@
+tasks:
+  - id: "ExecContests"
+    type: "cron"
+    handler: "/app/Controllers/Exec/Tasks/ExecContests.php"

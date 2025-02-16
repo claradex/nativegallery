@@ -81,6 +81,7 @@ class Routes
                 Router::any('/api/admin/geodb/load', 'ApiController@admingeodbload');
                 Router::any('/api/admin/contests/createtheme', 'ApiController@admincontestscreatetheme');
                 Router::any('/api/admin/contests/create', 'ApiController@admincontestscreate');
+                Router::any('/api/admin/settings/taskmanager', 'ApiController@admintaskmanager');
             }
             Router::get('/logout', 'MainController@logout');
             Router::get('/404', 'ExceptionRegister@notfound');
