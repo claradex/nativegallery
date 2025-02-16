@@ -8,6 +8,7 @@ use \App\Controllers\Api\{Login, Register};
 use \App\Controllers\Api\Subscribe as SubscribeUser;
 use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
+use \App\Controllers\Api\Images\RateContest as PhotoVoteContest;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
 use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\LoadRecent as PhotoLoadRecent;
@@ -33,6 +34,7 @@ use \App\Controllers\Api\Admin\GeoDB\Load as AdminGeoDBLoad;
 use \App\Controllers\Api\Admin\GeoDB\Delete as AdminGeoDBDelete;
 use \App\Controllers\Api\Admin\Contests\CreateTheme as AdminContestsCreateTheme;
 use \App\Controllers\Api\Admin\Contests\Create as AdminContestsCreate;
+use \App\Controllers\Api\Admin\Settings\TaskManager as AdminTaskManager;
 
 class ApiController
 {
@@ -52,6 +54,9 @@ class ApiController
     }
     public static function photovote() {
         return new PhotoVote();
+    }
+    public static function photovotecontest() {
+        return new PhotoVoteContest();
     }
     public static function photofavorite() {
         return new PhotoFavorite();
@@ -124,6 +129,9 @@ class ApiController
     }
     public static function admingeodbdelete() {
         return new AdminGeoDBDelete();
+    }
+    public static function admintaskmanager() {
+        return new AdminTaskManager();
     }
     public static function vehiclesload() {
         return new VehiclesLoad();
