@@ -69,6 +69,7 @@ class Routes
             Router::post('/api/photo/comment/$id/edit', 'ApiController@photocommentedit');
             Router::post('/api/photo/comment/$id/delete', 'ApiController@photocommentdelete');
             Router::post('/api/photo/comment/$id/pin', 'ApiController@photocommentpin');
+            Router::post('/api/photo/contests/sendpretend', 'ApiController@sendpretendphoto()');
             Router::get('/api/vehicles/load', 'ApiController@vehiclesload');
             Router::get('/api/geodb/search', 'ApiController@geodbsearch');
             if ($user->i('admin') > 0) {

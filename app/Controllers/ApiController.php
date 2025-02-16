@@ -20,6 +20,7 @@ use \App\Controllers\Api\Images\Comments\Delete as PhotoCommentDelete;
 use \App\Controllers\Api\Images\Comments\Pin as PhotoCommentPin;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
+use \App\Controllers\Api\Images\Contests\SendPretend as PhotoContestsSendPretend;
 use \App\Controllers\Api\GeoDB\Search as GeoDBSearch;
 use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
@@ -99,6 +100,9 @@ class ApiController
     }
     public static function recentphotos() {
         return new PhotoLoadRecent();
+    }
+    public static function sendpretendphoto() {
+        return new PhotoContestsSendPretend();
     }
     public static function loaduser() {
         return new UserLoad();
