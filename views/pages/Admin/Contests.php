@@ -5,9 +5,8 @@ use \App\Models\User;
 
 $task = new TaskScheduler();
 
-//$userprofile = new User(explode('/', $_SERVER['REQUEST_URI'])[2]);
 $contestCreate = true;
-if (!$task->isTaskExists("FinishContests", "php /path/to/finish_contests.php")) {
+if (!$task->isTaskExists("ExecContests", "php ".$_SERVER['DOCUMENT_ROOT'].$task->findHandlerById(NGALLERY_TASKS, 'ExecContests'))) {
     $contestCreate = false;
 }
 ?>
@@ -38,16 +37,9 @@ if (!$task->isTaskExists("FinishContests", "php /path/to/finish_contests.php")) 
                                                                                                                 } ?>">Провести новый</a>
                 <table class="table">
                     <?php
-                    /*echo $task->addTask(
-                        "FinishContests", 
-                        "php ".$_SERVER['DOCUMENT_ROOT']."/app/Controllers/Exec/Tasks/FinishContests.php >> ".$_SERVER['DOCUMENT_ROOT'].NGALLERY['root']['logslocation']." 2>&1",
-                        "* * * * *" // Каждую минуту (можно менять)
-                    );*/
                     if ($contestCreate === false) {
-                        echo "<div class='alert alert-warning' role='alert'>У вас не добавлена задача на проведение конкурсов. Без неё, сервер не сможет завершать конкурс и проводить новый автоматически.</div>";
+                        echo "<div class='alert alert-warning mt-3' role='alert'>У вас не добавлена задача на проведение конкурсов. Без неё, сервер не сможет завершать конкурс и проводить новый автоматически.<a href='/admin?type=Settings' type='button' style='margin-left: 5px;' class='btn btn-sm btn-outline-dark'>Включить</a></div>";
                     }
-                    echo $task->removeTask("FinishContests", "php /path/to/finish_contests.php");
-
                     ?>
                     <tbody>
                         <tr>
