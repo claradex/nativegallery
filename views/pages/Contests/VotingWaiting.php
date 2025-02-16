@@ -31,6 +31,13 @@ use \App\Models\User;
 					<div class="p20p">
 						<table>
 							<tbody>
+								
+								<?php
+								if (DB::query('SELECT status FROM contests WHERE status=1')[0]['status'] === 1) {
+								} else {
+									echo '<h2><b>Следующего конкурса нет. Пожалуйста, заходите сюда позже.</b></h2>';
+								}
+								?>
 								<tr>
 									<td class="pb_pre vote" style="padding-left:15px; padding-right:10px; display:table-cell" pid="2068639">
 										<a href="#" vote="1" class="konk_btn"><span>Красиво, на&nbsp;конкурс!</span></a>
