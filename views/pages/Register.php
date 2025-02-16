@@ -151,7 +151,7 @@ if (Auth::userid() > 0) {
                     </center>
                 <?php } else { ?>
                     <center>
-                        <h1>К сожалению, регистрация на сервере <?= NGALLERY['root']['title'] ?> запрещена.</h1>
+                        <h1>К сожалению, регистрация на сервере <?= NGALLERY['root']['title'] ?> закрыта.</h1>
                         </center?
                             <?php } ?>
                             </td>
