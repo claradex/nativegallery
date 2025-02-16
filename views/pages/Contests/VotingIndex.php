@@ -93,30 +93,19 @@ $(document).ready(function()
                     <div style="margin-top:20px">Чтобы проголосовать, отметьте одну, две или три фотографии, которые Вам понравились</div><br><br>
                     <?php
                     if (DB::query('SELECT status FROM contests WHERE status=2')[0]['status'] != 2) {
+                        $contest = DB::query('SELECT * FROM contests WHERE status=0')[0];
                         echo '<div class="p20">
                         <h4>Сейчас конкурс не проводится. Пожалуйста, заходите позже.</h4>
-                    </div>';
+                    </div>    
+                    <script>startCountdown(' . $contest['openpretendsdate'] . ');</script>
+    <h2>Следующий Фотоконкурс будет через:</h2>
+    <h1 id="countdown"></h1>';
                     } else { ?>
                         <div id="tip" lock="0"><span id="img"></span></div>
-                        <img pid="2044756" src="/photo/20/44/75/2044756.jpg?2" style="display:none">
-                        <div class="p20p">
-                            <table>
-                                <tr>
-                                    <td><a href="#" pid="2044756" class="contestBtn"></a></td>
-                                    <td class="pb_photo" id="p2044756"><a href="/photo/2044756/" target="_blank" class="prw"><img class="f" src="/img/prw-loader.gif" data-src="/photo/20/44/75/2044756_s.jpg?2" alt="1162 КБ">
-                                            <div class="hpshade">
-                                                <div class="eye-icon">353</div>
-                                            </div>
-                                        </a></td>
-                                    <td class="pb_descr">
-                                        <p><a href="/articles/3/" target="_blank">Фотозарисовки</a></p>
-                                        <p><b class="pw-place">Линия 5</b> | Линия 5</p>
-                                        <p class="sm"><b>16 января 2021 г., суббота</b><br>Автор: <a href="/author/17434/">Levis</a></p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <img pid="2068176" src="/photo/20/68/17/2068176.jpg" style="display:none">
+                        <?php
+                        $photos_contest = DB::query('SELECT * FROM photos WHERE on_contest=1');
+                        foreach ($photos_contest as $pc) {
+                            echo '<img pid="2068176" src="/photo/20/68/17/2068176.jpg" style="display:none">
                         <div class="p20p">
                             <table>
                                 <tr>
@@ -136,7 +125,9 @@ $(document).ready(function()
                                     </td>
                                 </tr>
                             </table>
-                        </div>
+                        </div>';
+                        }
+                        ?>
                         <img pid="2073198" src="/photo/20/73/19/2073198.jpg" style="display:none">
                         <div class="p20p">
                             <table>
@@ -294,8 +285,6 @@ $(document).ready(function()
     <?php }
     ?>
 
-    <h2>Следующий Фотоконкурс будет через:</h2>
-    <h1 id="countdown"></h1>
     <br>
 
     </center>
