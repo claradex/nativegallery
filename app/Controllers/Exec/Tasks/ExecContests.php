@@ -62,6 +62,7 @@ class ExecContests
         }
 
         if ($contest['closepretendsdate'] <= time() && $contest['opendate'] <= time()) {
+            DB::query('UPDATE photos SET on_contest=2 WHERE on_contest=1 AND contest_id=:id', array(':id'=>$contest['id']));
             DB::query('UPDATE contests SET status = 2 WHERE id = :id', [':id' => $contest['id']]);
             echo "[{$contest['id']}] Closed for pretends.\n";
         } else {
@@ -132,7 +133,7 @@ class ExecContests
             'place' => $place
         ];
         
-        DB::query('UPDATE photos SET content = :content WHERE id = :id', [
+        DB::query('UPDATE photos SET content = :content, on_contest=0, contest_id=0 WHERE id = :id', [
             ':id' => $vote['photo_id'],
             ':content' => json_encode($photoData)
         ]);
