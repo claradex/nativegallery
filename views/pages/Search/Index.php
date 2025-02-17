@@ -425,10 +425,10 @@ $(document).ready(function()
 		</div>
 	</td>
 </tr>
-<tr>
+<!--tr>
 	<td class="lcol">Модель камеры:</td>
 	<td style="padding-bottom:17px"><input type="text" name="cammod" style="width:300px" value=""></td>
-</tr>
+</!--tr>
 <tr>
 	<td class="lcol">Пользователь:</td>
 	<td>
@@ -501,7 +501,7 @@ $(document).ready(function()
 <tr>
 	<td></td>
 	<td><br><input type="submit" value="&nbsp; &nbsp; &nbsp; Искать &nbsp; &nbsp; &nbsp;"></td>
-</tr>
+</tr-->
 </tbody></table>
 </form>
                 </tbody>

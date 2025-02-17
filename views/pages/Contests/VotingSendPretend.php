@@ -151,7 +151,9 @@ function convertUnixToRussianDateTime($unixTime)
                 data: $(this).serialize(),
                 success: function(response) {
                     var jsonData = JSON.parse(response);
-
+                    if (jsonData.errorcode === 0) {
+                        alert('Фотография успешно отправлена на претенденты на Фотоконкурс');
+                    }
                     
                 }
             });
