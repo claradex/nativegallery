@@ -86,10 +86,10 @@ function renderInputs($data, $prefix = '')
         <div class="v-header__tabs">
             <div class="v-tabs">
                 <div class="v-tabs__scroll">
-                    <div class="v-tabs__content"><a href="#" onclick="changeTab('config')" id="config" class="v-tab v-tab-b v-tab--active"><span class="v-tab__label">
+                    <div class="v-tabs__content"><!--a href="#" onclick="changeTab('config')" id="config" class="v-tab v-tab-b v-tab--active"><span class="v-tab__label">
                                 Конфиг сервера
 
-                            </span></a><a href="#" onclick="changeTab('tasks')" id="tasks" class="v-tab v-tab-b"><span class="v-tab__label">
+                            </span></!--a--><a href="#" onclick="changeTab('tasks')" id="tasks" class="v-tab v-tab-b v-tab--active"><span class="v-tab__label">
                                 Задачи
 
                             </span></a>
@@ -99,7 +99,7 @@ function renderInputs($data, $prefix = '')
                 </div>
             </div>
         </div>
-        <div class="active__block" id="config__block">
+        <div id="config__block" style="display: none;" >
         <div class="alert alert-warning" role="alert">
             Изменяйте только на свой страх и риск.
         </div>
@@ -118,7 +118,7 @@ function renderInputs($data, $prefix = '')
 
 
         </div>
-        <div style="display: none;" id="tasks__block">
+        <div class="active__block"id="tasks__block">
         <table class="table">
                             <tbody>
                                 <tr>

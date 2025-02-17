@@ -37,8 +37,6 @@ use \App\Models\{User, Photo};
                     foreach ($photos as $row) {
                         $grouped[$row['contest_id']][] = $row;
                     }
-
-                    // Разбиваем на блоки по 3 элемента
                     $final_result = [];
                     foreach ($grouped as $contest_id => $rows) {
                         $chunks = array_chunk($rows, 3);
@@ -69,12 +67,7 @@ use \App\Models\{User, Photo};
                         </table><br>';
                     }
 
-                   
-                  
                     ?>
-                     
-                
-                   
                     <p class="narrow" style="font-size:19px"><a href="/voting">Голосование</a> &nbsp;&middot;&nbsp; <b>Победители</b> &nbsp;&middot;&nbsp; <a href="/voting/rating">Рейтинг</a> &nbsp;&middot;&nbsp; <a href="/voting/waiting">Претенденты</a></p>
                 </center>
             </td>
