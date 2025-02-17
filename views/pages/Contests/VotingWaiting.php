@@ -1,7 +1,7 @@
 <?php
 
 use \App\Services\{Auth, DB, Date};
-use \App\Models\{User, VoteContest};
+use \App\Models\{User, VoteContest, Vote};
 
 ?>
 <!DOCTYPE html>
@@ -40,12 +40,17 @@ ORDER BY rates_count DESC;
 ', array(':id'=>$contest['id']));
                         foreach ($photos_contest as $pc) {
 							$user = new User($pc['user_id']);
+							if (VoteContest::photo(Auth::userid(), $pc['id'], $contest['id']) === 1) {
+								$classp = 'voted';
+							} else if (VoteContest::photo(Auth::userid(), $pc['id'], $contest['id']) === 0) {
+								$classm = 'voted';
+							}
                          echo '<div class="p20p">
 						<table>
 							<tbody>
 								<tr>
 									<td class="pb_pre vote" style="padding-left:15px; padding-right:10px; display:table-cell" cid="'.$contest['id'].'" pid="'.$pc['id'].'">
-										<a href="#" vote="1" class="konk_btn"><span>Красиво, на&nbsp;конкурс!</span></a>
+										<a href="#" vote="1" class="konk_btn '.$classp.'"><span>Красиво, на&nbsp;конкурс!</span></a>
 										<table style="margin:5px 0 7px; width:100px">
 											<tbody>
 												<tr>
@@ -55,7 +60,7 @@ ORDER BY rates_count DESC;
 												</tr>
 											</tbody>
 										</table>
-										<a href="#" vote="0" class="konk_btn"><span>Неконкурсное фото</span></a>
+										<a href="#" vote="0" class="konk_btn '.$classm.'"><span>Неконкурсное фото</span></a>
 									</td>
 									<td class="pb_photo" id="p2072294"><a href="/photo/'.$pc['id'].'" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$pc['photourl'].'" alt="597 КБ" style="display: inline;">
 											<div class="hpshade">
