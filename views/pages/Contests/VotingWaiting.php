@@ -87,7 +87,7 @@ ORDER BY rates_count DESC;
 							
 				
 					<br>
-					<p class="narrow" style="font-size:19px"><a href="/voting.php">Голосование</a> &nbsp;·&nbsp; <a href="?show=results">Победители</a> &nbsp;·&nbsp; <a href="?show=rating">Рейтинг</a> &nbsp;·&nbsp; <b>Претенденты</b></p>
+					<p class="narrow" style="font-size:19px"><a href="/voting">Голосование</a> &nbsp;·&nbsp; <a href="/voting/results">Победители</a> &nbsp;·&nbsp; <a href="/voting/rating">Рейтинг</a> &nbsp;·&nbsp; <b>Претенденты</b></p>
 				</center>
 			</td>
 		</tr>

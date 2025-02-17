@@ -165,6 +165,9 @@ class ExecContests
             'place' => $place
         ];
 
+
+        DB::query('INSERT INTO contests_winners VALUES (\'0\', :photo_id, :place, :contest_id, :date)', array(':photo_id'=>$vote['photo_id'], ':place'=>$place, ':contest_id'=>$contest['id'], ':date'=>time()));
+
         DB::query('UPDATE photos SET content = :content, on_contest=0, contest_id=0 WHERE id = :id', [
             ':id' => $vote['photo_id'],
             ':content' => json_encode($photoData, JSON_UNESCAPED_UNICODE)

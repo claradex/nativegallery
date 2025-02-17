@@ -89,7 +89,7 @@ $(document).ready(function()
                 <center>
                     <h1>Фотоконкурс</h1>
 
-                    <p class="narrow" style="font-size:19px"><b>Голосование</b> &nbsp;&middot;&nbsp; <a href="results">Победители</a> &nbsp;&middot;&nbsp; <a href="/voting/rating">Рейтинг</a> &nbsp;&middot;&nbsp; <a href="/voting/waiting">Претенденты</a></p>
+                    <p class="narrow" style="font-size:19px"><b>Голосование</b> &nbsp;&middot;&nbsp; <a href="/voting/results">Победители</a> &nbsp;&middot;&nbsp; <a href="/voting/rating">Рейтинг</a> &nbsp;&middot;&nbsp; <a href="/voting/waiting">Претенденты</a></p>
                     <div style="margin-top:20px">Чтобы проголосовать, отметьте одну, две или три фотографии, которые Вам понравились</div><br><br>
                     <?php
                     if (DB::query('SELECT status FROM contests WHERE status=2')[0]['status'] != 2) {
@@ -130,8 +130,7 @@ $(document).ready(function()
                         </div>';
                         }
                         ?>
-                      
-                        <br>Число проголосовавших: <b>3</b><br>Число голосов: <b>6</b><br><br>
+                        <br>Число проголосовавших: <b><?=DB::query('SELECT COUNT(DISTINCT user_id) AS unique_user_count FROM contests_rates WHERE contest_id=:id', array(':id'=>$contest['id']))[0]['unique_user_count']?></b><br>Число голосов: <b><?=DB::query('SELECT COUNT(*) FROM contests_rates WHERE contest_id=:id', array(':id'=>$contest['id']))[0]['COUNT(*)']?></b><br><br>
                        
                 </center>
            
