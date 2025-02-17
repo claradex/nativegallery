@@ -136,7 +136,7 @@ class ExecContests
         $votes = DB::query(
             'SELECT user_id, photo_id, COUNT(*) AS vote_count 
              FROM contests_rates WHERE contest_id = :id 
-             GROUP BY user_id ORDER BY vote_count DESC LIMIT 3',
+             GROUP BY user_id ORDER BY vote_count DESC LIMIT 10',
             [':id' => $contest['id']]
         );
 
