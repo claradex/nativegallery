@@ -134,20 +134,62 @@ LIMIT 10;');
                                 $contest = DB::query('SELECT * FROM contests WHERE status=2')[0];
                                 $theme = DB::query('SELECT * FROM contests_themes WHERE id=:id', array(':id' => $contest['themeid']))[0];
                                 echo ' <div id="contestNotify" style="float:left; border:solid 1px #171022; padding:6px 10px 7px; margin-bottom:13px; background-color:#E5D6FF"><h4>Фотоконкурс!</h4>
-                                Закончится через: <b id="countdown"></b><br>
+                                <span id="timett">Закончится через:</span> <b id="countdown"></b><br>
                                 Тематика: <b>' . $theme['title'] . '</b><br>
                                 <b style="color: #412378;">Голосуйте за лучшие фотографии, которые должны стать победителями сегодняшнего конкурса!</b><br><br>
-                                <a href="/voting" style="background-color: #37009D; color: #fff;" type="button">Голосовать!</a>
+                                <div id="contestBtns"><a href="/voting" style="background-color: #37009D; color: #fff;" type="button">Голосовать!</a></div>
                                 <script>startCountdown(' . $contest['closedate'] . ');</script>';
                             } else if (DB::query('SELECT status FROM contests WHERE status=1')[0]['status'] === 1) {
                                 $contest = DB::query('SELECT * FROM contests WHERE status=1')[0];
                                 $theme = DB::query('SELECT * FROM contests_themes WHERE id=:id', array(':id' => $contest['themeid']))[0];
                                 echo ' <div id="contestNotify" style="float:left; border:solid 1px #171022; padding:6px 10px 7px; margin-bottom:13px; background-color:#E5D6FF"><h4>Фотоконкурс!</h4>
-                                Начнётся через: <b id="countdown"></b><br>
+                                <span id="timett">Начнётся через:</span> <b id="countdown"></b><br>
                                 Тематика: <b>' . $theme['title'] . '</b><br>
-                                <b style="color: #412378;">Лучшие фотографии по мнению сообщества ' . NGALLERY['root']['title'] . ' будут отмечены</b><br><br>
-                                <a href="/voting/sendpretend" style="background-color: #37009D; color: #fff;" type="button">Участвовать!</a> <a href="/voting/waiting" style="background-color: #37009D; color: #fff;" type="button">Голосовать за претендентов</a>
-                                <script>startCountdown(' . $contest['closepretendsdate'] . ');</script>';
+                                <b id="textContest" style="color: #412378;">Лучшие фотографии по мнению сообщества ' . NGALLERY['root']['title'] . ' будут отмечены</b><br><br>
+                                <div id="contestBtns"><a href="/voting/sendpretend" style="background-color: #37009D; color: #fff;" type="button">Участвовать!</a> <a href="/voting/waiting" style="background-color: #37009D; color: #fff;" type="button">Голосовать за претендентов</a></div>
+                                <script>
+                                 $(document).ready(function () {
+                                    let unixThreshold = '.$contest['closepretendsdate'].'; // Задайте нужное значение UNIX
+                                    let checkInterval = 1000; // Интервал проверки в миллисекундах (1 секунда)
+                                    let isRequestSent = false;
+
+                                    function checkUnixTime() {
+                                        let currentUnixTime = Math.floor(Date.now() / 1000);
+                                        
+                                        if (currentUnixTime > unixThreshold) {
+                                            $("#countdown").text("Ожидаем ответ от сервера...");
+
+                                            $.ajax({
+                                                url: "/api/contests/getinfo", // Укажите свой URL
+                                                method: "GET",
+                                                success: function (response) {
+
+                                                    let data = typeof response === "string" ? JSON.parse(response) : response;
+                                                      if (data.statuses.pretends === "closed" && data.statuses.public === "opened") {
+                                                        clearInterval(pingInterval); // Останавливаем старый пинг
+                                                        $("#textContest").text("Голосуйте за лучшие фотографии, которые должны стать победителями сегодняшнего конкурса!");
+                                                        $("#timett").text("Закончится через:");
+                                                        $("#contestBtns").html(`<a href="/voting" style="background-color: #37009D; color: #fff;" type="button">Голосовать!</a>`)
+                                                        unixThreshold = data.contest.closedate;
+                                                        startCountdown(data.contest.closedate);
+                                                        pingInterval = setInterval(checkUnixTime, checkInterval);
+                                                    }
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error("Ошибка запроса:", error);
+                                                }
+                                            });
+                                        } else {
+                                            console.log(currentUnixTime);
+                                        }
+                                    }
+
+                                    // Запускаем периодический пинг
+                                    let pingInterval = setInterval(checkUnixTime, checkInterval);
+                                });
+
+
+                                </script>';
                             }
 
 

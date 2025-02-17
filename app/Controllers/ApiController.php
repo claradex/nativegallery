@@ -8,7 +8,6 @@ use \App\Controllers\Api\{Login, Register};
 use \App\Controllers\Api\Subscribe as SubscribeUser;
 use \App\Controllers\Api\Images\{Upload};
 use \App\Controllers\Api\Images\Rate as PhotoVote;
-use \App\Controllers\Api\Images\RateContest as PhotoVoteContest;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
 use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\LoadRecent as PhotoLoadRecent;
@@ -21,6 +20,8 @@ use \App\Controllers\Api\Images\Comments\Pin as PhotoCommentPin;
 use \App\Controllers\Api\Images\Comments\Load as PhotoCommentLoad;
 use \App\Controllers\Api\Images\Comments\Rate as PhotoCommentVote;
 use \App\Controllers\Api\Images\Contests\SendPretend as PhotoContestsSendPretend;
+use \App\Controllers\Api\Images\Contests\Rate as PhotoContestsRate;
+use \App\Controllers\Api\Contests\GetInfo as ContestsGetInfo;
 use \App\Controllers\Api\GeoDB\Search as GeoDBSearch;
 use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
@@ -57,7 +58,7 @@ class ApiController
         return new PhotoVote();
     }
     public static function photovotecontest() {
-        return new PhotoVoteContest();
+        return new PhotoContestsRate();
     }
     public static function photofavorite() {
         return new PhotoFavorite();
@@ -139,6 +140,9 @@ class ApiController
     }
     public static function vehiclesload() {
         return new VehiclesLoad();
+    }
+    public static function contestsgetinfo() {
+        return new ContestsGetInfo();
     }
 
 

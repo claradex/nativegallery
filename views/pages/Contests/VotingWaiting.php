@@ -31,7 +31,13 @@ use \App\Models\{User, VoteContest};
 					<?php
 					if (DB::query('SELECT status FROM contests WHERE status=1')[0]['status'] === 1) {
 						$contest = DB::query('SELECT * FROM contests WHERE status=1')[0];
-                        $photos_contest = DB::query('SELECT * FROM photos WHERE on_contest=1');
+                        $photos_contest = DB::query('SELECT p.*, COUNT(prc.photo_id) AS rates_count
+FROM photos p
+LEFT JOIN photos_rates_contest prc ON p.id = prc.photo_id
+WHERE p.on_contest = 1 AND p.contest_id = :id
+GROUP BY p.id
+ORDER BY rates_count DESC;
+', array(':id'=>$contest['id']));
                         foreach ($photos_contest as $pc) {
 							$user = new User($pc['user_id']);
                          echo '<div class="p20p">
@@ -44,7 +50,7 @@ use \App\Models\{User, VoteContest};
 											<tbody>
 												<tr>
 													<td style="width:20px"><img class="loader" pid="2072294" src="/img/loader.gif"></td>
-													<td align="center" style="padding:2px"><b class="s_rating" pid="2072294">'.VoteContest::count($pc['id'], $contest['id']).'</b></td>
+													<td align="center" style="padding:2px"><b class="s_rating" pid="'.$pc['id'].'">'.VoteContest::count($pc['id'], $contest['id']).'</b></td>
 													<td style="width:20px; display:table-cell" class="star" pid="2072294"><img src="/img/star_people.png" alt=""></td>
 												</tr>
 											</tbody>

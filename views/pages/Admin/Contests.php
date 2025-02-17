@@ -60,6 +60,8 @@ if (!$task->isTaskExists("ExecContests", "php ".$_SERVER['DOCUMENT_ROOT'].$task-
                                 $status = 'Ещё не проведён';
                             } else if ($t['status'] === 1) {
                                 $status = 'Отбор кандидатов';
+                            } else if ($t['status'] === 02) {
+                                $status = 'Ещё не открыт для отбора победителей';
                             } else if ($t['status'] === 2) {
                                 $status = 'Отбор победителей';
                             } else if ($t['status'] === 3) {

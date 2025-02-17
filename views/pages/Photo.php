@@ -125,6 +125,25 @@ if ($photo->i('id') !== null) {
                                             <img onerror="errimg(); this.onerror = null;" id="ph" src="<?= $photo->i('photourl') ?>" alt="" title="Фотография">
                                         <?php
                                         }
+                                        if ($photo->i('on_contest') === 2) { ?>
+                                        <a class="underphoto" href="/voting"><img style="margin-top:-4px" src="/static/img/star_people.png"> &nbsp;Фотография участвует в голосовании</a>
+
+                                        <?php }
+                                        
+                                        foreach ($photo->content('contests') as $c) {
+                                            if ($c['place'] === 1) {
+                                                $img = '3';
+                                            }
+                                            if ($c['place'] === 2) {
+                                                $img = '2';
+                                            }
+                                            if ($c['place'] === 3) {
+                                                $img = '1';
+                                            }
+                                            echo '<a class="underphoto" style="font-weight:bold" href="/pk.php?pid=2068816&amp;type=d"><img style="margin-top:-4px" src="/static/img/vs'.$img.'.png"> &nbsp;'.$c['place'].'-е место на фотоконкурсе</a>';
+                                        }
+                                        
+
                                         if ($photo->i('priority') === 1) { ?>
                                             <div class="underphoto s17" style="cursor:help" title="Фотография не удовлетворяет действующим на момент публикации критериям качества снимков."><i style="position:relative; top:1px" class="fas fa-info-circle"></i>&ensp;<b class="dot">Условная публикация</b></div>
                                         <?php } else if ($photo->i('priority') === 2) {  ?>
@@ -259,14 +278,14 @@ if ($photo->i('id') !== null) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Мне не&nbsp;нравится</span></a>
                                         <?php
-                                        if ($photo->content('video') === null && $photo->i('user_id') != Auth::userid()) { ?>
+                                        if (($photo->content('video') === null && $photo->i('user_id') != Auth::userid()) || $photo->i('on_contest') != 2) { ?>
                                         <a class="konk_btn  <?php if (Vote::photoContest(Auth::userid(), $id) === 1) {
                                                                                     echo 'voted';
                                                                                 } ?>" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></a>
                                         <a href="#" vote="0" class="konk_btn  <?php if (Vote::photoContest(Auth::userid(), $id) === 0) {
                                                                                     echo 'voted';
                                                                                 } ?>"><span>Неконкурсное фото</span></a>
-                                        <?php } else if ($photo->i('user_id') === Auth::userid()) { ?>
+                                        <?php } else if ($photo->i('user_id') === Auth::userid() && $photo->i('on_contest') != 2) { ?>
                                             
                                     <a href="#" vote="1" class="konk_btn"><span>Выставить на&nbsp;конкурс</span></a><a href="#" vote="0" class="konk_btn"><span>Не участвовать в&nbsp;конкурсе</span></a></div>
                                             <?php } ?>
