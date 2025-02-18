@@ -70,4 +70,10 @@ ngallery:
       premoderation: false
     contests:
       enabled: true
-      autonew: true
+      autonew:
+        enabled: true
+        times:
+          pretendsopen: 'now'
+          pretendsclose: '2d'
+          open: 'now'
+          close: '2d'
