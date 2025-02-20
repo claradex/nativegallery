@@ -116,7 +116,7 @@ function convertUnixToRussianDateTime($unixTime)
                                             $photos = DB::query('SELECT * FROM photos WHERE user_id=:uid AND on_contest=0', array(':uid' => Auth::userid()));
                                             foreach ($photos as $p) {
                                                 $content = json_decode($p['content'], true);
-                                                if ($content['video'] === null) {
+                                                if (($content['video'] === null || $content['type'] === 'image') && $p['moderated'] === 1) {
                                                     echo '<option photourl="/api/photo/compress?url=' . $p['photourl'] . '" value="' . $p['id'] . '">[ID: ' . $p['id'] . '] ' . $p['place'] . '</option>';
                                                 }
                                             }
@@ -153,6 +153,8 @@ function convertUnixToRussianDateTime($unixTime)
                     var jsonData = JSON.parse(response);
                     if (jsonData.errorcode === 0) {
                         alert('Фотография успешно отправлена на претенденты на Фотоконкурс');
+                    } else {
+                        alert('Пожалуйста, выберите Фотоконкурс на который вы хотите отправить фотографию!');
                     }
                     
                 }

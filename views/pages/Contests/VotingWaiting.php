@@ -38,6 +38,7 @@ WHERE p.on_contest = 1 AND p.contest_id = :id
 GROUP BY p.id
 ORDER BY rates_count DESC;
 ', array(':id'=>$contest['id']));
+var_dump($photos_contest);
                         foreach ($photos_contest as $pc) {
 							$user = new User($pc['user_id']);
 							if (VoteContest::photo(Auth::userid(), $pc['id'], $contest['id']) === 1) {
@@ -64,7 +65,7 @@ ORDER BY rates_count DESC;
 									</td>
 									<td class="pb_photo" id="p2072294"><a href="/photo/'.$pc['id'].'" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$pc['photourl'].'" alt="597 КБ" style="display: inline;">
 											<div class="hpshade">
-												<div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div>
+												<div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$pc['id']))[0]['COUNT(*)'].'</div>
 											</div>
 										</a></td>
 									<td class="pb_descr">
