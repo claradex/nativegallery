@@ -225,7 +225,7 @@ $birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['val
                     <div class="p20" style="margin-top: 8px; background-color: white !important;">
                     <h4>О себе</h4>
                     <?=
-                   $about
+                   htmlspecialchars($about)
                     ?>
                     </div>
                 <?php } else if ($usercttc === True) { 
