@@ -31,14 +31,21 @@ use \App\Models\{User, VoteContest, Vote};
 					<?php
 					if (DB::query('SELECT status FROM contests WHERE status=1')[0]['status'] === 1) {
 						$contest = DB::query('SELECT * FROM contests WHERE status=1')[0];
-                        $photos_contest = DB::query('SELECT p.*, COUNT(prc.photo_id) AS rates_count
-FROM photos p
-LEFT JOIN photos_rates_contest prc ON p.id = prc.photo_id
-WHERE p.on_contest = 1 AND p.contest_id = :id
-GROUP BY p.id
-ORDER BY rates_count DESC;
-', array(':id'=>$contest['id']));
-var_dump($photos_contest);
+						$photos_contest = DB::query('SELECT p.*, COUNT(prc.photo_id) AS rates_count
+						FROM photos p
+						LEFT JOIN photos_rates_contest prc ON p.id = prc.photo_id
+						WHERE p.on_contest = 1 AND p.contest_id = :id
+						GROUP BY p.id
+						ORDER BY rates_count DESC;
+						', array(':id'=>$contest['id']));
+
+						foreach ($photos_contest as &$photo) {
+							$photo['votes'] = VoteContest::count($pc['id'], $contest['id']);
+						}
+
+						usort($photos_contest, function ($a, $b) {
+							return $b['votes'] <=> $a['votes'];
+						});
                         foreach ($photos_contest as $pc) {
 							$user = new User($pc['user_id']);
 							if (VoteContest::photo(Auth::userid(), $pc['id'], $contest['id']) === 1) {

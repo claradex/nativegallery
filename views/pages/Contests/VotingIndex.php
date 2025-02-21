@@ -105,7 +105,9 @@ $(document).ready(function()
                         <?php
                         $contest = DB::query('SELECT * FROM contests WHERE status=2')[0];
                         $photos_contest = DB::query('SELECT * FROM photos WHERE on_contest=2 AND contest_id=:id', array(':id'=>$contest['id']));
+
                         foreach ($photos_contest as $pc) {
+                            $user = new User($pc['user_id']);
                             $class = '';
                             if ((int)DB::query('SELECT photo_id FROM contests_rates WHERE photo_id=:pid AND user_id=:uid AND contest_id=:cid', array(':uid' => Auth::userid(), ':pid' => $pc['id'], ':cid' => $contest['id']))[0]['photo_id'] === (int)$pc['id']) {
                                 $class = ' voted';
@@ -117,7 +119,7 @@ $(document).ready(function()
                                     <td><a href="#" pid="'.$pc['id'].'" class="contestBtn'.$class.'"></a></td>
                                     <td class="pb_photo" id="p2068176"><a href="/photo/'.$pc['id'].'/" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$pc['photourl'].'" data-src="/api/photo/compress?url='.$pc['photourl'].'" alt="630 КБ">
                                             <div class="hpshade">
-                                                <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div>
+                                                <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$pc['id']))[0]['COUNT(*)'].'</div>
                                             </div>
                                         </a></td>
                                     <td class="pb_descr">
