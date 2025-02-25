@@ -1,0 +1,42 @@
+{layout '@layout.latte'}
+{block content}
+<center>
+                    <h1>30 самых просматриваемых фото за 24 часа</h1>
+                    <div style="width:80%">
+                    {var $photos = \App\Services\DB::query('SELECT photo_id, COUNT(*) as view_count
+FROM photos_views
+WHERE time >= UNIX_TIMESTAMP(NOW()) - 86400
+GROUP BY photo_id
+ORDER BY view_count DESC
+LIMIT 30;')}
+{var $top = 0}
+{foreach $photos as $pd}
+    {var $photo = \App\Services\DB::query('SELECT * FROM photos WHERE id=:id', array(':id' => $pd[photo_id]))}
+    {foreach $photo as $p}
+        {do $top++}
+        {var $author = new \App\Models\User($p[user_id])} <div class="p20p">
+                            <table>
+                                <tr>
+                                    <td style="text-align:center; padding:10px"><b style="font-size:25px">{$top}</b><br><br><small>Новых просмотров:</small><br><b>+{$pd[view_count]}</b><br><br>
+                                        
+                                    </td>
+                                    <td class="pb_photo" id="p1977446"><a href="/photo/{$p[id]}/" target="_blank" class="prw"><img class="f" src="{$p[photourl]}" alt="347 КБ">
+                                            
+                                        </a></td>
+                                    <td class="pb_descr">
+                                
+                                    <p><b class="pw-place">{$p[place]}</b></p>
+                                    <span class="pw-descr">{$p[postbody]}</span>
+                                    <p class="sm"><b>{\App\Services\Date::zmdate($p[timeupload])}</b><br>Автор: <a href="/author/{$p[user_id]}/">{$author->i(username)}</a></p>
+                                </td>
+                                </tr>
+                            </table>
+                        </div>
+    {/foreach}
+{/foreach}                       
+                      
+                    </div>
+                </center>
+            </td>
+        </tr>
+        {/block}
