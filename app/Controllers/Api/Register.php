@@ -308,7 +308,7 @@ class Register
                         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 
-                            if (!DB::query('SELECT email FROM users WHERE email=:email', array(':email' => $email))) {
+                            if (!DB::query('SELECT email FROM users WHERE LOWER(email) = LOWER(:email)', array(':email' => '%'.$email.'%'))) {
 
 
 

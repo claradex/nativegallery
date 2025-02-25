@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мессенджер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            width: 250px;
+            background-color: #2C3E50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .chat-item:hover {
+            background-color: #34495E;
+        }
+
+        .chat-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-item .chat-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-item .chat-name {
+            font-weight: bold;
+        }
+
+        .chat-item .chat-message {
+            font-size: 0.9em;
+            color: #BDC3C7;
+        }
+
+        /* Основная область с чатами */
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ECF0F1;
+        }
+
+        .chat-header {
+            background-color: #3498DB;
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .chat-header .chat-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            align-self: flex-start;
+        }
+
+        .message.sender {
+            background-color: #3498DB;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: #FFFFFF;
+            border-top: 1px solid #BDC3C7;
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #BDC3C7;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Боковое меню -->
+    <div class="sidebar">
+        <h2>Чаты</h2>
+        <div class="chat-item">
+            <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Аватар 1">
+            <div class="chat-details">
+                <div class="chat-name">Чат 1</div>
+                <div class="chat-message">Привет! Как дела?</div>
+            </div>
+        </div>
+        <div class="chat-item">
+            <img src="https://www.w3schools.com/w3images/avatar6.png" alt="Аватар 2">
+            <div class="chat-details">
+                <div class="chat-name">Чат 2</div>
+                <div class="chat-message">Что нового?</div>
+            </div>
+        </div>
+        <div class="chat-item">
+            <img src="https://www.w3schools.com/w3images/avatar5.png" alt="Аватар 3">
+            <div class="chat-details">
+                <div class="chat-name">Чат 3</div>
+                <div class="chat-message">Можем поговорить позже?</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основная область с чатами -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Аватар чата">
+            <div class="chat-title">Чат 1</div>
+        </div>
+        <div class="chat-messages">
+            <div class="message">Привет! Как дела?</div>
+            <div class="message sender">Все хорошо! А у тебя?</div>
+            <div class="message">Нормально, немного занят.</div>
+            <div class="message sender">Понимаю. Когда встречаемся?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Напишите сообщение...">
+        </div>
+    </div>
+
+</body>
+</html>

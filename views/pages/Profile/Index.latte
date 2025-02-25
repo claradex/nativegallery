@@ -1,0 +1,185 @@
+{layout '..\@layout.latte'}
+{block content}
+{var $usercttc = False}
+{var $city = htmlspecialchars(json_decode($userprofile->i(content), true)[aboutlive][value])}
+{var $photourl = $userprofile->i(photourl)}
+{var $regdate = \App\Services\Date::zmdate($userprofile->content(regdate))}
+{var $about = json_decode($userprofile->i(content), true)[aboutmemo][value]}
+{var $birthdate = json_decode($userprofile->i(content), true)[aboutbirthday][value]}
+        <h1>{$userprofile->i(username)}{if $userprofile->i(admin) === 1}<img width="32" src="/static/img/star.png">{/if}</h1>
+        {if $usercttc === True}<div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>Профиль на transphoto.org</b><br>Пользователь не зарегистрирован на сервере {$ngallery[root][title]}. Информация может быть неполной.<br><a href="https://transphoto.org/author/{=(int) explode('/', explode('@', $_SERVER[REQUEST_URI])[0])[2]}" target="_blank">Открыть на transphoto.org</a></div>
+        {/if}
+        {if $userprofile->i(admin) === 1}Администратор сервера
+        {else}
+        {if $userprofile->i(admin) === 2}Фотомодератор
+        {/if}
+        {/if}
+        {if $userprofile->i(id) === $user_id}
+        <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
+        {/if}
+        <div class="p20" style="padding-right:12px; background-color: white !important;">
+                <table width="100%">
+                    <tr>
+                    {if $userprofile->content(badge) !== null}
+                    <div style="float:left; border:solid 1px #3b7dc1; padding:6px 10px 7px; margin-bottom:13px; background-color:#0199ff44"><b>{nl2br($userprofile->content(badge))}</div><br>
+                    {/if}
+                    {var $content = json_decode($userprofile->i(content), true)}
+
+                        <td style="vertical-align:top; width:100%" valign="top" width="100%">
+                            <table style="margin-bottom: 15px;">
+                                <colgroup><col width="170px"></colgroup>
+
+                                {ifset $city}
+                                    <tr>
+                                        <td class="sm" style="padding:3px 10px 3px 0">Откуда:</td>
+                                        <td>{$city}</td>
+                                    </tr>
+                                {/ifset}
+
+                                {ifset $birthdate}
+                                    <tr>
+                                        <td class="sm" style="padding:3px 10px 3px 0">День рождения:</td>
+                                        <td>{$birthdate}</td>
+                                    </tr>
+                                {/ifset}
+                            </table>
+
+                            <table style="margin-bottom: 15px;">
+                                <colgroup><col width="170px"></colgroup>
+
+                                {foreach ['aboutlangs' => 'Владение языками', 'abouttelegram' => 'Telegram', 'aboutvk' => 'ВКонтакте', 
+                                        'abouttwitter' => 'Twitter/X', 'aboutyoutube' => 'YouTube', 'aboutemail' => 'Почта', 
+                                        'aboutinstagram' => 'Instagram', 'abouttransphoto' => 'TransPhoto', 'aboutwebsite' => 'Личный сайт'] as $key => $label}
+
+                                    {ifset $content[$key]['value']}
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">{$label}:</td>
+                                            <td>
+                                                {if $key === 'aboutemail'}
+                                                    <a href="mailto:{$content[$key]['value']}">{$content[$key]['value']}</a>
+                                                {else}
+                                                    {$content[$key]['value']}
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    {/ifset}
+
+                                {/foreach}
+                            </table>
+
+                            <table style="margin-bottom: 15px;">
+                                <colgroup><col width="170px"></colgroup>
+
+                                {foreach ['aboutfavs_trains' => 'Любимые модели поездов', 'aboutfavs_countries' => 'Любимые страны', 'aboutfavs_cities' => 'Любимые города'] as $key => $label}
+                                    {ifset $content[$key]['value']}
+                                        <tr>
+                                            <td class="sm" style="padding:3px 10px 3px 0">{$label}:</td>
+                                            <td>{$content[$key]['value']}</td>
+                                        </tr>
+                                    {/ifset}
+                                {/foreach}
+                            </table>
+
+                            <table>
+                                <colgroup><col width="170px"></colgroup>
+                                <tr>
+                                    <td class="sm" style="padding:3px 10px 3px 0">Дата регистрации:</td>
+                                    <td><span class="sm">{$regdate}</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="sm" style="padding:3px 10px 3px 0">Был на сайте:</td>
+                                    <td>
+                                        <span class="sm">
+                                            {=\App\Services\Date::zmdate($userprofile->i(online))}
+                                            {if time() - 300 <= $userprofile->i(online)}(<b>online</b>){/if}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <br />
+                            <div class="sm" style="float:right">
+                                <a href="/lk/ticket.php?action=add&amp;aid=140"></a>
+                            </div>
+                        </td>
+
+                        <td valign="top" align="right">
+                            <script n:syntax=off>
+                                function getBodyScrollTop() {
+                                    return self.pageYOffset || (document.documentElement && document.documentElement.scrollTop) || (document.body && document.body.scrollTop);
+                                }
+
+                                function showUserPhoto() {
+                                    _getID('userphoto_big_img').src = '{$userprofile->i(photourl)}';
+                                    _getID('userphoto_big_div').style.top = '' + (getBodyScrollTop() + 10) + 'px';
+                                    _getID('userphoto_big_div').style.display = 'block';
+                                }
+
+                                function hideUserPhoto() {
+                                    _getID('userphoto_big_div').style.display = 'none';
+                                }
+
+                                document.onclick = function(e) {
+                                    e = e || window.event;
+                                    E = e.target || e.srcElement;
+                                    if (E.id != 'userphoto_big_div' && E.id != 'userphoto_img') {
+                                        _getID('userphoto_big_div').style.display = 'none';
+                                    }
+                                }
+                            </script>
+
+                            <div id="userphoto_big_div" style="position:absolute; display:none; border:1px solid gray; padding:10px; background-color:white; margin:auto; text-align:center; right:100px; z-index:3000" class="p5 shadow"><a href="#" onclick="hideUserPhoto(); return false"><img src="" id="userphoto_big_img" border="0" style="vertical-align:middle"></a>
+                                <div style="margin-top:8px"><a class="dot" href="#" onclick="hideUserPhoto(); return false">закрыть</a></div>
+                            </div>
+
+                            <a href="{$photourl}" onclick="showUserPhoto(); return false;"><img onerror="this.src = '/static/img/avatar.png'; this.onerror = null;" src="{$photourl}" alt="" id="userphoto_img" class="f" style="width:auto; max-width:100px"></a>
+                        </td>
+                    </tr>
+                </table>
+                </div>
+                {if $about != null && $usercttc === False}
+                <div class="p20" style="margin-top: 8px; background-color: white !important;">
+                    <h4>О себе</h4>
+                    {$about}
+                </div>
+                {else}
+                {if $usercttc === True}{$about}{/if}
+                {/if}
+                <div style="margin-top: 25px;"><b><a href="/search?id={$userprofile->i(id)}">Найти все фотографии, сделанные этим пользователем</a></b></div>
+                {if $userprofile->i(id) != $user_id}
+                <script>
+
+
+                $(document).ready(function()
+                {
+                    $('.toggle, .toggle-label').on('click', function()
+                    {
+                        var toggle = $('.toggle').toggleClass('on');
+
+                        var subscr_cnt = $('#subscr_cnt');
+                        var cnt = parseInt(subscr_cnt.text());
+                        subscr_cnt.html(toggle.is('.on') ? cnt+1 : cnt-1);
+
+                        $.get('/api/subscribe', { action: 'subscribe', id: {$userprofile->i(id)}, subj: 'a' }, function (r)
+                        {
+                            if (r != 0 && r != 1)
+                            {
+                                toggle.toggleClass('on');
+                                alert(r);
+                            }
+                            else toggle.attr('class', (r == 1) ? 'toggle on' : 'toggle');
+                        });
+                    });
+                });
+
+
+                </script>
+                {if \App\Services\DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userprofile->i(id), ':followerid' => $user_id))}
+                    {var $class = on}
+                {/if}
+                <div style="margin-top: 8px;"><div class="toggle {$class}"><div class="handle"></div></div> &nbsp;<label class="toggle-label"><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt">{=\App\Services\DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid' => $userprofile->i(id)))[0]['COUNT(*)']}</b>)</label></div>
+                {else}
+                <div style="margin-top: 8px;">Пользователей, подписанных на мои фотографии: <b>{=\App\Services\DB::query('SELECT COUNT(*) FROM followers WHERE user_id=:uid', array(':uid' => $userprofile->i(id)))[0]['COUNT(*)']}</b></div>
+                {/if}
+</td>
+{/block}
