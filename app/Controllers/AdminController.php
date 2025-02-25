@@ -5,7 +5,7 @@ use \App\Services\{Router, Auth, DB, Json};
 use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 
-class AdminController
+class AdminController extends NGController
 {
     static $file = 'General';
 

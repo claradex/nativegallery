@@ -2,16 +2,17 @@
 namespace App\Controllers;
 
 use \App\Services\{Router, Auth, DB, Json};
-use \App\Controllers\ExceptionRegister;
-use \App\Core\Page;
 
-class LoginController
+class LoginController extends NGController
 {
 
-  
-    public static function i()
+    public function i()
     {
-       Page::set('Login');
+        if (Auth::userid() > 0) {
+            Router::redirect('/');
+        } else{
+            $this->render('System/Login');
+        }
     }
 
 

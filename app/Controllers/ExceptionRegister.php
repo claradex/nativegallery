@@ -1,20 +1,17 @@
 <?php
+
 namespace App\Controllers;
+
 use \App\Services\{DB, Json};
 use \App\Core\Router;
 use \App\Core\Page;
 
-class ExceptionRegister
+class ExceptionRegister extends NGController
 {
-    public static function resolve($httpcode, $corecode) {
-        return Page::set('Errors/'.$corecode);
 
+    public function notfound()
+    {
+        http_response_code(404);
+        $this->render('Errors/404');
     }
-
-    public static function notfound() {
-        Page::set('Errors/404');
-    }
-
-    
-
 }

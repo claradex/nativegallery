@@ -5,13 +5,17 @@ use \App\Services\{Router, Auth, DB, Json};
 use \App\Controllers\ExceptionRegister;
 use \App\Core\Page;
 
-class RegisterController
+class RegisterController extends NGController
 {
 
   
-    public static function i()
+    public function i()
     {
-       Page::set('Register');
+        if (Auth::userid() > 0) {
+            Router::redirect('/');
+        } else{
+            $this->render('System/Register');
+        }
     }
 
 
