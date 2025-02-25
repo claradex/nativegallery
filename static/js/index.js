@@ -22,14 +22,6 @@ $(document).ready(function()
 	});
 
 
-	$(window).on('load resize', function()
-	{
-		var list = $('#idx-regions-list');
-		var h = list.closest('table').height() - list.position().top + 40;
-		list.css('height', h + 'px');
-	});
-
-
 	$('#loadmore').on('click', LoadRecentPhotos).click();
 	$('#newrand' ).on('click', LoadRandomPhotos).click();
 
@@ -70,25 +62,6 @@ $(document).ready(function()
 		e.stopPropagation();
 	});
 
-
-	$('#loginbtn').on('click', function()
-	{
-		var username = $('#username').val().trim();
-		var password = $('#password').val().trim();
-
-		if (username != '' && username != '')
-		{
-			$('#loginbtn').prop('disabled', true).val(_text['IX_LOGGING']);
-
-			$.post('/api.php?action=check-login', { username: username, password: password, remember: $('#remember').is('checked') }, function(r)
-			{
-				if (r == 0)
-					 $('#loginform').submit();
-				else window.location.reload();
-			})
-			.fail(function(jx) { if (jx.responseText != '') alert(jx.responseText); });
-		}
-	});
 
 
 	$('#mobile-menu').on('click', function()
