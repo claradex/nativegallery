@@ -2,45 +2,61 @@
 
 namespace App\Core;
 
+use Latte\Engine;
+use Exception;
+use App\Services\Auth;
+use App\Models\User;
+use App\Services\DB;
+
 class Page
 {
-    private static $cache = [];
+    private $latte;
+    private $layouts = [
+        'dashboard' => 'dashboard.latte',
+        'login' => null,
+    ];
+    private $defaultLayout = '@layout.latte';
+    private $user;
 
-    public static function component($name)
+    public function __construct()
     {
-        if (!isset(self::$cache[$name])) {
-            self::$cache[$name] = require_once($_SERVER['DOCUMENT_ROOT'] . '/views/components/' . $name . '.php');
+        $this->latte = new Engine;
+        $this->latte->setTempDirectory($_SERVER['DOCUMENT_ROOT'] . '/cdn/lattecache');
+        $this->user = new User(Auth::userid());
+    }
+
+
+
+    private function get_current_git_commit($branch = 'main')
+    {
+        if ($hash = file_get_contents(sprintf($_SERVER['DOCUMENT_ROOT'] . '/.git/refs/heads/%s', $branch))) {
+            return mb_strimwidth($hash, 0, 7, "");
+        } else {
+            return false;
+        }
+    }
+
+
+
+    public function render($template, $params = [])
+    {
+        $templatePath = $_SERVER['DOCUMENT_ROOT'] . "/views/pages/" . $template . ".latte";
+        if (!file_exists($templatePath)) {
+            throw new Exception("Template not found: " . $templatePath);
+        }
+        $params['ngallery'] = NGALLERY;
+        $params['user_id'] = Auth::userid();
+        $params['user'] = $this->user;
+        $params['nonreviewedimgs'] = DB::query('SELECT COUNT(*) FROM photos WHERE moderated=0')[0]['COUNT(*)'];
+        $params['lastcommit'] = self::get_current_git_commit();
+        $params['mysqlversion'] = DB::query('SELECT VERSION()')[0]['VERSION()'];
+        $params['db'] = \App\Services\DB::class;
+
+        $layout = $this->layouts[$template] ?? $this->defaultLayout;
+        if ($layout) {
+            $params['layout'] = $_SERVER['DOCUMENT_ROOT'] . "/views/components/" . $layout;
         }
 
-        return self::$cache[$name];
-    }
-
-    public static function rewrite($search, $replace, $rootUrl)
-    {
-        return str_ireplace($search, $replace, $rootUrl);
-    }
-
-    public static function set($name)
-    {
-            if (!isset(self::$cache[$name])) {
-                self::$cache[$name] = require_once($_SERVER['DOCUMENT_ROOT'] . '/views/pages/' . $name . '.php');
-            }
-
-            return self::$cache[$name];
-    }
-
-    public static function render($name)
-    {
-        return self::set($name)();
-    }
-
-    public static function method()
-    {
-        return $_SERVER['REQUEST_METHOD'];
-    }
-
-    public static function exists($name)
-    {
-        return file_exists($_SERVER['DOCUMENT_ROOT'] . '/views/pages/' . $name . '.php');
+        $this->latte->render($templatePath, $params);
     }
 }

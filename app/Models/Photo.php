@@ -5,11 +5,17 @@ use \App\Services\DB;
 class Photo {
 
     public $photoid;
-    function __construct($user_id) {
-        $this->photoid = $user_id;
+    private $photo;
+    function __construct($photo_id) {
+        $this->photoid = $photo_id;
+        $this->photo = DB::query("SELECT * FROM photos WHERE id=:id", array(':id'=>$this->photoid))[0];
     }
     public function i($table) {
-        return DB::query("SELECT * FROM photos WHERE id=:id", array(':id'=>$this->photoid))[0][$table];
+        return $this->photo[$table];
+    }
+    public function exists(): bool
+    {
+       return $this->i('id') !== null;
     }
     public static function fetchAll($user_id = NULL) {
         if ($user_id != NULL) {

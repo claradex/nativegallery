@@ -40,6 +40,7 @@ class Routes
         Router::get('/voting/results', 'ContestsController@results');
         Router::get('/voting/waiting', 'ContestsController@waiting');
         Router::get('/comments', 'MainController@comments');
+        Router::get('/messages', 'MessagesController@i');
         if (Auth::userid() > 0) {
             $user = new \App\Models\User(Auth::userid());
 
