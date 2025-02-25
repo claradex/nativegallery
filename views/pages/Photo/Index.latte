@@ -1,0 +1,575 @@
+{layout '..\@layout.latte'}
+{var $photo = new \App\Models\Photo($photo_id)}
+{block content}
+{var $id = $photo->i('id')}
+                {if $photo->i('moderated') === 0 && $moderated === true}
+                    <div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
+<center><h4 style="color:#fff; margin-bottom:3px">Это {$extname} пока не опубликовано</h4>
+<div>Сейчас {$extnamef} рассматривается модераторами и пока не видна другим пользователям. Это может занять определённое время, иногда до нескольких дней.<br><br>
+<b>Здесь Вы можете увидеть, как будет выглядеть страница с фотографией после публикации.</b></center></div>
+</div>
+                {/if}
+                {if $photo->i('moderated') === 2 && $moderated === true}
+                    <div class="label-red" style="padding:10px; margin:0 -20px; color:#fff"><center>
+<h4 style="color:#fff; margin-bottom:3px">Фотография не принята к публикации</h4>
+<div></div>
+<div style="margin-top:7px">' . $photo->declineReason($photo->content('declineReason')) . '</div></center>
+</div>
+                {/if}
+                <div id="err"></div>
+                {if $photo_id != null && $moderated === true}
+                    <center>
+                        <div id="photobar">
+                            <div id="prev" title="Переход по профилю ТС"><span>&lt;</span></div>
+                            <div id="next" title="Переход по профилю ТС"><span>&gt;</span></div>
+                            <div style="display:inline-block">
+                                <div id="underphoto_frame">
+                                    <div id="ph_frame">
+                                        {if $photo->content('videourl') != null}
+                                            <video controls>
+                                                <source src="{$photo->content('videourl')}">
+                                            </video>
+
+                                        {else}
+                                            <img onerror="errimg(); this.onerror = null;" id="ph" src="{$photo->i('photourl')}" alt="" title="Фотография">
+                                        {/if}
+                                        {if $photo->i('on_contest') === 2}
+                                        <a class="underphoto" href="/voting"><img style="margin-top:-4px" src="/static/img/star_people.png"> &nbsp;Фотография участвует в голосовании</a>
+                                        {/if}
+                                        {foreach $photo->content('contests') as $c}
+                                            {if $c['place'] === 1}
+                                                {var $img = '3'}
+                                            {/if}
+                                            {if $c['place'] === 2}
+                                                {var $img = '2'}
+                                            {/if}
+                                            {if $c['place'] === 3}
+                                                {var $img = '1'}
+                                            {/if}
+                                            <a class="underphoto" style="font-weight:bold" href="/pk.php?pid=2068816&amp;type=d"><img style="margin-top:-4px" src="/static/img/vs{$img}.png"> &nbsp;{$c['place']}-е место на фотоконкурсе</a>
+                                        {/foreach}
+                                        {if $photo->i('priority') === 1}
+                                            <div class="underphoto s17" style="cursor:help" title="Фотография не удовлетворяет действующим на момент публикации критериям качества снимков."><i style="position:relative; top:1px" class="fas fa-info-circle"></i>&ensp;<b class="dot">Условная публикация</b></div>
+                                        {elseif $photo->i('priority') === 2}
+                                            <div class="underphoto s19" style="cursor:help" title="Изображение будет удалено с сайта через некоторое время"><i style="position:relative; top:1px" class="fas fa-clock"></i>&ensp;<b class="dot">Временная публикация</b></div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/if}
+                        <script>
+                            function checkPhotoSize() {
+                                var photo = $('#ph');
+                                if (!photo.length) return;
+
+                                var w = photo[0].naturalWidth;
+                                var h = photo[0].naturalHeight;
+
+                                var pw = photo.width();
+                                var ww = $(window).width();
+                                var wh = $(window).height();
+
+                                if (h > w && w < ww)
+                                    photo.addClass('v-zoom');
+                                else photo.removeClass('v-zoom');
+
+                                if (w === undefined || w == 0 || w > pw || w > ww || (h > wh && h > w)) {
+                                    photo.removeClass('nozoom').off('click').on('click', function() {
+                                        photo.toggleClass('zoomed');
+                                    });
+                                } else photo.addClass('nozoom').off('click');
+                            }
+
+                            // Масштабирование фото
+                            $('#ph').on('load', checkPhotoSize);
+                            $(window).on('resize', checkPhotoSize);
+                            checkPhotoSize();
+                        </script>
+                    </center>
+            </td>
+        </tr>
+    </table>
+        <div id="pmain">
+            <div>
+                <div style="line-height:15px; margin-bottom:10px">
+                    <table class="pwrite">
+                        <tr>
+                            {if $photo->i('place') != null}
+                                <td class="nw" valign="top" align="right"><b>{$photo->i('place')}</b></td>
+                            {/if}
+                        </tr>
+                    </table>
+                    {if $photo->i('gallery_id') != 0 || $photo->i('gallery_id') != null}
+                        <div><a href="/articles/{$photo->i('gallery_id')}">' . \App\Services\DB::query('SELECT title FROM galleries WHERE id=:id', array(':id' => $photo->i('gallery_id')))[0]['title'] . '</a></div>
+                    {/if}
+                </div>
+            </div>
+        {if $photo->i('entitydata_id') >= 1}
+
+            <tr>
+
+                <td class="nw" valign="top" align="right"><a href="/vehicle/{$photo->i('entitydata_id')}">{$entitydata['title']}</a></td>
+                <td class="nw" align="left" valign="top">&nbsp;— &nbsp;маршрут <b>{$photo->content('entityroute')}</b></td>
+            </tr>
+
+        {/if}
+        <div>
+        {if $photo->content('comment') != null}
+            <div style="padding-top:8px">{$photo->content('comment')}</div>
+        {/if}
+        </div><br>
+        {if $photo->i('posted_at') === 943909200 || \App\Services\Date::zmdate($photo->i('posted_at')) === '30 ноября 1999 в 00:00'}
+            {var $date = 'не указана'}
+        {else}
+            {var $date = \App\Services\Date::zmdate($photo->i('posted_at'))}
+        {/if}
+        <div>Автор: <a href="/author/{$photo->i('user_id')}/">{$photouser->i('username')}</a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Дата: <b>{$date}</b></div>
+        <table id="pp-items">
+            <tr>
+                <td id="pp-left-col">
+                    <div class="p20a" id="pp-item-info">
+                        <h4>Статистика</h4>
+                        <div class="sm">
+                            <div style="margin-bottom:10px">Лицензия: <b>BY-NC</b></div>
+                            Опубликовано <b>{\App\Services\Date::zmdate($photo->i('timeupload'))}</b><br>
+                            Просмотров — {\App\Services\DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id' => $photo_id))[0]['COUNT(*)']}
+                            <br><br>
+                            <a href="/photoext?id={$photo_id}">Подробная информация</a>
+                        </div>
+                    </div>
+                    {if $user_id > 0}
+                    <div class="p0" id="pp-item-tools">
+                        <h4 class="pp-item-header">Инструменты</h4>
+                        <div class="pp-item-body" style="margin:7px 5px">
+                            <div class="sm">
+                                {if \App\Services\DB::query('SELECT user_id FROM photos_favorite WHERE photo_id=:pid AND user_id=:uid', array(':uid' => $user_id, ':pid' => $photo_id))}
+                                    {var $fav = 1}
+                                    {var $textfav = 'Удалить фото из Избранного'}
+                                {else}
+                                    {var $fav = 0}
+                                    {var $textfav = 'Добавить фото в Избранное'}
+                                {/if}
+                                <a class="tool-link" href="#" id="favLink" faved="{$fav}">{$textfav}</a>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                    {if $photo->i('moderated') === 1 && $photo->content('rating') != 'disabled'}
+                        <div class="p20a" id="pp-item-vote">
+                            <h4 class="pp-item-header">Оценка</h4>
+                            <div class="sm">
+                                <img class="loader" pid="1361063" src="/img/loader.png">
+                                <div class="rtext">Рейтинг: <b id="rating">{\App\Models\Vote::count($id)}</b></div>
+                                <div class="star" pid="1361063"></div>
+                                {if $user_id > 0 && ($ngallery['root']['registration']['emailverify'] != true || $user->i('status') != 3)}
+                                    <div class="vote" pid="{$id}">
+                                        <a href="#" vote="1" class="vote_btn {if (\App\Models\Vote::photo($user_id, $id) === 1)} voted {/if}"><span>Интересная фотография!</span></a>
+                                        <a href="#" vote="0" class="vote_btn {if (\App\Models\Vote::photo($user_id, $id) === 0)} voted {/if}"><span>Мне не&nbsp;нравится</span></a>
+                                        {if (($photo->content('video') === null && $photo->i('user_id') != $user_id) || $photo->i('on_contest') != 2)}
+                                        <a class="konk_btn  {if (\App\Models\Vote::photoContest($user_id, $id) === 1)} voted {/if}" vote="1" href="#"><span>Красиво, на&nbsp;конкурс!</span></a>
+                                        <a href="#" vote="0" class="konk_btn {if (\App\Models\Vote::photoContest($user_id, $id) === 0)} voted {/if}"><span>Неконкурсное фото</span></a>
+                                        {elseif ($photo->i('user_id') === $user_id && $photo->i('on_contest') != 2)}
+                                        <a href="#" vote="1" class="konk_btn"><span>Выставить на&nbsp;конкурс</span></a><a href="#" vote="0" class="konk_btn"><span>Не участвовать в&nbsp;конкурсе</span></a></div>
+                                        {/if}
+                                    </div>
+                                {/if}
+                                <div id="votes" class="votes">
+                                    <table class="vblock pro">
+                                        {var $votespos = \App\Services\DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=1 AND contest=0 ORDER BY id DESC', array(':pid' => $id))}
+                                        {foreach $votespos as $ps}
+                                            {var $uservote = new \App\Models\User($ps['user_id'])}
+                                            <tr><td><a href="/author/{$ps['user_id']}/">{$uservote->i('username')}</a></td><td class="vv">+1</td></tr>
+                                        {/foreach}
+                                    </table>
+                                    <table class="vblock coN">
+                                        {var $votesneg = \App\Services\DB::query('SELECT * FROM photos_rates WHERE photo_id=:pid AND type=0 AND contest=0 ORDER BY id DESC', array(':pid' => $id))}
+                                        {foreach $votesneg as $ps}
+                                            {var $uservote = new \App\Models\User($ps['user_id'])}
+                                            <tr><td><a href="/author/{$ps['user_id']}/">{$uservote->i('username')}</a></td><td class="vv">-1</td></tr>
+                                        {/foreach}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+
+
+                    <div class="p20a" id="pp-item-link">
+                        <h4 style="margin-bottom:7px">Постоянная ссылка на фото</h4>
+                        <input type="text" value="https://{$_SERVER['SERVER_NAME']}/photo/{$id}/" readonly="readonly" class="pp-link" onclick="this.select()">
+                        <script src="https://yastatic.net/share2/share.js"></script>
+                        <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,odnoklassniki,telegram,twitter,whatsapp"></div>
+                    </div>
+
+
+                </td>
+                <style>
+                    .header-container {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+
+                    .pp-item-header {
+                        margin: 0;
+                    }
+
+                    .header-container img {
+                        margin-right: 5px;
+                        height: 20px;
+                    }
+                </style>
+                <td id="pp-main-col">
+                {if $photo->i('entitydata_id') >= 1}
+                    <div id="pp-item-vdata">
+                        <div class="p0">
+                            <h4 class="pp-item-header"><b><a href="/vehicle/{$photo->i('entitydata_id')}">{$entitydata['title']}</a></b></h4>
+                            <div class="pp-item-body">
+                                <table class="linetable">
+                                    <colgroup>
+                                        <col width="25%">
+                                    </colgroup>
+                                    <tbody>
+                                        {var $entity = \App\Services\DB::query('SELECT * FROM entities_data WHERE id=:id', array(':id'=>$photo->i('entitydata_id')))[0]}
+                                        {var $vehiclevariables = json_decode($vehicle->i('sampledata'), true)}
+                                        {var $vehicledatavariables = json_decode($entity['content'], true)}
+                                        {var $num = 1}
+                                        {foreach $vehiclevariables as $vb}
+                                        <tr class="s11 h21">
+                                            <td class="ds nw">{$vb['name']}:</td>
+                                            <td class="ds"><b>{$vehicledatavariables[$num]['value']}</b></td>
+                                        </tr>
+                                        {$num++}
+                                        {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+                       {if ($photo->content('type') != 'none') && (json_decode($photo->i('exif'), true)['type'] != 'none') && ($photo->content('rating') != 'disabled') && ($photo->i('exif') != NULL)}
+                        <div id="pp-item-vdata">
+                            <div class="p0" id="pp-item-exif">
+                                <div class="header-container">
+                                    <h4 class="pp-item-header">Параметры съёмки</h4>
+                                    <!--img src="/static/img/flex_arrow_open2.png" height="100%"-->
+                                </div>
+                                <div class="pp-item-body">
+                                    <table class="linetable" id="exif">
+                                        {var $data = json_decode($photo->i('exif'), true)}
+                                        {var $exifTranslations = [
+                                            'FILE.FileName' => 'Имя файла',
+                                            'FILE.FileSize' => 'Размер файла',
+                                            'FILE.FileDateTime' => 'Дата и время файла',
+                                            'COMPUTED.MimeType' => 'Тип MIME',
+                                            'IFD0.Make' => 'Производитель камеры',
+                                            'IFD0.Model' => 'Модель камеры',
+                                            'IFD0.Orientation' => 'Ориентация',
+                                            'IFD0.XResolution' => 'Разрешение по X',
+                                            'IFD0.YResolution' => 'Разрешение по Y',
+                                            'IFD0.ResolutionUnit' => 'Единица разрешения',
+                                            'IFD0.Software' => 'Программное обеспечение',
+                                            'IFD0.DateTime' => 'Дата и время',
+                                            'IFD0.Artist' => 'Автор',
+                                            'IFD0.Copyright' => 'Авторские права',
+                                            'EXIF.ExposureTime' => 'Время экспозиции',
+                                            'EXIF.FNumber' => 'Диафрагма',
+                                            'EXIF.ExposureProgram' => 'Программа экспозиции',
+                                            'EXIF.ISOSpeedRatings' => 'ISO',
+                                            'EXIF.ExifVersion' => 'Версия EXIF',
+                                            'EXIF.DateTimeOriginal' => 'Дата и время оригинала',
+                                            'EXIF.DateTimeDigitized' => 'Дата и время оцифровки',
+                                            'EXIF.ShutterSpeedValue' => 'Значение выдержки',
+                                            'EXIF.ApertureValue' => 'Значение диафрагмы',
+                                            'EXIF.BrightnessValue' => 'Значение яркости',
+                                            'EXIF.ExposureBiasValue' => 'Экспокоррекция',
+                                            'EXIF.MaxApertureValue' => 'Максимальная диафрагма',
+                                            'EXIF.MeteringMode' => 'Режим экспозамера',
+                                            'EXIF.LightSource' => 'Источник света',
+                                            'EXIF.Flash' => 'Вспышка',
+                                            'EXIF.FocalLength' => 'Фокусное расстояние',
+                                            'EXIF.SubjectArea' => 'Область объекта',
+                                            'EXIF.FlashpixVersion' => 'Версия Flashpix',
+                                            'EXIF.ColorSpace' => 'Цветовое пространство',
+                                            'EXIF.PixelXDimension' => 'Размер изображения по X',
+                                            'EXIF.PixelYDimension' => 'Размер изображения по Y',
+                                            'EXIF.SensingMethod' => 'Метод съёмки',
+                                            'EXIF.SceneType' => 'Тип сцены',
+                                            'EXIF.ExposureMode' => 'Режим экспозиции',
+                                            'EXIF.WhiteBalance' => 'Баланс белого',
+                                            'EXIF.FocalLengthIn35mmFilm' => 'Фокусное расстояние для 35мм плёнки',
+                                            'EXIF.SceneCaptureType' => 'Тип съёмки',
+                                            'EXIF.GainControl' => 'Регулировка усиления',
+                                            'EXIF.Contrast' => 'Контрастность',
+                                            'EXIF.Saturation' => 'Насыщенность',
+                                            'EXIF.Sharpness' => 'Резкость',
+                                            'GPS.GPSLatitude' => 'Широта',
+                                            'GPS.GPSLongitude' => 'Долгота',
+                                            'GPS.GPSAltitude' => 'Высота',
+                                            'GPS.GPSTimeStamp' => 'Время GPS',
+                                            'GPS.GPSDateStamp' => 'Дата GPS'
+                                        ]}
+
+                                        <table>
+                                            {foreach $data as $key => $value}
+                                                {if isset($exifTranslations[$key])}
+                                                    <tr class="s11 h21">
+                                                        <td class="ds nw" width="30%">{$exifTranslations[$key]|escape}:</td>
+                                                        <td class="ds">{$value|escape}</td>
+                                                    </tr>
+                                                {/if}
+                                            {/foreach}
+                                        </table>
+                                        </div></div>
+
+                        {/if}
+                        {if $photo->content('lat') != null && $photo->content('lng') != null}
+                            <div class="p0" id="pp-item-exif">
+
+                                <h4 class="pp-item-header">Место на карте</h4>
+                                <div class="pp-item-body">
+                                    <table class="linetable" id="exif">
+                                        <tr class="upl-map">
+                                            <div id="map_frame" class="s11 p20" style="display:inline-block; padding:3px">
+                                                <div id="map_canvas"></div>
+                                            </div>
+                                            <script n:syntax=off>
+                                                const selectedPoint = {
+                                                    lat: {$photo->content('lat')},
+                                                    lng: {$photo->content('lng')}
+                                                };
+
+                                                const map = L.map('map_canvas').setView([selectedPoint.lat, selectedPoint.lng], 13);
+
+                                                L.tileLayer('https://'+s+'.tile.openstreetmap.org/'+z+'/'+z+'/'+y+'.png', {
+                                                    maxZoom: 19,
+                                                    attribution: '&copy; OpenStreetMap contributors'
+                                                }).addTo(map);
+
+                                                const marker = L.marker([selectedPoint.lat, selectedPoint.lng]).addTo(map);
+
+                                                marker.bindPopup("<b>Выбранная точка</b>").openPopup();
+                                            </script>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        {/if}
+
+                        {if ($photo->i('moderated') === 1)}
+                            {var = $comments = \App\Services\DB::query('SELECT * FROM photos_comments WHERE photo_id=:pid ORDER BY CASE WHEN id = :pinnedid THEN 0 ELSE 1 END, id ASC', array(':pid' => $id, ':pinnedid' => $photo->i('pinnedcomment_id')))}
+                            {var = $commcount = 0}
+                            {foreach $comments as $c}
+                                {if json_decode($c['content'], true)['deleted'] != 'true'}
+                                    {var $commcount = $commcount+1}
+                                {/if}
+                            {/foreach}
+                            {if ($photo->content('comments') != 'disabled')}
+                                <div class="p0" id="pp-item-comments">
+                                    {if ($commcount > 0)}
+                                        <h4 class="pp-item-header">Комментарии<span id="commcount" style="font-weight:normal"> <span style="color:#aaa">&middot;</span>{$commcount}</span></h4>
+                                    {/if}
+                                    <div id="posts">
+                                        {var $number = 1}
+                                        {foreach $comments as $c}
+                                            {var $comm = new \App\Models\Comment($c)}
+                                            {if $comm->content('deleted') != 'true'}
+                                                {if $number % 2 == 0}
+                                                    {var $class = 's11'}
+                                                {else}
+                                                    {var $class = 's1'}
+                                                {/if}
+                                                {$comm->class($class)}
+                                                {var $number = $number+1}
+                                                {$comm->i()}
+                                            {/if}
+                                        {/foreach}
+                                    </div>
+                                    <div class="cmt-write s1">
+                                        <h4 class="pp-item-header">Ваш комментарий</h4>
+                                       
+                                        <div style="padding:0 11px 11px">
+                                        {if $user_id > 0}
+                                            {if ($ngallery['root']['registration']['emailverify'] != true || $user->i('status') != 3)}
+                                            <form method="post" id="f1" enctype="multipart/form-data">
+                                                <input type="hidden" name="id" id="id" value="{$id}">
+                                                <textarea name="wtext" id="wtext"></textarea><br>
+                                                <div id="fileList" class="mt-3"></div>
+                                                <p id="statusSend" style="display: none;">Ошибка</p>
+                                                <div class="cmt-submit"><input type="submit" value="Добавить комментарий" id="sbmt"><button style="display: inline;" type="button" id="attachFile"><i class='bx bx-paperclip bx-rotate-90' ></i></button>
+                                               
+                                                </div>
+                                                
+                                            </form>
+
+                                            {else}
+                                                {'Комментарии могут оставлять только пользователи с подтверждённой почтой.'}
+                                            {/if}
+                                        {else}
+                                            {'Комментарии могут оставлять только зарегистрированные пользователи.'}
+                                        {/if}
+                                        </div>
+                                       
+
+                                    </div>
+                                </div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        const form = document.getElementById("f1");
+                                        if (!form) {
+                                            console.error("Форма #f1 не найдена!");
+                                            return;
+                                        }
+
+                                        const fileInput = document.createElement("input");
+                                        fileInput.type = "file";
+                                        fileInput.name = "filebody"; // Устанавливаем имя filebody
+                                        fileInput.style.display = "none";
+
+                                        form.appendChild(fileInput); // Добавляем input внутрь формы
+
+                                        const button = document.getElementById("attachFile");
+                                        const fileList = document.getElementById("fileList");
+
+                                        button.addEventListener("click", function () {
+                                            fileInput.click();
+                                        });
+
+                                        fileInput.addEventListener("change", function () {
+                                            const file = fileInput.files[0];
+                                            if (!file) return;
+
+                                            const maxSize = 100 * 1024 * 1024; // 100 MB
+                                            const forbiddenExtensions = [".html", ".php", ".htm", ".exe", ".com", ".cmd", ".bash", ".sh"];
+
+                                            const fileName = file.name.toLowerCase();
+                                            const fileSize = file.size;
+
+                                            if (fileSize > maxSize) {
+                                                alert("Файл превышает 100 МБ.");
+                                                return;
+                                            }
+
+                                            if (forbiddenExtensions.some(ext => fileName.endsWith(ext))) {
+                                                alert("Расширение не поддерживается.");
+                                                return;
+                                            }
+
+                                            const fileItem = document.createElement("div");
+                                            fileItem.setAttribute("style", "border:solid 1px #bbb; width:max-content; font-size: 12px; padding:3px 10px 3px; margin-bottom:13px; background-color:#e2e2e2");
+                                            fileItem.textContent = file.name;
+
+                                            const removeBtn = document.createElement("a");
+                                            removeBtn.classList.add("compl");
+                                            removeBtn.setAttribute("style", "display: inline-block; margin-left: 5px; color:#292929; cursor: pointer;");
+                                            removeBtn.textContent = "✖";
+                                            removeBtn.addEventListener("click", function () {
+                                                fileItem.remove();
+                                                fileInput.value = "";
+                                            });
+
+                                            fileItem.appendChild(removeBtn);
+                                            fileList.appendChild(fileItem);
+                                        });
+                                    });
+
+
+
+                                </script>
+                                 <script n:syntax=off>
+       $(document).ready(function() {
+        $('#f1').submit(function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/photo/comment",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+
+                if (jsonData.errorcode == "1") {
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'red'
+                    }).text('Комментарий некорректен');
+                } else if (jsonData.errorcode == "2") {
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'yellow'
+                    }).text('Пожалуйста, подождите...');
+                    setTimeout(function() {
+                        window.location.replace(jsonData.twofaurl);
+                    }, 1000);
+                } else if (jsonData.errorcode == "0") {
+                    $('#wtext').val('');
+                    $('#statusSend').css({
+                        display: 'block',
+                        color: 'green'
+                    }).text('Комментарий отправлен!');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/photo/getcomments/"+window.location.pathname.split('/')[2],
+                        processData: false,
+                        async: true,
+                        success: function(r) {
+                            $('#posts').html(r);
+                        },
+                        error: function(r) {
+                            console.log(r);
+                        }
+                    });
+                } else {
+                    alert('Неизвестная ошибка');
+                }
+            },
+            error: function(err) {
+                console.error("Ошибка при отправке формы", err);
+            }
+        });
+    });
+});
+
+
+        function errimg() {
+            const content = `<center>
+                        <div class="p20 s5" style="border:none; margin:0 -20px; display:none;">
+                            <b>Фото потеряно при крахе винчестера</b>
+                            <div class="sm" style="margin-top:5px">
+                                Если у вас есть это фото, пожалуйста, пришлите его на 
+                                <a href="mailto:{$ngallery['root']['adminemail']}?subject=Для восстановления фото {$id}">{$ngallery['root']['adminemail']}</a>
+                            </div>
+                        </div>
+                    </center>`;
+            $('#err').html(content);
+            $('#err .p20').slideDown(500);
+        }
+    </script>
+                           {else}
+                                <div class="p0" id="pp-item-comments">
+
+                                    <center>
+                                        <p>Комментарии отключены пользователем или по усмотрению Администрации.</p>
+                                    </center>
+                                </div>
+
+
+                            
+                       
+                </td>
+            </tr>
+            </tbody>
+            
+            {/if}
+        </table>
+        {/if}
+    {/block}
+   
+
