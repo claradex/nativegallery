@@ -1,0 +1,11 @@
+{layout '..\@layout.latte'}
+{var $photo = new \App\Models\Photo($photo_id)}
+{block content}
+        <center>
+            <h1>Аккаунт недоступен</h1>
+            <div class="p20w" style="margin-bottom:20px; padding:10px 30px">
+                <img src="/static/img/pnp.jpg" alt="Пусто" width="400" height="205" border="0">
+                <p>Мы сожалеем, но аккаунт пользователя {$username} был заблокирован за нарушение правил сайта.</p>
+            </div>
+        </center>
+    {/block}
