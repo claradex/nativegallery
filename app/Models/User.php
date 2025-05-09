@@ -5,7 +5,7 @@ use \App\Services\DB;
 class User {
 
     public $userid;
-    private $user;
+    public $user;
     function __construct($user_id) {
         $this->userid = $user_id;
         $this->user = DB::query("SELECT * FROM users WHERE id=:id", array(':id'=>$this->userid))[0];

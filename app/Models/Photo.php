@@ -5,7 +5,7 @@ use \App\Services\DB;
 class Photo {
 
     public $photoid;
-    private $photo;
+    public $photo;
     function __construct($photo_id) {
         $this->photoid = $photo_id;
         $this->photo = DB::query("SELECT * FROM photos WHERE id=:id", array(':id'=>$this->photoid))[0];

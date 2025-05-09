@@ -1,29 +1,6 @@
-<?php
-
-use \App\Services\{Auth, DB, Date};
-use \App\Models\{User, Photo, Vote};
-
-
-?>
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/LoadHead.php'); ?>
-
-
-</head>
-
-
-<body>
-    <div id="backgr"></div>
-    <table class="tmain">
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
-        <tr>
-            <td class="main">
+{layout '..\@layout.latte'}
+{block content}
                 <h1>Лента комментариев</h1>
-                <script src="/js/jquery-ui.js?1633005526"></script>
-                <script src="/js/selector.js?1730197663"></script>
                 <script>
                     $(document).ready(function() {
                         $('#cname').citySelector('cid', {
@@ -52,58 +29,57 @@ use \App\Models\{User, Photo, Vote};
                     });
                 </script>
                 <div id="upd_anchor"></div>
-                <?php
-                $comments = DB::query('SELECT * FROM photos_comments ORDER BY id DESC LIMIT 30');
-                foreach ($comments as $c) {
-                    $user = new User($c['user_id']);
-                    $content = json_decode($c['content'], true);
-                    $photo = new Photo($c['photo_id']);
-                    if ($user->i('admin') === 1) {
-                        $admintype = ' · Администратор сервера';
-                    } else if ($user->i('admin') === 2) {
-                        $admintype = ' · Фотомодератор';
-                    }
-                    if ((int)Vote::countcommrates($c['id'], -1) >= 1) {
-                        $commclass = 'pro';
-                        $symb = '+';
-                    } else if ((int)Vote::countcommrates($c['id'], -1) < 0) {
-                        $commclass = 'con';
-                        $symb = '';
-                    } else if ((int)Vote::countcommrates($c['id'], -1) === 0) {
-                        $commclass = '';
-                    }
-                    echo '<div class="p-comment p20p">
-                    <div class="pc-photo"><a href="/photo/'.$c['photo_id'].'/?top=1" target="_blank" class="prw"><img src="/api/photo/compress?url='.$photo->i('photourl').'" class="f"></a></div>
+                {var $comments = \App\Services\DB::query('SELECT * FROM photos_comments ORDER BY id DESC LIMIT 30')}
+                {foreach $comments as $c}
+                    {var $user = new \App\Models\User($c[user_id])}
+                    {var $content = json_decode($c[content], true)}
+                    {var $photo = new \App\Models\Photo($c[photo_id])}
+                    {if $user->i(admin) === 1}
+                        {var $admintype = ' · Администратор сервера'}
+                    {else}
+                        {if $user->i(admin) === 2}
+                            {var $admintype = ' · Фотомодератор'}
+                        {/if}
+                    {/if}
+                    {if (int) \App\Models\Vote::countcommrates($c[id], -1) >= 1}
+                        {var $commclass = pro}
+                        {var $symb = '+'}
+                    {else}
+                        {if (int) \App\Models\Vote::countcommrates($c[id], -1) < 0}
+                            {var $commclass = con}
+                            {var $symb = ''}
+                        {else}
+                            {if (int) \App\Models\Vote::countcommrates($c[id], -1) === 0}
+                                {var $commclass = ''}
+                            {/if}
+                        {/if}
+                    {/if}
+                    <div class="p-comment p20p">
+                    <div class="pc-photo"><a href="/photo/{$c[photo_id]}/?top=1" target="_blank" class="prw"><img src="/api/photo/compress?url={$photo->i(photourl)}" class="f"></a></div>
                     <div class="pc-content">
-                        <a class="pc-topost" href="/photo/'.$c['photo_id'].'/?top=1#' . $c['id'] . '" target="_blank">Ссылка</a>
+                        <a class="pc-topost" href="/photo/{$c[photo_id]}/?top=1#{$c[id]}" target="_blank">Ссылка</a>
                         <div class="pc-text">
                             <div><span class="cmt-aname">
-                                    <b><a href="/author/'.$c['user_id'].'/">'.$user->i('username').'</a></b></span> &middot; <span class="sm nw">'.Date::zmdate($c['posted_at']).'</span>
-                                <div class="rank">Фото: '.Photo::fetchAll($c['user_id']).''.$admintype.'</div>
-                                <div class="message-text feed">'.$c['body'].'</div>
+                                    <b><a href="/author/{$c[user_id]}/">{$user->i(username)}</a></b></span> &middot; <span class="sm nw">{\App\Services\Date::zmdate($c[posted_at])}</span>
+                                <div class="rank">Фото: {\App\Models\Photo::fetchAll($c[user_id])}{$admintype}</div>
+                                <div class="message-text feed">{$c[body]}</div>
                             </div>
                         </div>
                         <div class="pc-compl">
                             <div class="comment-votes-block">
-                               
-                                <div class="wvote" wid="' . $c['id'] . '">
+                                <div class="wvote" wid="{$c[id]}">
                                     <a href="#" vote="1" class="w-btn s2"><span>+</span></a>
-                                    <div class="w-rating '.$commclass.' active">' . $symb . Vote::countcommrates($c['id'], -1) . '</div>
+                                    <div class="w-rating {$commclass} active">{$symb}{\App\Models\Vote::countcommrates($c[id], -1)}</div>
                                     <div class="w-rating-ext">
-                                        <div><span class="pro">+' . Vote::countcommrates($c['id'], 1) . '</span> / <span class="con">' . Vote::countcommrates($c['id'], 0) . '</span></div>
+                                        <div><span class="pro">+{\App\Models\Vote::countcommrates($c[id], 1)}</span> / <span class="con">{\App\Models\Vote::countcommrates($c[id], 0)}</span></div>
                                     </div>
                                     <a href="#" vote="0" class="w-btn s5"><span>–</span></a>
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
-                </div>';
-                }
-                ?>
-
-                
-               
+                </div>
+                {/foreach}
                 <div id="scroll_anchor"></div>
                 <script src="/js/endless.js?031021"></script>
                 <script>
@@ -158,10 +134,4 @@ use \App\Models\{User, Photo, Vote};
                 </script>
                 <div id="loader-anchor"></div>
             </td>
-        </tr>
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-    </table>
-
-</body>
-
-</html>
+            {/block}

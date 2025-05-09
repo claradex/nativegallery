@@ -1,0 +1,32 @@
+{layout '..\@layout.latte'}
+
+{block content}
+    <h1>Избранные фотографии</h1>
+    {dump $photos}
+    {foreach $photos as $p}
+        {dump $p['photo']->photo['photourl']}
+        <div class="p20p" style="padding:0 5px">
+            <table>
+                <tr>
+                    <td class="pb_photo" id="p{$p['photo']->photo['id']}">
+                        <a href="/photo/{$p['photo']->photo['id']}" target="_blank" class="prw">
+                            <img class="f" src="/api/photo/compress?url={$p['photo']->photo['photourl']}" alt="598 КБ">
+                            <div class="hpshade">
+                                <div class="eye-icon">{$p['photo']->photo['views']}</div>
+                            </div>
+                        </a>
+                    </td>
+                    <td class="pb_descr">
+                        <p>{$p['photo']->photo['postbody']|noescape}</p>
+                        <p><b class="pw-place">{$p['photo']->photo['place']|noescape}</b></p>
+                        <p class="sm">
+                            <b>{$p->date}</b><br>
+                            Автор: <a href="/author/{$p['user']->user['id']}/">{$p['user']->user['username']}</a>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br>
+    {/foreach}
+{/block}

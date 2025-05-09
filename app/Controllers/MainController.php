@@ -8,6 +8,7 @@ use \App\Core\Page;
 
 class MainController extends NGController
 {
+   private array $params = [];
    public function t()
    {
       $this->render('t');
@@ -53,9 +54,22 @@ class MainController extends NGController
    {
       Page::set('Feed');
    }
-   public static function fav()
+   public function fav()
    {
-      Page::set('Fav');
+      $photos = DB::query('SELECT * FROM photos_favorite WHERE user_id=:uid ORDER BY id DESC LIMIT 100', array(':uid'=>Auth::userid()));
+      $preparedData = [];
+      
+      foreach ($photos as $p) {
+         echo $p['posted_at'];
+         $preparedData[] = [
+               'photo' => new \App\Models\Photo($p['photo_id']),
+               'user' => new \App\Models\User($p['user_id']),
+               'views' => DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'],
+               'date' => \App\Services\Date::zmdate($p['posted_at'])
+         ];
+      }
+      $this->params['photos'] = $preparedData;
+      $this->render('System/Fav', $this->params);
    }
    public static function gallery()
    {
@@ -69,9 +83,9 @@ class MainController extends NGController
    {
       Page::set('Errors/EmailVerify');
    }
-   public static function comments()
+   public function comments()
    {
-      Page::set('Comments/Index');
+      $this->render('Comments/Index');
    }
    public static function tour()
    {
