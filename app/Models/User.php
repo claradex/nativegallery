@@ -15,5 +15,14 @@ class User {
         $content = json_decode(self::i('content'), true);
         return $content[$table];
     }
+    public function getPhotoUrl(): string
+    {
+        return $this->i('photourl');
+    }
+    
+    public function getId(): int
+    {
+        return (int)$this->i('user_id');
+    }
 
 }
