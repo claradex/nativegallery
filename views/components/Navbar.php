@@ -25,20 +25,24 @@ $noncheckedimgs = DB::query('SELECT COUNT(*) FROM followers_notifications WHERE 
 if ($noncheckedimgs > 0) {
     $nonrw = '<span class="mm-notify notify-count">'.$noncheckedimgs.'</span>';
 }
-    
 ?>
-<tr>
+<style>
+    /* Анимация индикатора загрузки */
+[data-ajax-loader] {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Общие стили для контентных контейнеров */
+</style>
+<tr >
 <?php
 if (NGALLERY['root']['registration']['emailverify'] === true && $user->i('status') === 3) { ?>
 <div class="label-orange" style="padding:10px; margin:0 -20px; color:#fff">
 <center><h4 style="color:#fff; margin-bottom:3px">Пожалуйста, подтвердите свою почту</h4>
 <div>Так мы сможем убедиться, что Вы настоящий человек. После подтверждения, Вам будет доступен полностью функционал сайта.<br><br><b>Письмо с ссылкой для подтверждения почты была отправлена на Ваш ящик, указанный при регистрации.</b></div></center></div>
 <?php } ?>
-    <td class="mm-bar">
-        <?php
-        if (explode('/', $_SERVER['REQUEST_URI'])[1] === 'photo') { ?>
-    <a id="title-small" href="/"><img src="<?=$logo?>"><?=$title?></a>
-    <?php } ?>
+    <td id="navbar" class="mm-bar">
+    <a <?php if (explode('/', $_SERVER['REQUEST_URI'])[1] != 'photo') { echo 'style="display: none;"'; } ?> id="title-small" href="/"><img src="<?=$logo?>"><?=$title?></a>
         <ul class="mm mm-level-1">
             <li><a href="#" onclick="return false" class="mm-item"><span class="mm-label">Дополнительно</span></a>
                 <div>
@@ -82,7 +86,11 @@ if (NGALLERY['root']['registration']['emailverify'] === true && $user->i('status
                     </ul>
                 </div>
             </li>
+            <li><a href="/mapmedia" class="mm-item"><span class="mm-label">Map Media<span class="mm-notify notify-count">NEW</span></span></a></li>
             <?php
+            foreach (NGALLERY['root']['navbar'] as $ngn) {
+                echo '<li><a href="'.$ngn['link'].'" class="mm-item"><span class="mm-label">'.$ngn['name'].'</li>';
+            }
             if (Auth::userid() <= 0) { ?>
             
                 <li class="mm-pad-right"><a href="/login" class="mm-item"><span class="mm-icon"><i class="fas fa-xs fa-address-card"></i></span><span class="mm-label">Войти</span></a></li>
@@ -126,9 +134,6 @@ if (NGALLERY['root']['registration']['emailverify'] === true && $user->i('status
         </ul>
     </td>
 </tr>
-<?php
-        if (explode('/', $_SERVER['REQUEST_URI'])[1] != 'photo') { ?>
-<tr>
+<tr <?php if (explode('/', $_SERVER['REQUEST_URI'])[1] === 'photo') { echo 'style="display: none;"'; } ?> id="navbard">
     <td><a href="/" id="title"><img style="width: <?=$width?>;" src="<?=$logo?>" alt="<?=$title?>"><span><?=$title?></span></a></td>
 </tr>
-<?php } ?>
