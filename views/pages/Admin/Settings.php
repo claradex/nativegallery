@@ -126,7 +126,7 @@ function renderInputs($data, $prefix = '')
                                     <th width="50%">Статус</th>
                                     <th>Действия</th>
                                 </tr>
-                               
+                              
                                 
                                 <?php
                                 foreach (NGALLERY_TASKS as $nt) {

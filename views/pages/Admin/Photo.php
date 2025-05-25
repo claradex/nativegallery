@@ -134,6 +134,37 @@ use \App\Models\User;
     Техническая публикация
   </label>
 </div>
+<h6 class="mt-3">Оценка</h6>
+<div class="row">
+<div class="col-6">
+<div class="form-check">
+  <input name="iRate'.$p['id'].'" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="iRate1" checked>
+  <label class="form-check-label" for="iRate1">
+    И+
+  </label>
+</div>
+<div class="form-check">
+  <input name="iRate'.$p['id'].'" value="0" class="form-check-input" type="radio" name="flexRadioDefault" id="iRate0">
+  <label class="form-check-label" for="iRate0">
+    И-
+  </label>
+</div>
+</div>
+<div class="col-6">
+<div class="form-check">
+  <input name="kRate'.$p['id'].'" value="1" class="form-check-input" type="radio" name="flexRadioDefault" id="kRate1" checked>
+  <label class="form-check-label" for="kRate1">
+    К+
+  </label>
+</div>
+<div class="form-check">
+  <input name="kRate'.$p['id'].'" value="0" class="form-check-input" type="radio" name="flexRadioDefault" id="kRate0">
+  <label class="form-check-label" for="kRate0">
+    К-
+  </label>
+</div>
+</div>
+</div>
 <h6 class="mt-3">Другие действия</h6>
 <div class="mb-3">
   <label for="exampleFormControlTextarea1" class="form-label">Дополнительный комментарий</label>
@@ -142,7 +173,7 @@ use \App\Models\User;
       </div>
       <div class="modal-footer">
         <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</a>'; ?>
-        <a href="#" onclick="photoAction(<?=$p['id']?>, document.querySelector(`input[name='accept<?=$p['id']?>']:checked`).value, 1); return false;" data-bs-dismiss="modal" class="btn btn-primary">Сохранить</a>
+        <a href="#" onclick="photoAction(<?=$p['id']?>, document.querySelector(`input[name='accept<?=$p['id']?>']:checked`).value, document.querySelector(`input[name='kRate<?=$p['id']?>']:checked`).value, document.querySelector(`input[name='iRate<?=$p['id']?>']:checked`).value, 1); return false;" data-bs-dismiss="modal" class="btn btn-primary">Сохранить</a>
         <?php echo '
       </div>
     </div>
@@ -226,10 +257,10 @@ use \App\Models\User;
                 </td>
             </tr>
             <script>
-function photoAction(photo_id, decline_reason, mod) {
+function photoAction(photo_id, decline_reason, iRate, kRate, mod) {
    $.ajax({
                 type: "GET",
-                url: '/api/admin/images/setvisibility?id='+photo_id+'&mod='+mod+'&reason='+decline_reason,
+                url: '/api/admin/images/setvisibility?id='+photo_id+'&mod='+mod+'&reason='+decline_reason+'&irate='+iRate+'&krate='+kRate,
                 data: $(this).serialize(),
                 success: function(response) {
                 $('#pht'+photo_id).remove();
