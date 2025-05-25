@@ -7,16 +7,26 @@ use \App\Core\Page;
 class Router
 {
 
+    protected static $routes = [];
 
 
+    private static function addRoute($method, $route)
+    {
+        self::$routes[] = [
+            'method' => $method,
+            'path' => $route
+        ];
+    }
     public static function get($route, $path_to_include)
     {
+        self::addRoute('GET', $route);
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             self::route($route, $path_to_include);
         }
     }
     public static function post($route, $path_to_include)
     {
+        self::addRoute('POST', $route);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             self::route($route, $path_to_include);
         }
@@ -39,8 +49,22 @@ class Router
             self::route($route, $path_to_include);
         }
     }
+     public static function getRouteSegments()
+    {
+        $segments = [];
+        foreach (self::$routes as $route) {
+            $parts = explode('/', $route['path']);
+            foreach ($parts as $part) {
+                if (!empty($part) && !str_starts_with($part, '$')) {
+                    $segments[] = $part;
+                }
+            }
+        }
+        return array_unique($segments);
+    }
     public static function any($route, $path_to_include)
     {
+        self::addRoute('ANY', $route);
         self::route($route, $path_to_include);
     }
     public static function route($route, $path_to_include)

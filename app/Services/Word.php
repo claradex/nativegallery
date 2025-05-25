@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Services\GenerateRandomStr;
@@ -17,4 +18,29 @@ class Word
         }
         return $len;
     }
+public static function processMentions($text) {
+    return preg_replace_callback(
+        '/@\[(\d++):([^\]\r\n]+)\]/u',
+        function ($matches) {
+            if (count($matches) !== 3) {
+                return $matches[0] ?? '';
+            }
+
+            $userId = (int)$matches[1];
+            $username = trim($matches[2]);
+
+            // Экранируем только для HTML-атрибута, а не для видимой части
+            $attrUsername = htmlspecialchars($username, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return '<span class="user-mention" '
+                 . 'data-user-id="' . $userId . '" '
+                 . 'data-username="' . $attrUsername . '">'
+                 . '@' . $username
+                 . '</span>';
+        },
+        $text
+    );
+}
+
+
 }
