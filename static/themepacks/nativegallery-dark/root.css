@@ -1,0 +1,320 @@
+:root {
+    --theme-fg-color:   #fff;
+
+    --theme-body-color: #222;
+    --theme-main-color: #222;
+    --theme-text-color: #eee;
+	--theme-form-color: #333;
+}
+
+h1, h2, h3, h4, #mm-bar { color:#fff; }
+
+#adframe, .footer { background-color:var(--theme-body-color); }
+
+.footer, .footer a, .footer a:visited, .footer a:hover, .footer a:visited:hover { color:#ccc; }
+
+#random-photos, #popular-photos, #recent-photos, #restored-photos { background-color:#444; }
+
+.pb { background-color:#fff; }
+.p20, .p20a, .p20p, .p20i, .p20w, .p20k, .p0, .pg, .std-form { background-color:#333; border:solid 1px #222; }
+
+.p5g { padding:5px; background-color:#444; }
+
+.hpshade, .hdshade { color:#fff; background:linear-gradient(to top,rgba(0,0,0,.5),transparent); }
+.vpshade { background:linear-gradient(to right,rgba(0,0,0,.3),transparent); }
+
+.horlines { border:solid 1px #444; background-color:#333; }
+.horlines td { border-bottom:solid 1px #444; }
+
+.startdate { background-color:#333; }
+
+table.wlist { border:solid 1px #777; }
+table.wlist td { border-top:solid 1px #777; }
+
+.sec { color:#eee6; }
+
+span.pg { color:#777; }
+.pg { background-color:#3b3b3b; }
+
+.n, .g { text-shadow:none; }
+
+.s0, .s1, .s10 { background-color:#333 !important; }  .s11 { background-color:#3f3f3f !important; }
+/*.s2  { background-color:#00ff0033 !important; } .s12 { background-color:#00ff0044 !important; }
+.s3  { background-color:#ffff0033 !important; } .s13 { background-color:#ffff0044 !important; }
+.s4  { background-color:#ffffff33 !important; } .s14 { background-color:#ffffff44 !important; }
+.s5  { background-color:#ff000033 !important; } .s15 { background-color:#ff000044 !important; }
+.s6  { background-color:#d7ac7d !important; } .s16 { background-color:#c6955f !important; }
+.s7  { background-color:#8bd3ed !important; } .s17 { background-color:#62c7ed !important; }
+.s8  { background-color:#94a9e3 !important; } .s18 { background-color:#7d97df !important; }
+.s9  { background-color:#d8bfd8 !important; } .s19 { background-color:#c8a2c8 !important; }
+.s21 { background-color:#fdcb95 !important; } .s31 { background-color:#fbbb77 !important; }
+.s22 { background-color:#3fefdd !important; } .s32 { background-color:#36c7b9 !important; }
+.s23 { background-color:#3fefdd !important; } .s33 { background-color:#36c7b9 !important; }*/
+
+.s2  { background-color:#38663e !important; } .s12 { background-color:#508757 !important; }
+.s3  { background-color:#5b530b !important; } .s13 { background-color:#716503 !important; }
+.s4  { background-color:#707070 !important; } .s14 { background-color:#808080 !important; }
+.s5  { background-color:#5d1313 !important; } .s15 { background-color:#771917 !important; }
+.s6  { background-color:#463725 !important; } .s16 { background-color:#57442f !important; }
+.s7  { background-color:#48696e !important; } .s17 { background-color:#577d82 !important; }
+.s8  { background-color:#21325d !important; } .s18 { background-color:#234471 !important; }
+.s9  { background-color:#512851 !important; } .s19 { background-color:#653365 !important; }
+.s21 { background-color:#154e5a !important; } .s31 { background-color:#196471 !important; }
+
+.hl { background-color:#e2e2e2; }
+
+.tools, .yellow_stripes { background-color:#5b530b; }
+
+.died { border-color:#ccc; }
+
+.shadow { box-shadow: 1px 1px 10px 3px #000; -moz-box-shadow: 1px 1px 10px 3px #000; -webkit-box-shadow: 1px 1px 10px 3px #000; }
+
+#notify {
+	background-color:#333;
+	border:solid 1px #444;
+	box-shadow: 1px 1px 7px 3px #000;
+	-moz-box-shadow: 1px 1px 7px 3px #000;
+	-webkit-box-shadow: 1px 1px 7px 3px #000;
+}
+
+[type="text"],
+[type="password"],
+[type="color"],
+[type="date"],
+[type="datetime"],
+[type="datetime-local"],
+[type="email"],
+[type="number"],
+[type="search"],
+[type="tel"],
+[type="time"],
+[type="url"],
+[type="month"],
+[type="week"],
+select,
+textarea,
+[contenteditable="true"] {
+	background-color:#111;
+	border:solid 1px #222;
+	color:#eee;
+}
+
+[type="text"]:focus,
+[type="password"]:focus,
+[type="color"]:focus,
+[type="date"]:focus,
+[type="datetime"]:focus,
+[type="datetime-local"]:focus,
+[type="email"]:focus,
+[type="number"]:focus,
+[type="search"]:focus,
+[type="tel"]:focus,
+[type="time"]:focus,
+[type="url"]:focus,
+[type="month"]:focus,
+[type="week"]:focus,
+select:focus,
+textarea:focus,
+[contenteditable="true"]:focus {
+	border-color:#555;
+}
+
+:-ms-input-placeholder      { font-weight:normal; color:#ccc; }
+::-ms-input-placeholder     { font-weight:normal; color:#ccc; }
+::-webkit-input-placeholder { font-weight:normal; color:#ccc; }
+::-moz-placeholder          { font-weight:normal; color:#ccc; }
+:-moz-placeholder           { font-weight:normal; color:#ccc; }
+
+#tip { background-color:#444; }
+
+.unread { background-color:rgba(128,128,128,0.18); }
+
+.readmore {
+	-webkit-mask-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+}
+
+[type="submit"]:hover,
+[type="button"]:hover,
+button:hover,
+.button:hover,
+.mf-button:hover,
+.mf-button-wide:hover {
+	color:#f7f7f7 !important;
+}
+
+[type="submit"]:disabled,
+[type="button"]:disabled,
+button:disabled,
+.button:disabled,
+.mf-button:disabled,
+.mf-button-wide:disabled {
+	background-color:#666 !important;
+	color:#999 !important;
+}
+
+.mf-input,
+.mf-input-wide {
+	border-color:#777;
+}
+
+.prw-wrapper { background-color:#111; }
+
+.ix-qs-filter-item { background-color:#484848; }
+
+.ix-popular-spacer { background-color:transparent; }
+.ix-news-item, .ci-update-item { border-color:#505050; }
+
+#idx-regions-list { background-color:#2a2a2a; scrollbar-color:#333 #444; }
+
+.show-all-vdata { background-color:#272727; }
+
+.lk-dir { background:url('/img/dir_dark.gif'); }
+
+.new_vehicle { background-color:#444; }
+
+#vlist { background-color:#333; }
+#vlist tbody { border-color:#333; }
+#conn_veh tbody, #conn_gid tbody { border-color:#555; }
+
+
+/* PHOTO */
+
+#photobar { background-color:#000; }
+.underphoto { color:#fff; }
+a.underphoto, a.underphoto:visited { color:#fff; background-color:#777; }
+a.underphoto:hover { background-color:#222; }
+
+#prev, #next { color:rgba(150,150,150,0.5); }
+#prev:hover, #next:hover, #next.hover { color:#fff; background-color:rgba(80,80,80,0.3); }
+
+#pmain { background-color:#222; }
+#pmain.hidden, .footer.hidden { background-color:#422; }
+
+#map_canvas { border-color:#666 }
+
+#pfm { background:#333; border:none; }
+
+#photobar { box-shadow:0 1px 2px rgba(0, 0, 0, 0.4); -moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.4); -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.4); }
+
+.disclaimer { border:none; background-color:#5b530b; }
+.top-disclaimer { background-color: #373737; color: #ddd; }
+
+/* COMMENTS */
+
+.comment, .cmt-write, .cmt-subscribe { border-top:#3f3f3f; }
+
+.vote a, .vote a:visited, .vote a.voted:hover {
+	color:#777;
+}
+
+.vote a:hover, .vote a.voted, .vote a.voted:hover, .vote a.voted:visited  { color:#fff; }
+.vote a.locked, .vote a.locked:visited { color:grey; background-color:#ccc; cursor:default; }
+
+.vote_btn[vote="1"] { /*grid-row-start:1;*/ border-color:#8ecd87 !important; } .vote_btn[vote="1"]:hover { background-color:#8ecd87; } .vote_btn[vote="1"].voted, .vote_btn[vote="1"].voted:hover { border-color:#00aa00 !important; background-color:#00aa00; }
+.vote_btn[vote="0"] { /*grid-row-start:2;*/ border-color:#e9a19e !important; } .vote_btn[vote="0"]:hover { background-color:#e9a19e; } .vote_btn[vote="0"].voted, .vote_btn[vote="0"].voted:hover { border-color:#dd0000 !important; background-color:#dd0000; }
+.konk_btn[vote="1"] { /*grid-row-start:1;*/ border-color:#e7cd6e !important; } .konk_btn[vote="1"]:hover { background-color:#e7cd6e; } .konk_btn[vote="1"].voted, .konk_btn[vote="1"].voted:hover { border-color:#edad23 !important; background-color:#edad23; }
+.konk_btn[vote="0"] { /*grid-row-start:2;*/ border-color:#a0bcdf !important; } .konk_btn[vote="0"]:hover { background-color:#a0bcdf; } .konk_btn[vote="0"].voted, .konk_btn[vote="0"].voted:hover { border-color:#0077ee !important; background-color:#0077ee; }
+
+.linetable td { border-top:none; }
+
+.tpx-pub-info { background-color:#607c89; }
+
+.compl { border:solid 1px #0004; }
+
+.w-rating { border:solid 1px #0004; }
+.w-rating.active { background-color:#222; }
+
+.w-rating-ext div { background-color:#222; }
+.w-btn.voted, .w-btn.voted:hover { background-color:#444 !important; }
+
+.no-politics { color:#fd7272; }
+.no-quote-last { color:#f44; }
+
+.toggle { background-color:#4c4c4c; }
+.toggle .handle { background-color:#ccc; }
+.toggle.on { background:#090; }
+.toggle.on .handle { background-color:#eee; }
+
+.ml-list { background-color:#333; }
+#fav_langs tbody { border-color:#666; box-shadow:none; }
+
+.fav-item { background-color:#3b3b3b; }
+
+.up-warning {
+	border-color: #b70;
+	background: #b70;
+	color: #fff;
+}
+
+.hs-versions {
+	background: #737309;
+}
+
+.hs-naa-allow { color: #fa5; }
+.hs-notes-mod { color: #f77; }
+.hs-comment   { color: #3c3; }
+
+
+/* MAP */
+.leaflet-container .leaflet-control-geosearch input::placeholder { color: #aaa; }
+.leaflet-container .leaflet-control-geosearch input { color: #000; }
+
+ .tabs {
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 12px;
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.tab-nav {
+  border-bottom: 1px solid #005499;
+  padding: 4px 6px 0;
+  display: flex;
+  gap: 2px;
+  background: #333333;
+}
+
+.tab-item {
+  background: linear-gradient(to bottom, #2d2d2d 0%, #252525 100%);
+  border: 1px solid #5a5a5a;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: #c0c0c0;
+  position: relative;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.tab-item:hover:not(.active):not(:disabled) {
+  background: linear-gradient(to bottom, #3a3a3a 0%, #323232 100%);
+  color: #ffffff;
+}
+
+.tab-item.active {
+  background: #1e1e1e;
+  border-color: #005499;
+  color: #ffffff;
+  padding-bottom: 5px;
+  margin-bottom: -1px;
+}
+
+.tab-item:disabled {
+  background: #2a2a2a;
+  color: #6a6a6a;
+  cursor: not-allowed;
+  border-color: #4a4a4a;
+}
+
+.tab-content {
+  border: 1px solid #005499;
+  border-top: 0;
+  padding: 12px;
+  background: #1e1e1e;
+  min-height: 200px;
+  color: #d0d0d0;
+}
+.modal-content {
+    background-color: #333333;
+}
