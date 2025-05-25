@@ -809,3 +809,110 @@ input.ml-button { height:22px; }
         width: 100%;
     }
 }
+   .tabs {
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 12px;
+}
+
+.tab-nav {
+  padding: 4px 6px 0;
+  display: flex;
+  gap: 2px;
+}
+
+.tab-item {
+  background: linear-gradient(to bottom, #f3f3f3 0%, #e6e6e6 100%);
+  border: 1px solid #7a7a7a;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: #1a1a1a;
+  position: relative;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.tab-item:hover:not(.active):not(:disabled) {
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 100%);
+}
+
+.tab-item.active {
+  background: #ffffff;
+  border-color: #181c20;
+  color: #000000;
+  padding-bottom: 5px;
+  margin-bottom: -1px;
+}
+
+.tab-item:disabled {
+  background: #eeeeee;
+  color: #6d6d6d;
+  cursor: not-allowed;
+  border-color: #bdbdbd;
+}
+
+.tab-content {
+  border-top: 0;
+  padding: 12px;
+  background: #ffffff;
+  min-height: 200px;
+}
+  .styled-input {
+                position: relative;
+                margin: 20px 0;
+            }
+
+            .styled-input input {
+                width: 100%;
+                padding: 10px 10px 10px 0;
+                font-size: 16px;
+                border: none;
+                border-bottom: 2px solid #ccc;
+                background: transparent;
+                outline: none;
+            }
+
+            .styled-input input:focus {
+                border-bottom: 2px solid #000;
+            }
+
+            .styled-input label {
+                position: absolute;
+                top: 10px;
+                left: 0;
+                font-size: 16px;
+                color: #999;
+                pointer-events: none;
+                transition: 0.2s ease all;
+            }
+
+            .styled-input input:focus~label,
+            .styled-input input:valid~label {
+                top: -20px;
+                font-size: 12px;
+                color: #000;
+            }
+			/* Для базовой анимации */
+.prw-animate {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Эффекты загрузки */
+.blur-load {
+    filter: blur(10px);
+    transition: filter 0.4s ease;
+}
+
+.blur-load.loaded {
+    filter: blur(0);
+}
+
+.hdshade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
