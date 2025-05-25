@@ -43,9 +43,22 @@ class Login
 
                 $data = json_decode($response, true);
                 $loc = $data['country'] . ', ' . $data['city'];
-                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
+                $device = $ua->platform();
+                $os = $ua->platform();
+                $encryptionKey = NGALLERY['root']['encryptionkey'];
+
+                $iv = openssl_random_pseudo_bytes(16);
+                $encryptedIp = openssl_encrypt($ip, 'AES-256-CBC', $encryptionKey, 0, $iv);
+                $encryptedLoc = openssl_encrypt($loc, 'AES-256-CBC', $encryptionKey, 0, $iv);
+                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :device, :os, :ip, :loc, :la, :crd)', array(
                     ':token' => $token,
                     ':user_id' => $user_id,
+                    ':device' => $device,
+                    ':os' => $os,
+                    ':ip' => $encryptedIp,
+                    ':loc' => $encryptedLoc,
+                    ':la' => time(),
+                    ':crd' => time()
                 ));
 
                 setcookie("NGALLERYSESS", $token, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);
