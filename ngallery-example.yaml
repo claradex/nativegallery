@@ -8,6 +8,7 @@ ngallery:
     keywords: ""
     maintenance: false
     debug: true
+    alloweddomains: ["nativegallery.loc", "pub-f05d2c8192d549e4b52535d646e5909a.r2.dev"]
     botkey: ''
     access:
       type: 'allow'
