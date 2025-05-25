@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use \App\Services\{Router, Auth, DB, Json};
@@ -32,23 +33,20 @@ class AdminController
     }
 
     public static function index()
-
     {
-
         Page::set('Admin/Index');
     }
-    public static function loadContent() {
+    public static function loadContent()
+    {
         $fileName = $_GET['type'];
-    
-    
-            $filePath = $_SERVER['DOCUMENT_ROOT'].'/views/pages/Admin/' . $fileName.'.php';
-    
-            if (file_exists($filePath)) {
-                Page::set('Admin/' . self::$file);
-            } else {
-                Page::set('Admin/General');
-            }
-        
-        }
 
+
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . '/views/pages/Admin/' . $fileName . '.php';
+
+        if (file_exists($filePath)) {
+            Page::set('Admin/' . self::$file);
+        } else {
+            Page::set('Admin/General');
+        }
+    }
 }
