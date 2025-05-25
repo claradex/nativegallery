@@ -1,7 +1,6 @@
 ar1 = new Image();
 ar1.src = '/img/ar1.gif';
 
-
 $(document).ready(function()
 {
 	$('.ix-country > a[href="#"]').on('click', function(e)
@@ -119,10 +118,58 @@ function searchVehicles()
 
 
 
-function AddPhotoToBlock(block, arr, prepend)
-{
-	block[prepend ? 'prepend' : 'append']('<div class="prw-grid-item"><div class="prw-wrapper">' + arr.place + '<div>' + arr.date + '</div></div><a href="/photo/' + arr.id + '/" target="_blank" class="prw-animate" style="background-image:url(\'' + arr.photourl_small + '\')">' + (arr.ccnt != 0 ? '<div class="hdshade"><div class="com-icon">' + arr.ccnt + '</div></div>' : '') + '</a></div>');
+function AddPhotoToBlock(block, arr, prepend) {
+    const html = `
+    <div class="prw-grid-item">
+        <div class="prw-wrapper">
+            ${arr.place}
+            <div>${arr.date}</div>
+        </div>
+        <a href="/photo/${arr.id}/" 
+           target="_blank" 
+           class="prw-animate blur-load"
+           style="background-image: url('`+arr.photourl_extrasmall+`')"
+           data-src="${arr.photourl_small}">
+            ${arr.ccnt != 0 ? `
+            <div class="hdshade">
+                <div class="com-icon">${arr.ccnt}</div>
+            </div>` : ''}
+        </a>
+    </div>`;
+    
+    block[prepend ? 'prepend' : 'append'](html);
+    
+    // Инициируем загрузку для нового элемента
+    lazyLoadSingleImage(block.find('.blur-load').last()[0]);
 }
+
+// Отдельная функция для загрузки одного изображения
+function lazyLoadSingleImage(element) {
+    const realSrc = element.dataset.src;
+    const tempImg = new Image();
+    
+    tempImg.src = realSrc;
+    tempImg.onload = () => {
+        element.style.backgroundImage = `url('${realSrc}')`;
+        element.classList.add('loaded');
+    };
+}
+
+// Обновленный обработчик для всей страницы
+function lazyLoadImages(selector = '.blur-load') {
+    document.querySelectorAll(selector).forEach(element => {
+        if(!element.dataset.loaded) { // Проверка чтобы не дублировать загрузку
+            element.dataset.loaded = true;
+            lazyLoadSingleImage(element);
+        }
+    });
+}
+
+// Инициализация при загрузке и после динамического добавления
+window.addEventListener('load', () => {
+    lazyLoadImages();
+    // Для динамически добавленных элементов можно вызывать lazyLoadImages() после добавления
+});
 
 
 

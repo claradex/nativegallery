@@ -198,4 +198,3 @@ const deleteComment = (postId, modalid) => {
             });
         });
   }
-  

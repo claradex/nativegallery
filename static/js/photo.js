@@ -210,7 +210,7 @@ $(document).ready(function()
 	{
 		const url = window.location.pathname;
 		const segments = url.split('/'); 
-		const id = segments[segments.length - 1];
+		const id = segments[2];
 		var faved = parseInt($(this).attr('faved'));
 		$(this).html(faved ? 'Добавить фото в Избранное' : 'Удалить фото из Избранного').attr('faved', faved ? 0 : 1);
 		if (!faved) $('.toggle').attr('class', 'toggle on');
