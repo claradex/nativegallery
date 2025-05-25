@@ -1,7 +1,7 @@
 <?php
 // Prevent worker script termination when a client connection is interrupted
 require __DIR__.'/vendor/autoload.php';
-
+session_start();
 use App\Core\{Routes, Page};
 use App\Services\DB;
 use Symfony\Component\Yaml\Yaml;
@@ -20,8 +20,15 @@ class App
                 Debugger::enable();
             }
             try {
+
                 if (NGALLERY['root']['maintenance'] === false) {
-                    DB::connect();
+                    DB::init([
+                        'driver' => 'mysql',
+                        'host' => NGALLERY['root']['db']['host'],
+                        'database' => NGALLERY['root']['db']['name'],
+                        'username' => NGALLERY['root']['db']['login'],
+                        'password' => NGALLERY['root']['db']['password'],
+                    ]);
                     Routes::init();
                 } else {
                     Page::set('Errors/ServerDown');
