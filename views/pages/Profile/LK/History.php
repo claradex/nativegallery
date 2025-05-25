@@ -42,6 +42,7 @@ use \App\Models\{User, Photo};
                                     <th width="90%">Информация</th>
                                     <th></th>
                                     <th class="c nw">Покинуло очередь</th>
+                                    <th class="c nw">Действия</th>
                                 </tr>
                                 
                                <?php
@@ -80,10 +81,24 @@ use \App\Models\{User, Photo};
                                     if ($p['endmoderation'] === -1) {
                                         $endm = 'На модерации';
                                     } else {
-                                        $endm = Date::zmdate($p['endmoderation']).'<div style="margin-top:15px">Оценка<br><b>И+ К+</b></div>';
+                                        if ($photo->content('iRate') === 0) {
+                                            $irate = '-';
+                                        } else {
+                                            $irate = '+';
+                                        }
+                                        if ($photo->content('kRate') === 0) {
+                                            $krate = '-';
+                                        } else {
+                                            $krate = '+';
+                                        }
+                                        $endm = Date::zmdate($p['endmoderation']).'<div style="margin-top:15px">Оценка<br><b>И'.$irate.' К'.$irate.'</b></div>';
                                     }
                                     echo '
                                     <td class="cs">'.$endm.'
+                                        
+                                    </td>';
+                                    echo '
+                                    <td class="cs"><a type="button" href="/lk/editimage?id='.$p['id'].'">Редактировать</a>
                                         
                                     </td>
                                 </tr>';

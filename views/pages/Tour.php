@@ -282,18 +282,7 @@ use App\Services\{Router, Auth};
         </style>
         <tr>
             <td class="main">
-            <div class="player">
-        <button id="playPause">▶</button>
-        <div class="info">
-            <strong>Неизвестен</strong> — Tele 2 - X_й дозвонишься.mp3
-        </div>
-        <div class="progress" id="progressBar">
-            <span></span>
-            <div class="slider" id="slider"></div>
-        </div>
-        <span class="time" id="time">00:00 / 00:06</span>
-    </div>
-    <audio id="audio" src="/static/kolya.mp3"></audio>
+          
      
     <script>
         const audio = document.getElementById("audio");

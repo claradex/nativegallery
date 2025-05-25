@@ -49,7 +49,7 @@ $birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['val
                 if ($userprofile->i('id') === Auth::userid()) { ?>
                     <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>
                 <?php } ?>
-                <div class="p20" style="padding-right:12px; background-color: white !important;">
+                <div class="p20" style="padding-right:12px;">
                 <table width="100%">
                     <tr>
                     <?php if ($userprofile->content('badge') !== null) { ?>
@@ -225,7 +225,7 @@ $birthdate = json_decode($userprofile->i('content'), true)['aboutbirthday']['val
                     <div class="p20" style="margin-top: 8px; background-color: white !important;">
                     <h4>О себе</h4>
                     <?=
-                   htmlspecialchars($about)
+                 nl2br(htmlspecialchars($about))
                     ?>
                     </div>
                 <?php } else if ($usercttc === True) { 

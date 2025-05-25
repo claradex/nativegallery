@@ -23,20 +23,24 @@ if (Auth::userid() > 0) {
         <tr>
             <td class="main">
                 <center>
-                    <h1>Вход на сайт</h1>
+                    <h1><b>Авторизация</b></h1>
                     <div class="mf-center-block mf-label">
 
                         <form id="form" method="post" class="p20i mf-center-block-wide mf-label">
                             <input type="hidden" name="ref" value="/">
-
-                            <input type="text" name="username" id="username" class="mf-input-wide" placeholder="Имя или e-mail" value="">
+                             <div class="styled-input">
+                            <input type="text" name="username" id="username" required>
+                            <label for="username">Имя или Email</label>
+                             </div>
                             <div style="color:#e00" id="err_username"></div>
-
-                            <input type="password" name="password" id="password" class="mf-input-wide" placeholder="Пароль">
+                            <div class="styled-input">
+                            <input type="password" name="password" id="password" required>
+                             <label for="username">Пароль</label>
+                            </div>
                             <div style="color:#e00" id="err_password"></div>
 
                          
-                            <input type="button" id="loginbtn" class="mf-button-wide" value="Войти">
+                            <input type="button" id="loginbtn" class="mf-button-wide" value="Войти"style="margin-top:15px" >
 
                         </form>
 

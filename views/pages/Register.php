@@ -19,43 +19,6 @@ if (Auth::userid() > 0) {
 <body>
     <div id="backgr"></div>
     <table class="tmain">
-        <style>
-            .styled-input {
-                position: relative;
-                margin: 20px 0;
-            }
-
-            .styled-input input {
-                width: 100%;
-                padding: 10px 10px 10px 0;
-                font-size: 16px;
-                border: none;
-                border-bottom: 2px solid #ccc;
-                background: transparent;
-                outline: none;
-            }
-
-            .styled-input input:focus {
-                border-bottom: 2px solid #000;
-            }
-
-            .styled-input label {
-                position: absolute;
-                top: 10px;
-                left: 0;
-                font-size: 16px;
-                color: #999;
-                pointer-events: none;
-                transition: 0.2s ease all;
-            }
-
-            .styled-input input:focus~label,
-            .styled-input input:valid~label {
-                top: -20px;
-                font-size: 12px;
-                color: #000;
-            }
-        </style>
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
             <td class="main">

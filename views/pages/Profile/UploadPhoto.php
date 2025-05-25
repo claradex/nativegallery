@@ -20,25 +20,25 @@ $user = new User(Auth::userid());
     <table class="tmain">
         <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Navbar.php'); ?>
         <tr>
-            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" data-restart></script>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface" data-restart> </script>
             <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-            <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-            <script src="https://cesium.com/downloads/cesiumjs/releases/1.83/Build/Cesium/Cesium.js"></script>
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" data-restart></script>
+            <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js" data-restart></script>
+            <script src="https://cesium.com/downloads/cesiumjs/releases/1.83/Build/Cesium/Cesium.js" data-restart></script>
             <link href="https://cesium.com/downloads/cesiumjs/releases/1.83/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-indoor/0.4.2/leaflet.indoor.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-indoor/0.4.2/leaflet.indoor.min.js" data-restart></script>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-indoor/0.4.2/leaflet.indoor.min.css" />
             <!-- Подключение плагина Leaflet.markercluster -->
             <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
             <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
-            <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+            <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js" data-restart></script>
             <!-- Подключение плагина Leaflet-Geoman -->
             <link rel="stylesheet" href="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.css">
-            <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+            <script src="https://unpkg.com/leaflet-geoman-free/dist/leaflet-geoman.min.js" data-restart></script>
 
             <!-- Подключение плагина Leaflet-3d-model -->
-            <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js"></script>
+            <script src="https://unpkg.com/leaflet-3d-model/dist/leaflet-3d-model.min.js" data-restart></script>
             <script>
                 var pub_pid = 0;
             </script>
@@ -310,7 +310,7 @@ $user = new User(Auth::userid());
 
 
 
-                                <script>
+                                <script data-restart>
                                     const imageUpload = document.getElementById('image');
 
                                     const inputFieldsContainer = document.getElementById('inputFields');
@@ -727,7 +727,7 @@ $user = new User(Auth::userid());
 		<td></td>
 	</tr>
 </tbody></table>
-<script>
+<script data-restart>
 
 function openViewSelector(val, el, twoside)
 {
@@ -923,7 +923,7 @@ $(document).ready(function()
 
         </tr>
         </tbody>
-        <script>
+        <script data-restart>
             var map = L.map('map_canvas').setView([55.7558, 37.6176], 13);
             var marker;
             var geocoder;
@@ -1232,32 +1232,7 @@ $(document).ready(function()
                     clear: both;
                 }
             </style>
-
-            <tr>
-                <td></td>
-                <td style="padding:20px 2px 12px">
-                    <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Опубликовать</button> &nbsp; &nbsp;&nbsp;
-                    <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
-                    <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
-                    <div style="margin-top: 20px; max-width: 50% !important;" id="prgb" class="w3-light-grey">
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    </form>
-    </div><br>
-    <div id="loadtable" class="p20" style="display:none; padding-bottom:20px; margin-bottom:15px">
-        <h4>Загруженные фотографии</h4>
-        <div id="loadbox" style="display:flex; flex-wrap:wrap; gap:10px"></div>
-    </div>
-    </td>
-    </tr>
-    <tr>
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
-    </tr>
-    </table>
-    <script>
+            <script >
         $('#mform').submit(function(e) {
 
 
@@ -1390,6 +1365,31 @@ $(document).ready(function()
 
         });
     </script>
+            <tr>
+                <td></td>
+                <td style="padding:20px 2px 12px">
+                    <button id="submitbtn" href="#" class="progress-button" data-loading="Идёт загрузка..." data-finished="Обработка..." type="submit">Опубликовать</button> &nbsp; &nbsp;&nbsp;
+                    <span id="statusbox" class="narrow" style="font-size:20px; font-weight:bold; position:relative; top:-12px"></span>
+                    <div id="errorsbox" style="display:none; color:red; margin-top:15px; font-weight:bold;"></div>
+                    <div style="margin-top: 20px; max-width: 50% !important;" id="prgb" class="w3-light-grey">
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>
+    </div><br>
+    <div id="loadtable" class="p20" style="display:none; padding-bottom:20px; margin-bottom:15px">
+        <h4>Загруженные фотографии</h4>
+        <div id="loadbox" style="display:flex; flex-wrap:wrap; gap:10px"></div>
+    </div>
+    </td>
+    </tr>
+    <tr>
+        <?php include($_SERVER['DOCUMENT_ROOT'] . '/views/components/Footer.php'); ?>
+    </tr>
+    </table>
+    
 </body>
 
 </html>

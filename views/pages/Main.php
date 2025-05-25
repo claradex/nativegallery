@@ -74,7 +74,7 @@ LIMIT 10;');
                                     $photo = DB::query('SELECT * FROM photos WHERE id=:id', array(':id' => $pd['photo_id']));
                                     foreach ($photo as $p) {
                                         $author = new User($p['user_id']);
-                                        echo '<a href="/photo/' . $p['id'] . '" target="_blank" class="prw pop-prw">
+                                        echo '<a href="/photo/' . $p['id'] . '" class="prw pop-prw">
    <img width="250" src="/api/photo/compress?url=' . $p['photourl'] . '">
    <div class="hpshade">
       <div class="eye-icon">+' . $pd['view_count'] . '</div>
@@ -100,7 +100,7 @@ LIMIT 10;');
                         <td style="vertical-align:top; width:70%; padding-top:4px">
 
 
-                            <h4><a href="/photo/" target="_blank">Случайные фотографии</a></h4>
+                            <h4><a href="/photo/">Случайные фотографии</a></h4>
                             <div id="random-photos" class="ix-photos ix-photos-oneline">
                                 <?php
                                 $photos = DB::query('SELECT * FROM photos WHERE moderated=1 ORDER BY RAND() DESC LIMIT 7');
@@ -116,7 +116,7 @@ LIMIT 10;');
                                         <div>' . $date . '</div>
                                     </div>
                                     '; ?>
-                                    <a href="/photo/<?= $p['id'] ?>" target="_blank" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
+                                    <a href="/photo/<?= $p['id'] ?>" class="prw-animate" style='background-image:url("/api/photo/compress?url=<?= $p['photourl'] ?>")'></a>
                                 <?php echo '
                                 </div>';
                                 }
