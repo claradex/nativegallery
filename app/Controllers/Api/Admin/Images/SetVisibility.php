@@ -19,9 +19,16 @@ class SetVisibility
         if (!array_key_exists('declineReason', $data)) {
             $data['declineReason'] = null;
         }
+        if (!array_key_exists('iRate', $data)) {
+            $data['iRate'] = $_GET['irate'];
+        }
+        if (!array_key_exists('kRate', $data)) {
+            $data['kRate'] = $_GET['krate'];
+        }
         if ($_POST['comment'] != null) {
             $data['declineComment'] = $_POST['comment'];
         }
+
         if ($_GET['mod'] != 1) {
             $data['declineReason'] = $_GET['reason'];
         } else {

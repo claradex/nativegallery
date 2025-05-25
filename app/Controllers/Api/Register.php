@@ -299,7 +299,7 @@ class Register
         $status = 0;
         if (!self::checkforb($_POST['username'], $forbusernames)) {
 
-            if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false) {
+            if (!strcasecmp(DB::query('SELECT username FROM users WHERE (LOWER(username) LIKE :username)', array(':username' => '%' . $username . '%'))[0]['username'], $username) === false && !in_array(strtolower($username), array_map('strtolower',  Router::getRouteSegments()))) {
                 if (Word::strlen(ltrim($username)) >= 2 && Word::strlen(ltrim($username)) <= 20) {
 
 
@@ -427,15 +427,35 @@ class Register
                                 } else {
                                     $ip = $_SERVER['REMOTE_ADDR'];
                                 }
+                                $parser = new UserAgentParser();
+
+                                $ua = $parser->parse();
+                                $ua = $parser();
+
+                                $servicekey = GenerateRandomStr::gen_uuid();
                                 $url = 'http://ip-api.com/json/' . $ip;
 
                                 $response = file_get_contents($url);
 
                                 $data = json_decode($response, true);
-                                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id)', array(
+                                $loc = $data['country'] . ', ' . $data['city'];
+                                $device = $ua->platform();
+                                $os = $ua->platform();
+                                $encryptionKey = NGALLERY['root']['encryptionkey'];
+
+                                $iv = openssl_random_pseudo_bytes(16);
+                                $encryptedIp = openssl_encrypt($ip, 'AES-256-CBC', $encryptionKey, 0, $iv);
+                                $encryptedLoc = openssl_encrypt($loc, 'AES-256-CBC', $encryptionKey, 0, $iv);
+                                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :device, :os, :ip, :loc, :la, :crd, :iv)', array(
                                     ':token' => $token,
                                     ':user_id' => $user_id,
-
+                                    ':device' => $device,
+                                    ':os' => $os,
+                                    ':ip' => $encryptedIp,
+                                    ':loc' => $encryptedLoc,
+                                    ':la' => time(),
+                                    ':crd' => time(),
+                                    ':iv' => $iv
                                 ));
 
                                 setcookie("NGALLERYSESS", $token, time() + 120 * 180 * 240 * 720, '/', NULL, NULL, TRUE);

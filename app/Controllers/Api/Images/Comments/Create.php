@@ -16,6 +16,7 @@ class Create
     }
     public function __construct()
     {
+
         $id = $_POST['id'];
         $postbody = $_POST['wtext'];
         if ((int)$id === DB::query('SELECT id FROM photos WHERE id=:id', array(':id' => $id))[0]['id']) {
@@ -69,7 +70,21 @@ class Create
 
             if ((strlen($postbody) < 4096 || strlen($postbody) > 1) || $_FILES['filebody']['error'] != 4) {
                 if (trim($postbody) != '' || $_FILES['filebody']['error'] != 4) {
+                    $smileys_dir = $_SERVER['DOCUMENT_ROOT'].'/static/img/smileys/1';
+
+                    $allowedCodes = [];
+                    $files = scandir($smileys_dir);
+                    foreach ($files as $file) {
+                        $ext = pathinfo($file, PATHINFO_EXTENSION);
+                        if (in_array(strtolower($ext), ['gif', 'png', 'jpg'])) {
+                            $allowedCodes[] = ':'.pathinfo($file, PATHINFO_FILENAME).':';
+                        }
+                    }
                     $postbody = ltrim($postbody);
+                    $postbody = preg_replace_callback('/:\w+:/', function($matches) use ($allowedCodes) {
+                    return in_array($matches[0], $allowedCodes) ? $matches[0] : '';
+                }, $postbody);
+                    
                     echo json_encode(
                         array(
                             'errorcode' => '0',

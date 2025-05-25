@@ -11,6 +11,7 @@ use \App\Controllers\Api\Images\Rate as PhotoVote;
 use \App\Controllers\Api\Images\Compress as PhotoCompress;
 use \App\Controllers\Api\Images\CheckAll as PhotoCheckAll;
 use \App\Controllers\Api\Images\LoadRecent as PhotoLoadRecent;
+use \App\Controllers\Api\Images\LoadMap as PhotoLoadMap;
 use \App\Controllers\Api\Images\Favorite as PhotoFavorite;
 use \App\Controllers\Api\Images\Stats as PhotoStats;
 use \App\Controllers\Api\Images\Comments\Create as PhotoComment;
@@ -27,6 +28,7 @@ use \App\Controllers\Api\Vehicles\Load as VehiclesLoad;
 use \App\Controllers\Api\Profile\Update as ProfileUpdate;
 use \App\Controllers\Api\Users\LoadUser as UserLoad;
 use \App\Controllers\Api\Users\EmailVerify as EmailVerify;
+use \App\Controllers\Api\Users\Search as UsersSearch;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
 use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
 use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
@@ -37,6 +39,11 @@ use \App\Controllers\Api\Admin\GeoDB\Delete as AdminGeoDBDelete;
 use \App\Controllers\Api\Admin\Contests\CreateTheme as AdminContestsCreateTheme;
 use \App\Controllers\Api\Admin\Contests\Create as AdminContestsCreate;
 use \App\Controllers\Api\Admin\Settings\TaskManager as AdminTaskManager;
+use \App\Controllers\Api\Messages\GetChats as MSGGetChats;
+use \App\Controllers\Api\Messages\UploadFile as MSGUpload;
+use \App\Controllers\Api\Messages\GetUsers as MSGGetUsers;
+use \App\Controllers\Api\Messages\CreateChat as MSGCreateChat;
+use \App\Controllers\Api\Emoji\Load as EmojiLoad;
 
 class ApiController
 {
@@ -143,6 +150,27 @@ class ApiController
     }
     public static function contestsgetinfo() {
         return new ContestsGetInfo();
+    }
+    public static function msggetchats() {
+        return new MSGGetChats();
+    }
+    public static function msgupload() {
+        return new MSGUpload();
+    }
+    public static function msggetusers() {
+        return new MSGGetUsers();
+    }
+    public static function msgcreatechat() {
+        return new MSGCreateChat();
+    }
+    public static function userssearch() {
+        return new UsersSearch();
+    }
+    public static function emojiload() {
+        return new EmojiLoad();
+    }
+    public static function photoloadmap() {
+        return new PhotoLoadMap();
     }
 
 

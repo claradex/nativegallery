@@ -102,11 +102,9 @@ class Upload
                 imagejpeg($background, $outputImagePath, 90);
                 imagedestroy($background);
                 imagedestroy($overlay);
-                
                 $upload = new UploadPhoto($outputImagePath, 'cdn/img/');
                 self::$vidpreview = $upload->getSrc();
                 $upload = new UploadPhoto($mp4File, 'cdn/video/');
-                echo explode($mp4File, '.')[1];
                 self::$videourl = $upload->getSrc();
                 $exif = Json::return(
                     array(
