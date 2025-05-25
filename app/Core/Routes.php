@@ -35,6 +35,8 @@ class Routes
         Router::get('/api/photo/loadrecent', 'ApiController@recentphotos');
         Router::get('/api/users/load/$id', 'ApiController@loaduser');
         Router::get('/api/users/emailverify', 'ApiController@emailverify');
+        Router::get('/api/users/search', 'ApiController@userssearch');
+        Router::get('/api/emoji/load', 'ApiController@emojiload');
         Router::get('/article/$id', 'MainController@gallery');
         Router::get('/voting', 'ContestsController@index');
         Router::get('/voting/results', 'ContestsController@results');
@@ -46,13 +48,18 @@ class Routes
             Router::get('/lk', 'ProfileController@lk');
             Router::get('/lk/upload', 'ProfileController@upload');
             Router::get('/lk/history', 'ProfileController@lkhistory');
-            Router::get('/lk/profile', 'ProfileController@lkprofile');
+            Router::any('/lk/profile', 'ProfileController@lkprofile');
             Router::get('/lk/pday', 'ProfileController@photoindexhistory');
+            Router::get('/lk/editimage', 'ProfileController@editimage');
             Router::get('/fav_authors', 'MainController@favauthors');
+
+            Router::get('/messages', 'MessagesController@i');
+
 
             Router::get('/search', 'SearchController@i');
 
             Router::get('/fav', 'MainController@fav');
+            Router::get('/mapmedia', 'MainController@mapmedia');
             Router::get('/voting/sendpretend', 'ContestsController@sendpretend');
 
             Router::get('/vehicle/edit', 'VehicleController@iedit');
@@ -60,6 +67,7 @@ class Routes
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
+            Router::get('/api/photo/loadmap', 'ApiController@photoloadmap');
             Router::get('/api/photo/$id/favorite', 'ApiController@photofavorite');
             Router::get('/api/subscribe', 'ApiController@subscribeuser');
             Router::post('/api/photo/getcomments/$id', 'ApiController@photocommentload');
@@ -72,6 +80,10 @@ class Routes
             Router::post('/api/photo/contests/sendpretend', 'ApiController@sendpretendphoto');
             Router::get('/api/photo/contests/rate', 'ApiController@photovotecontest');
             Router::get('/api/contests/getinfo', 'ApiController@contestsgetinfo');
+            Router::any('/api/messages/getchats', 'ApiController@msggetchats');
+            Router::any('/api/messages/upload', 'ApiController@msgupload');
+            Router::any('/api/messages/getusers', 'ApiController@msggetusers');
+            Router::any('/api/messages/createchat', 'ApiController@msgcreatechat');
             Router::get('/api/vehicles/load', 'ApiController@vehiclesload');
             Router::get('/api/geodb/search', 'ApiController@geodbsearch');
             if ($user->i('admin') > 0) {
