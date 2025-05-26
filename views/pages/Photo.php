@@ -58,7 +58,9 @@ if ($photo->i('id') !== null) {
             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
             <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-            <script src="/static/js/comments.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>" defer></script>
+            <script src="/static/js/comments.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) {
+                                                    echo '?' . time();
+                                                } ?>" defer></script>
             <link
                 rel="stylesheet"
                 href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
@@ -110,7 +112,7 @@ if ($photo->i('id') !== null) {
                 <div id="err"></div>
                 <script defer>
                     $(document).ready(function() {
-                    Fancybox.bind('[data-fancybox="gallery"]');
+                        Fancybox.bind('[data-fancybox="gallery"]');
                     });
                 </script>
                 <?php
@@ -703,12 +705,14 @@ if ($photo->i('id') !== null) {
 
                             .autocomplete {
                                 position: absolute;
-                                background: white;
+                                background: #fff;
                                 border: 1px solid #ddd;
-                                max-height: 200px;
+                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                min-width: 200px;
+                                max-height: 300px;
                                 overflow-y: auto;
-                                z-index: 1001;
-                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                                z-index: 10000;
+                                transform: translateY(2px);/
                             }
 
                             .autocomplete-item {
@@ -861,67 +865,67 @@ if ($photo->i('id') !== null) {
                 </div>
 
                 <script data-restart>
-    $(document).ready(function() {
-        $('#f1').submit(function(e) {
-            e.preventDefault();
+                    $(document).ready(function() {
+                        $('#f1').submit(function(e) {
+                            e.preventDefault();
 
-            var formData = new FormData(this); // Собираем данные из формы, включая filebody
+                            var formData = new FormData(this); // Собираем данные из формы, включая filebody
 
-            $.ajax({
-                type: "POST",
-                url: "/api/photo/comment",
-                data: formData,
-                processData: false, // Не обрабатывать данные (важно для файлов)
-                contentType: false, // Не устанавливать заголовок Content-Type (браузер сделает сам)
-                success: function(response) {
-                    var jsonData = JSON.parse(response);
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/photo/comment",
+                                data: formData,
+                                processData: false, // Не обрабатывать данные (важно для файлов)
+                                contentType: false, // Не устанавливать заголовок Content-Type (браузер сделает сам)
+                                success: function(response) {
+                                    var jsonData = JSON.parse(response);
 
-                    if (jsonData.errorcode == "1") {
-                        $('#statusSend').css({
-                            display: 'block',
-                            color: 'red'
-                        }).text('Комментарий некорректен');
-                    } else if (jsonData.errorcode == "2") {
-                        $('#statusSend').css({
-                            display: 'block',
-                            color: 'yellow'
-                        }).text('Пожалуйста, подождите...');
-                        setTimeout(function() {
-                            window.location.replace(jsonData.twofaurl);
-                        }, 1000);
-                    } else if (jsonData.errorcode == "0") {
-                        $('#wtext').val('');
-                        $('#statusSend').css({
-                            display: 'block',
-                            color: 'green'
-                        }).text('Комментарий отправлен!');
+                                    if (jsonData.errorcode == "1") {
+                                        $('#statusSend').css({
+                                            display: 'block',
+                                            color: 'red'
+                                        }).text('Комментарий некорректен');
+                                    } else if (jsonData.errorcode == "2") {
+                                        $('#statusSend').css({
+                                            display: 'block',
+                                            color: 'yellow'
+                                        }).text('Пожалуйста, подождите...');
+                                        setTimeout(function() {
+                                            window.location.replace(jsonData.twofaurl);
+                                        }, 1000);
+                                    } else if (jsonData.errorcode == "0") {
+                                        $('#wtext').val('');
+                                        $('#statusSend').css({
+                                            display: 'block',
+                                            color: 'green'
+                                        }).text('Комментарий отправлен!');
 
-                        $.ajax({
-                            type: "POST",
-                            url: "/api/photo/getcomments/<?= $id ?>",
-                            processData: false,
-                            async: true,
-                            success: function(r) {
-                                $('#posts').html(r);
-                            },
-                            error: function(r) {
-                                console.log(r);
-                            }
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/api/photo/getcomments/<?= $id ?>",
+                                            processData: false,
+                                            async: true,
+                                            success: function(r) {
+                                                $('#posts').html(r);
+                                            },
+                                            error: function(r) {
+                                                console.log(r);
+                                            }
+                                        });
+                                    } else {
+                                        alert('Неизвестная ошибка');
+                                    }
+                                },
+                                error: function(err) {
+                                    console.error("Ошибка при отправке формы", err);
+                                }
+                            });
                         });
-                    } else {
-                        alert('Неизвестная ошибка');
-                    }
-                },
-                error: function(err) {
-                    console.error("Ошибка при отправке формы", err);
-                }
-            });
-        });
-    });
+                    });
 
 
-    function errimg() {
-        const content = `<center>
+                    function errimg() {
+                        const content = `<center>
                         <div class="p20 s5" style="border:none; margin:0 -20px; display:none;">
                             <b>Фото потеряно при крахе винчестера</b>
                             <div class="sm" style="margin-top:5px">
@@ -930,10 +934,10 @@ if ($photo->i('id') !== null) {
                             </div>
                         </div>
                     </center>`;
-        $('#err').html(content);
-        $('#err .p20').slideDown(500);
-    }
-</script>
+                        $('#err').html(content);
+                        $('#err .p20').slideDown(500);
+                    }
+                </script>
             <?php } else { ?>
                 <div class="p0" id="pp-item-comments">
 

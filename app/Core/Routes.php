@@ -63,7 +63,8 @@ class Routes
             Router::get('/voting/sendpretend', 'ContestsController@sendpretend');
 
             Router::get('/vehicle/edit', 'VehicleController@iedit');
-            Router::get('/vehicle/dbedit', 'VehicleController@dbedit');
+            Router::any('/vehicle/dbedit', 'VehicleController@dbedit');
+            Router::any('/vehicle/$id', 'VehicleController@i');
             Router::post('/api/upload', 'ApiController@upload');
             Router::post('/api/profile/update', 'ApiController@updateprofile');
             Router::post('/api/photo/comment', 'ApiController@photocomment');
@@ -89,9 +90,11 @@ class Routes
             if ($user->i('admin') > 0) {
                 Router::any('/admin', 'AdminController@index');
                 Router::any('/api/admin/images/setvisibility', 'ApiController@adminsetvis');
-                Router::any('/api/admin/createnews', 'ApiController@admincreatenews');
+                Router::any('/api/admin/news/create', 'ApiController@admincreatenews');
+                Router::any('/api/admin/news/$id/delete', 'ApiController@admindeletenews');
                 Router::any('/api/admin/loadnews', 'ApiController@adminloadnews');
                 Router::any('/api/admin/getvehicleinputs/$id', 'ApiController@admingetvehicleinputs');
+                Router::any('/api/admin/models/requests/$id/$type', 'ApiController@adminmodelsrequesthandler');
                 Router::any('/api/admin/geodb/create', 'ApiController@admingeodbcreate');
                 Router::any('/api/admin/geodb/load', 'ApiController@admingeodbload');
                 Router::any('/api/admin/contests/createtheme', 'ApiController@admincontestscreatetheme');
@@ -103,6 +106,5 @@ class Routes
         } else {
             Router::redirect('/login?return='.$_SERVER['HTTP_REFERER']);
         }
-        Router::get('/vehicle/$id', 'VehicleController@i');
     }
 }

@@ -70,24 +70,6 @@ $(document).ready(function()
 	});
 
 
-	$('#loginbtn').on('click', function()
-	{
-		var username = $('#username').val().trim();
-		var password = $('#password').val().trim();
-
-		if (username != '' && username != '')
-		{
-			$('#loginbtn').prop('disabled', true).val(_text['IX_LOGGING']);
-
-			$.post('/api.php?action=check-login', { username: username, password: password, remember: $('#remember').is('checked') }, function(r)
-			{
-				if (r == 0)
-					 $('#loginform').submit();
-				else window.location.reload();
-			})
-			.fail(function(jx) { if (jx.responseText != '') alert(jx.responseText); });
-		}
-	});
 
 
 	$('#mobile-menu').on('click', function()

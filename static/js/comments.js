@@ -215,12 +215,12 @@
         if ((e.which == 10 || e.which == 13) && e.ctrlKey) $("#f1").submit();
       })
       .on("focus", function () {
-      navLock = true;
-      saveSelection();
-    })
-    .on("blur", function () {
-      navLock = false;
-    })
+        navLock = true;
+        saveSelection();
+      })
+      .on("blur", function () {
+        navLock = false;
+      })
       .on("blur", function () {
         navLock = false;
       });
@@ -278,7 +278,7 @@
     // Вставляем в сохраненную позицию
     if (lastSelection) {
       lastSelection.insertNode(img);
-      
+
       // Обновляем позицию курсора
       const newRange = document.createRange();
       newRange.setStartAfter(img);
@@ -290,14 +290,13 @@
     }
 
     // Форсируем обновление состояния
-    editor.dispatchEvent(new Event('input', { bubbles: true }));
+    editor.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
-
   // Обработчики событий
-   const showPickerElement = document.getElementById("showPicker");
+  const showPickerElement = document.getElementById("showPicker");
 
-   if (showPickerElement) {
+  if (showPickerElement) {
     showPickerElement.addEventListener("click", function (e) {
       e.stopPropagation();
       const picker = document.getElementById("picker");
@@ -309,24 +308,25 @@
     });
   }
 
-   document.querySelectorAll(".emoji-option").forEach((emoji) => {
-    emoji.addEventListener("mousedown", function(e) { // Используем mousedown вместо click
+  document.querySelectorAll(".emoji-option").forEach((emoji) => {
+    emoji.addEventListener("mousedown", function (e) {
+      // Используем mousedown вместо click
       e.preventDefault();
       e.stopPropagation();
-      
+
       // Фокусируем редактор перед вставкой
       const editor = document.getElementById("wtext");
       if (editor) editor.focus();
-      
+
       insertEmoji(emoji);
       document.getElementById("picker").classList.remove("active");
     });
   });
 
-  document.addEventListener('selectionchange', () => {
+  document.addEventListener("selectionchange", () => {
     const editor = document.getElementById("wtext");
     const sel = window.getSelection();
-    
+
     if (editor && sel.rangeCount > 0) {
       const range = sel.getRangeAt(0);
       if (editor.contains(range.commonAncestorContainer)) {
@@ -335,19 +335,19 @@
     }
   });
 
-const picker = document.getElementById("picker");
-const showPicker = document.getElementById("showPicker");
+  const picker = document.getElementById("picker");
+  const showPicker = document.getElementById("showPicker");
 
-if (picker) {
-  document.addEventListener("click", function(e) {
-    const isClickInsidePicker = picker.contains(e.target);
-    const isClickOnShowButton = showPicker?.contains(e.target);
-    
-    if (!isClickInsidePicker && !isClickOnShowButton) {
-      picker.classList.remove("active");
-    }
-  });
-}
+  if (picker) {
+    document.addEventListener("click", function (e) {
+      const isClickInsidePicker = picker.contains(e.target);
+      const isClickOnShowButton = showPicker?.contains(e.target);
+
+      if (!isClickInsidePicker && !isClickOnShowButton) {
+        picker.classList.remove("active");
+      }
+    });
+  }
 
   // Обновленный JavaScript для работы с новым форматом
   document.addEventListener("click", function (e) {
@@ -415,10 +415,6 @@ if (picker) {
         };
       });
 
-      console.log(
-        "Processed codes:",
-        allSmileys.map((s) => s.code)
-      );
       return allSmileys;
     } catch (error) {
       console.error("Error loading smileys:", error);
@@ -490,349 +486,155 @@ if (picker) {
 
   // Автодополнение
   // Автодополнение
-  function setupAutocomplete() {
-    const editor = document.getElementById("wtext");
-    let currentWord = "";
-    let startPos = 0;
-    let selectedIndex = -1;
-    let isAutocompleteOpen = false;
+function setupAutocomplete() {
+  const editor = document.getElementById("wtext");
+  if (!editor) return;
 
-    const acContainer = document.createElement("div");
-    acContainer.className = "autocomplete";
-    document.body.appendChild(acContainer);
+  let autocompleteType = null;
+  let isAutocompleteOpen = false;
+  let startPos = 0;
+  let currentWord = "";
+  let allSmileys = [];
+  
+  // Загрузка смайлов при инициализации
+  loadSmileys().then(data => allSmileys = data);
 
-    // Обработчик клавиш
-    function handleKeyDown(e) {
-      if (!isAutocompleteOpen) return;
+  const acContainer = document.createElement("div");
+  acContainer.className = "autocomplete";
+  document.body.appendChild(acContainer);
 
-      const items = acContainer.querySelectorAll(".autocomplete-item");
-      if (items.length === 0) return;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-          updateSelection();
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          selectedIndex = Math.max(selectedIndex - 1, -1);
-          updateSelection();
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (selectedIndex >= 0) {
-            insertSuggestion(items[selectedIndex]);
-          }
-          break;
-        case "Escape":
-          e.preventDefault();
-          closeAutocomplete();
-          break;
-      }
+  // Обработчик клавиш для активации
+    editor.addEventListener("keydown", function(e) {
+    // Активация при вводе первого символа
+    if ((e.key === ":" || e.key === "@") && !isAutocompleteOpen) {
+      e.preventDefault();
+      autocompleteType = e.key === ":" ? "emoji" : "mention";
+      isAutocompleteOpen = true;
+      const range = window.getSelection().getRangeAt(0);
+      startPos = range.startOffset;
+      showAutocomplete("", range); // Показываем сразу
     }
+  });
 
-    function updateSelection() {
-      const items = acContainer.querySelectorAll(".autocomplete-item");
-      items.forEach((item, index) => {
-        item.classList.toggle("selected", index === selectedIndex);
-      });
-    }
+  // Обработчик ввода
+  editor.addEventListener("input", function() {
+    if (!isAutocompleteOpen) return;
 
-    function insertSuggestion(item) {
-      const code = item.dataset.code;
-      const sel = window.getSelection();
-      const range = sel.getRangeAt(0);
+    const sel = window.getSelection();
+    const range = sel.getRangeAt(0);
+    const text = range.startContainer.textContent || "";
+    const pos = range.startOffset;
 
-      range.setStart(range.startContainer, startPos);
-      range.deleteContents();
+    // Определяем границы текущего слова
+    let i = pos - 1;
+    while (i >= 0 && !/[:\s@]/.test(text[i])) i--;
 
-      const textNode = document.createTextNode(`[${code}]`);
-      range.insertNode(textNode);
+    startPos = i + 1;
+    currentWord = text.substring(startPos, pos);
 
-      range.setStartAfter(textNode);
-      range.collapse(true);
+    positionAutocomplete(range); // Обновляем позицию
+    showAutocomplete(currentWord, range);
+  });
+  function positionAutocomplete(range) {
+    const rect = range.getBoundingClientRect();
+    const scrollY = window.scrollY || window.pageYOffset;
+    
+    acContainer.style.top = `${rect.bottom + scrollY + 5}px`;
+    acContainer.style.left = `${rect.left + window.scrollX}px`;
+  }
 
-      closeAutocomplete();
-      editor.focus();
-    }
 
-    function closeAutocomplete() {
-      acContainer.style.display = "none";
-      acContainer.style.top = "-9999px";
-      acContainer.style.left = "-9999px";
-      acContainer.innerHTML = "";
+  // Показать подсказки (исправленная версия)
+  function showAutocomplete(query, range) {
+    positionAutocomplete(range);
 
-      // Сброс состояний
-      selectedIndex = -1;
-      isAutocompleteOpen = false;
-      autocompleteType = null;
-    }
+    if (!isAutocompleteOpen) return;
 
-    // Предполагаем, что editor получен через getElementById
+    // Позиционирование относительно редактора
+    const editorRect = editor.getBoundingClientRect();
+    const rangeRect = range.getBoundingClientRect();
+    
+    acContainer.style.top = `${rangeRect.top - editorRect.top + 30}px`;
+    acContainer.style.left = `${rangeRect.left - editorRect.left}px`;
 
-    if (editor) {
-      let isAutocompleteOpen = false; // Добавляем инициализацию переменных
-      let autocompleteType = "";
-      let startPos = 0;
-      let currentWord = "";
+    if (autocompleteType === "emoji") {
+      const suggestions = allSmileys.filter(smiley => 
+        query ? smiley.code.toLowerCase().includes(query) : true
+      ).slice(0, 8);
 
-      // Объявляем функции для безопасного использования
-      const handleKeyDown = (e) => {
-        /* ... */
-      };
-      const showAutocomplete = (word, range) => {
-        /* ... */
-      };
-      const closeAutocomplete = () => {
-        /* ... */
-      };
-
-      // Обработчик нажатия клавиш
-      editor.addEventListener("keydown", function (e) {
-        const isAtSymbol =
-          e.key === "@" ||
-          (e.key === "2" && e.shiftKey) ||
-          (e.key === "Quote" && e.shiftKey);
-
-        if (e.key === ":" && !isAutocompleteOpen) {
-          autocompleteType = "emoji";
-          isAutocompleteOpen = true;
-          editor.addEventListener("keydown", handleKeyDown);
-        } else if (isAtSymbol && !isAutocompleteOpen) {
-          autocompleteType = "mention";
-          isAutocompleteOpen = true;
-          editor.addEventListener("keydown", handleKeyDown);
-        }
-      });
-
-      // Обработчик ввода
-      editor.addEventListener("input", function (e) {
-        if (!isAutocompleteOpen) return;
-
-        const sel = window.getSelection();
-        if (!sel || sel.rangeCount === 0) return;
-
-        const range = sel.getRangeAt(0);
-        const text = range.startContainer?.textContent || "";
-        const pos = range.startOffset;
-
-        let i = pos - 1;
-        const stopChar = autocompleteType === "emoji" ? ":" : "@";
-
-        while (i >= 0 && text[i] !== stopChar && text[i] !== " ") i--;
-
-        if (text[i] === stopChar) {
-          startPos = i;
-          currentWord = text.slice(i + 1, pos).toLowerCase();
-          showAutocomplete(currentWord, range);
-        } else {
-          closeAutocomplete();
-        }
-      });
-    }
-
-    // Показать подсказки
-    function showAutocomplete(query, range) {
-      if (autocompleteType === "emoji") {
-        const suggestions = allSmileys
-          .filter((smiley) =>
-            smiley.code.toLowerCase().includes(query.toLowerCase())
-          )
-          .slice(0, 10);
-
-        if (suggestions.length === 0) {
-          closeAutocomplete();
-          return;
-        }
-
-        const rect = range.getBoundingClientRect();
-        acContainer.style.top = `${rect.bottom + window.scrollY}px`;
-        acContainer.style.left = `${rect.left + window.scrollX}px`;
-
-        acContainer.innerHTML = suggestions
-          .map(
-            (smiley, index) => `
-                                <div class="autocomplete-item" 
-                                    data-code="${smiley.code}">
-                                    <img src="${smiley.url}" 
-                                        style="width:24px;height:24px">
-                                    <span>${smiley.code}</span>
-                                </div>
-                            `
-          )
-          .join("");
-
-        acContainer.style.display = "block";
-        selectedIndex = 0;
-        updateSelection();
-      } else if (autocompleteType === "mention") {
-        fetch(`/api/users/search?q=${encodeURIComponent(query)}`)
-          .then((response) => response.json())
-          .then((users) => {
-            currentMentions = users;
-            const rect = range.getBoundingClientRect();
-            acContainer.style.top = `${rect.bottom + window.scrollY}px`;
-            acContainer.style.left = `${rect.left + window.scrollX}px`;
-
-            acContainer.innerHTML = users
-              .map(
-                (user, index) => `
-                    <div class="autocomplete-item" 
-                        data-user-id="${user.id}"
-                        data-username="${user.username}">
-                        <img src="${user.photourl}" 
-                            style="width:24px;height:24px;border-radius:50%">
-                        <span>${user.username}</span>
-                    </div>
-                `
-              )
-              .join("");
-
-            acContainer.style.display = "block";
-            selectedIndex = 0;
-            updateSelection();
-          });
-      }
-    }
-
-    // Обновленный обработчик клика
-    acContainer.addEventListener("mousedown", function (e) {
-      // Используем mousedown вместо click
-      const item = e.target.closest(".autocomplete-item");
-      if (item) {
-        insertSuggestion(item);
-        e.preventDefault();
-      }
-    });
-
-    // Скрыть при клике вне
-    document.addEventListener("click", function (e) {
-      if (!e.target.closest(".autocomplete")) {
-        acContainer.style.display = "none";
-      }
-    });
-
-    function insertSuggestion(item) {
-      if (autocompleteType === "emoji") {
-        const code = item.dataset.code;
-        const sel = window.getSelection();
-        const range = sel.getRangeAt(0);
-
-        range.setStart(range.startContainer, startPos);
-        range.deleteContents();
-
-        // Создаем элемент изображения вместо текстового узла
-        const img = document.createElement("img");
-        img.className = "editor-emoji";
-        img.src = item.querySelector("img").src;
-        img.dataset.code = `[${code}]`;
-        img.contentEditable = "false";
-
-        range.insertNode(img);
-
-        // Сдвигаем курсор после изображения
-        const newRange = document.createRange();
-        newRange.setStartAfter(img);
-        newRange.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-
-        closeAutocomplete();
-        editor.focus();
-      } else if (autocompleteType === "mention") {
-        const userId = item.dataset.userId;
-        const username = item.dataset.username;
-        const sel = window.getSelection();
-
-        if (sel.rangeCount === 0) return;
-
-        const range = sel.getRangeAt(0).cloneRange();
-        range.setStart(range.startContainer, startPos);
-        range.deleteContents();
-
-        // Создаем основной элемент упоминания
-        const mentionSpan = document.createElement("span");
-        mentionSpan.className = "user-mention";
-        mentionSpan.dataset.userId = userId;
-        mentionSpan.textContent = `@${username}`;
-        mentionSpan.contentEditable = "false";
-
-        // Создаем пробел после упоминания
-        const spaceSpan = document.createTextNode("\u00A0");
-
-        // Вставляем элементы
-        const fragment = document.createDocumentFragment();
-        fragment.appendChild(mentionSpan);
-        fragment.appendChild(spaceSpan);
-        range.insertNode(fragment);
-
-        // Обновляем позицию курсора
-        const newRange = document.createRange();
-        newRange.setStartAfter(spaceSpan);
-        newRange.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-
-        // Обновляем редактор
-        closeAutocomplete();
-        editor.focus();
-      }
-      closeAutocomplete();
-      editor.focus();
-      window.addEventListener("scroll", () => closeAutocomplete(), true);
-    }
-
-    function closeAutocomplete(immediate = false) {
-      if (immediate) {
-        // Немедленное удаление из DOM
-        acContainer.style.display = "none";
-        acContainer.innerHTML = "";
-        acContainer.style.top = "-9999px"; // Убираем за пределы видимости
-        selectedIndex = -1;
-        isAutocompleteOpen = false;
-        autocompleteType = null;
+      acContainer.innerHTML = suggestions.map(smiley => `
+        <div class="autocomplete-item" data-code="${smiley.code}">
+          <img src="${smiley.url}" class="emoji-preview">
+          <span>${smiley.code}</span>
+        </div>
+      `).join("");
+      
+    } else if (autocompleteType === "mention") {
+       if (!query) {
+        acContainer.innerHTML = getPopularContacts();
         return;
       }
-
-      // Анимация исчезновения (опционально)
-      acContainer.classList.add("closing");
-      setTimeout(() => {
-        acContainer.style.display = "none";
-        acContainer.innerHTML = "";
-        acContainer.classList.remove("closing");
-        selectedIndex = -1;
-        isAutocompleteOpen = false;
-        autocompleteType = null;
-      }, 200);
-    }
-
-    document.addEventListener("mouseover", async function (e) {
-      const mention = e.target.closest(".user-mention");
-      if (mention && !mention.dataset.loaded) {
-        const userId = mention.dataset.userId;
-
-        const response = await fetch(`/api/users/load/${userId}`);
-        const userInfo = await response.json();
-      }
-    });
-
-    function updateSelection() {
-      const items = acContainer.querySelectorAll(".autocomplete-item");
-      items.forEach((item, index) => {
-        item.classList.toggle("selected", index === selectedIndex);
-      });
-
-      // Прокрутка к выбранному элементу
-      if (selectedIndex >= 0 && items[selectedIndex]) {
-        items[selectedIndex].scrollIntoView({
-          behavior: "auto",
-          block: "nearest",
+      fetch(`/api/users/search?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(users => {
+          acContainer.innerHTML = users.map(user => `
+            <div class="autocomplete-item" 
+                 data-user-id="${user.id}" 
+                 data-username="${user.username}">
+              <img src="${user.avatar}" class="user-avatar">
+              ${user.username}
+            </div>
+          `).join("");
         });
-      }
     }
+    
+    acContainer.style.display = "block";
   }
+
+  // Обработчик выбора элемента
+  acContainer.addEventListener("mousedown", (e) => {
+    const item = e.target.closest(".autocomplete-item");
+    if (!item) return;
+
+    const sel = window.getSelection();
+    const range = sel.getRangeAt(0);
+    
+    // Удаляем триггер и текущее слово
+    range.setStart(range.startContainer, startPos);
+    range.setEnd(range.startContainer, startPos + currentWord.length);
+    range.deleteContents();
+
+    // Вставка эмодзи
+    if (autocompleteType === "emoji") {
+      const img = document.createElement("img");
+      img.className = "editor-emoji";
+      img.src = item.querySelector("img").src;
+      img.dataset.code = `[:${item.dataset.code}:]`;
+      range.insertNode(img);
+    } 
+    // Вставка упоминания
+    else if (autocompleteType === "mention") {
+      const mention = document.createElement("span");
+      mention.className = "user-mention";
+      mention.textContent = `@${item.dataset.username}`;
+      mention.dataset.userId = item.dataset.userId;
+      range.insertNode(mention);
+    }
+
+    // Сброс состояния
+    acContainer.style.display = "none";
+    isAutocompleteOpen = false;
+    editor.focus();
+  });
+
+  // Закрытие при клике вне
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".autocomplete")) {
+      acContainer.style.display = "none";
+      isAutocompleteOpen = false;
+    }
+  });
+}
 
   // Инициализация после загрузки
   window.addEventListener("DOMContentLoaded", setupAutocomplete);

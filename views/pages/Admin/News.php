@@ -36,36 +36,8 @@ use \App\Models\User;
     <?php
     $news = DB::query('SELECT * FROM news ORDER BY id');
     foreach ($news as $n) {
-        echo '<div class="card mb-3"><div class="card-body">' . Date::zmdate($n['time']) . '<br>' . $n['body'] . '</div></div>';
+        $nn = new \App\Models\Admin\News($n['id']);
+        $nn->view();
     }
     ?>
 </div>
-
-<script>
-    function createNews() {
-        $.ajax({
-            type: "POST",
-            url: '/api/admin/createnews',
-            data: {
-                body: $('#body').val()
-            },
-            success: function(response) {
-                Notify.noty('success', 'OK!');
-                $.ajax({
-                    type: "GET",
-                    url: '/api/admin/loadnews',
-
-                    success: function(response) {
-                        $('#news').html(response);
-
-
-                    }
-
-                });
-
-
-            }
-
-        });
-    }
-</script>

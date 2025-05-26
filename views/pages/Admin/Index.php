@@ -13,6 +13,7 @@ if (!isset($_GET['type']) || $_GET['type'] != 'Photo') {
 <!DOCTYPE html>
 <html lang="ru">
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="/static/js/act.js" defer></script>
 <link rel="stylesheet" href="/static/css/notie.css<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>">
 <script src="/static/js/notie.js<?php if (NGALLERY['root']['cloudflare-caching'] === true) { echo '?'.time(); } ?>"></script>
 

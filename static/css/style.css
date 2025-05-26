@@ -916,3 +916,16 @@ input.ml-button { height:22px; }
     left: 0;
     right: 0;
 }
+.ix-photos.shine {
+    background-image: linear-gradient(270deg, rgba(100, 181, 239, 0) 48.44%, #adadad 75.52%, rgba(100, 181, 239, 0) 100%);
+    background-repeat: no-repeat;
+    animation: bg-move linear 2s infinite;
+}
+@-webkit-keyframes bg-move {
+  0%   { background-position: -500px 0; }
+  100% { background-position: 1000px 0; }
+}
+@keyframes bg-move {
+  0%   { background-position: -500px 0; }
+  100% { background-position: 1000px 0; }
+}

@@ -30,9 +30,11 @@ use \App\Controllers\Api\Users\LoadUser as UserLoad;
 use \App\Controllers\Api\Users\EmailVerify as EmailVerify;
 use \App\Controllers\Api\Users\Search as UsersSearch;
 use \App\Controllers\Api\Admin\Images\SetVisibility as AdminPhotoSetVisibility;
-use \App\Controllers\Api\Admin\CreateNews as AdminCreateNews;
-use \App\Controllers\Api\Admin\LoadNews as AdminLoadNews;
+use \App\Controllers\Api\Admin\News\Create as AdminCreateNews;
+use \App\Controllers\Api\Admin\News\Load as AdminLoadNews;
+use \App\Controllers\Api\Admin\News\Delete as AdminDeleteNews;
 use \App\Controllers\Api\Admin\GetVehicleInputs as AdminGetVehicleInputs;
+use \App\Controllers\Api\Admin\Models\RequestHandler as AdminModelsRequestHandler;
 use \App\Controllers\Api\Admin\GeoDB\Create as AdminGeoDBCreate;
 use \App\Controllers\Api\Admin\GeoDB\Load as AdminGeoDBLoad;
 use \App\Controllers\Api\Admin\GeoDB\Delete as AdminGeoDBDelete;
@@ -121,6 +123,9 @@ class ApiController
     public static function admincreatenews() {
         return new AdminCreateNews();
     }
+    public static function admindeletenews() {
+        return new AdminDeleteNews();
+    }
     public static function adminloadnews() {
         return new AdminLoadNews();
     }
@@ -171,6 +176,9 @@ class ApiController
     }
     public static function photoloadmap() {
         return new PhotoLoadMap();
+    }
+    public static function adminmodelsrequesthandler() {
+        return new AdminModelsRequestHandler();
     }
 
 

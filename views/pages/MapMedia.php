@@ -108,7 +108,7 @@ use \App\Models\{Vehicle, User};
 
         </tr>
         <script>
-            const map = L.map('mapd').setView([51.505, -0.09], 13);
+            const map = L.map('mapd').setView([55.751244, 37.618423], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);

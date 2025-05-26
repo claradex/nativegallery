@@ -15,10 +15,9 @@ class Login
     {
         $username = $_POST['username'];
         $password = $_POST['password'];
-        if (DB::query('SELECT email FROM users WHERE email=:username OR username=:username', array(':username' => $username))) {
-            $email = DB::query('SELECT email FROM users WHERE email=:username OR username=:username', array(':username' => $username))[0]['email'];
+        if (DB::query('SELECT email FROM users WHERE (LOWER(username) LIKE :username1) OR (LOWER(email) LIKE :username2)', array(':username1' => '%'.$username.'%', ':username2' => '%'.$username.'%'))) {
+            $email = DB::query('SELECT email FROM users WHERE (LOWER(username) LIKE :username1) OR (LOWER(email) LIKE :username2)', array(':username1' => '%'.$username.'%', ':username2' => '%'.$username.'%'))[0]['email'];
             if (password_verify($password, DB::query('SELECT password FROM users WHERE email=:username', array(':username' => $email))[0]['password'])) {
-                $cstrong = True;
                 $token = GenerateRandomStr::gen_uuid();
                 $user_id = DB::query('SELECT id FROM users WHERE email=:username', array(':username' => $email))[0]['id'];
 
@@ -50,7 +49,7 @@ class Login
                 $iv = openssl_random_pseudo_bytes(16);
                 $encryptedIp = openssl_encrypt($ip, 'AES-256-CBC', $encryptionKey, 0, $iv);
                 $encryptedLoc = openssl_encrypt($loc, 'AES-256-CBC', $encryptionKey, 0, $iv);
-                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :device, :os, :ip, :loc, :la, :crd)', array(
+                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :device, :os, :ip, :loc, :la, :crd, :iv)', array(
                     ':token' => $token,
                     ':user_id' => $user_id,
                     ':device' => $device,
@@ -58,7 +57,8 @@ class Login
                     ':ip' => $encryptedIp,
                     ':loc' => $encryptedLoc,
                     ':la' => time(),
-                    ':crd' => time()
+                    ':crd' => time(),
+                    ':iv' => $iv
                 ));
 
                 setcookie("NGALLERYSESS", $token, time() + 50 * 50 * 54 * 72, '/', NULL, NULL, TRUE);

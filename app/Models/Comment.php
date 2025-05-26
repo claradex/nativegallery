@@ -150,7 +150,7 @@ class Comment
         $pinc = 'Закрепить';
         echo '<div class="' . $this->class . ' comment" wid="' . $this->c['id'] . '">';
         if ($photo->i('pinnedcomment_id') === $this->c['id']) {
-            echo '<i style="padding-bottom: 15px;">Комментарий закреплён</i>';
+            echo '<i style="margin-bottom: 1px;">Комментарий закреплён</i><br>';
             $pinc = 'Открепить';
         }
         echo '

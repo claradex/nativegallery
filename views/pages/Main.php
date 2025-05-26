@@ -214,7 +214,7 @@ LIMIT 10;');
                             $first_id = $photos[0]['id'];
                             $last_id = end($photos)['id'];
                             ?>
-                            <div id="recent-photos" class="ix-photos ix-photos-multiline" lastpid="<?= $first_id + 1 ?>" firstpid="<?= $last_id ?>">
+                            <div id="recent-photos" class="ix-photos ix-photos-multiline shine" lastpid="<?= $first_id + 1 ?>" firstpid="<?= $last_id ?>">
 
                             </div>
                             </div>

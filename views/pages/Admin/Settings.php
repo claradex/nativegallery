@@ -130,7 +130,8 @@ function renderInputs($data, $prefix = '')
                                 
                                 <?php
                                 foreach (NGALLERY_TASKS as $nt) {
-                                    $nt = $nt;
+                                    if ($nt['type'] === 'cron') {
+                                         $nt = $nt;
                                     echo '<tr><td>
 
                                        '.$nt['id'].'
@@ -139,6 +140,8 @@ function renderInputs($data, $prefix = '')
                                     </td><td class="c">
                                         <a onclick="taskManager(`'.$nt['id'].'`, 1)" class="btn btn-sm btn-primary">Запустить</a> <a onclick="taskManager(`'.$nt['id'].'`, 0)" class="btn btn-sm btn-danger">Остановить</a>
                                     </td> <tr>';
+                                    }
+                                   
                                 }
 
                               

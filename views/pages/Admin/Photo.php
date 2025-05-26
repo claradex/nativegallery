@@ -39,10 +39,10 @@ use \App\Models\User;
                     <div class="v-header__tabs">
                 <div class="v-tabs">
                     <div class="v-tabs__scroll">
-                        <div class="v-tabs__content"><!--a href="#" onclick="changeTab('full')" id="full" class="v-tab v-tab-b"><span class="v-tab__label">
+                        <div class="v-tabs__content"><a href="#" onclick="changeTab('full')" id="full" class="v-tab v-tab-b"><span class="v-tab__label">
                                     Полный список
 
-                                    </span></!--a--><a href="#" onclick="changeTab('moderate')" id="moderate" class="v-tab v-tab-b v-tab--active"><span class="v-tab__label">
+                                    </span></a><a href="#" onclick="changeTab('moderate')" id="moderate" class="v-tab v-tab-b v-tab--active"><span class="v-tab__label">
                                     Ожидают модерации
 
                                     </span></a>

@@ -24,7 +24,7 @@ $user = new User(Auth::userid());
                     <div class="tabs">
                         <nav class="tab-nav">
                             <a href="/lk/profile" class="tab-item <?php if ($_GET['type'] === null) { ?> active <?php } ?>">Профиль</a>
-                            <a href="?type=Security" class="tab-item <?php if ($_GET['type'] === 'Security') { ?> active <?php } ?>">Безопасность</a>
+                            <!--a href="?type=Security" class="tab-item <?php if ($_GET['type'] === 'Security') { ?> active <?php } ?>">Безопасность</!--a-->
                             <a href="?type=Personalization" class="tab-item <?php if ($_GET['type'] === 'Personalization') { ?> active <?php } ?>">Внешний вид</a>
                         </nav>
                         <div class="tab-content">

@@ -11,7 +11,9 @@ class App
 {
     public static function start()
     {
-        error_reporting(E_ALL & ~E_WARNING);
+        ini_set('display_errors', 0);
+        ini_set('display_startup_errors', 0);
+        error_reporting(E_ALL);
 
         if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/ngallery.yaml')) {
             define("NGALLERY", Yaml::parse(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/ngallery.yaml'))['ngallery']);
@@ -35,9 +37,8 @@ class App
                 }
             } catch (PDOException $ex) {
                 echo '<details><summary class="p20 s5" style="border:none; margin:0 -20px"><b>Произошла ошибка MySQL</b></summary>'.nl2br($ex).'</details>';
-                
             } catch (Exception $ex) {
-                echo '<details><summary class="p20 s5" style="border:none; margin:0 -20px"><b>Произошла скриптовая ошибка PHP</b></summary>'.nl2br($ex).'</details>';
+                echo '<pre><b>Произошла скриптовая ошибка PHP</b><br><br>'.nl2br($ex).'</pre>';
             }
         } else {
             Page::set('Errors/Problems');

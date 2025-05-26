@@ -8,11 +8,12 @@ $themeManager = new ThemeManager();
 $themeManager->loadThemes();
 
 $themesList = $themeManager->getAllThemes();
-var_dump($_SESSION);
+$selectedTheme = $_SESSION['selected_theme'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme_id'])) {
   try {
     $themeManager->saveThemeToProfile($_POST['theme_id']);
-    header('Location: ' . $_SERVER['REQUEST_URI']);
+    die('<script>window.location.href = "/lk/profile?type=Personalization"</script>');
     exit;
   } catch (Exception $e) {
     error_log($e->getMessage());
