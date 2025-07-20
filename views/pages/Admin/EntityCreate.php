@@ -51,7 +51,7 @@ if (isset($_POST['create'])) {
         <div class="col-md-3">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Название переменной</label>
-                <input name="variablename_1" type="text" class="form-control" id="exampleFormControlInput1" placeholder="#FFFFFF">
+                <input name="variablename_1" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Название">
             </div>
         </div>
         <div class="col-md-3">

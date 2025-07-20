@@ -446,7 +446,7 @@ class Register
                                 $iv = openssl_random_pseudo_bytes(16);
                                 $encryptedIp = openssl_encrypt($ip, 'AES-256-CBC', $encryptionKey, 0, $iv);
                                 $encryptedLoc = openssl_encrypt($loc, 'AES-256-CBC', $encryptionKey, 0, $iv);
-                                DB::query('INSERT INTO login_tokens VALUES (\'0\', :token, :user_id, :device, :os, :ip, :loc, :la, :crd, :iv)', array(
+                                DB::query('INSERT INTO login_tokens (id, token, iv, user_id, device_name, os, ip, location, last_activity, created_at) VALUES (\'0\', :token, :iv, :user_id, :device, :os, :ip, :loc, :la, :crd)', array(
                                     ':token' => $token,
                                     ':user_id' => $user_id,
                                     ':device' => $device,

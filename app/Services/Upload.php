@@ -76,7 +76,7 @@ class Upload
             $this->name = $name;
         } else {
             // Формирование путей
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads{$location}";
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/{$location}";
             $destination = "{$uploadDir}/{$filecdn}";
 
             // Создание директории
