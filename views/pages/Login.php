@@ -40,7 +40,7 @@ if (Auth::userid() > 0) {
                             <div style="color:#e00" id="err_password"></div>
 
                          
-                            <input type="button" id="loginbtn" class="mf-button-wide" value="Войти"style="margin-top:15px" >
+                            <input type="submit" id="loginbtn" class="mf-button-wide" value="Войти"style="margin-top:15px" >
 
                         </form>
 

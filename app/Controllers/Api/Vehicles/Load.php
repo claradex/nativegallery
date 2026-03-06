@@ -13,7 +13,7 @@ class Load
     public function __construct()
     {
 
-        $entities_data = DB::query('SELECT * FROM entities_data WHERE (LOWER(title) LIKE :value) OR (LOWER(id) LIKE :value) AND entityid=:pid', array(':pid' => $_GET['type'], ':value'=>'%'.$_GET['num'].'%'));
+        $entities_data = DB::query('SELECT * FROM entities_data WHERE ((LOWER(title) LIKE :value1) OR (LOWER(id) LIKE :value2)) AND entityid=:pid', array(':pid' => $_GET['type'], ':value1'=>'%'.$_GET['num'].'%', ':value2'=>'%'.$_GET['num'].'%'));
         echo '<table>';
         foreach ($entities_data as $e) {
             $vehicle = new Vehicle($e['entityid']);

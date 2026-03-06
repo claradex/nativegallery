@@ -85,9 +85,7 @@ if ($alert != null) {
             <option value="1" <?php if ((int)$user->i('admin') === 1) {
                                     echo 'selected';
                                 }
-                                if (Auth::userid() === 1) {
-                                    echo 'disabled';
-                                } ?>>Администратор</option>
+                                ?>>Администратор</option>
             <option value="2" <?php if ((int)$user->i('admin') === 2) {
                                     echo 'selected';
                                 } ?>>Фотомодератор</option>
