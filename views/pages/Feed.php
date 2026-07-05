@@ -68,7 +68,7 @@ use App\Models\{User, Vote, Comment};
                     <table>
                         <tr>
                             <td class="pb-pre">'.Date::zmdate($p['timeupload']).'</td>
-                            <td class="pb_photo" id="p2017137"><a href="/photo/'.$p['id'].'" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url=' . $p['photourl'] . '" alt="598 КБ">
+                            <td class="pb_photo" id="p2017137"><a href="/photo/'.$p['id'].'" target="_blank" class="prw"><img class="f" src="' . ng_photo_thumb($p['photourl']) . '" alt="598 КБ">
                                     <div class="hpshade">
                                         <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$p['id']))[0]['COUNT(*)'].'</div>
                                     </div>

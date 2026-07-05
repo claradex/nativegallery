@@ -94,7 +94,7 @@ $statusForPhoto = static function (array $photo): array {
                                     <tr class="<?= $status['class'] ?>">
                                         <td class="pb-photo pb_photo">
                                             <a href="/photo/<?= (int) $photo['id'] ?>/" target="_blank" class="prw">
-                                                <img src="/api/photo/compress?url=<?= htmlspecialchars($photo['photourl']) ?>" class="f" alt="">
+                                                <img src="<?= htmlspecialchars(ng_photo_thumb($photo['photourl'])) ?>" class="f" alt="">
                                             </a>
                                         </td>
                                         <td class="d">
@@ -120,7 +120,7 @@ $statusForPhoto = static function (array $photo): array {
                                     <tr class="s2">
                                         <td class="pb-photo pb_photo">
                                             <a href="/photo/<?= (int) $row['photo_id'] ?>/" target="_blank" class="prw">
-                                                <img src="/api/photo/compress?url=<?= htmlspecialchars((string) $row['photourl']) ?>" class="f" alt="">
+                                                <img src="<?= htmlspecialchars(ng_photo_thumb((string) $row['photourl'])) ?>" class="f" alt="">
                                             </a>
                                         </td>
                                         <td class="d">

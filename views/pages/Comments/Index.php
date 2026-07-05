@@ -47,7 +47,7 @@ use \App\Models\{User, Photo, Vote};
                         $commclass = 'con';
                     }
                     echo '<div class="p-comment p20p">
-                    <div class="pc-photo"><a href="/photo/'.$c['photo_id'].'/?top=1" target="_blank" class="prw"><img src="/api/photo/compress?url='.$photo->i('photourl').'" class="f"></a></div>
+                    <div class="pc-photo"><a href="/photo/'.$c['photo_id'].'/?top=1" target="_blank" class="prw"><img src="'.ng_photo_thumb((string) $photo->i('photourl')).'" class="f"></a></div>
                     <div class="pc-content">
                         <a class="pc-topost" href="/photo/'.$c['photo_id'].'/?top=1#' . $c['id'] . '" target="_blank">Ссылка</a>
                         <div class="pc-text">

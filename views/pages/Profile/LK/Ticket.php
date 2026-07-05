@@ -89,8 +89,8 @@ $statusLabels = [
                                         );
                                         if ($photoRows) {
                                             $photoHtml = '<a href="/photo/' . $photoId . '/" target="_blank">'
-                                                . '<img src="/api/photo/compress?url='
-                                                . htmlspecialchars($photoRows[0]['photourl'])
+                                                . '<img src="'
+                                                . htmlspecialchars(ng_photo_thumb($photoRows[0]['photourl']))
                                                 . '" style="max-width:72px" alt=""></a>';
                                         } else {
                                             $photoHtml = '#' . $photoId;

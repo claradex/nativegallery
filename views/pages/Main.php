@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Services\{DB, Auth, Date, Json, SiteNews};
 use App\Models\{User, Vote, Comment};
@@ -78,7 +78,7 @@ LIMIT 10;');
                                     foreach ($photo as $p) {
                                         $author = new User($p['user_id']);
                                         echo '<a href="/photo/' . $p['id'] . '" class="prw pop-prw">
-   <img width="250" src="/api/photo/compress?url=' . $p['photourl'] . '">
+   <img width="250" src="' . ng_photo_thumb($p['photourl']) . '">
    <div class="hpshade">
       <div class="eye-icon">+' . $pd['view_count'] . '</div>
    </div>';
@@ -117,7 +117,7 @@ LIMIT 10;');
                                     } else {
                                         $date = Date::zmdate($p['posted_at']);
                                     }
-                                    $thumb = '/api/photo/compress?url=' . rawurlencode((string) $p['photourl']);
+                                    $thumb = 'ng_photo_thumb((string) $p['photourl']);
                                     echo '<div class="prw-grid-item">';
                                     echo '<div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars((string) $p['place']) . '</b></span>';
                                     echo '<div>' . htmlspecialchars($date) . '</div></div>';

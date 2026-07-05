@@ -126,7 +126,7 @@ $(document).ready(function()
                             <table>
                                 <tr>
                                     <td><a href="javascript:void(0)" role="button" pid="'.$pc['id'].'" class="contestBtn'.$class.'"></a></td>
-                                    <td class="pb_photo" id="p2068176"><a href="/photo/'.$pc['id'].'/" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url='.$pc['photourl'].'" data-src="/api/photo/compress?url='.$pc['photourl'].'" alt="630 КБ">
+                                    <td class="pb_photo" id="p2068176"><a href="/photo/'.$pc['id'].'/" target="_blank" class="prw"><img class="f" src="'.ng_photo_thumb($pc['photourl']).'" data-src="'.ng_photo_thumb($pc['photourl']).'" alt="630 КБ">
                                             <div class="hpshade">
                                                 <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$pc['id']))[0]['COUNT(*)'].'</div>
                                             </div>

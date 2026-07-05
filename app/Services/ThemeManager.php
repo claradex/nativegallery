@@ -9,6 +9,9 @@ use RuntimeException, InvalidArgumentException;
 
 class ThemeManager
 {
+    private static ?array $themesCache = null;
+    private static int $themesCacheMtime = 0;
+
     private $themepacksPath;
     private $loadedThemes = [];
     private $defaultThemeId = 'standard';
@@ -20,7 +23,15 @@ class ThemeManager
 
     public function loadThemes(): void
     {
-        if (!is_dir($this->themepacksPath)) return;
+        if (!is_dir($this->themepacksPath)) {
+            return;
+        }
+
+        $dirMtime = (int) filemtime($this->themepacksPath);
+        if (self::$themesCache !== null && self::$themesCacheMtime === $dirMtime) {
+            $this->loadedThemes = self::$themesCache;
+            return;
+        }
 
         $folders = array_diff(scandir($this->themepacksPath), ['..', '.']);
 
@@ -50,6 +61,9 @@ class ThemeManager
                 }
             }
         }
+
+        self::$themesCache = $this->loadedThemes;
+        self::$themesCacheMtime = $dirMtime;
     }
 
     public function getAllThemes(): array

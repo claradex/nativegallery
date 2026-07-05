@@ -21,7 +21,7 @@ $photo = new \App\Models\Photo($_GET['id']);
             <td class="main">
                 <center>
                     <h1>Информация об изображении</h1>
-                    <div style="display:inline-block"><a href="/photo/<?=$_GET['id']?>/"><img src="/api/photo/compress?url=<?= $photo->i('photourl') ?>" width="250" alt="347 КБ" class="f"></a></div>
+                    <div style="display:inline-block"><a href="/photo/<?=$_GET['id']?>/"><img src="<?= htmlspecialchars(ng_photo_thumb((string) $photo->i('photourl'))) ?>" width="250" alt="347 КБ" class="f"></a></div>
                     <br /><br />
 
                     <table class="p20">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Services\Search\CommentSearch;
 use App\Services\Date;
@@ -89,7 +89,7 @@ $buildUrl = function (int $st = 0) use ($queryBase) {
                             }
                             echo '<div class="p-comment p20p">
                                 <div class="pc-photo"><a href="/photo/' . $c['photo_id'] . '/?top=1" target="_blank" class="prw">
-                                    <img src="/api/photo/compress?url=' . urlencode($c['photourl']) . '" class="f"></a></div>
+                                    <img src="ng_photo_thumb($c['photourl']) . '" class="f"></a></div>
                                 <div class="pc-content">
                                     <a class="pc-topost" href="/photo/' . $c['photo_id'] . '/?top=1#' . $c['id'] . '" target="_blank">Ссылка</a>
                                     <div class="pc-text">

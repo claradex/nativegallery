@@ -118,7 +118,7 @@ if ($nonreviewedentities > 0) {
                             if ($requestPhotoId > 0) {
                                 $photoRows = DB::query('SELECT id, photourl FROM photos WHERE id = :id', array(':id' => $requestPhotoId));
                                 if ($photoRows) {
-                                    $photoHtml = '<a href="/photo/' . $requestPhotoId . '/" target="_blank"><img src="/api/photo/compress?url=' . htmlspecialchars($photoRows[0]['photourl']) . '" style="max-width:80px"></a>';
+                                    $photoHtml = '<a href="/photo/' . $requestPhotoId . '/" target="_blank"><img src="' . htmlspecialchars(ng_photo_thumb($photoRows[0]['photourl'])) . '" style="max-width:80px"></a>';
                                 } else {
                                     $photoHtml = '#' . $requestPhotoId . ' (не найдено)';
                                 }

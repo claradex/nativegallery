@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Api\Images;
 
-use App\Services\{DB, Date, Image};
+use App\Services\{DB, Date, ThumbUrl};
 
 class LoadRandom
 {
@@ -40,7 +40,7 @@ class LoadRandom
             'place' => '<span style="word-spacing:-1px"><b>' . htmlspecialchars((string) $photo['place']) . '</b></span>',
             'date' => $this->formatDate((int) $photo['posted_at']),
             'photourl_small' => $this->compressUrl((string) $photo['photourl']),
-            'photourl_extrasmall' => Image::generateBlurredPlaceholder((string) $photo['photourl']),
+            'photourl_extrasmall' => 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
             'ccnt' => $comments,
         ];
     }
@@ -56,6 +56,6 @@ class LoadRandom
 
     private function compressUrl(string $url): string
     {
-        return '/api/photo/compress?url=' . rawurlencode($url);
+        return ThumbUrl::resolve($url);
     }
 }

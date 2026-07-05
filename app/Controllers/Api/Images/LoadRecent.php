@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Api\Images;
 
-use \App\Services\{Auth, DB, Date, HTMLParser, Image};
+use \App\Services\{Auth, DB, Date, HTMLParser, ThumbUrl};
 use DOMDocument, DOMXPath;
 
 class LoadRecent
@@ -103,7 +103,7 @@ class LoadRecent
             'user_id' => $photo['user_id'],
             'photourl' => $photo['photourl'],
             'photourl_small' => $this->generateSmallUrl($photo['photourl']),
-            'photourl_extrasmall' => Image::generateBlurredPlaceholder($photo['photourl']),
+            'photourl_extrasmall' => self::getTransparentPixel(),
             'ccnt' => $comments
         ];
     }
@@ -118,7 +118,16 @@ class LoadRecent
 
     private function generateSmallUrl(string $url): string
     {
-        return 'https://' . $_SERVER['SERVER_NAME'] . '/api/photo/compress?url=' . urlencode($url);
+        $thumb = ThumbUrl::resolve($url);
+        if ($thumb !== '' && $thumb[0] === '/') {
+            return 'https://' . $_SERVER['SERVER_NAME'] . $thumb;
+        }
+        return $thumb;
+    }
+
+    private static function getTransparentPixel(): string
+    {
+        return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
     }
 
 }

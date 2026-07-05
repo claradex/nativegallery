@@ -101,7 +101,7 @@ foreach ($photos as $photo) {
                                             <option value="" disabled selected>Выберите фотографию</option>
                                             <?php foreach ($eligiblePhotos as $photo) { ?>
                                                 <option
-                                                    photourl="/api/photo/compress?url=<?= htmlspecialchars($photo['photourl'], ENT_QUOTES) ?>"
+                                                    photourl="<?= htmlspecialchars(ng_photo_thumb($photo['photourl']), ENT_QUOTES) ?>"
                                                     value="<?= (int) $photo['id'] ?>">
                                                     [ID: <?= (int) $photo['id'] ?>] <?= htmlspecialchars((string) $photo['place']) ?>
                                                 </option>

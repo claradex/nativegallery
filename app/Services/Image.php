@@ -7,6 +7,8 @@ use GdImage;
 
 class Image
 {
+    private static bool $dirsReady = false;
+
     private const CACHE_DIR = __DIR__ . '/../../cdn/';
     private const LOCK_DIR = __DIR__ . '/../../storage/locks/';
     private const QUEUE_FILE = __DIR__ . '/../../storage/queue/image_processing.queue';
@@ -22,9 +24,10 @@ class Image
                 return self::getCachedImage($cacheFile);
             }
 
+            $lockFile = self::LOCK_DIR . md5($imageUrl) . '.lock';
             if (!self::isProcessing($imageUrl)) {
+                @touch($lockFile);
                 self::addToQueue($imageUrl, $quality);
-                error_log("Added to queue: " . $imageUrl);
             }
 
             return self::getTransparentPixel();
@@ -36,35 +39,31 @@ class Image
 
     private static function checkDirectories(): void
     {
-        try {
-            $dirs = [
-                self::CACHE_DIR,
-                self::LOCK_DIR,
-                dirname(self::QUEUE_FILE)
-            ];
-
-            foreach ($dirs as $dir) {
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0755, true);
-                    error_log("Created directory: $dir");
-                }
-
-                // Проверяем права записи
-                if (!is_writable($dir)) {
-                    throw new Exception("Directory not writable: $dir");
-                }
-            }
-
-            // Создаем файл очереди
-            if (!file_exists(self::QUEUE_FILE)) {
-                touch(self::QUEUE_FILE);
-                chmod(self::QUEUE_FILE, 0666);
-                error_log("Created queue file: " . self::QUEUE_FILE);
-            }
-        } catch (Exception $e) {
-            error_log("Directory error: " . $e->getMessage());
-            throw $e;
+        if (self::$dirsReady) {
+            return;
         }
+
+        $dirs = [
+            self::CACHE_DIR,
+            self::LOCK_DIR,
+            dirname(self::QUEUE_FILE),
+        ];
+
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            if (!is_writable($dir)) {
+                throw new Exception("Directory not writable: $dir");
+            }
+        }
+
+        if (!is_file(self::QUEUE_FILE)) {
+            touch(self::QUEUE_FILE);
+            @chmod(self::QUEUE_FILE, 0666);
+        }
+
+        self::$dirsReady = true;
     }
 
 
@@ -197,9 +196,7 @@ class Image
 
     private static function isProcessing(string $imageUrl): bool
     {
-        return
-            file_exists(self::LOCK_DIR . md5($imageUrl) . '.lock') ||
-            self::isInQueue(md5($imageUrl));
+        return is_file(self::LOCK_DIR . md5($imageUrl) . '.lock');
     }
 
 

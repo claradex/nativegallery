@@ -73,7 +73,7 @@ use App\Models\{User, Vote, Comment, Photo};
                     <table>
                         <tr>
                             
-                            <td class="pb_photo" id="p2017137"><a href="/photo/'.$photo->i('id').'" target="_blank" class="prw"><img class="f" src="/api/photo/compress?url=' . $photo->i('photourl') . '" alt="598 КБ">
+                            <td class="pb_photo" id="p2017137"><a href="/photo/'.$photo->i('id').'" target="_blank" class="prw"><img class="f" src="' . ng_photo_thumb((string) $photo->i('photourl')) . '" alt="598 КБ">
                                     <div class="hpshade">
                                         <div class="eye-icon">'.DB::query('SELECT COUNT(*) FROM photos_views WHERE photo_id=:id', array(':id'=>$photo->i('id')))[0]['COUNT(*)'].'</div>
                                     </div>

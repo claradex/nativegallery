@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\{RuntimeInfo, ThumbUrl};
+
 if (!function_exists('ng_asset_query')) {
     function ng_asset_query(): string
     {
@@ -7,9 +9,8 @@ if (!function_exists('ng_asset_query')) {
         if ($query !== null) {
             return $query;
         }
-        $hash = @file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/.git/refs/heads/main');
-        $query = $hash ? mb_substr(trim($hash), 0, 7) : 'dev';
-        if (NGALLERY['root']['cloudflare-caching'] === true) {
+        $query = RuntimeInfo::gitShortHash();
+        if (defined('NGALLERY') && NGALLERY['root']['cloudflare-caching'] === true) {
             $query .= '.' . time();
         }
         return $query;
@@ -18,5 +19,12 @@ if (!function_exists('ng_asset_query')) {
     function ng_asset(string $path): string
     {
         return $path . '?' . ng_asset_query();
+    }
+}
+
+if (!function_exists('ng_photo_thumb')) {
+    function ng_photo_thumb(string $url, int $quality = 20): string
+    {
+        return ThumbUrl::resolve($url, $quality);
     }
 }

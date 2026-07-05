@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Api\Images;
 
+use App\Services\ThumbUrl;
+
 class Compress
 {
     private const MAX_REDIRECTS = 3;
@@ -105,36 +107,25 @@ class Compress
 
     private function generateCachePath(): void
     {
-        $params = [
-            'url' => $this->sourceUrl,
-            'q' => $this->quality,
-            'w' => $this->width,
-            'h' => $this->height,
-            'strip' => $this->config['stripMeta'],
-            'resizePct' => $this->config['resizePercentage'],
-        ];
-
-        $hash = md5(serialize($params));
-        $subdir = substr($hash, 0, 2);
-        $this->cachePath = $_SERVER['DOCUMENT_ROOT'] . self::CACHE_DIR . $subdir . '/' . $hash . '.jpg';
+        $this->cachePath = ThumbUrl::compressCachePath($this->sourceUrl, $this->quality);
     }
 
     private function serveFromCache(): bool
     {
-        if (file_exists($this->cachePath)) {
-            $lastModified = filemtime($this->cachePath);
-
-            if (time() - $lastModified < self::MAX_CACHE_AGE) {
-                header('Content-Type: image/jpeg');
-                header('Content-Length: ' . filesize($this->cachePath));
-                header('Cache-Control: max-age=' . self::MAX_CACHE_AGE);
-                readfile($this->cachePath);
-                return true;
-            }
-
-            unlink($this->cachePath);
+        if (!is_readable($this->cachePath)) {
+            return false;
         }
-        return false;
+
+        $lastModified = filemtime($this->cachePath);
+        if ($lastModified === false || time() - $lastModified >= self::MAX_CACHE_AGE) {
+            @unlink($this->cachePath);
+            return false;
+        }
+
+        $publicPath = ThumbUrl::compressCachePublicPath($this->sourceUrl, $this->quality);
+        header('Location: ' . $publicPath, true, 302);
+        header('Cache-Control: public, max-age=' . self::MAX_CACHE_AGE);
+        exit;
     }
 
     private function saveToCache(string $data): void
