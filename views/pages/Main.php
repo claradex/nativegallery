@@ -117,7 +117,7 @@ LIMIT 10;');
                                     } else {
                                         $date = Date::zmdate($p['posted_at']);
                                     }
-                                    $thumb = 'ng_photo_thumb((string) $p['photourl']);
+                                    $thumb = ng_photo_thumb((string) $p['photourl']);
                                     echo '<div class="prw-grid-item">';
                                     echo '<div class="prw-wrapper"><span style="word-spacing:-1px"><b>' . htmlspecialchars((string) $p['place']) . '</b></span>';
                                     echo '<div>' . htmlspecialchars($date) . '</div></div>';

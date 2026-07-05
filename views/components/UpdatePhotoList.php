@@ -27,7 +27,7 @@ foreach ($photos as $p) {
                 <td class="pb-pre">' . htmlspecialchars(Date::formatDate((int) $p['timeupload'])) . '</td>
                 <td class="pb_photo">
                     <a href="/photo/' . (int) $p['id'] . '/" target="_blank" class="prw">
-                        <img class="f" src="ng_photo_thumb($p['photourl']) . '" alt="">
+                        <img class="f" src="' . ng_photo_thumb($p['photourl']) . '" alt="">
                         <div class="hpshade">';
     if ($commentsCount >= 1) {
         echo '<div class="com-icon">' . (int) $commentsCount . '</div>';

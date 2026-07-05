@@ -234,7 +234,7 @@ $voteCountForEntry = static function (array $entry) use ($contestId): int {
                             $votes = $voteCountForEntry($entry);
                             $author = new User((int) $entry['user_id']);
                             $icon = $placeIcon($place);
-                            $thumb = 'ng_photo_thumb((string) $entry['photourl']);
+                            $thumb = ng_photo_thumb((string) $entry['photourl']);
                             $isCurrent = $entryPhotoId === $photoId;
                             ?>
                             <div class="p20p" style="<?= $isCurrent ? 'background:#f5f5f5; border-radius:8px;' : '' ?>">

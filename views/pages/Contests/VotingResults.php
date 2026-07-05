@@ -81,7 +81,7 @@ $placeIcon = static function (int $place): string {
                             foreach ($winners as $winner) {
                                 $photo = new Photo((int) $winner['photo_id']);
                                 $icon = $placeIcon((int) $winner['place']);
-                                $thumb = 'ng_photo_thumb((string) $photo->i('photourl'));
+                                $thumb = ng_photo_thumb((string) $photo->i('photourl'));
                                 echo '<td class="p20" style="text-align:center; vertical-align:bottom; padding:20px 20px 10px; font-size:17px">'
                                     . '<a href="/photo/' . (int) $winner['photo_id'] . '/">'
                                     . '<img src="' . htmlspecialchars($thumb) . '" class="f" style="margin-bottom:7px" alt="">'

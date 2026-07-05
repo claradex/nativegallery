@@ -12,7 +12,7 @@ foreach ($photos as $p) {
                 <tr>
                     <td class="pb_photo">
                         <a href="/photo/' . $p['id'] . '" target="_blank" class="prw">
-                            <img class="f" src="ng_photo_thumb($p['photourl']) . '">
+                            <img class="f" src="' . ng_photo_thumb($p['photourl']) . '">
                             <div class="hpshade">';
     $commentsCount = DB::query('SELECT COUNT(*) FROM photos_comments WHERE photo_id=:id', [':id' => $p['id']])[0]['COUNT(*)'];
     if ($commentsCount >= 1) {
