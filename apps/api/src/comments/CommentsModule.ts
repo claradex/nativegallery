@@ -96,7 +96,7 @@ class CommentsController {
       const counts = await tx.photoCommentRate.groupBy({ by: ['type'], where: { comment_id: id }, _count: { type: true } });
       const positive = counts.find(count => count.type === 1)?._count.type ?? 0;
       const negative = counts.find(count => count.type === 0)?._count.type ?? 0;
-      return [{ 1: selected === 1, 0: selected === 0 }, { 1: positive, 0: negative }, positive - negative];
+      return [{ 1: selected === 1, 0: selected === 0 }, { 1: positive, 0: -negative || 0 }, positive - negative];
     });
   }
 }
