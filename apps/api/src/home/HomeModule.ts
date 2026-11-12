@@ -1,8 +1,25 @@
 import { Controller, Get, Module } from '@nestjs/common';
+import type { SiteOverview } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 
 @Controller('api/internal')
 class HomeController {
+  @Get('about')
+  async about(): Promise<SiteOverview> {
+    const now = Math.floor(Date.now() / 1000);
+    const [users, photos, online, staff] = await Promise.all([
+      database.user.count(),
+      database.photo.count({ where: { moderated: 1 } }),
+      database.user.count({ where: { online: { gte: now - 300 } } }),
+      database.user.findMany({
+        where: { admin: { in: [1, 2, 3] } },
+        select: { id: true, username: true, photourl: true, admin: true },
+        orderBy: { id: 'asc' },
+      }),
+    ]);
+    return { users, photos, online, staff };
+  }
+
   @Get('home')
   async home() {
     const now = Math.floor(Date.now() / 1000);

@@ -1,6 +1,7 @@
 import { Document, type PageContext } from '../../components/Document';
 import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
+import { About } from '../../features/site/About';
 import { Rules } from '../../features/rules/Rules';
 
 export const dynamic = 'force-dynamic';
@@ -9,8 +10,23 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const path = (await route.params).path?.join('/') ?? '';
   const login = path === 'login';
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const markup = login ? Login() : path === '' ? await Home(api) : Rules(path);
-  if (!markup) return path === '' ? new Response('Service Unavailable', { status: 503 }) : new Response('Not Found', { status: 404 });
+  if (path === 'logout') {
+    const response = await fetch(api + '/api/internal/logout', {
+      headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store', redirect: 'manual',
+    }).catch(() => null);
+    if (response?.status !== 302) return new Response('Service Unavailable', { status: 503 });
+    const headers = new Headers({ Location: '/', 'Cache-Control': 'private, no-store' });
+    for (const cookie of response.headers.getSetCookie()) headers.append('Set-Cookie', cookie);
+    return new Response(null, { status: 302, headers });
+  }
+  if (path === 'robots.txt') {
+    const hostname = process.env.SITE_ORIGIN ? new URL(process.env.SITE_ORIGIN).hostname : new URL(request.url).hostname;
+    return new Response('User-Agent: *\nDisallow: /lk/\nClean-Param: vid&gid&upd /photo/\nHost: https://' + hostname, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
+  const markup = login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : Rules(path);
+  if (!markup) return path === '' || path === 'about' ? new Response('Service Unavailable', { status: 503 }) : new Response('Not Found', { status: 404 });
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);

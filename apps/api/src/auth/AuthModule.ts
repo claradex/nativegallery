@@ -8,11 +8,16 @@ import type { LoginRequest, LoginResponse, Viewer } from '@nativegallery/contrac
 const sessionAge = 50 * 50 * 54 * 72 * 1000;
 const failure: LoginResponse = { errorcode: '1', error: 1 };
 const sessionCookie = 'NGALLERYSESS';
+const sessionCookies = [sessionCookie, 'NGALLERYSERVICE', 'NGALLERYSESS_', 'NGALLERYID'];
+
+function sessionToken(request: Request) {
+  return request.headers.cookie?.match(/(?:^|;\s*)NGALLERYSESS=([a-f0-9-]{36})(?:;|$)/i)?.[1];
+}
 
 @Injectable()
 export class AuthService {
   async viewer(request: Request): Promise<Viewer | null> {
-    const token = request.headers.cookie?.match(/(?:^|;\s*)NGALLERYSESS=([a-f0-9-]{36})(?:;|$)/i)?.[1];
+    const token = sessionToken(request);
     if (!token) return null;
     const lastValid = BigInt(Math.floor((Date.now() - sessionAge) / 1000));
     const session = await database.loginToken.findFirst({
@@ -64,6 +69,15 @@ class AuthController {
   @Header('Content-Type', 'text/html; charset=utf-8')
   async login(@Body() body: Partial<LoginRequest>, @Res({ passthrough: true }) response: Response) {
     return JSON.stringify(await this.auth.login(body, response));
+  }
+
+  @Get('internal/logout')
+  async logout(@Req() request: Request, @Res() response: Response) {
+    const token = sessionToken(request);
+    if (token) await database.loginToken.deleteMany({ where: { token: 'v2:' + token } });
+    for (const name of sessionCookies) response.clearCookie(name, { path: '/' });
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.redirect(302, '/');
   }
 
   @Get('internal/viewer')

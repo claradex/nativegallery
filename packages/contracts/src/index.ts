@@ -25,3 +25,10 @@ export interface MediaJob {
 }
 
 export { legacyDate } from './Date';
+
+export interface SiteOverview {
+  users: number;
+  photos: number;
+  online: number;
+  staff: { id: number; username: string; photourl: string; admin: number }[];
+}

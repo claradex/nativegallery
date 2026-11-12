@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Module, Param, Query, Req } from '@nestjs/common';
+import { Controller, ForbiddenException, Get, Header, Module, Param, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthModule, AuthService } from '../auth/AuthModule';
@@ -6,6 +6,18 @@ import { AuthModule, AuthService } from '../auth/AuthModule';
 @Controller('api')
 class CatalogController {
   constructor(private readonly auth: AuthService) {}
+
+  @Get('users/search')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  async searchUsers(@Query('q') query: unknown) {
+    if (query !== undefined && typeof query !== 'string') return 'null';
+    const users = await database.user.findMany({
+      where: { username: { contains: query ?? '' } },
+      select: { id: true, username: true, photourl: true },
+      orderBy: { id: 'asc' }, take: 10,
+    });
+    return JSON.stringify(users.length ? users : null);
+  }
 
   @Get('users/load/:id')
   async user(@Param('id') id: string) {
