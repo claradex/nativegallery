@@ -70,3 +70,19 @@ export interface PhotoCommentData {
   canEdit: boolean;
   canPin: boolean;
 }
+
+export interface PhotoPageData {
+  id: number;
+  authorId: number;
+  author: string;
+  url: string;
+  place: string;
+  description: string;
+  takenAt: number;
+  publishedAt: number;
+  published: boolean;
+  views: number;
+  favorite: boolean;
+  signedIn: boolean;
+  commentsEnabled: boolean;
+}

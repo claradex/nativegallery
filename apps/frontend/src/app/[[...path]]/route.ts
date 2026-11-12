@@ -5,6 +5,7 @@ import { NotFound, Tour } from '../../features/site/StaticPages';
 import { About } from '../../features/site/About';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
+import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
 import { Rules } from '../../features/rules/Rules';
@@ -30,7 +31,9 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const followed = path === 'fav_authors' ? await FollowedPhotos(request, api)
+  const photoId = path.match(/^photo\/(\d+)$/)?.[1];
+  const followed = photoId ? await PhotoPage(request, api, photoId)
+    : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
   const markup = followed ?? ( login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : Rules(path));
