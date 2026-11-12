@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
+import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
 import { NotFound } from '../site/StaticPages';
 
@@ -42,6 +43,7 @@ function PhotoContent({ photo, comments }: { photo: PhotoPageData; comments: Pho
               </a>
             </div></div>
           </div>}
+          <PhotoRating photo={photo} />
         </td>
         <td id="pp-main-col">
           <div className="p0" id="pp-item-comments">

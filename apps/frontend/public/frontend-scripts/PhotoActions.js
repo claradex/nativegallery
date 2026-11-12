@@ -87,3 +87,22 @@ commentsPanel?.addEventListener('click', async event => {
     delete comment.dataset.pending;
   }
 });
+
+const photoVote = document.querySelector('[data-photo-vote]');
+let voting = false;
+photoVote?.addEventListener('click', async event => {
+  const button = event.target.closest?.('[data-vote]');
+  if (!button) return;
+  event.preventDefault();
+  if (voting) return;
+  voting = true;
+  try {
+    const query = new URLSearchParams({ pid: photoVote.dataset.photoVote, vote: button.dataset.vote });
+    const response = await fetch('/api/photo/vote?' + query, { cache: 'no-store' });
+    if (!response.ok || !(await response.json())?.buttons) throw new Error();
+    location.reload();
+  } catch {
+    voting = false;
+    window.alert('Не удалось сохранить оценку.');
+  }
+});

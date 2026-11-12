@@ -27,11 +27,32 @@ export class PhotoPageController {
       viewer ? database.photoFavorite.findFirst({ where: { photo_id: id, user_id: viewer.id }, select: { id: true } }) : null,
     ]);
     let commentsEnabled = true;
-    try { commentsEnabled = JSON.parse(photo.content)?.comments !== 'disabled'; } catch {}
+    let ratingEnabled = true;
+    try {
+      const content = JSON.parse(photo.content);
+      commentsEnabled = content?.comments !== 'disabled';
+      ratingEnabled = content?.rating !== 'disabled';
+    } catch {}
+    let rating: PhotoPageData['rating'] = null;
+    if (photo.moderated === 1 && ratingEnabled) {
+      const votes = await database.photoRate.findMany({ where: { photo_id: id }, orderBy: { id: 'desc' } });
+      const users = await database.user.findMany({
+        where: { id: { in: [...new Set(votes.map(vote => vote.user_id))] } },
+        select: { id: true, username: true },
+      });
+      const names = new Map(users.map(user => [user.id, user.username]));
+      rating = {
+        total: votes.reduce((total, vote) => total + (vote.type === 1 ? 1 : -1), 0),
+        current: votes.find(vote => vote.contest === 0 && vote.user_id === viewer?.id)?.type ?? null,
+        votes: votes.filter(vote => vote.contest === 0).map(vote => ({
+          id: vote.id, authorId: vote.user_id, author: names.get(vote.user_id) ?? '', type: vote.type,
+        })),
+      };
+    }
     return {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
-      published: photo.moderated === 1, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled,
+      published: photo.moderated === 1, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
       canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
     };
   }

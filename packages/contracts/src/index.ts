@@ -86,4 +86,9 @@ export interface PhotoPageData {
   signedIn: boolean;
   commentsEnabled: boolean;
   canComment: boolean;
+  rating: {
+    total: number;
+    current: number | null;
+    votes: { id: number; authorId: number; author: string; type: number }[];
+  } | null;
 }
