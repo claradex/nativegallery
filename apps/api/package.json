@@ -9,15 +9,16 @@
     "start": "node --env-file-if-exists=../../.env dist/main.js"
   },
   "dependencies": {
+    "@nativegallery/contracts": "2.0.0",
+    "@nativegallery/database": "2.0.0",
+    "@nativegallery/jobs": "2.0.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "@nativegallery/database": "2.0.0",
-    "@nativegallery/contracts": "2.0.0",
-    "@nativegallery/jobs": "2.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@types/express": "^5.0.0",
-    "bcryptjs": "^3.0.0"
+    "bcryptjs": "^3.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "sharp": "^0.35.5"
   }
 }

@@ -6,6 +6,7 @@ import { CatalogModule } from './catalog/CatalogModule';
 import { HomeModule } from './home/HomeModule';
 import { PhotoRatingsModule } from "./photos/PhotoRatingsModule";
 import { PhotoDetailsModule } from './photos/PhotoDetailsModule';
+import { PhotoStatsModule } from "./photos/PhotoStatsModule";
 import { PhotosModule } from './photos/PhotosModule';
 import { ContestsModule } from './contests/ContestsModule';
 import { EngagementModule } from './catalog/EngagementModule';
@@ -19,7 +20,7 @@ class HealthController {
   health() { return { status: 'ok' }; }
 }
 
-@Module({ imports: [AuthModule, CatalogModule, JobsModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule], controllers: [HealthController] })
+@Module({ imports: [AuthModule, CatalogModule, JobsModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule, PhotoStatsModule], controllers: [HealthController] })
 class ApiModule {}
 
 async function main() {
