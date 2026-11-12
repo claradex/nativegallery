@@ -1,5 +1,6 @@
 import { Controller, ForbiddenException, Get, Header, Module, Param, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
+import type { TopPhoto } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthModule, AuthService } from '../auth/AuthModule';
 
@@ -12,6 +13,25 @@ function parseId(value: unknown): number | undefined {
 @Controller('api')
 class EngagementController {
   constructor(private readonly auth: AuthService) {}
+
+  @Get('internal/favorite-photos')
+  @Header('Cache-Control', 'private, no-store')
+  async favorites(@Req() request: Request): Promise<TopPhoto[]> {
+    const viewer = await this.auth.viewer(request);
+    if (!viewer) throw new ForbiddenException();
+    const rows = await database.$queryRaw<(Omit<TopPhoto, 'views'> & { views: bigint })[]>(Prisma.sql`
+      SELECT p.id, p.photourl, p.place, p.postbody, p.posted_at AS timeupload, p.user_id AS authorId,
+             COALESCE(u.username, '') AS author,
+             (SELECT COUNT(*) FROM photos_views v WHERE v.photo_id = p.id) AS views
+      FROM photos_favorite f
+      JOIN photos p ON p.id = f.photo_id
+      LEFT JOIN users u ON u.id = p.user_id
+      WHERE f.user_id = ${viewer.id}
+        AND (p.moderated = 1 OR p.user_id = ${viewer.id} OR ${viewer.admin} > 0)
+      ORDER BY f.id DESC LIMIT 100
+    `);
+    return rows.map(row => ({ ...row, views: Number(row.views) }));
+  }
 
   @Get('photo/:id/favorite')
   @Header('Cache-Control', 'private, no-store')
