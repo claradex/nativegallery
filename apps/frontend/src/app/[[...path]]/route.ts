@@ -3,6 +3,7 @@ import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { About } from '../../features/site/About';
+import { TopPhotos } from '../../features/photos/TopPhotos';
 import { Rules } from '../../features/rules/Rules';
 
 export const dynamic = 'force-dynamic';
@@ -26,8 +27,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const markup = login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'tour' ? Tour() : Rules(path);
-  if (!markup) return path === '' || path === 'about' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
+  const markup = login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'top30' ? await TopPhotos(api) : path === 'tour' ? Tour() : Rules(path);
+  if (!markup) return path === '' || path === 'about' || path === 'top30' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);

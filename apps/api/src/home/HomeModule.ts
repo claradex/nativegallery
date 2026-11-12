@@ -1,5 +1,5 @@
 import { Controller, Get, Module } from '@nestjs/common';
-import type { SiteOverview } from '@nativegallery/contracts';
+import type { SiteOverview, TopPhoto } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 
 @Controller('api/internal')
@@ -18,6 +18,19 @@ class HomeController {
       }),
     ]);
     return { users, photos, online, staff };
+  }
+
+  @Get('top30')
+  topPhotos() {
+    const since = Math.floor(Date.now() / 1000) - 86400;
+    return database.$queryRaw<TopPhoto[]>(Prisma.sql`
+      SELECT p.id, p.photourl, p.place, p.postbody, p.timeupload, p.user_id AS authorId,
+        COALESCE(u.username, '') AS author, CAST(v.views AS DOUBLE) AS views
+      FROM (SELECT photo_id, COUNT(*) AS views FROM photos_views
+            WHERE time >= ${since} GROUP BY photo_id ORDER BY views DESC, photo_id LIMIT 30) v
+      JOIN photos p ON p.id = v.photo_id
+      LEFT JOIN users u ON u.id = p.user_id
+      WHERE p.moderated = 1 ORDER BY v.views DESC, p.id`);
   }
 
   @Get('home')

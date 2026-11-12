@@ -32,3 +32,14 @@ export interface SiteOverview {
   online: number;
   staff: { id: number; username: string; photourl: string; admin: number }[];
 }
+
+export interface TopPhoto {
+  id: number;
+  photourl: string;
+  place: string;
+  postbody: string;
+  timeupload: number;
+  authorId: number;
+  author: string;
+  views: number;
+}
