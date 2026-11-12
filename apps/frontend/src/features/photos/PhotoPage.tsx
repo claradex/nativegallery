@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
+import { CommentForm } from "./CommentForm";
 import { PhotoComments } from './PhotoComments';
 import { NotFound } from '../site/StaticPages';
 
@@ -48,7 +49,7 @@ function PhotoContent({ photo, comments }: { photo: PhotoPageData; comments: Pho
               {' '}<span style={{ color: '#aaa' }}>·</span> {comments.length}
             </span>}</h4>
             <div className="pp-item-body">
-              {photo.commentsEnabled ? <PhotoComments comments={comments} />
+              {photo.commentsEnabled ? <><PhotoComments comments={comments} />{photo.published && <CommentForm photoId={photo.id} signedIn={photo.signedIn} allowed={photo.canComment} />}</>
                 : <p>Комментарии отключены пользователем или по усмотрению Администрации.</p>}
             </div>
           </div>

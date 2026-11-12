@@ -32,6 +32,7 @@ export class PhotoPageController {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
       published: photo.moderated === 1, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled,
+      canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
     };
   }
 }

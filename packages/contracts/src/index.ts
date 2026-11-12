@@ -85,4 +85,5 @@ export interface PhotoPageData {
   favorite: boolean;
   signedIn: boolean;
   commentsEnabled: boolean;
+  canComment: boolean;
 }

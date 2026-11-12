@@ -26,3 +26,64 @@ document.getElementById('pp-item-comments')?.addEventListener('click', event => 
   text.style.display = text.hidden ? '' : 'inline';
   button.textContent = text.hidden ? 'показать больше' : 'показать меньше';
 });
+
+const commentsPanel = document.getElementById('pp-item-comments');
+const commentForm = commentsPanel?.querySelector('#f1');
+
+commentForm?.addEventListener('submit', async event => {
+  event.preventDefault();
+  const editor = commentForm.querySelector('#wtext');
+  const submit = commentForm.querySelector('#sbmt');
+  const status = commentForm.querySelector('#statusSend');
+  if (submit.disabled) return;
+  const body = new FormData(commentForm);
+  body.set('wtext', editor.innerText.trim());
+  status.hidden = true;
+  submit.disabled = true;
+  try {
+    const response = await fetch(commentForm.action, { method: 'POST', body });
+    const result = response.ok ? await response.json() : null;
+    if (result?.error !== 0) throw new Error();
+    location.reload();
+  } catch {
+    status.textContent = 'Не удалось добавить комментарий.';
+    status.hidden = false;
+    submit.disabled = false;
+  }
+});
+
+commentsPanel?.addEventListener('click', async event => {
+  const control = event.target.closest?.('[data-comment-action]');
+  if (!control || control.dataset.commentAction === 'expand') return;
+  event.preventDefault();
+  const comment = control.closest('[data-comment-id]');
+  const id = comment?.dataset.commentId;
+  if (!id || comment.dataset.pending) return;
+  const action = control.dataset.commentAction;
+  const root = '/api/photo/comment/';
+  let url = root + id + '/' + action;
+  let options = { method: 'POST' };
+  if (action === 'vote') {
+    url = root + 'rate?' + new URLSearchParams({ wid: id, vote: control.dataset.vote });
+    options = { cache: 'no-store' };
+  } else if (action === 'edit') {
+    const value = window.prompt('Редактировать комментарий', control.dataset.commentBody);
+    if (value === null) return;
+    options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value }) };
+  } else if (action === 'delete') {
+    if (!window.confirm('Удалить комментарий?')) return;
+  } else if (action !== 'pin') {
+    return;
+  }
+
+  comment.dataset.pending = 'true';
+  try {
+    const response = await fetch(url, options);
+    const result = response.ok ? await response.json() : null;
+    if (action === 'vote' ? !Array.isArray(result) : result?.error !== 0) throw new Error();
+    location.reload();
+  } catch {
+    window.alert('Не удалось выполнить действие.');
+    delete comment.dataset.pending;
+  }
+});
