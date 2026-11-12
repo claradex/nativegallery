@@ -1,5 +1,6 @@
 const scripts: Record<string, boolean> = {
   "Head": false,
+  "FollowedPhotos": false,
   "Login": false,
   "TourTabs": false,
   "TourLogin": false,
