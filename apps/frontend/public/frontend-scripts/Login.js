@@ -1,38 +1,48 @@
-$(document).ready(function() {
-                            $('#username').on('input', function() {
-                                $('#err_password, #err_username').html('');
-                            });
-                            $('#password').on('input', function() {
-                                $('#err_password').html('');
-                            });
+const form = document.querySelector('#form');
+const username = document.querySelector('#username');
+const password = document.querySelector('#password');
+const submit = document.querySelector('#loginbtn');
+const usernameError = document.querySelector('#err_username');
+const passwordError = document.querySelector('#err_password');
 
-                            $('#loginbtn').on('click', function() {
-                                var username = $('#username').val().trim();
-                                var password = $('#password').val().trim();
+username?.addEventListener('input', () => {
+  usernameError.textContent = '';
+  passwordError.textContent = '';
+});
+password?.addEventListener('input', () => { passwordError.textContent = ''; });
 
-                                var err_username = $('#err_username').html('');
-                                var err_password = $('#err_password').html('');
+async function login(event) {
+  event.preventDefault();
+  if (submit.disabled) return;
+  const name = username.value.trim();
+  const secret = password.value.trim();
+  usernameError.textContent = name ? '' : 'Поле не заполнено';
+  passwordError.textContent = secret ? '' : 'Поле не заполнено';
+  if (!name || !secret) return;
 
-                                if (username == '') err_username.html('Поле не заполнено');
-                                if (password == '') err_password.html('Поле не заполнено');
+  submit.disabled = true;
+  submit.value = 'Отправка данных...';
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      body: new URLSearchParams({
+        username: name, password: secret, remember: String(Boolean(document.querySelector('#remember')?.checked)),
+      }),
+    });
+    if (!response.ok) throw new Error('Login request failed');
+    const data = await response.json();
+    if (data.errorcode === '0') {
+      window.location.assign('/');
+      return;
+    }
+    passwordError.textContent = 'Неверно указаны логин и/или пароль';
+  } catch {
+    passwordError.textContent = 'Не удалось отправить запрос. Попробуйте ещё раз.';
+  } finally {
+    submit.disabled = false;
+    submit.value = 'Войти';
+  }
+}
 
-                                if (err_username.html() + err_password.html() == '') {
-                                    $('#loginbtn').prop('disabled', true).val('Отправка данных...');
-
-                                    $.post('/api/login', {
-                                            username: username,
-                                            password: password,
-                                            remember: $('#remember').is('checked')
-                                        }, function(r) {
-                                            r = JSON.parse(r);
-                                            if (r.errorcode == 1) {
-                                                err_password.html('Неверно указаны логин и/или пароль');
-                                                $('#loginbtn').prop('disabled', false).val('Войти');
-                                            } else window.location.href = '/';
-                                        })
-                                        .fail(function(jx) {
-                                            if (jx.responseText != '') alert(jx.responseText);
-                                        });
-                                }
-                            });
-                        });
+submit?.addEventListener('click', login);
+form?.addEventListener('submit', login);

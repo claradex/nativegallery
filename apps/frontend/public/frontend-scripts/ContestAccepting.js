@@ -1,41 +1,35 @@
-(function (contestTime) {
-$(document).ready(function () {
-                                    let unixThreshold = contestTime; // Задайте нужное значение UNIX
-                                    let checkInterval = 1000; // Интервал проверки в миллисекундах (1 секунда)
-                                    let isRequestSent = false;
+(function (threshold) {
+  const countdown = document.getElementById('countdown');
+  if (!countdown || !Number.isFinite(threshold)) return;
 
-                                    function checkUnixTime() {
-                                        let currentUnixTime = Math.floor(Date.now() / 1000);
+  async function check() {
+    if (Date.now() >= threshold * 1000) {
+      countdown.textContent = 'Ожидаем ответ от сервера...';
+      try {
+        const response = await fetch('/api/contests/getinfo', { cache: 'no-store' });
+        if (response.ok) {
+          const { statuses, contest } = await response.json();
+          if (statuses?.pretends === 'closed' && statuses.public === 'opened' && contest?.closedate) {
+            document.getElementById('textContest').textContent =
+              'Голосуйте за лучшие фотографии, которые должны стать победителями сегодняшнего конкурса!';
+            document.getElementById('timett').textContent = 'Закончится через:';
+            const link = document.createElement('a');
+            link.href = '/voting';
+            link.style.backgroundColor = '#37009D';
+            link.style.color = '#fff';
+            link.setAttribute('type', 'button');
+            link.textContent = 'Голосовать!';
+            document.getElementById('contestBtns').replaceChildren(link);
+            startCountdown(contest.closedate);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    window.setTimeout(check, 1000);
+  }
 
-                                        if (currentUnixTime > unixThreshold) {
-                                            $("#countdown").text("Ожидаем ответ от сервера...");
-
-                                            $.ajax({
-                                                url: "/api/contests/getinfo", // Укажите свой URL
-                                                method: "GET",
-                                                success: function (response) {
-
-                                                    let data = typeof response === "string" ? JSON.parse(response) : response;
-                                                      if (data.statuses.pretends === "closed" && data.statuses.public === "opened") {
-                                                        clearInterval(pingInterval); // Останавливаем старый пинг
-                                                        $("#textContest").text("Голосуйте за лучшие фотографии, которые должны стать победителями сегодняшнего конкурса!");
-                                                        $("#timett").text("Закончится через:");
-                                                        $("#contestBtns").html(`<a href="/voting" style="background-color: #37009D; color: #fff;" type="button">Голосовать!</a>`)
-                                                        unixThreshold = data.contest.closedate;
-                                                        startCountdown(data.contest.closedate);
-                                                        pingInterval = setInterval(checkUnixTime, checkInterval);
-                                                    }
-                                                },
-                                                error: function (xhr, status, error) {
-                                                    console.error("Ошибка запроса:", error);
-                                                }
-                                            });
-                                        } else {
-                                            console.log(currentUnixTime);
-                                        }
-                                    }
-
-                                    // Запускаем периодический пинг
-                                    let pingInterval = setInterval(checkUnixTime, checkInterval);
-                                });
+  window.setTimeout(check, 1000);
 })(Number(document.currentScript.dataset.contestTime));
