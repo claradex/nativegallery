@@ -43,3 +43,12 @@ export interface TopPhoto {
   author: string;
   views: number;
 }
+
+export interface PhotoDetailsData {
+  id: number;
+  url: string;
+  author: string;
+  publishedAt: number;
+  views: number;
+  comments: number;
+}
