@@ -36,3 +36,9 @@
   document.addEventListener('focusin', event => setFieldActive(event, true));
   document.addEventListener('focusout', event => setFieldActive(event, false));
 })();
+document.addEventListener('error', event => {
+  const image = event.target;
+  if (!(image instanceof HTMLImageElement) || !image.hasAttribute('data-avatar-fallback')) return;
+  image.removeAttribute('data-avatar-fallback');
+  image.src = '/static/img/avatar.png';
+}, true);
