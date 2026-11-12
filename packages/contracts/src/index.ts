@@ -23,3 +23,5 @@ export interface MediaJob {
   input: string;
   output: string;
 }
+
+export { legacyDate } from './Date';

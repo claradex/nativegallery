@@ -3,6 +3,9 @@ import { Controller, Get, Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth/AuthModule';
 import { CatalogModule } from './catalog/CatalogModule';
+import { HomeModule } from './home/HomeModule';
+import { PhotosModule } from './photos/PhotosModule';
+import { ContestsModule } from './contests/ContestsModule';
 import { JobsModule } from './jobs/JobsModule';
 
 @Controller('api')
@@ -11,7 +14,7 @@ class HealthController {
   health() { return { status: 'ok' }; }
 }
 
-@Module({ imports: [AuthModule, CatalogModule, JobsModule], controllers: [HealthController] })
+@Module({ imports: [AuthModule, CatalogModule, JobsModule, HomeModule, PhotosModule, ContestsModule], controllers: [HealthController] })
 class ApiModule {}
 
 async function main() {

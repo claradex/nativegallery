@@ -9,7 +9,7 @@
   "scripts": {
     "db:generate": "prisma generate --schema packages/database/prisma/schema.prisma",
     "db:deploy": "prisma migrate deploy --schema packages/database/prisma/schema.prisma",
-    "build": "npm run db:generate && npm run build -w @nativegallery/contracts -w @nativegallery/database -w @nativegallery/jobs -w @nativegallery/api -w @nativegallery/crons -w @nativegallery/media-worker -w @nativegallery/frontend"
+    "build": "npm run db:generate && npm run build -w @nativegallery/contracts && npm run build -w @nativegallery/database && npm run build -w @nativegallery/jobs && npm run build -w @nativegallery/api && npm run build -w @nativegallery/crons && npm run build -w @nativegallery/media-worker && npm run build -w @nativegallery/frontend"
   },
   "devDependencies": {
     "typescript": "5.9.3",

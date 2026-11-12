@@ -69,7 +69,10 @@ class AuthController {
   @Get('internal/viewer')
   @Header('Cache-Control', 'private, no-store')
   async viewer(@Req() request: Request) {
-    return { viewer: await this.auth.viewer(request) };
+    const [viewer, versions] = await Promise.all([
+      this.auth.viewer(request), database.$queryRaw<{ version: string }[]>`SELECT VERSION() AS version`,
+    ]);
+    return { viewer, databaseVersion: versions[0]?.version ?? '' };
   }
 }
 
