@@ -52,3 +52,21 @@ export interface PhotoDetailsData {
   views: number;
   comments: number;
 }
+
+export interface PhotoCommentData {
+  id: number;
+  authorId: number;
+  author: { id: number; username: string; photourl: string; admin: number } | null;
+  publishedPhotos: number;
+  body: string;
+  postedAt: number;
+  edited: boolean;
+  attachmentType: 'img' | 'video' | null;
+  attachmentUrl: string | null;
+  pinned: boolean;
+  positive: number;
+  negative: number;
+  ownVote: number | null;
+  canEdit: boolean;
+  canPin: boolean;
+}

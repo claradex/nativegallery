@@ -1,4 +1,5 @@
 import { Controller, Get, Header, Module, NotFoundException, Param, Req } from '@nestjs/common';
+import type { PhotoCommentData } from "@nativegallery/contracts";
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthModule, AuthService } from '../auth/AuthModule';
@@ -19,7 +20,7 @@ class PhotoCommentsController {
 
   @Get('photo-comments/:id')
   @Header('Cache-Control', 'private, no-store')
-  async list(@Param('id') value: string, @Req() request: Request) {
+  async list(@Param('id') value: string, @Req() request: Request): Promise<PhotoCommentData[]> {
     const id = Number(value);
     if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
     const viewer = await this.auth.viewer(request);
