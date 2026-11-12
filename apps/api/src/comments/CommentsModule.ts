@@ -1,4 +1,5 @@
-import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Module, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Module, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common';
+import { NoFilesInterceptor } from "@nestjs/platform-express";
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthModule, AuthService } from '../auth/AuthModule';
@@ -27,6 +28,37 @@ class CommentsController {
     const viewer = await this.auth.viewer(request);
     if (!viewer) throw new ForbiddenException();
     return viewer;
+  }
+
+  @Post()
+  @HttpCode(200)
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  @UseInterceptors(NoFilesInterceptor({ limits: { fields: 12, fieldSize: 65535, parts: 12 } }))
+  async create(@Req() request: Request, @Body() body: { id?: unknown; wtext?: unknown }) {
+    const viewer = await this.viewer(request);
+    const id = idOf(body?.id);
+    const message = body?.wtext;
+    if (!id) return '{"errorcode":"3","error":1}';
+    if (typeof message !== 'string' || !message.trim()) return failure;
+    if (Buffer.byteLength(message) > 65535) return '{"errorcode":"2","error":1}';
+
+    return database.$transaction(async tx => {
+      const [photo] = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`
+        SELECT id FROM photos WHERE id = ${id}
+          AND (moderated = 1 OR user_id = ${viewer.id} OR ${viewer.admin} > 0)
+        FOR UPDATE`);
+      if (!photo) return '{"errorcode":"3","error":1}';
+      await tx.photoComment.create({
+        data: {
+          user_id: viewer.id,
+          photo_id: id,
+          body: message,
+          posted_at: Math.floor(Date.now() / 1000),
+          content: JSON.stringify({ type: 'none', by: 'user', filetype: null, src: null }),
+        },
+      });
+      return '{"errorcode":"0","error":0}';
+    });
   }
 
   @Post(':id/edit')
