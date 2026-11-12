@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Follower {
+  id Int @id @default(autoincrement())
+  user_id Int
+  follower_id Int
+
+  @@map("followers")
+}
+
+model FollowerNotification {
+  id Int @id @default(autoincrement())
+  user_id Int
+  follower_id Int
+  photo_id Int
+  checked Int
+
+  @@map("followers_notifications")
+}
+
+model LoginToken {
+  id Int @id @default(autoincrement())
+  token String @db.Text
+  iv Bytes @db.VarBinary(16)
+  user_id Int
+  device_name String @db.VarChar(255)
+  os String @db.VarChar(50)
+  ip String @db.VarChar(45)
+  location String @db.VarChar(255)
+  last_activity BigInt
+  created_at BigInt
+
+  @@map("login_tokens")
+}
+
+model News {
+  id Int @id @default(autoincrement())
+  body String @db.MediumText
+  time Int
+
+  @@map("news")
+}
+
+model Photo {
+  id Int @id @default(autoincrement())
+  user_id Int
+  postbody String @db.Text
+  photourl String @db.Text
+  posted_at Int
+  timeupload Int
+  exif String @db.Text
+  priority Int
+  moderated Int @default(1)
+  place String @db.Text
+  endmoderation Int @default(0)
+  gallery_id Int @default(0)
+  entitydata_id Int
+  pinnedcomment_id Int @default(0)
+  on_contest Int @default(0)
+  contest_id Int @default(0)
+  content String @db.Text
+
+  @@map("photos")
+}
+
+model PhotoComment {
+  id Int @id @default(autoincrement())
+  user_id Int
+  photo_id Int
+  body String @db.Text
+  posted_at Int
+  content String @db.Text
+
+  @@map("photos_comments")
+}
+
+model PhotoCommentRate {
+  id Int @id @default(autoincrement())
+  user_id Int
+  comment_id Int
+  type Int
+
+  @@map("photos_comments_rates")
+}
+
+model PhotoRate {
+  id Int @id @default(autoincrement())
+  user_id Int
+  photo_id Int
+  type Int
+  contest Int @default(0)
+
+  @@map("photos_rates")
+}
+
+model PhotoView {
+  id Int @id @default(autoincrement())
+  user_id Int
+  photo_id Int
+  time Int
+
+  @@map("photos_views")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @db.VarChar(255)
+  email String @db.VarChar(255)
+  password String @db.VarChar(255)
+  photourl String @db.Text
+  uploadindex Int
+  online Int @default(0)
+  admin Int
+  status Int @default(0)
+  content String @db.Text
+
+  @@map("users")
+}
+
+model Entity {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  createdate BigInt
+  sampledata String @db.Text
+  color String @db.Text
+
+  @@map("entities")
+}
+
+model EntityData {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  createdate BigInt
+  entityid Int
+  comment String? @db.Text
+  content String? @db.Text
+
+  @@map("entities_data")
+}
+
+model Gallery {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  opened Int
+
+  @@map("galleries")
+}
+
+model PhotoFavorite {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  user_id Int
+
+  @@map("photos_favorite")
+}
+
+model UploadIndexHistory {
+  id Int @id @default(autoincrement())
+  user_id Int
+  oldindex Int
+  newindex Int
+  date Int
+  type Int
+  photo_id Int
+
+  @@map("uploadindex_history")
+}
+
+model Contest {
+  id Int @id @default(autoincrement())
+  themeid Int
+  openpretendsdate Int
+  closepretendsdate Int
+  opendate Int
+  closedate Int
+  status Int
+
+  @@map("contests")
+}
+
+model GeoEntry {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+
+  @@map("geodb")
+}
+
+model ServiceKey {
+  id Int @id @default(autoincrement())
+  token String @db.Text
+  type String @db.Text
+  status Int
+  content String @db.Text
+
+  @@map("servicekeys")
+}
+
+model ContestEntry {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  contest_id Int
+
+  @@map("contests_pretends")
+}
+
+model ContestRate {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  user_id Int
+  contest_id Int
+
+  @@map("contests_rates")
+}
+
+model ContestTheme {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  status Int
+
+  @@map("contests_themes")
+}
+
+model ContestWinner {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  place Int
+  contest_id Int
+  date Int
+
+  @@map("contests_winners")
+}
+
+model PhotoContestRate {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  user_id Int
+  contest_id Int
+  type Int
+
+  @@map("photos_rates_contest")
+}
+
+model Page {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  body String @db.Text
+  created_by Int
+  created_at Int
+
+  @@map("pages")
+}
+
+model EntityRequest {
+  id Int @id @default(autoincrement())
+  title String @db.Text
+  user_id Int
+  created_at BigInt
+  entityid Int
+  data String @db.Text
+  status Int
+
+  @@map("entities_requests")
+}
+
+model Job {
+  id Int @id @default(autoincrement())
+  kind String @db.VarChar(32)
+  dedupe_key String @unique @db.VarChar(191)
+  payload Json
+  available_at DateTime @db.DateTime(3)
+  lease_until DateTime? @db.DateTime(3)
+  lease_token String? @db.VarChar(36)
+  attempts Int @default(0)
+  completed_at DateTime? @db.DateTime(3)
+  last_error String? @db.Text
+
+  @@index([kind, completed_at, available_at])
+  @@map("ng_jobs")
+}
+
+model JobSchedule {
+  kind String @id @db.VarChar(32)
+  enabled Boolean
+
+  @@map("ng_job_schedules")
+}

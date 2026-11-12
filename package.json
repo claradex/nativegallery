@@ -1,0 +1,19 @@
+{
+  "name": "nativegallery",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "db:generate": "prisma generate --schema packages/database/prisma/schema.prisma",
+    "db:deploy": "prisma migrate deploy --schema packages/database/prisma/schema.prisma",
+    "build": "npm run db:generate && npm run build -w @nativegallery/contracts -w @nativegallery/database -w @nativegallery/jobs -w @nativegallery/api -w @nativegallery/crons -w @nativegallery/media-worker -w @nativegallery/frontend"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "prisma": "6.19.3",
+    "@types/node": "^22.0.0"
+  }
+}

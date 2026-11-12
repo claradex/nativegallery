@@ -1,0 +1,14 @@
+{
+  "name": "@nativegallery/jobs",
+  "version": "2.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@nativegallery/database": "2.0.0",
+    "@nativegallery/contracts": "2.0.0"
+  }
+}

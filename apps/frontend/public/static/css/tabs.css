@@ -1,0 +1,89 @@
+.v-header {
+    /**
+ * Redefine media queries, because header mobile styles are enabled
+ * when page width is less than two-columns layout width (~960px)
+ */
+    --border-radius: 8px;
+    --offset-x: var(--island-offset-x, 20px);
+    --offset-y: 24px;
+    border-radius: var(--border-radius);
+    padding: var(--offset-y) var(--offset-x);
+    font-size: 16px;
+    line-height: 1.5em;
+ }
+
+ @media (max-width: 999px) {
+    .v-header {
+       --offset-x: var(--island-offset-x, 16px);
+       --offset-y: 16px;
+    }
+ }
+.v-header__tabs {
+    margin-bottom: calc(var(--offset-y)* -1);
+    margin-left: calc(var(--offset-x)* -1);
+    margin-right: calc(var(--offset-x)* -1);
+}
+.v-tabs {
+    --height: 63px;
+    --nav-size: 36px;
+    --tab-offset: 12px;
+    font-size: var(--font-size);
+    height: var(--height);
+    position: relative;
+    min-width: 0;
+}
+.v-tabs__scroll {
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+.v-header__tabs .v-tabs__content {
+    padding-left: var(--offset-x);
+    padding-right: var(--offset-x);
+}
+.v-tabs__content {
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    vertical-align: top;
+}
+.v-tab:first-child {
+    padding-left: 0;
+}
+.v-tab--active {
+    pointer-events: none;
+    color: #ffffff;
+}
+.v-tab {
+    padding: 0 var(--tab-offset);
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: #000000;
+    font-weight: 400;
+}
+.v-tab--active .v-tab__label {
+    position: relative;
+}
+.v-tab__label {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    height: var(--height);
+    line-height: calc(var(--height) + 1px);
+}
+.v-tab--active .v-tab__label::after {
+    content: '';
+    width: 100%;
+    height: 3px;
+    background-color: #306bff;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 500px;
+}
+.active__block, .active__blockm {
+    display: block !important;
+    transition: 0.3s all;
+}
