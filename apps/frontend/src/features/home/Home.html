@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    __HEAD__
+
+
+</head>
+
+
+<style>
+    .ix-country {
+        padding-top: 3px;
+        white-space: nowrap;
+        font-family: var(--narrow-font);
+        font-size: 18px;
+    }
+
+    .ix-country>a>b {
+        border-bottom: dotted 1px;
+    }
+
+    .ix-cities {
+        padding: 5px 0 15px 15px;
+    }
+
+    .ix-arrow {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        background: url("/img/arrow_blue.png") no-repeat;
+        transition: transform .1s ease-out;
+        position: relative;
+        top: -1px;
+    }
+
+    .ix-arrow.ix-arrow-expanded {
+        transform: rotate(90deg);
+    }
+</style>
+
+
+
+
+</head>
+
+
+<body>
+    <div id="backgr"></div>
+    <table class="tmain">
+        __NAVBAR__
+        <tr>
+            <td class="main">
+                <table id="idx-main">
+                    <tr>
+
+                        <td style="vertical-align:top; padding-right:20px">
+
+                            <h4><a href="/top30">Самые популярные за 24 часа</a></h4>
+                            <div>
+                                __POPULAR__
+                            </div>
+
+
+                            <div style="text-align:center; margin-bottom:20px">
+                                <div style="width: 250px;"></div>
+                            </div>
+
+
+
+                        </td>
+                        <td style="vertical-align:top; width:70%; padding-top:4px">
+
+
+                            <h4><a href="/photo/">Случайные фотографии</a></h4>
+                            <div id="random-photos" class="ix-photos ix-photos-oneline">
+                                __RANDOM__
+                            </div>
+                            <style>
+                                #contestNotify {
+                                    background-size: 550px 211.2px;
+                                    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 550 211.2" width="550" height="211.2" style="opacity: 0.3; filter: grayscale(0);"><text x="0em" y="1em" font-size="88" transform="rotate(17 55 52.8)">🎁</text><text x="1.25em" y="2em" font-size="88" transform="rotate(17 165 140.8)">🎈</text><text x="2.5em" y="1em" font-size="88" transform="rotate(17 275 52.8)">🎀</text><text x="3.75em" y="2em" font-size="88" transform="rotate(17 385 140.8)">🎊</text><text x="5em" y="1em" font-size="88" transform="rotate(17 495 52.8)">🎉</text></svg>');
+                                }
+                            </style>
+                            
+                            __CONTEST__
+
+
+
+
+                            </div>
+
+                            </div>
+
+
+
+                            <br>
+
+
+                            <h4 style="clear:both"><a href="/update">Недавно добавленные фотографии</a></h4>
+                            
+                            <div id="recent-photos" class="ix-photos ix-photos-multiline shine" lastpid="__FIRST__" firstpid="__LAST__">
+
+                            </div>
+                            </div>
+                            <div style="text-align:center; margin:10px 0"><input type="button" name="button" id="loadmore" class="" value="Загрузить ещё"></div>
+
+
+
+
+
+                            <h4>Сейчас на сайте (__ONLINE_COUNT__)</h4>
+                            <div>
+                                __ONLINE__
+
+                            </div>
+                        </td>
+                        <td style="padding-left:20px; width:254px; vertical-align:top">
+
+                            <h4>Новости сайта</h4>
+                            <div class="sm" style="margin-bottom:15px; line-height:13px; white-space:normal">
+                                __NEWS__
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            __FOOTER__
+        </tr>
+    </table>
+
+
+</body>
+
+</html>

@@ -1,19 +1,13 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import type { SiteOverview } from '@nativegallery/contracts';
 import { escapeHtml } from '../../components/Html';
 
-const templateDirectory = join(process.cwd(), 'src', 'features', 'site');
-
-function readTemplate(file: 'About.html' | 'StaffMember.html') {
-  return readFile(join(templateDirectory, file), 'utf8');
-}
+import { readTemplate } from '../../components/ReadTemplate';
 
 export async function About(api: string) {
   const response = await fetch(api + '/api/internal/about', { cache: 'no-store' }).catch(() => null);
   if (!response?.ok) return null;
   const [data, template, staffTemplate]: [SiteOverview, string, string] = await Promise.all([
-    response.json(), readTemplate('About.html'), readTemplate('StaffMember.html'),
+    response.json(), readTemplate('src/features/site/About.html'), readTemplate('src/features/site/StaffMember.html'),
   ]);
   const values: Record<string, string> = {
     TITLE: escapeHtml(process.env.SITE_TITLE ?? 'NativeGallery'),

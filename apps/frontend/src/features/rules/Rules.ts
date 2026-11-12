@@ -1,8 +1,13 @@
-const rules: Record<string, string> = {
-  "rules": "<!DOCTYPE html>\n<html lang=\"ru\">\n\n<head>\n    __HEAD__\n\n\n</head>\n\n\n<body>\n    <div id=\"backgr\"></div>\n    <table class=\"tmain\">\n        __NAVBAR__\n            <td class=\"main\">\n                <h1>Правила сайта</h1>\n            \n                <div class=\"p20\" style=\"padding:20px\">\n                    <b>Основные правила сайта.</b>\n                </div>\n            </td>\n        </tr>\n       \n        <tr>\n\n            __FOOTER__\n\n\n        </tr>\n    </table>\n\n</body>\n\n</html>",
-  "rules/photo": "<!DOCTYPE html>\n<html lang=\"ru\">\n\n<head>\n    __HEAD__\n\n\n</head>\n\n\n<body>\n    <div id=\"backgr\"></div>\n    <table class=\"tmain\">\n        __NAVBAR__\n            <td class=\"main\">\n                <h1>Правила подписи фотографий</h1>\n            \n                <div class=\"p20\" style=\"padding:20px\">\n                    <b>Правила подписи фотографий</b>\n                </div>\n            </td>\n        </tr>\n       \n        <tr>\n\n            __FOOTER__\n\n\n        </tr>\n    </table>\n\n</body>\n\n</html>",
-  "rules/video": "<!DOCTYPE html>\n<html lang=\"ru\">\n\n<head>\n    __HEAD__\n\n\n</head>\n\n\n<body>\n    <div id=\"backgr\"></div>\n    <table class=\"tmain\">\n        __NAVBAR__\n            <td class=\"main\">\n                <h1>Правила видеотеки</h1>\n            \n                <div class=\"p20\" style=\"padding:20px\">\n                    <b>Правила видеокаталога</b>\n                </div>\n            </td>\n        </tr>\n       \n        <tr>\n\n            __FOOTER__\n\n\n        </tr>\n    </table>\n\n</body>\n\n</html>",
-  "rules/pub": "<!DOCTYPE html>\n<html lang=\"ru\">\n\n<head>\n    __HEAD__\n\n\n</head>\n\n\n<body>\n    <div id=\"backgr\"></div>\n    <table class=\"tmain\">\n        __NAVBAR__\n            <td class=\"main\">\n                <h1>Правила отбора фотографий</h1>\n            \n                <div class=\"p20\" style=\"padding:20px\">\n                    <b>Правила публикации фотографий</b>\n                </div>\n            </td>\n        </tr>\n       \n        <tr>\n\n            __FOOTER__\n\n\n        </tr>\n    </table>\n\n</body>\n\n</html>"
-};
+import { readTemplate } from '../../components/ReadTemplate';
 
-export function Rules(path: string) { return Object.hasOwn(rules, path) ? rules[path] : undefined; }
+const templates = new Map([
+  ['rules', 'src/features/rules/Rules.html'],
+  ['rules/photo', 'src/features/rules/PhotoRules.html'],
+  ['rules/video', 'src/features/rules/VideoRules.html'],
+  ['rules/pub', 'src/features/rules/PublicationRules.html'],
+]);
+
+export function Rules(path: string) {
+  const file = templates.get(path);
+  return file ? readTemplate(file) : undefined;
+}
