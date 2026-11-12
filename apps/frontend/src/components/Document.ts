@@ -1,3 +1,4 @@
+import { PageScripts } from './PageScripts';
 import { Footer } from './Footer';
 import { LoadHead } from './LoadHead';
 import { Navbar } from './Navbar';
@@ -11,7 +12,7 @@ export function Document(request: Request, page: string, context: PageContext, s
   const parts: Record<string, string> = {
     HEAD: LoadHead(title), NAVBAR: Navbar(path, title, context.viewer), FOOTER: Footer(context.databaseVersion),
   };
-  return new Response(page.replaceAll(/__(HEAD|NAVBAR|FOOTER)__/g, (_, key) => parts[key]), {
+  return new Response(PageScripts(page.replaceAll(/__(HEAD|NAVBAR|FOOTER)__/g, (_, key) => parts[key])), {
     status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store' },
   });
 }

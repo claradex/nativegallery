@@ -279,46 +279,7 @@
             <td class="main">
 
 
-    <script>
-        const audio = document.getElementById("audio");
-        const playPause = document.getElementById("playPause");
-        const progressBar = document.getElementById("progressBar");
-        const progress = progressBar.querySelector("span");
-        const timeDisplay = document.getElementById("time");
-
-        playPause.addEventListener("click", () => {
-            if (audio.paused) {
-                audio.play();
-                playPause.textContent = "⏸";
-            } else {
-                audio.pause();
-                playPause.textContent = "▶";
-            }
-        });
-
-        audio.addEventListener("timeupdate", () => {
-            const currentTime = audio.currentTime;
-            const duration = audio.duration;
-            const progressPercent = (currentTime / duration) * 100;
-            progress.style.width = progressPercent + "%";
-
-            const formatTime = (time) => {
-                const minutes = Math.floor(time / 60);
-                const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-                return `${minutes}:${seconds}`;
-            };
-
-            timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-        });
-
-        progressBar.addEventListener("click", (e) => {
-            const rect = progressBar.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const progressWidth = rect.width;
-            const newTime = (clickX / progressWidth) * audio.duration;
-            audio.currentTime = newTime;
-        });
-    </script>
+    __SCRIPT_TourTabs__
                 <div class="wrap2">
                     <div class="wrap1">
                         <div id="auth" class="page-wrap">
@@ -803,24 +764,7 @@
             __FOOTER__
         </tr>
     </table>
-    <script>
-        function eurotour(evt, step) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(step).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        // Get the element with id="defaultOpen" and click on it
-        document.getElementById("defaultOpen").click();
-    </script>
+    __SCRIPT_TourLogin__
 
 </body>
 

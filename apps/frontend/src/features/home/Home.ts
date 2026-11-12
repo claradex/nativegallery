@@ -30,7 +30,8 @@ export async function Home(api: string): Promise<string | null> {
         <a href="/photo/${photo.id}" class="prw-animate" style='background-image:url("/api/photo/compress?url=${url}")'></a></div>`;
     }).join(''),
     CONTEST: contest ? (contest.status === 2 ? voting : accepting)
-      .replace('__CONTEST_TIME__', String(contest.status === 2 ? contest.closedate : contest.closepretendsdate))
+      .replace(/__SCRIPT_(ContestVoting|ContestAccepting)__/, (_, name) =>
+        '__SCRIPT_' + name + ':' + (contest.status === 2 ? contest.closedate : contest.closepretendsdate) + '__')
       .replace('__CONTEST_THEME__', () => escapeHtml(contest.theme))
       .replace('__SITE_TITLE__', () => escapeHtml(process.env.SITE_TITLE ?? 'NativeGallery')) : '',
     FIRST: String((recent[0]?.id ?? 0) + 1),
