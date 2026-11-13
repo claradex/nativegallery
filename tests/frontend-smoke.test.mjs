@@ -16,6 +16,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/internal/favorite-photos': [],
+      '/api/internal/followed-photos': [],
       '/api/upload/options': { galleries: [], entities: [], username: 'Автор', uploadIndex: 5, directUpload: false },
       '/api/internal/account': { id: 9, username: 'Автор', published: 1, pending: 0, uploadIndex: null },
       '/api/internal/account/uploads': { author: { id: 9, username: 'Автор' }, photos: [] },
@@ -41,6 +43,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     };
     fixtures['/api/internal/photo-comments/3'] = [];
     if (['/api/internal/photo-page/999', '/api/internal/author/999'].includes(request.url)) response.statusCode = 404;
+    if (['/api/internal/favorite-photos', '/api/internal/followed-photos'].includes(request.url) &&
+        request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
     response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
@@ -104,6 +108,14 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal(theme.status, 303);
     assert.equal(theme.headers.get('location'), '/lk/profile?type=Personalization');
     assert.match(theme.headers.get('set-cookie'), /NGALLERYTHEME=nativegallery-dark/);
+    for (const [path, heading] of [['/fav', 'Избранные фотографии'], ['/fav_authors', 'Фотографии избранных авторов']]) {
+      const guest = await fetch(origin + path, { redirect: 'manual' });
+      assert.equal(guest.status, 307, path);
+      assert.equal(guest.headers.get('location'), '/login');
+      const member = await fetch(origin + path, { headers: { cookie: 'test-viewer=1' } });
+      assert.equal(member.status, 200, path);
+      assert.ok((await member.text()).includes(heading), path);
+    }
     const photo = await fetch(origin + '/photo/3?aid=9');
     assert.equal(photo.status, 200);
     const photoHtml = await photo.text();

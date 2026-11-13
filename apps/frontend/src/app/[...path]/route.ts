@@ -14,8 +14,6 @@ import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound, Tour } from '../../features/site/StaticPages';
-import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
-import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
@@ -77,8 +75,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
     : path === 'vehicle/edit' ? await VehicleEdit(request, api)
     : vehicleId ? await VehiclePage(request, api, vehicleId)
-    : path === 'fav_authors' ? await FollowedPhotos(request, api)
-    : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
+    : undefined;
   if (followed instanceof Response) return followed;
   const markup = followed ?? ( path === 'tour' ? Tour() : undefined);
   if (!markup) return NotFound(request);

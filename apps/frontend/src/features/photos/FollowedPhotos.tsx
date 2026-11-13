@@ -1,5 +1,6 @@
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 function FollowedPhoto({ photo }: { photo: TopPhoto }) {
   return <div className="p20p"><table><tbody><tr>
@@ -15,22 +16,22 @@ function FollowedPhoto({ photo }: { photo: TopPhoto }) {
   </tr></tbody></table></div>;
 }
 
-export async function FollowedPhotos(request: Request, api: string) {
+export async function FollowedPhotos() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/followed-photos', {
-    headers: { cookie: request.headers.get('cookie') ?? '' },
+    headers: { cookie: (await headers()).get('cookie') ?? '' },
     cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load saved photos');
 
   const photos: TopPhoto[] = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
       <h1>Фотографии избранных авторов</h1>
       {photos.length > 0
         ? <div className="mark-btn"><a className="button" href="#">Отметить все фотографии просмотренными</a></div>
         : <div className="p20" style={{ marginBottom: 15 }} id="no_photos"><h4>Новых фотографий пока нет.</h4></div>}
       {photos.map(photo => <FollowedPhoto key={photo.id} photo={photo} />)}
-    </td></tr>) +
-    '__SCRIPT_FollowedPhotos__<tr>__FOOTER__</tr></table></body></html>';
+      <script src="/frontend-scripts/FollowedPhotos.js" defer />
+    </td></tr>;
 }
