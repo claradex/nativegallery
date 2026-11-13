@@ -14,7 +14,8 @@ import { CommentsModule } from "./comments/CommentsModule";
 import { FollowingModule } from './catalog/FollowingModule';
 import { PhotoCommentsModule } from "./comments/PhotoCommentsModule";
 import { VehicleModule } from './catalog/VehicleModule';
+import { NewsModule } from './news/NewsModule';
 import { JobsModule } from './jobs/JobsModule';
 
-@Module({ imports: [AuthModule, CatalogModule, JobsModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule, PhotoStatsModule, PhotoCommentsModule, PhotoPageModule, VehicleModule], controllers: [HealthController] })
+@Module({ imports: [AuthModule, CatalogModule, JobsModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule, PhotoStatsModule, PhotoCommentsModule, PhotoPageModule, VehicleModule, NewsModule], controllers: [HealthController] })
 export class ApiModule {}

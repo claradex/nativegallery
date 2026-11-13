@@ -1,3 +1,4 @@
+import { newsHtml } from '../news/NewsHtml';
 import { Controller, Get } from '@nestjs/common';
 import type { SiteOverview, TopPhoto } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
@@ -50,6 +51,6 @@ export class HomeController {
       database.contest.findFirst({ where: { status: { in: [1, 2] } }, orderBy: [{ status: 'desc' }, { id: 'asc' }] }),
     ]);
     const theme = contests ? await database.contestTheme.findUnique({ where: { id: contests.themeid }, select: { title: true } }) : null;
-    return { popular, random, online, news, recent, contest: contests && { ...contests, theme: theme?.title ?? '' } };
+    return { popular, random, online, news: news.map(item => ({ ...item, body: newsHtml(item.body) })), recent, contest: contests && { ...contests, theme: theme?.title ?? '' } };
   }
 }
