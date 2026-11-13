@@ -16,7 +16,7 @@ function field(value: unknown, key: string): string {
   return typeof raw === 'string' || typeof raw === 'number' ? String(raw) : '';
 }
 
-export async function photoVehicle(id: number): Promise<PhotoPageData['vehicle']> {
+export async function findVehicle(id: number): Promise<PhotoPageData['vehicle']> {
   if (id < 1) return null;
   const vehicle = await database.entityData.findUnique({
     where: { id }, select: { title: true, entityid: true, content: true },

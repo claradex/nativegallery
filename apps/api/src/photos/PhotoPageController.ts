@@ -2,7 +2,7 @@ import { Controller, Get, Header, NotFoundException, Param, Query, Req } from '@
 import type { Request } from 'express';
 import type { PhotoPageData } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
-import { photoVehicle } from './PhotoVehicle';
+import { findVehicle } from '../catalog/VehicleData';
 import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
 
@@ -38,7 +38,7 @@ export class PhotoPageController {
       viewer ? database.photoFavorite.findFirst({ where: { photo_id: id, user_id: viewer.id }, select: { id: true } }) : null,
       database.photo.findFirst({ where: { ...neighbors, id: { gt: id } }, orderBy: { id: 'asc' }, select: { id: true } }),
       database.photo.findFirst({ where: { ...neighbors, id: { lt: id } }, orderBy: { id: 'desc' }, select: { id: true } }),
-      photoVehicle(photo.entitydata_id),
+      findVehicle(photo.entitydata_id),
     ]);
     let commentsEnabled = true;
     let ratingEnabled = true;

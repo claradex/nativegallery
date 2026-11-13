@@ -101,3 +101,8 @@ export interface PhotoPageData {
     votes: { id: number; authorId: number; author: string; type: number }[];
   } | null;
 }
+
+export interface VehiclePageData {
+  vehicle: NonNullable<PhotoPageData["vehicle"]>;
+  photos: (TopPhoto & { comments: number })[];
+}
