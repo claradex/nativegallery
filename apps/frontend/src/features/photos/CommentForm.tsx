@@ -46,12 +46,12 @@ export function CommentForm({ photoId, signedIn, allowed }: { photoId: number; s
         <input type="hidden" name="id" value={photoId} />
         <input type="hidden" name="wtext" id="hiddenContent" />
         <div contentEditable id="wtext" role="textbox" aria-label="Комментарий" aria-multiline="true" /><br />
-        <input type="file" name="filebody" id="comment-file" accept="image/jpeg,image/png,image/gif,image/webp" hidden />
+        <input type="file" name="filebody" id="comment-file" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/x-msvideo,video/3gpp,video/x-matroska,.avi,.3gp,.mkv" hidden />
         <div id="fileList" className="mt-3"></div>
         <p id="statusSend" role="status" hidden />
         <div className="cmt-submit">
           <input type="submit" value="Добавить комментарий" id="sbmt" />
-          <button type="button" id="attachFile" aria-label="Прикрепить изображение"><i className="bx bx-paperclip bx-rotate-90"></i></button>
+          <button type="button" id="attachFile" aria-label="Прикрепить файл"><i className="bx bx-paperclip bx-rotate-90"></i></button>
           <button style={{ display: 'inline' }} type="button" id="showPicker" aria-label="Эмодзи" aria-expanded="false" aria-controls="picker">
             <i className="bx bx-smile"></i>
           </button>
