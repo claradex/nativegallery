@@ -1,5 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
-
 function RegisterForm({ title }: { title: string }) {
   return <center>
     <h1><b>Регистрация</b></h1>
@@ -35,14 +33,14 @@ function RegisterForm({ title }: { title: string }) {
   </center>;
 }
 
-export async function Register(api: string) {
+export async function Register() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/register/options', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (!response?.ok) throw new Error('Could not load registration options');
   const { open }: { open: boolean } = await response.json();
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     {open ? <RegisterForm title={title} /> : <center><h1>К сожалению, регистрация на сервере {title} закрыта.</h1></center>}
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    content + '<tr>__FOOTER__</tr></table>' + (open ? '__SCRIPT_Register__' : '') + '</body></html>';
+    {open && <script src="/frontend-scripts/Register.js" defer />}
+  </td></tr>;
 }

@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { redirect } from 'next/navigation';
+import { siteContext } from '../site/SiteContext';
 
 function LoginForm() {
   return (
@@ -32,9 +33,10 @@ function LoginContent() {
   );
 }
 
-export function Login() {
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><div id="backgr"></div><table class="tmain">' +
-    '__NAVBAR__<tr><td class="main">' + renderToStaticMarkup(<LoginContent />) +
-    '__SCRIPT_Login__</td></tr><tr>__FOOTER__</tr></table></body></html>';
+export async function Login() {
+  if ((await siteContext()).viewer) redirect('/');
+  return <tr><td className="main">
+    <LoginContent />
+    <script src="/frontend-scripts/Login.js" defer />
+  </td></tr>;
 }

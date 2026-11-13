@@ -1,22 +1,15 @@
 import type { ReactNode } from 'react';
-import { headers } from 'next/headers';
-import type { Viewer } from '@nativegallery/contracts';
+import { siteContext } from '../../features/site/SiteContext';
 import { Footer } from '../../components/Footer';
 import { LoadHead, ProgressBar } from '../../components/LoadHead';
 import { EmailVerification, Navbar, NavbarStyle } from '../../components/Navbar';
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  const cookie = (await headers()).get('cookie');
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/viewer', {
-    headers: { cookie: cookie ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  const context: { viewer: Viewer | null; databaseVersion: string } = response?.ok
-    ? await response.json() : { viewer: null, databaseVersion: '' };
+  const context = await siteContext();
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
 
   return <html lang="ru">
-    <head><LoadHead title={title} cookie={cookie} native /></head>
+    <head><LoadHead title={title} cookie={context.cookie} native /></head>
     <body>
       <ProgressBar />
       <div id="backgr"></div>

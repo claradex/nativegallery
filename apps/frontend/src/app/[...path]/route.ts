@@ -13,9 +13,6 @@ import { AdminModels } from '../../features/admin/AdminModels';
 import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
-import { EmailVerified } from '../../features/auth/EmailVerified';
-import { Register } from '../../features/auth/Register';
-import { Login } from '../../features/auth/Login';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
 import { NewsPage } from '../../features/site/NewsPage';
@@ -52,7 +49,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request, route: { params: Promise<{ path?: string[] }> }) {
   const requestedPath = (await route.params).path?.join('/') ?? '';
   const path = legacyPaths.get(requestedPath) ?? requestedPath;
-  const login = path === 'login';
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   if (path === 'admin') {
     const section = new URL(request.url).searchParams.get('type');
@@ -92,8 +88,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
-    : path === 'email-verified' ? EmailVerified()
-    : path === 'register' ? await Register(api)
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
     : path === 'comments' ? await CommentFeed(request, api)
@@ -116,14 +110,13 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( login ? Login() : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
+  const markup = followed ?? ( path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
   if (!markup) return path === 'top30' || path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
   if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
   const context: PageContext = await response.json();
-  if (login && context.viewer) return Response.redirect(new URL('/', request.url), 302);
   return Document(request, markup, context);
 }
 
