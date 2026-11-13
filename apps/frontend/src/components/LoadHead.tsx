@@ -45,7 +45,7 @@ export function ProgressBar() {
   return <div className="progress-container fixed-top"><span className="progress-bard"></span></div>;
 }
 
-export function LoadHead({ title, cookie, native = false }: { title: string; cookie: string | null; native?: boolean }) {
+export function LoadHead({ title, cookie }: { title: string; cookie: string | null }) {
   const cache = process.env.CLOUDFLARE_CACHING === 'true' ? '?' + Math.floor(Date.now() / 1000) : '';
   const darkTheme = /(?:^|;\s*)NGALLERYTHEME=nativegallery-dark(?:;|$)/.test(cookie ?? '');
   return <>
@@ -65,13 +65,12 @@ export function LoadHead({ title, cookie, native = false }: { title: string; coo
     {darkTheme && <link rel="stylesheet" href="/static/themepacks/nativegallery-dark/root.css" />}
     <link rel="stylesheet" href={'/static/css/map.css' + cache} />
     <link rel="stylesheet" href={'/static/css/jquery-ui-1.8.20.custom.css' + cache} />
-    {native ? <script src="/frontend-scripts/ContestCountdown.js" defer /> : '__SCRIPT_ContestCountdown__'}
-    <script src={'/static/js/notie.js' + cache} data-restart defer={native || undefined}></script>
+    <script src="/frontend-scripts/ContestCountdown.js" defer />
+    <script src={'/static/js/notie.js' + cache} data-restart defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" />
-    {!native && <ProgressBar />}
     <style>{progressStyles}</style>
-    {native ? <script src="/frontend-scripts/Head.js" defer /> : '__SCRIPT_Head__'}
-    {native ? <script src="/frontend-scripts/Navigation.js" defer /> : '__SCRIPT_Navigation__'}
+    <script src="/frontend-scripts/Head.js" defer />
+    <script src="/frontend-scripts/Navigation.js" defer />
   </>;
 }

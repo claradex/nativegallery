@@ -58,16 +58,14 @@ export function NavbarStyle() {
   return <style>{'[data-ajax-loader] { transition: opacity 0.3s, transform 0.3s; }'}</style>;
 }
 
-export function Navbar({ path, title: siteTitle, viewer, native = false }: { path: string; title: string; viewer: Viewer | null; native?: boolean }) {
+export function Navbar({ path, title: siteTitle, viewer }: { path: string; title: string; viewer: Viewer | null }) {
   const photo = path.split('/')[1] === 'photo';
   const hidden = { display: 'none' };
   const verify = process.env.EMAIL_VERIFY === 'true' && viewer?.status === 3;
   const logo = process.env.SITE_LOGO ?? '/static/img/logosmall.png';
   const title = process.env.SITE_SHOW_TITLE === 'false' ? '' : siteTitle;
   return <>
-{!native && <NavbarStyle />}
 <tr>
-{verify && !native && <EmailVerification />}
     <td id="navbar" className="mm-bar">
     <a style={photo ? undefined : hidden} id="title-small" href="/"><img src={logo} />{title}</a>
         <ul className="mm mm-level-1">

@@ -9,14 +9,14 @@ export async function SiteLayout({ children, photo = false }: { children: ReactN
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
 
   return <html lang="ru">
-    <head><LoadHead title={title} cookie={context.cookie} native /></head>
+    <head><LoadHead title={title} cookie={context.cookie} /></head>
     <body>
       <ProgressBar />
       <div id="backgr"></div>
       <NavbarStyle />
       {process.env.EMAIL_VERIFY === 'true' && context.viewer?.status === 3 && <EmailVerification />}
       <table className="tmain"><tbody>
-        <Navbar path={photo ? "/photo" : "/"} title={title} viewer={context.viewer} native />
+        <Navbar path={photo ? "/photo" : "/"} title={title} viewer={context.viewer} />
         {children}
         <tr><Footer databaseVersion={context.databaseVersion} /></tr>
       </tbody></table>
