@@ -228,9 +228,13 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     const tourHtml = await tour.text();
     assert.ok(tourHtml.includes('src="/frontend-scripts/TourLogin.js"'));
     assert.equal((tourHtml.match(/id="backgr"/g) ?? []).length, 1);
-    const script = await fetch(origin + '/frontend-scripts/Register.js');
-    assert.equal(script.status, 200);
-    assert.match(await script.text(), /addEventListener/);
+    for (const [route, button] of [['/register', 'regbtn'], ['/login', 'loginbtn']]) {
+      const response = await fetch(origin + route);
+      assert.equal(response.status, 200);
+      const html = await response.text();
+      assert.ok(html.includes(`id="${button}"`));
+      assert.doesNotMatch(html, /src="\/frontend-scripts\/(Register|Login)\.js"/);
+    }
   } finally {
     next.kill();
     api.close();
