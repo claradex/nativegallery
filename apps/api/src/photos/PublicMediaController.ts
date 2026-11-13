@@ -17,7 +17,14 @@ export class PublicMediaController {
     return this.send('video', filename, response);
   }
 
-  private async send(folder: 'img' | 'video', filename: string, response: Response) {
+  @Get('pages/:filename')
+  async attachment(@Param('filename') filename: string, @Res() response: Response) {
+    if (!/^[a-f0-9]{64}\.(?:jpg|png|gif|webp|mp4|mp3)$/.test(filename)) throw new NotFoundException();
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+    return this.send('pages', filename, response);
+  }
+
+  private async send(folder: 'img' | 'video' | 'pages', filename: string, response: Response) {
     const directory = await realpath(join(process.env.MEDIA_ROOT ?? '../../uploads', 'cdn', folder)).catch(() => null);
     if (!directory) throw new NotFoundException();
     const file = await realpath(join(directory, filename)).catch(() => null);

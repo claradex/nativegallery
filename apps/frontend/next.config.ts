@@ -11,6 +11,7 @@ const config: NextConfig = {
       beforeFiles: [
         { source: '/api/:path*', destination: apiOrigin + '/api/:path*' },
         { source: '/uploads/cdn/img/:filename', destination: apiOrigin + '/uploads/cdn/img/:filename' },
+        { source: '/uploads/cdn/pages/:filename', destination: apiOrigin + '/uploads/cdn/pages/:filename' },
         { source: '/uploads/cdn/video/:filename', destination: apiOrigin + '/uploads/cdn/video/:filename' },
       ],
     };

@@ -21,28 +21,63 @@ if (editor) {
 
   const attachment = document.getElementById('page-attachment');
   const address = document.getElementById('attachment-url');
+  const file = document.getElementById('attachment-file');
+  const attachmentError = document.getElementById('attachment-error');
+  const attachButton = document.getElementById('submit-attachment');
+  const cancelAttachment = document.getElementById('cancel-attachment');
   let attachmentTag;
+  attachment.addEventListener('cancel', event => {
+    if (attachButton.disabled) event.preventDefault();
+  });
   for (const button of editor.querySelectorAll('[data-attachment]')) {
     button.addEventListener('click', () => {
       attachmentTag = button.dataset.attachment;
       address.value = '';
+      file.value = '';
+      file.accept = { img: '.jpg,.jpeg,.png,.gif,.webp', video: '.mp4', audio: '.mp3' }[attachmentTag];
+      attachmentError.hidden = true;
       address.setCustomValidity('');
       document.getElementById('attachment-title').textContent = button.dataset.title;
       attachment.showModal();
     });
   }
+  file.addEventListener('change', () => address.setCustomValidity(''));
   address.addEventListener('input', () => address.setCustomValidity(''));
-  document.getElementById('cancel-attachment').addEventListener('click', () => attachment.close());
-  document.getElementById('page-attachment-form').addEventListener('submit', event => {
+  cancelAttachment.addEventListener('click', () => attachment.close());
+  document.getElementById('page-attachment-form').addEventListener('submit', async event => {
     event.preventDefault();
-    const url = new URL(address.value);
-    if (!url || !['https:', 'http:'].includes(url.protocol)) {
-      address.setCustomValidity('Укажите адрес HTTP или HTTPS.');
-      address.reportValidity();
-      return;
+    if (attachButton.disabled) return;
+    attachmentError.hidden = true;
+    let source;
+    if (file.files.length) {
+      const data = new FormData();
+      data.append('kind', attachmentTag);
+      data.append('file', file.files[0]);
+      attachButton.disabled = cancelAttachment.disabled = true;
+      try {
+        const response = await fetch('/api/admin/pages/attachments', { method: 'POST', body: data });
+        if (!response.ok) throw new Error();
+        source = (await response.json()).url;
+      } catch {
+        attachmentError.textContent = 'Не удалось загрузить файл. Проверьте формат и размер.';
+        attachmentError.hidden = false;
+        return;
+      } finally {
+        attachButton.disabled = cancelAttachment.disabled = false;
+      }
+    } else {
+      try {
+        const url = new URL(address.value);
+        if (!['https:', 'http:'].includes(url.protocol)) throw new Error();
+        source = url.href;
+      } catch {
+        address.setCustomValidity('Выберите файл или укажите адрес HTTP или HTTPS.');
+        address.reportValidity();
+        return;
+      }
     }
     const element = document.createElement(attachmentTag);
-    element.setAttribute('src', url.href);
+    element.setAttribute('src', source);
     if (attachmentTag === 'img') element.setAttribute('alt', '');
     else {
       element.setAttribute('controls', '');

@@ -49,10 +49,13 @@ function PageEditor() {
     <form id="page-attachment-form">
       <h5 id="attachment-title"></h5>
       <label htmlFor="attachment-url" className="form-label">Адрес файла</label>
-      <input id="attachment-url" className="form-control" type="url" required />
+      <input id="attachment-url" className="form-control" type="url" />
+      <label htmlFor="attachment-file" className="form-label mt-2">Файл</label>
+      <input id="attachment-file" className="form-control" type="file" />
+      <div id="attachment-error" className="text-danger" role="alert" hidden />
       <div className="mt-3">
         <button type="button" id="cancel-attachment" className="btn btn-secondary me-2">Отмена</button>
-        <button type="submit" className="btn btn-primary">Прикрепить</button>
+        <button type="submit" id="submit-attachment" className="btn btn-primary">Прикрепить</button>
       </div>
     </form>
   </dialog></>;
