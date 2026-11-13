@@ -25,6 +25,7 @@ import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { UploadPage } from '../../features/photos/upload/UploadPage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
+import { UpdatesPage } from '../../features/photos/UpdatesPage';
 import { FeedPage } from '../../features/photos/FeedPage';
 import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
@@ -77,6 +78,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
     : path === 'comments' || path === 'comments.php' ? await CommentFeed(request, api)
+    : path === 'update' || path === 'update.php' ? await UpdatesPage(api)
     : path === 'feed' ? await FeedPage(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)

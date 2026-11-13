@@ -10,5 +10,7 @@ import { GalleryController } from './GalleryController';
 
 import { FeedController } from './FeedController';
 
-@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController, FeedController] })
+import { UpdatesController } from './UpdatesController';
+
+@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController, FeedController, UpdatesController] })
 export class PhotosModule {}
