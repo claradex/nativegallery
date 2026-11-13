@@ -1,0 +1,11 @@
+@import url("https://rsms.me/inter/inter.css");
+    body {
+        font-family: inherit !important;
+    }
+	#tracy-error { all: initial; position: absolute; top: 0; left: 0; right: 0; height: 70vh; min-height: 400px; display: flex; align-items: center; justify-content: center; z-index: 1000 }
+	#tracy-error div { all: initial; max-width: 550px; background: white; color: #333; display: block }
+	#tracy-error h1 { all: initial; font-family: inherit !important; font-size: 50px; font-weight: 700; display: block; margin: 40px }
+	#tracy-error p { all: initial; font-family: inherit !important; margin: 40px; display: block }
+    #tracy-error pre { all: initial; font-family: inherit !important; margin: 40px; display: block }
+	#tracy-error small { color: gray }
+	#tracy-error small span { color: silver }

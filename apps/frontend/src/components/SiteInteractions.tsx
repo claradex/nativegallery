@@ -2,18 +2,13 @@
 
 import { useEffect } from 'react';
 
-const navigation: Record<string, string> = {
-  ArrowLeft: 'PrevLink',
-  ArrowRight: 'NextLink',
-  ArrowUp: 'UpLink',
-  ArrowDown: 'DownLink',
-};
+const navigation: Record<string, string> = { ArrowLeft: 'a[rel="prev"]', ArrowRight: 'a[rel="next"]' };
 
 function navigateByKey(event: KeyboardEvent) {
   if (!event.ctrlKey || event.defaultPrevented ||
       (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]'))) return;
-  const id = navigation[event.key];
-  const href = event.key === 'Home' ? '/' : id && document.getElementById(id)?.getAttribute('href');
+  const link = navigation[event.key];
+  const href = event.key === 'Home' ? '/' : link && document.querySelector(link)?.getAttribute('href');
   if (!href) return;
   event.preventDefault();
   window.location.assign(href);

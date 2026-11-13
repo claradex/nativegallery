@@ -11,7 +11,7 @@ a.underphoto, a.underphoto:visited { display:block; font-size:15px; padding:3px 
 a.underphoto:hover { background-color:#888; }
 #reasons { display:none; margin-top:7px; font-weight:normal; font-size:11px; }
 
-#prev, #next { opacity:0; cursor:pointer; position:absolute; top:0; bottom:0; width:66px; padding-top:7px; color:rgba(150,150,150,0.5); background-color:transparent; transition:all 0.2s ease; font-family:PT Sans Narrow; font-size:50px; }
+#prev, #next { opacity:0; cursor:pointer; position:absolute; top:0; bottom:0; width:66px; padding-top:7px; color:rgba(150,150,150,0.5); background-color:transparent; transition:all 0.2s ease; font-family:var(--narrow-font); font-size:50px; }
 #photobar:hover #prev, #photobar:hover #next { opacity:1; }
 #prev:hover, #next:hover, #next.hover { color:#fff; background-color:rgba(80,80,80,0.7); }
 #prev { left:0; }

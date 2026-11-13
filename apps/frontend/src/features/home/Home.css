@@ -1,0 +1,28 @@
+.ix-country {
+        padding-top: 3px;
+        white-space: nowrap;
+        font-family: var(--narrow-font);
+        font-size: 18px;
+    }
+
+    .ix-country>a>b {
+        border-bottom: dotted 1px;
+    }
+
+    .ix-cities {
+        padding: 5px 0 15px 15px;
+    }
+
+    .ix-arrow {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        background: url("/img/arrow_blue.png") no-repeat;
+        transition: transform .1s ease-out;
+        position: relative;
+        top: -1px;
+    }
+
+    .ix-arrow.ix-arrow-expanded {
+        transform: rotate(90deg);
+    }

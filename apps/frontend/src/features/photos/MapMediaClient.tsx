@@ -1,27 +1,22 @@
 'use client';
 
-import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import type * as Leaflet from 'leaflet';
+import type {} from 'leaflet.markercluster';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
+import shadow from 'leaflet/dist/images/marker-shadow.png';
 
-type Point = [number, number];
-type Bounds = Record<'getNorth' | 'getSouth' | 'getEast' | 'getWest', () => number>;
-interface LeafletMap {
-  setView(center: Point, zoom: number): LeafletMap;
-  getBounds(): Bounds;
-  getZoom(): number;
-  on(event: 'moveend', handler: () => void): void;
-  remove(): void;
+/** Leaflet touches `window` on import and markercluster extends the global `L`, so both load in the browser only. */
+export async function loadLeaflet(cluster = false) {
+  const L = (await import('leaflet')).default;
+  // Bundled image names are hashed, which defeats Leaflet's CSS-based default icon path detection.
+  L.Icon.Default.mergeOptions({ iconUrl: icon.src, iconRetinaUrl: iconRetina.src, shadowUrl: shadow.src });
+  (window as Window & { L?: typeof Leaflet }).L = L;
+  if (cluster) await import('leaflet.markercluster');
+  return L;
 }
-interface Layer<T> { addTo(map: LeafletMap): T }
-interface Marker { bindPopup(render: () => HTMLElement): Marker }
-interface Cluster extends Layer<Cluster> { addLayer(marker: Marker): void }
-interface Leaflet {
-  map(id: string): LeafletMap;
-  tileLayer(url: string, options: { attribution: string }): Layer<unknown>;
-  markerClusterGroup(): Cluster;
-  marker(point: Point, options: { icon: unknown }): Marker;
-  divIcon(options: { className: string; html: HTMLElement }): unknown;
-}
+
 interface MapPhoto {
   id: number;
   lat: number;
@@ -31,22 +26,17 @@ interface MapPhoto {
   photourl: string;
 }
 
-export function MapMediaClient({ leaflet, cluster }: { leaflet: string; cluster: string }) {
-  const [leafletReady, setLeafletReady] = useState(false);
-  const [clusterReady, setClusterReady] = useState(false);
+export function MapMediaClient() {
   useEffect(() => {
-    if (!clusterReady) return;
-    const L = (window as Window & { L?: Leaflet }).L;
-    if (L?.markerClusterGroup) return mountMap(L);
-  }, [clusterReady]);
-
-  return <>
-    <Script src={leaflet + 'leaflet.js'} onReady={() => setLeafletReady(true)} />
-    {leafletReady && <Script src={cluster + 'leaflet.markercluster.js'} onReady={() => setClusterReady(true)} />}
-  </>;
+    let unmount: (() => void) | undefined;
+    let cancelled = false;
+    loadLeaflet(true).then(L => { if (!cancelled) unmount = mountMap(L); });
+    return () => { cancelled = true; unmount?.(); };
+  }, []);
+  return null;
 }
 
-function mountMap(L: Leaflet) {
+function mountMap(L: typeof Leaflet) {
   const map = L.map('mapd').setView([55.751244, 37.618423], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',

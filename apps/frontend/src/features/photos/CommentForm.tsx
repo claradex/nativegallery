@@ -1,42 +1,4 @@
-const pickerStyles = `
-.emoji-picker {
-    display: none;
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 10px;
-    z-index: 1000;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-}
-
-.emoji-picker.active {
-    display: grid;
-}
-
-.emoji-option {
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    transition: transform 0.1s;
-    object-fit: contain;
-}
-
-.emoji-option:hover {
-    transform: scale(1.2);
-}
-
-
-.editor-emoji {
-    width: 35px;
-    vertical-align: middle;
-    margin: 0 2px;
-}
-`;
+import './CommentForm.css';
 
 export function CommentForm({ photoId, signedIn, allowed }: { photoId: number; signedIn: boolean; allowed: boolean }) {
   return <div style={{ padding: '0 11px 11px' }}>
@@ -57,7 +19,7 @@ export function CommentForm({ photoId, signedIn, allowed }: { photoId: number; s
           </button>
         </div>
         <div id="picker" className="emoji-picker"></div>
-        <style>{pickerStyles}</style>
+        
       </form>}
   </div>;
 }

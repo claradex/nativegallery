@@ -1,1 +1,1 @@
-export { SiteLayout as default } from '../../components/SiteLayout';
+export { SiteLayout as default, generateMetadata, viewport } from '../../components/SiteLayout';

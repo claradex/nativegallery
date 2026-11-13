@@ -8,7 +8,7 @@
     --theme-form-color: #fff;
 
 	--default-font: Verdana,Tahoma,Arial,Helvetica,sans-serif;
-	--narrow-font: PT Sans Narrow,Arial Narrow,Arial,Helvetica,sans-serif;
+	--narrow-font: var(--font-narrow),PT Sans Narrow,Arial Narrow,Arial,Helvetica,sans-serif;
 
 	--type0-color: #3b7dc1;
 	--type1-color: #ae0000;

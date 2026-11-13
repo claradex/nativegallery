@@ -1,5 +1,5 @@
-/** @param {AbortSignal} signal */
-export function bindUploadMap(signal) {
+/** @param {AbortSignal} signal @param {typeof import('leaflet')} leaflet */
+export function bindUploadMap(signal, leaflet) {
   const get = id => document.getElementById(id);
   const noMap = get('nomap');
   const mapRow = document.querySelector('#mform .upl-map');
@@ -8,9 +8,8 @@ export function bindUploadMap(signal) {
     mapRow.hidden = noMap.checked;
     if (!noMap.checked) map?.invalidateSize();
   }, { signal });
-  const leaflet = window.L;
   let map;
-  if (leaflet && document.getElementById('map_canvas')) {
+  if (document.getElementById('map_canvas')) {
     map = leaflet.map('map_canvas').setView([55.75, 37.62], 4);
     const tiles = {
       osm: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'],

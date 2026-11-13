@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const config: NextConfig = {
-  experimental: { authInterrupts: true },
+  experimental: { authInterrupts: true, globalNotFound: true },
   skipTrailingSlashRedirect: true,
   async rewrites() {
     const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';

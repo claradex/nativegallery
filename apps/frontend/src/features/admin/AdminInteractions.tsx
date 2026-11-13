@@ -17,6 +17,12 @@ const interactions = {
 
 export type AdminSection = keyof typeof interactions;
 
+/** Bootstrap's data-API (modals, dropdowns) binds itself to the document once the bundle is evaluated. */
+export function AdminBootstrap() {
+  useEffect(() => { import('bootstrap/dist/js/bootstrap.bundle.min.js'); }, []);
+  return null;
+}
+
 export function AdminInteractions({ section }: { section: AdminSection }) {
   useEffect(() => {
     const events = new AbortController();

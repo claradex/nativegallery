@@ -241,7 +241,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal(map.status, 200);
     const mapHtml = await map.text();
     assert.ok(mapHtml.includes('id="mapd"'));
-    assert.ok(mapHtml.includes('leaflet@1.7.1/dist/leaflet.css'));
+    assert.doesNotMatch(mapHtml, /unpkg\.com|<style>/);
     assert.doesNotMatch(mapHtml, /src="\/frontend-scripts\/MapMedia\.js"/);
     const photo = await fetch(origin + '/photo/3?aid=9');
     assert.equal(photo.status, 200);

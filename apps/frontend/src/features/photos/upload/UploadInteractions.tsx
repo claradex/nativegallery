@@ -1,28 +1,16 @@
 'use client';
 
-import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { loadLeaflet } from '../MapMediaClient';
 import { bindUpload } from './UploadHandlers';
 import { bindUploadMap } from './UploadMap';
 
 export function UploadInteractions() {
-  const [mapReady, setMapReady] = useState(false);
-
   useEffect(() => {
     const events = new AbortController();
     bindUpload(events.signal);
+    loadLeaflet().then(L => { if (!events.signal.aborted) bindUploadMap(events.signal, L); });
     return () => events.abort();
   }, []);
-
-  useEffect(() => {
-    if (!mapReady) return;
-    const events = new AbortController();
-    bindUploadMap(events.signal);
-    return () => events.abort();
-  }, [mapReady]);
-
-  return <>
-    <Script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" onReady={() => setMapReady(true)} />
-    <Script src="/static/js/exif.js" />
-  </>;
+  return null;
 }

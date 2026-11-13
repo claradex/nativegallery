@@ -39,7 +39,7 @@
 }
 .multimark {
 	background:url('/img/m/multimark.png') no-repeat;
-	font-family:PT Sans Narrow,sans-serif;
+	font-family:var(--narrow-font);
 	font-size:18px;
 	color:#fff;
 	font-weight:bold;

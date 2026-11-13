@@ -36,7 +36,8 @@ export function bindUpload(signal) {
     let date;
     try {
       const bytes = await selected.slice(0, 512 * 1024).arrayBuffer();
-      const tags = window.EXIF?.readFromBinaryFile(bytes);
+      const { default: EXIF } = await import('exif-js');
+      const tags = EXIF.readFromBinaryFile(bytes);
       date = /^(\d{4}):(\d{2}):(\d{2})/.exec(tags?.DateTimeOriginal ?? '');
     } catch {
       // A missing or malformed EXIF segment does not prevent manual date entry.

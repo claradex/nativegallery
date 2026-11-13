@@ -1,3 +1,4 @@
+import 'leaflet/dist/leaflet.css';
 import { UploadInteractions } from './UploadInteractions';
 import type { UploadOptionsData } from '@nativegallery/contracts';
 import { apiGet } from '../../../api/client';
@@ -8,7 +9,6 @@ import { UploadLocation } from './UploadLocation';
 function UploadForm({ data }: { data: UploadOptionsData }) {
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
   return <tr><td className="main">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <h1>Предложить медиа на публикацию</h1>
     <p>Ваш текущий индекс загрузки: <b>{data.uploadIndex}</b></p>
     <div id="formtable">

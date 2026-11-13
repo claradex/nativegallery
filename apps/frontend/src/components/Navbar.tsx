@@ -54,10 +54,6 @@ function MemberMenu({ viewer, verify }: { viewer: Viewer; verify: boolean }) {
   </>;
 }
 
-export function NavbarStyle() {
-  return <style>{'[data-ajax-loader] { transition: opacity 0.3s, transform 0.3s; }'}</style>;
-}
-
 export function Navbar({ path, title: siteTitle, viewer }: { path: string; title: string; viewer: Viewer | null }) {
   const photo = path.split('/')[1] === 'photo';
   const hidden = { display: 'none' };

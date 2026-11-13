@@ -11,12 +11,10 @@ export function PhotoMedia({ photo, scope }: { photo: PhotoPageData; scope: stri
   const image = mediaUrl(photo.url);
   return <div style={{ textAlign: 'center' }}>
     <div id="photobar">
-      <a id="prev" aria-label="Предыдущая фотография" aria-disabled={!photo.previousId}
+      <a id="prev" rel="prev" aria-label="Предыдущая фотография" aria-disabled={!photo.previousId}
         href={photo.previousId ? '/photo/' + photo.previousId + '/' + scope : undefined}><span>&lt;</span></a>
-      <a id="next" aria-label="Следующая фотография" aria-disabled={!photo.nextId}
+      <a id="next" rel="next" aria-label="Следующая фотография" aria-disabled={!photo.nextId}
         href={photo.nextId ? '/photo/' + photo.nextId + '/' + scope : undefined}><span>&gt;</span></a>
-      {photo.previousId && <link id="PrevLink" rel="prev" href={'/photo/' + photo.previousId + '/' + scope} />}
-      {photo.nextId && <link id="NextLink" rel="next" href={'/photo/' + photo.nextId + '/' + scope} />}
       <div style={{ display: 'inline-block' }}>
         <div id="underphoto_frame"><div id="ph_frame">
           {video ? <video controls><source src={video} /></video> : <a href={image}>
