@@ -27,7 +27,7 @@ export class AuthService {
     const user = await database.user.findUnique({
       where: { id: session.user_id }, select: { id: true, username: true, status: true, admin: true },
     });
-    if (!user) return null;
+    if (!user || user.status === 1) return null;
     const now = Math.floor(Date.now() / 1000);
     const [unreadPhotos, pendingPhotos] = await Promise.all([
       database.followerNotification.count({ where: { follower_id: user.id, checked: 0 } }),
@@ -44,7 +44,7 @@ export class AuthService {
       where: { OR: [{ username: { contains: body.username } }, { email: { contains: body.username } }] },
       orderBy: { id: 'asc' },
     });
-    if (!user || !await compare(body.password, user.password.replace(/^\$2y\$/, () => '$2b$'))) return failure;
+    if (!user || user.status === 1 || !await compare(body.password, user.password.replace(/^\$2y\$/, () => '$2b$'))) return failure;
     const token = randomUUID();
     const now = BigInt(Math.floor(Date.now() / 1000));
     await database.loginToken.create({
