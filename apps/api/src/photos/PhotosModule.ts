@@ -6,5 +6,7 @@ import { PhotoUploadController } from './PhotoUploadController';
 
 import { PublicMediaController } from './PublicMediaController';
 
-@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController] })
+import { GalleryController } from './GalleryController';
+
+@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController] })
 export class PhotosModule {}

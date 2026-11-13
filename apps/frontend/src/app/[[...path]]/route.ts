@@ -24,6 +24,7 @@ import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { UploadPage } from '../../features/photos/upload/UploadPage';
+import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
@@ -66,12 +67,14 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     });
   }
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
+  const galleryId = path.match(/^article\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
+    : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')

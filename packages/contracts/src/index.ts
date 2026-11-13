@@ -156,3 +156,16 @@ export interface UploadOptionsData {
   uploadIndex: number;
   directUpload: boolean;
 }
+export interface GalleryData {
+  title: string;
+  photos: {
+    id: number;
+    photourl: string;
+    postbody: string;
+    place: string;
+    postedAt: number;
+    authorId: number;
+    author: string;
+    views: number;
+  }[];
+}
