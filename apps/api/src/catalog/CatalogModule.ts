@@ -14,7 +14,5 @@ import { AccountController } from './AccountController';
 
 import { ProfileSettingsController } from './ProfileSettingsController';
 
-import { ProfileAvatarController } from './ProfileAvatarController';
-
-@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController, ProfileSettingsController, ProfileAvatarController] })
+@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController, ProfileSettingsController] })
 export class CatalogModule {}

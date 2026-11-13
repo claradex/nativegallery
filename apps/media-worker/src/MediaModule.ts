@@ -7,6 +7,8 @@ import { Injectable, Module, OnApplicationShutdown, OnModuleInit } from '@nestjs
 import type { JobKind } from '@nativegallery/contracts';
 import { consume, enabled } from '@nativegallery/jobs';
 
+import { renderUploadedVideo } from './RenderUploadedVideo';
+
 const ffmpeg = promisify(execFile);
 const formats = {
   BlurNewImage: ['-vf', 'scale=32:-1,gblur=sigma=3', '-frames:v', '1'],
@@ -52,11 +54,18 @@ class MediaWorker implements OnModuleInit, OnApplicationShutdown {
         throw new Error('Invalid media job');
       }
       const root = await realpath(process.env.MEDIA_ROOT ?? '../../uploads');
-      const input = inside(root, await realpath(inside(root, payload.input)));
+      const inputPath = inside(root, payload.input);
+      const input = inside(root, await realpath(inputPath));
       const requested = inside(root, payload.output);
       const directory = await realpath(dirname(requested));
       const output = inside(root, resolve(directory, basename(requested)));
       if (input === output) throw new Error('Input and output must differ');
+      if (kind === 'RenderVideo' && typeof payload.preview === 'string' && typeof payload.format === 'string') {
+        const preview = inside(root, payload.preview);
+        const previewDirectory = await realpath(dirname(preview));
+        await renderUploadedVideo(input, payload.format, output, inside(root, resolve(previewDirectory, basename(preview))));
+        return;
+      }
       const temporary = resolve(directory, '.' + randomUUID() + extname(output));
       try {
         await ffmpeg(process.env.FFMPEG_PATH ?? 'ffmpeg', ['-nostdin', '-y', '-i', input, ...formats[kind], temporary],

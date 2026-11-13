@@ -3,6 +3,7 @@ import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import { database } from '@nativegallery/database';
+import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
 import { photoContent } from './PhotoContent';
 
@@ -26,11 +27,12 @@ function photoDate(body: Record<string, unknown>) {
 
 export async function uploadPhoto(userId: number, body: Record<string, unknown>, buffer?: Buffer) {
   if (!buffer) return rejected('FILE_NOTSELECTED');
+  const video = videoContainer(buffer);
   const image = sharp(buffer, { limitInputPixels: 40000000, animated: true });
-  const metadata = await image.metadata().catch(() => null);
-  const extension = metadata && formats.get(metadata.format);
+  const metadata = video ? null : await image.metadata().catch(() => null);
+  const extension = video ? 'jpg' : metadata && formats.get(metadata.format);
   if (!extension || (extension === 'gif' && process.env.PHOTO_ALLOW_GIF === 'false')) return rejected('FILE_NOTSUPPORTED');
-  if (!await image.stats().catch(() => null)) return rejected('FILE_NOTSUPPORTED');
+  if (!video && !await image.stats().catch(() => null)) return rejected('FILE_NOTSUPPORTED');
 
   const fields = body.disableexif === '1' ? {} : uploadedExif(metadata?.exif);
   const exif = JSON.stringify(Object.keys(fields).length ? fields : { type: 'none' });
@@ -48,11 +50,14 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
     return text(body[key + '[' + entity + ']'] ?? (values && typeof values === 'object' ? Reflect.get(values, String(entity)) : null));
   };
   const allowed = (key: string) => body[key] === '1' ? 'disabled' : 'allowed';
-  const filename = randomBytes(32).toString('hex') + '.' + extension;
-  const directory = join(process.env.MEDIA_ROOT ?? '../../uploads', 'cdn', 'img');
-  const path = join(directory, filename);
-  const photourl = '/uploads/cdn/img/' + filename;
-  await mkdir(directory, { recursive: true });
+  const key = randomBytes(32).toString('hex');
+  const root = process.env.MEDIA_ROOT ?? '../../uploads';
+  const preview = 'cdn/img/' + key + '.' + extension;
+  const output = 'cdn/video/' + key + '.mp4';
+  const input = video ? '.incoming/' + key + '.bin' : preview;
+  const path = join(root, input);
+  await mkdir(join(root, video ? '.incoming' : 'cdn/img'), { recursive: true });
+  if (video) await Promise.all(['cdn/img', 'cdn/video'].map(directory => mkdir(join(root, directory), { recursive: true })));
   await writeFile(path, buffer, { flag: 'wx' });
 
   try {
@@ -62,15 +67,19 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       if ((gallery && (!targetGallery || !targetGallery.opened)) || (entity && !await tx.entityData.findUnique({ where: { id: entity }, select: { id: true } }))) return null;
       const moderated = process.env.PHOTO_PREMODERATION !== 'false' && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
-        user_id: userId, postbody: description, photourl, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
+        user_id: userId, postbody: description, photourl: '/uploads/' + preview, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
         exif, priority: 0, moderated, place, gallery_id: gallery, entitydata_id: entity,
         content: JSON.stringify({
-          type: 'image', videourl: null, copyright: text(body.license), comment: description,
+          type: video ? 'video' : 'image', videourl: video ? '/uploads/' + output : null, copyright: text(body.license), comment: description,
           lat: body.nomap ? null : text(body.lat), lng: body.nomap ? null : text(body.lng),
           comments: allowed('disablecomments'), rating: allowed('disablerating'), showtop: allowed('disableshowtop'),
           entityroute: entity ? linkedValue('route') : null, entitycomment: entity ? linkedValue('notes') : null,
         }),
       }, select: { id: true } });
+      if (video) await tx.job.create({ data: {
+        kind: 'RenderVideo', dedupe_key: 'render-video:' + photo.id,
+        payload: { input, output, preview, format: video }, available_at: new Date(),
+      } });
       if (moderated === 1 && allowed('disablesubsnotify') === 'allowed') {
         const followers = await tx.follower.findMany({ where: { user_id: userId }, distinct: ['follower_id'], select: { follower_id: true } });
         if (followers.length) await tx.followerNotification.createMany({
