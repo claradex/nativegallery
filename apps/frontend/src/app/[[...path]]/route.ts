@@ -13,6 +13,7 @@ import { AdminModels } from '../../features/admin/AdminModels';
 import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
+import { Register } from '../../features/auth/Register';
 import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
@@ -81,6 +82,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
+    : path === 'register' ? await Register(api)
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
     : path === 'comments' || path === 'comments.php' ? await CommentFeed(request, api)
