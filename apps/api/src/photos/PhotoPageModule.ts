@@ -2,5 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/AuthModule';
 import { PhotoPageController } from './PhotoPageController';
 
-@Module({ imports: [AuthModule], controllers: [PhotoPageController] })
+import { PhotoModerationController } from "./PhotoModerationController";
+
+@Module({ imports: [AuthModule], controllers: [PhotoPageController, PhotoModerationController] })
 export class PhotoPageModule {}
