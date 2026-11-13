@@ -33,6 +33,7 @@ import { CommentFeed } from '../../features/photos/CommentFeed';
 import { UpdatesPage } from '../../features/photos/UpdatesPage';
 import { MapMedia } from '../../features/photos/MapMedia';
 import { FeedPage } from '../../features/photos/FeedPage';
+import { GalleryDirectory } from '../../features/photos/GalleryDirectory';
 import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
@@ -101,6 +102,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'feed' ? await FeedPage(api)
     : sitePageId ? await SitePage(request, api, sitePageId)
+    : path === 'misc' ? await GalleryDirectory(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'

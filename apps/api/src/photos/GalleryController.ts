@@ -5,6 +5,11 @@ import { publishedPhotos } from './PublishedPhotos';
 
 @Controller('api/internal/galleries')
 export class GalleryController {
+  @Get()
+  list() {
+    return database.gallery.findMany({ orderBy: { id: 'asc' }, select: { id: true, title: true } });
+  }
+
   @Get(':id')
   async gallery(@Param('id') rawId: string): Promise<GalleryData> {
     const id = Number(rawId);
