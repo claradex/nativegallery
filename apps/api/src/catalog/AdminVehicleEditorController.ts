@@ -1,6 +1,6 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
-import { database } from '@nativegallery/database';
+import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 
 function parseId(raw: unknown) {
@@ -71,6 +71,22 @@ export class AdminVehicleEditorController {
     const data = await this.modelData(model.entityid, body);
     const result = await database.entityData.updateMany({ where: { id, entityid: model.entityid }, data });
     if (!result.count) throw new NotFoundException();
+    return { id };
+  }
+
+  @Delete('models/catalog/:id')
+  async remove(@Req() request: Request, @Param('id') rawId: string) {
+    await this.authorize(request);
+    const id = parseId(rawId);
+    await database.$transaction(async tx => {
+      const [model] = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`
+        SELECT id FROM entities_data WHERE id = ${id} FOR UPDATE
+      `);
+      if (!model) throw new NotFoundException();
+      const photo = await tx.photo.findFirst({ where: { entitydata_id: id }, select: { id: true } });
+      if (photo) throw new ConflictException('К модели привязаны фотографии.');
+      await tx.entityData.delete({ where: { id } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return { id };
   }
 
