@@ -4,5 +4,7 @@ import { CatalogController } from './CatalogController';
 
 import { AdminGeoController } from './AdminGeoController';
 
-@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController] })
+import { AdminUsersController } from './AdminUsersController';
+
+@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController] })
 export class CatalogModule {}
