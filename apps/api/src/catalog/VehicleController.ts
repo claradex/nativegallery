@@ -9,6 +9,13 @@ import { findVehicle } from './VehicleData';
 export class VehicleController {
   constructor(private readonly auth: AuthService) {}
 
+  @Get('vehicle-models')
+  @Header('Cache-Control', 'private, no-store')
+  async models(@Req() request: Request) {
+    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    return database.entity.findMany({ select: { id: true, title: true, color: true }, orderBy: { id: 'asc' } });
+  }
+
   @Get('vehicle/:id')
   @Header('Cache-Control', 'private, no-store')
   async getVehicle(@Param('id') rawId: string, @Req() request: Request): Promise<VehiclePageData> {
