@@ -1,6 +1,7 @@
 import { Document, type PageContext } from '../../components/Document';
 import { AdminModelCreate } from '../../features/admin/AdminModelCreate';
 import { AdminEntities } from '../../features/admin/AdminEntities';
+import { ContestResults } from '../../features/contests/ContestResults';
 import { AdminContests } from '../../features/admin/AdminContests';
 import { AdminSettings } from '../../features/admin/AdminSettings';
 import { AdminUsers } from '../../features/admin/AdminUsers';
@@ -59,7 +60,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   }
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
-  const followed = path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
+  const followed = path === 'voting/results' ? await ContestResults(api)
+    : path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
     : path === 'vehicle/edit' ? await VehicleEdit(request, api)
     : vehicleId ? await VehiclePage(request, api, vehicleId) : photoId ? await PhotoPage(request, api, photoId)
     : path === 'fav_authors' ? await FollowedPhotos(request, api)

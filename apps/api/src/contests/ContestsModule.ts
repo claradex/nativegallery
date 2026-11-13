@@ -4,5 +4,7 @@ import { ContestsController } from './ContestsController';
 
 import { AdminContestsController } from './AdminContestsController';
 
-@Module({ imports: [AuthModule], controllers: [ContestsController, AdminContestsController] })
+import { ContestResultsController } from './ContestResultsController';
+
+@Module({ imports: [AuthModule], controllers: [ContestsController, AdminContestsController, ContestResultsController] })
 export class ContestsModule {}

@@ -106,3 +106,13 @@ export interface VehiclePageData {
   vehicle: NonNullable<PhotoPageData["vehicle"]>;
   photos: (TopPhoto & { comments: number })[];
 }
+
+export interface ContestWinnerData {
+  id: number;
+  contestId: number;
+  date: number;
+  place: number;
+  photoId: number;
+  photoUrl: string;
+  theme: string;
+}
