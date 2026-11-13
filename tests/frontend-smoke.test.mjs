@@ -16,6 +16,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/internal/photo-search?id=9&page=2': { authorId: 9, total: 60, page: 2, pages: 2, photos: [] },
       '/api/internal/favorite-photos': [],
       '/api/internal/followed-photos': [],
       '/api/upload/options': { galleries: [], entities: [], username: 'Автор', uploadIndex: 5, directUpload: false },
@@ -118,6 +119,14 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       const member = await fetch(origin + path, { headers: { cookie: 'test-viewer=1' } });
       assert.equal(member.status, 200, path);
       assert.ok((await member.text()).includes(heading), path);
+    }
+    const guestSearch = await fetch(origin + '/search.php?id=9', { redirect: 'manual' });
+    assert.equal(guestSearch.status, 307);
+    assert.equal(guestSearch.headers.get('location'), '/login');
+    for (const route of ['/search', '/search.php']) {
+      const search = await fetch(origin + route + '?id=9&page=2', { headers: { cookie: 'test-viewer=1' } });
+      assert.equal(search.status, 200);
+      assert.match(await search.text(), /Найдено изображений: <b>60<\/b>/);
     }
     const guestMap = await fetch(origin + '/mapmedia', { redirect: 'manual' });
     assert.equal(guestMap.status, 307);

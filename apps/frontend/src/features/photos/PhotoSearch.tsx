@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { redirect } from 'next/navigation';
+import { siteContext } from '../site/SiteContext';
 import { legacyDate, type PhotoSearchResult } from '@nativegallery/contracts';
 
 function SearchForm({ authorId }: { authorId?: string }) {
@@ -35,26 +36,31 @@ function Results({ data }: { data: PhotoSearchResult }) {
   </>;
 }
 
-export async function PhotoSearch(request: Request, api: string) {
-  const query = new URL(request.url).searchParams;
-  const id = query.get('id') ?? undefined;
+export async function PhotoSearch({ searchParams }: {
+  searchParams: Promise<{ id?: string | string[]; page?: string | string[] }>;
+}) {
+  const { viewer, cookie } = await siteContext();
+  if (!viewer) redirect('/login');
+
+  const query = await searchParams;
+  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const page = (Array.isArray(query.page) ? query.page[0] : query.page) ?? '1';
   let data: PhotoSearchResult | null = null;
-  const headers = { cookie: request.headers.get('cookie') ?? '' };
+  let invalid = false;
   if (id !== undefined) {
-    const search = new URLSearchParams({ id, page: query.get('page') ?? '1' });
-    const response = await fetch(api + '/api/internal/photo-search?' + search, { cache: 'no-store', headers }).catch(() => null);
-    if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-    if (response?.status === 400) return new Response('Некорректные параметры поиска', { status: 400 });
-    if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
-    data = await response.json();
-  } else {
-    const response = await fetch(api + '/api/internal/viewer', { cache: 'no-store', headers }).catch(() => null);
-    if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
-    if (!(await response.json()).viewer) return Response.redirect(new URL('/login', request.url), 302);
+    const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+    const search = new URLSearchParams({ id, page });
+    const response = await fetch(api + '/api/internal/photo-search?' + search, {
+      cache: 'no-store', headers: { cookie: cookie ?? '' },
+    }).catch(() => null);
+    if (response?.status === 403) redirect('/login');
+    if (response?.ok) data = await response.json();
+    else if (response?.status === 400) invalid = true;
+    else throw new Error('Could not load photo search results');
   }
-  const content = renderToStaticMarkup(<tr><td className="main">
-    <h1>Результаты поиска</h1>{data && <Results data={data} />}<SearchForm authorId={id} />
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">' +
-    '__NAVBAR__' + content + '<tr>__FOOTER__</tr></table></body></html>';
+  return <tr><td className="main">
+    <h1>Результаты поиска</h1>
+    {invalid && <p role="alert">Некорректные параметры поиска</p>}
+    {data && <Results data={data} />}<SearchForm authorId={id} />
+  </td></tr>;
 }
