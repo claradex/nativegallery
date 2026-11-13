@@ -37,9 +37,9 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
     <div className="p20w" style={{ display: 'block' }}>
       <table><tbody>
         <tr><th {...{ width: '100' }}>Изображение</th><th {...{ width: '90%' }}>Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
-        {photos.map(photo => <tr key={photo.id} className={photo.moderated === 0 ? 's0' : photo.moderated === 2 ? 's15' : 's12'}>
+        {photos.map(photo => <tr key={photo.id} className={photo.moderated <= 0 ? 's0' : photo.moderated === 2 ? 's15' : 's12'}>
           <td className="pb-photo pb_photo"><a href={'/photo/' + photo.id + '/'} target="_blank" className="prw">
-            <img src={photo.photourl} className="f" />
+            {photo.moderated === -1 ? <span>Видео обрабатывается</span> : <img src={photo.photourl} className="f" />}
           </a></td>
           <td className="d">
             <p><span style={{ wordSpacing: -1 }}><b>{photo.place}</b></span></p>
@@ -48,10 +48,10 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
             {photo.declineComment && <p className="sm"><b>Комментарий: </b> {photo.declineComment}</p>}
           </td>
           <td className="c" style={{ padding: 10 }}></td>
-          <td className="cs">{(photo.moderated === 0 || photo.endmoderation === -1) ? 'На модерации' : <>
+          <td className="cs">{photo.moderated === -1 ? 'В обработке' : (photo.moderated === 0 || photo.endmoderation === -1) ? 'На модерации' : <>
             {legacyDate(photo.endmoderation)}<div style={{ marginTop: 15 }}>Оценка<br /><b>И{photo.rating} К{photo.rating}</b></div>
           </>}</td>
-          <td className="cs"><a type="button" href={'/lk/editimage?id=' + photo.id}>Редактировать</a></td>
+          <td className="cs">{photo.moderated !== -1 && <a type="button" href={'/lk/editimage?id=' + photo.id}>Редактировать</a>}</td>
         </tr>)}
       </tbody></table>
     </div><br />
