@@ -1,3 +1,4 @@
+import { CommentText } from './CommentText';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
 
@@ -14,7 +15,7 @@ function FeedComment({ comment }: { comment: CommentFeedEntry }) {
       <div className="pc-text"><div>
         <span className="cmt-aname"><b><a href={'/author/' + comment.authorId + '/'}>{comment.author}</a></b></span> · <span className="sm nw">{legacyDate(comment.postedAt)}</span>
         <div className="rank">Фото: {comment.photoCount}{role}</div>
-        <div className="message-text feed">{comment.body}</div>
+        <div className="message-text feed"><CommentText body={comment.body} /></div>
       </div></div>
       <div className="pc-compl"><div className="comment-votes-block">
         <div className="wvote" {...{ wid: String(comment.id) }}>

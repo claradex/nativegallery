@@ -82,5 +82,5 @@ export async function PhotoPage(request: Request, api: string, id: string) {
   return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
     '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
     renderToStaticMarkup(<PhotoContent photo={photo} comments={comments} scope={suffix} />) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_PhotoActions__</body></html>';
+    '<tr>__FOOTER__</tr></table>__SCRIPT_PhotoActions____SCRIPT_CommentEmoji__</body></html>';
 }

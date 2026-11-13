@@ -1,3 +1,4 @@
+import { CommentText } from './CommentText';
 import { legacyDate, type PhotoCommentData } from '@nativegallery/contracts';
 
 function safeMedia(url: string | null | undefined) {
@@ -12,10 +13,14 @@ function safeMedia(url: string | null | undefined) {
 
 function CommentBody({ body }: { body: string }) {
   const characters = Array.from(body);
+  let split = 200;
+  const prefix = characters.slice(0, split).join('');
+  const partial = /\[\d*\/?[\w-]*$/.exec(prefix)?.[0];
+  if (partial && /^\[\d+\/[\w-]+\]/.test(partial + characters.slice(split).join(''))) split -= partial.length;
   return <div className="message-text"><div className="message-text"><div>
-    {characters.slice(0, 200).join('')}
-    {characters.length > 200 && <>
-      <span className="hidden-text" hidden>{characters.slice(200).join('')}</span>
+    <CommentText body={characters.slice(0, split).join('')} />
+    {characters.length > split && <>
+      <span className="hidden-text" hidden><CommentText body={characters.slice(split).join('')} /></span>
       <a href="#" className="toggle-message" data-comment-action="expand">показать больше</a>
     </>}
   </div></div></div>;

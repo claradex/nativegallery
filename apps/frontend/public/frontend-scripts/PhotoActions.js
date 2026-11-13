@@ -37,7 +37,17 @@ commentForm?.addEventListener('submit', async event => {
   const status = commentForm.querySelector('#statusSend');
   if (submit.disabled) return;
   const body = new FormData(commentForm);
-  body.set('wtext', editor.innerText.trim());
+  const content = editor.cloneNode(true);
+  for (const emoji of content.querySelectorAll('img[data-code]')) emoji.replaceWith(emoji.dataset.code);
+  content.hidden = true;
+  // Preserve line breaks from the editable HTML using the live editor layout.
+  content.style.position = 'absolute';
+  content.style.visibility = 'hidden';
+  content.hidden = false;
+  content.removeAttribute('id');
+  editor.after(content);
+  body.set('wtext', content.innerText.trim());
+  content.remove();
   status.hidden = true;
   submit.disabled = true;
   try {

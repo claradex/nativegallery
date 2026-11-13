@@ -9,6 +9,7 @@ const scripts: Record<string, boolean> = {
   "VehicleRequest": false,
   "VehicleEdit": false,
   "PhotoActions": false,
+  "CommentEmoji": false,
   "Navigation": false,
   "RecentPhotos": false,
   "ContestCountdown": false,
