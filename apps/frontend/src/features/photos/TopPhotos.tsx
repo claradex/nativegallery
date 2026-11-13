@@ -1,5 +1,4 @@
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 function RankedPhoto({ photo, rank }: { photo: TopPhoto; rank: number }) {
   return (
@@ -40,12 +39,10 @@ function TopPhotosContent({ photos }: { photos: TopPhoto[] }) {
   );
 }
 
-export async function TopPhotos(api: string) {
+export async function TopPhotos() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/top30', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return null;
+  if (!response?.ok) throw new Error('Could not load popular photos');
   const photos: TopPhoto[] = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<TopPhotosContent photos={photos} />) +
-    '<tr>__FOOTER__</tr></table></body></html>';
+  return <TopPhotosContent photos={photos} />;
 }

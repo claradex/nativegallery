@@ -16,7 +16,6 @@ import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
 import { Account } from '../../features/site/Account';
-import { AuthorSearch } from '../../features/site/AuthorSearch';
 import { Author } from '../../features/site/Author';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
@@ -25,15 +24,12 @@ import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { UploadPage } from '../../features/photos/upload/UploadPage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
-import { UpdatesPage } from '../../features/photos/UpdatesPage';
 import { MapMedia } from '../../features/photos/MapMedia';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
-import { TopPhotos } from '../../features/photos/TopPhotos';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
   ['comments.php', 'comments'],
-  ['update.php', 'update'],
   ['search.php', 'search'],
   ['voting.php', 'voting'],
 ]);
@@ -82,9 +78,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
     : path === 'comments' ? await CommentFeed(request, api)
-    : path === 'update' ? await UpdatesPage(api)
     : path === 'mapmedia' ? await MapMedia(request, api)
-    : path === 'authors.php' ? await AuthorSearch(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
@@ -96,8 +90,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
-  if (!markup) return path === 'top30' || path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
+  const markup = followed ?? ( path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
+  if (!markup) return path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);

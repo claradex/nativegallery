@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type GalleryData } from '@nativegallery/contracts';
 
 type UpdatePhoto = GalleryData['photos'][number] & { comments: number };
@@ -21,15 +20,14 @@ function UpdateCard({ photo }: { photo: UpdatePhoto }) {
   </tr></tbody></table></div>;
 }
 
-export async function UpdatesPage(api: string) {
+export async function UpdatesPage() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/updates', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (!response?.ok) throw new Error('Could not load photo updates');
   const photos: UpdatePhoto[] = await response.json();
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     <h1>Новые фотографии за 72 часа</h1>
     {photos.map(photo => <UpdateCard key={photo.id} photo={photo} />)}
     <br />
-  </td></tr>);
-  return '<html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    content + '<tr>__FOOTER__</tr></table></body></html>';
+  </td></tr>;
 }

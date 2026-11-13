@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 interface AuthorResult {
   id: number;
@@ -6,16 +5,18 @@ interface AuthorResult {
   photourl: string;
 }
 
-export async function AuthorSearch(request: Request, api: string) {
-  const query = new URL(request.url).searchParams.get('q')?.trim() ?? '';
+export async function AuthorSearch({ searchParams }: { searchParams: Promise<{ q?: string | string[] }> }) {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+  const { q } = await searchParams;
+  const query = typeof q === 'string' ? q.trim() : '';
   let authors: AuthorResult[] = [];
   if (query) {
     const search = new URLSearchParams({ q: query });
     const response = await fetch(api + '/api/users/search?' + search, { cache: 'no-store' }).catch(() => null);
-    if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+    if (!response?.ok) throw new Error('Could not load author search results');
     authors = await response.json();
   }
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     <h1>Поиск авторов</h1>
     <form method="get" action="/authors.php" className="p20">
       <label htmlFor="author-query">Имя автора&nbsp;</label>
@@ -30,7 +31,5 @@ export async function AuthorSearch(request: Request, api: string) {
         </a>
       </li>)}
     </ul> : <p>Авторы не найдены.</p>)}
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    content + '<tr>__FOOTER__</tr></table></body></html>';
+  </td></tr>;
 }
