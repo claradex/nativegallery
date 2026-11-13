@@ -23,6 +23,7 @@ export function HomeContest({ contest }: { contest: Contest }) {
       : <><a href="/voting/sendpretend" style={linkStyle} type="button">Участвовать!</a>{' '}
         <a href="/voting/waiting" style={linkStyle} type="button">Голосовать за претендентов</a></>}
     </div>
-    {voting ? '__SCRIPT_ContestVoting:' + contest.closedate + '__' : '__SCRIPT_ContestAccepting:' + contest.closepretendsdate + '__'}
+    <script src={voting ? "/frontend-scripts/ContestVoting.js" : "/frontend-scripts/ContestAccepting.js"}
+      data-contest-time={voting ? contest.closedate : contest.closepretendsdate} defer />
   </div>;
 }

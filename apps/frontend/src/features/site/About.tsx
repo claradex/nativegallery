@@ -1,5 +1,4 @@
 import type { SiteOverview } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 const roles = [
   { id: 1, icon: '220.ico', label: 'Администраторы' },
@@ -47,13 +46,12 @@ function AboutContent({ data, title, description }: { data: SiteOverview; title:
   );
 }
 
-export async function About(api: string) {
+export async function About() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/about', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return null;
+  if (!response?.ok) throw new Error('Could not load site information');
   const data: SiteOverview = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<tr><td className="main">
-      <AboutContent data={data} title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />
-    </td></tr>) +
-    '<tr>__FOOTER__</tr></table></body></html>';
+  return <tr><td className="main">
+    <AboutContent data={data} title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />
+  </td></tr>;
 }

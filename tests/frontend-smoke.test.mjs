@@ -12,9 +12,12 @@ const require = createRequire(new URL('package.json', frontend));
 test('production frontend serves legacy HTML and native scripts', { timeout: 20_000 }, async () => {
   const api = createServer((request, response) => {
     response.setHeader('Content-Type', 'application/json');
-    response.end(JSON.stringify(request.url === '/api/register/options'
-      ? { open: true }
-      : { viewer: null, databaseVersion: 'test' }));
+    const fixtures = {
+      '/api/register/options': { open: true },
+      '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
+      '/api/internal/about': { users: 5, photos: 8, online: 1, staff: [] },
+    };
+    response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
   await once(api, 'listening');
@@ -38,6 +41,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     }
     assert.ok(origin, output);
     for (const [path, status, marker] of [
+      ['/', 200, 'Недавно добавленные фотографии'],
+      ['/about', 200, 'Зарегистрировано пользователей'],
       ['/rules', 200, 'Правила сайта'],
       ['/tour', 200, 'data-tour-tab'],
       ['/login', 200, 'loginbtn'],

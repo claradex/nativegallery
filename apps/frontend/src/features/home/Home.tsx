@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate } from '@nativegallery/contracts';
 import { NewsItem } from '../site/NewsPage';
 import { HomeContest } from './HomeContest';
@@ -32,6 +31,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
   return (
   <tr>
     <td className="main">
+        <style>{homeStyle}</style>
         <table id="idx-main"><tbody>
             <tr>
                 <td style={{ verticalAlign: 'top', paddingRight: 20 }}>
@@ -72,16 +72,16 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                 </td>
             </tr>
         </tbody></table>
+        <script src="/frontend-scripts/RecentPhotos.js" defer />
     </td>
 </tr>
   );
 }
 
-export async function Home(api: string): Promise<string | null> {
+export async function Home() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/home', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return null;
+  if (!response?.ok) throw new Error('Could not load the home page');
   const data: HomeData = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head>' + renderToStaticMarkup(<style>{homeStyle}</style>) +
-    '<body><div id="backgr"></div><table class="tmain">__NAVBAR__' + renderToStaticMarkup(<HomeContent {...data} />) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_RecentPhotos__</body></html>';
+  return <HomeContent {...data} />;
 }

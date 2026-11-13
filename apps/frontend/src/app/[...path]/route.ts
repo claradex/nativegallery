@@ -16,7 +16,6 @@ import { AdminNews } from '../../features/admin/AdminNews';
 import { EmailVerified } from '../../features/auth/EmailVerified';
 import { Register } from '../../features/auth/Register';
 import { Login } from '../../features/auth/Login';
-import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
 import { NewsPage } from '../../features/site/NewsPage';
@@ -24,7 +23,6 @@ import { SitePage } from '../../features/site/SitePage';
 import { Account } from '../../features/site/Account';
 import { AuthorSearch } from '../../features/site/AuthorSearch';
 import { Author } from '../../features/site/Author';
-import { About } from '../../features/site/About';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
@@ -118,8 +116,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
-  if (!markup) return path === '' || path === 'about' || path === 'top30' || path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
+  const markup = followed ?? ( login ? Login() : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
+  if (!markup) return path === 'top30' || path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
