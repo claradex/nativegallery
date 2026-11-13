@@ -3,6 +3,7 @@ import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import { database } from '@nativegallery/database';
+import { uploadedExif } from './UploadedExif';
 import { photoContent } from './PhotoContent';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
@@ -31,6 +32,8 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
   if (!extension || (extension === 'gif' && process.env.PHOTO_ALLOW_GIF === 'false')) return rejected('FILE_NOTSUPPORTED');
   if (!await image.stats().catch(() => null)) return rejected('FILE_NOTSUPPORTED');
 
+  const fields = body.disableexif === '1' ? {} : uploadedExif(metadata?.exif);
+  const exif = JSON.stringify(Object.keys(fields).length ? fields : { type: 'none' });
   const date = photoDate(body);
   const place = typeof body.place === 'string' ? body.place : '';
   const description = typeof body.descr === 'string' ? body.descr : '';
@@ -60,7 +63,7 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       const moderated = process.env.PHOTO_PREMODERATION !== 'false' && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
         user_id: userId, postbody: description, photourl, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
-        exif: '{"type":"none"}', priority: 0, moderated, place, gallery_id: gallery, entitydata_id: entity,
+        exif, priority: 0, moderated, place, gallery_id: gallery, entitydata_id: entity,
         content: JSON.stringify({
           type: 'image', videourl: null, copyright: text(body.license), comment: description,
           lat: body.nomap ? null : text(body.lat), lng: body.nomap ? null : text(body.lng),

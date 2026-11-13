@@ -6,21 +6,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const errors = get('errorsbox');
   const status = get('statusbox');
 
-  file.addEventListener('change', () => {
-    get('filename').textContent = file.files[0]?.name ?? '';
+  function setDate(year, month, day) {
+    const select = get('year');
+    if (year && !Array.from(select.options).some(option => Number(option.value) === year)) {
+      select.add(new Option(year, year), 1);
+    }
+    select.value = year;
+    get('month').value = month;
+    get('day').value = day;
+  }
+
+  let dateRevision = 0;
+  const dateLoaded = get('dateLoaded');
+  const dateAbsent = get('dateAbsent');
+  for (const id of ['year', 'month', 'day']) {
+    get(id).addEventListener('change', () => {
+      dateRevision++;
+      dateLoaded.style.display = dateAbsent.style.display = 'none';
+    });
+  }
+  file.addEventListener('change', async () => {
+    const selected = file.files[0];
+    const revision = ++dateRevision;
+    get('filename').textContent = selected?.name ?? '';
+    dateLoaded.style.display = dateAbsent.style.display = 'none';
+    if (!selected) return;
+    let date;
+    try {
+      const bytes = await selected.slice(0, 512 * 1024).arrayBuffer();
+      const tags = window.EXIF?.readFromBinaryFile(bytes);
+      date = /^(\d{4}):(\d{2}):(\d{2})/.exec(tags?.DateTimeOriginal ?? '');
+    } catch {
+      // A missing or malformed EXIF segment does not prevent manual date entry.
+    }
+    if (revision !== dateRevision) return;
+    const [, year, month, day] = date?.map(Number) ?? [];
+    if (year >= 1850 && year <= 2037 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      setDate(year, month, day);
+      dateLoaded.style.display = 'inline';
+    } else {
+      dateAbsent.style.display = 'inline';
+    }
   });
   form.querySelectorAll('[data-date]').forEach(link => link.addEventListener('click', event => {
     event.preventDefault();
+    dateRevision++;
+    dateLoaded.style.display = dateAbsent.style.display = 'none';
     const date = new Date();
     if (link.dataset.date === 'yesterday') date.setDate(date.getDate() - 1);
-    const known = link.dataset.date !== 'unknown';
-    const year = get('year');
-    if (known && !Array.from(year.options).some(option => Number(option.value) === date.getFullYear())) {
-      year.add(new Option(date.getFullYear(), date.getFullYear()), 1);
-    }
-    get('day').value = known ? date.getDate() : 0;
-    get('month').value = known ? date.getMonth() + 1 : 0;
-    year.value = known ? date.getFullYear() : 0;
+    if (link.dataset.date === 'unknown') setDate(0, 0, 0);
+    else setDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
   }));
 
   const results = get('vlist');

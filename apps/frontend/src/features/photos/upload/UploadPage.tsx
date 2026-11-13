@@ -54,5 +54,5 @@ export async function UploadPage(request: Request, api: string) {
   const data: UploadOptionsData = await response.json();
   return '<!DOCTYPE html><html lang="ru"><head>__HEAD__<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"></head>' +
     '<body><div id="backgr"></div><table class="tmain">__NAVBAR__' + renderToStaticMarkup(<UploadForm data={data} />) +
-    '<tr>__FOOTER__</tr></table><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script>__SCRIPT_PhotoUpload__</body></html>';
+    '<tr>__FOOTER__</tr></table><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script><script src="/static/js/exif.js" defer></script>__SCRIPT_PhotoUpload__</body></html>';
 }
