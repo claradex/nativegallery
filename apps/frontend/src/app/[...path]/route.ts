@@ -18,7 +18,6 @@ import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
-import { MapMedia } from '../../features/photos/MapMedia';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
@@ -66,7 +65,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   }
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const followed = path === 'comments' ? await CommentFeed(request, api)
-    : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
     : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
