@@ -1,6 +1,7 @@
 import { Document, type PageContext } from '../../components/Document';
 import { AdminModelCreate } from '../../features/admin/AdminModelCreate';
 import { AdminEntities } from '../../features/admin/AdminEntities';
+import { AdminContests } from '../../features/admin/AdminContests';
 import { AdminSettings } from '../../features/admin/AdminSettings';
 import { AdminUsers } from '../../features/admin/AdminUsers';
 import { AdminPhotos } from '../../features/admin/AdminPhotos';
@@ -35,6 +36,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     if (section === 'Entities' || section === 'EntityCreate') return AdminEntities(request, api, section === 'EntityCreate');
     if (!section || section === 'General') return AdminUsers(request, api);
     if (section === 'UserEdit') return AdminUsers(request, api, new URL(request.url).searchParams.get('user_id') ?? '');
+    if (section === 'Contests') return AdminContests(request, api);
     if (section === 'Settings') return AdminSettings(request, api);
     if (section === 'Photo') return AdminPhotos(request, api);
     if (section === 'GeoDB') return AdminGeo(request, api);
