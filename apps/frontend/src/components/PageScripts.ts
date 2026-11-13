@@ -15,7 +15,6 @@ const scripts: Record<string, boolean> = {
   "FollowedPhotos": false,
   "Login": false,
   "Register": false,
-  "TourTabs": false,
   "TourLogin": false,
   "ContestAccepting": true,
   "ContestVoting": true
