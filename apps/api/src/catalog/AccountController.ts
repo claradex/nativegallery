@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Header, Req } from '@nestjs/common';
+import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import type { UploadHistoryData } from '@nativegallery/contracts';
 import { photoContent } from '../photos/PhotoContent';
@@ -36,13 +36,15 @@ export class AccountController {
 
   @Get('uploads')
   @Header('Cache-Control', 'private, no-store')
-  async uploadHistory(@Req() request: Request): Promise<UploadHistoryData> {
+  async uploadHistory(@Req() request: Request, @Query('sort') sort?: string): Promise<UploadHistoryData> {
     const viewer = await this.auth.viewer(request);
     if (!viewer) throw new ForbiddenException();
     const photos = await database.photo.findMany({
-      where: { user_id: viewer.id }, orderBy: { id: 'desc' },
+      where: { user_id: viewer.id },
+      orderBy: sort === '1' ? [{ endmoderation: 'desc' }, { id: 'desc' }] : { id: 'desc' },
       select: { id: true, photourl: true, place: true, posted_at: true, endmoderation: true, moderated: true, content: true },
     });
+    if (sort === '2') photos.sort((a, b) => Number(a.moderated === 1) - Number(b.moderated === 1));
     return {
       author: { id: viewer.id, username: viewer.username },
       photos: photos.map(({ content, ...photo }) => {

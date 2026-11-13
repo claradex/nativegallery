@@ -42,7 +42,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/internal/followed-photos': [],
       '/api/upload/options': { galleries: [], entities: [], username: 'Автор', uploadIndex: 5, directUpload: false },
       '/api/internal/account': { id: 9, username: 'Автор', published: 1, pending: 0, uploadIndex: null },
-      '/api/internal/account/uploads': { author: { id: 9, username: 'Автор' }, photos: [] },
+      '/api/internal/account/uploads?sort=0': { author: { id: 9, username: 'Автор' }, photos: [] },
       '/api/internal/account/upload-index': [],
       '/api/profile/settings': { id: 9, username: 'Автор', photourl: '', fields: {} },
       '/api/internal/photo-details/3': { id: 3, author: 'Автор снимка', url: '/static/img/avatar.png', publishedAt: 0, views: 10, comments: 2 },
@@ -140,6 +140,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes(marker), path);
       assert.doesNotMatch(html, /__SCRIPT_|<(?:script|link)[^>]+jquery/i);
     }
+    const sort = await fetch(origin + '/set.php?lk_upl_sort=2', { redirect: 'manual' });
+    assert.equal(sort.status, 302);
+    assert.equal(sort.headers.get('location'), '/lk/history');
+    assert.match(sort.headers.get('set-cookie'), /^lk_upl_sort=2;/);
     const theme = await fetch(origin + '/lk/profile/theme', {
       method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
     });

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { legacyDate, type UploadHistoryData } from '@nativegallery/contracts';
 
 const statuses = [
@@ -20,14 +21,19 @@ const declineReasons = [
   'Файл сломан',
 ];
 
-export function UploadHistory({ author, photos }: UploadHistoryData) {
+export function UploadHistory({ author, photos, sort }: UploadHistoryData & { sort: string }) {
   return <>
     <h1>Журнал</h1>
     <div className="sm">
       {statuses.map(([code, label]) => <div key={code} className={'p20 s' + code}
         style={{ float: 'left', padding: '1px 5px 2px', marginRight: 15 }}>{label}</div>)}
     </div><br {...{ style: undefined, clear: 'all' }} /><br />
-    <div className="sm">Сортировка фотографий:&ensp;<b>в порядке загрузки</b>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=1">в порядке выхода из очереди</a>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=2">сначала неопубликованные (в порядке загрузки)</a></div><br />
+    <div className="sm">Сортировка фотографий:&ensp;{[
+      'в порядке загрузки', 'в порядке выхода из очереди', 'сначала неопубликованные (в порядке загрузки)',
+    ].map((label, index) => <Fragment key={label}>
+      {index > 0 && <>&ensp;·&ensp;</>}
+      {String(index) === sort ? <b>{label}</b> : <a href={'/set.php?lk_upl_sort=' + index}>{label}</a>}
+    </Fragment>)}</div><br />
     <div className="p20w" style={{ display: 'block' }}>
       <table><tbody>
         <tr><th {...{ width: '100' }}>Изображение</th><th {...{ width: '90%' }}>Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
