@@ -98,7 +98,7 @@ export function ProfileForm({ data }: { data: ProfileSettingsData }) {
 }
 
 export function ProfileThemeForm({ theme }: { theme?: string }) {
-  return <form method="post" action="/lk/profile/theme" name="form" id="form" encType="multipart/form-data" style={{ display: 'inline-block' }}>
+  return <form method="post" action="/lk/profile?type=Personalization" name="form" id="form" encType="multipart/form-data" style={{ display: 'inline-block' }}>
       <div className="p20" style={panel}>
         <h4>Оформление сайта</h4>
         <div style={fieldLabel}>Тема</div>

@@ -116,7 +116,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/lk', 200, 'Общая информация'],
       ['/lk/history', 200, 'Покинуло очередь'],
       ['/lk/pday', 200, 'История изменения индекса загрузки'],
-      ['/lk/profile?type=Personalization', 200, 'action="/lk/profile/theme"'],
+      ['/lk/profile?type=Personalization', 200, 'action="/lk/profile?type=Personalization"'],
       ['/voting', 200, '<h1 id="countdown"'],
       ['/voting.php', 200, '<h1 id="countdown"'],
       ['/voting/results', 200, 'Победители фотоконкурса'],
@@ -157,7 +157,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal(sort.status, 302);
     assert.equal(sort.headers.get('location'), '/lk/history');
     assert.match(sort.headers.get('set-cookie'), /^lk_upl_sort=2;/);
-    const theme = await fetch(origin + '/lk/profile/theme', {
+    const theme = await fetch(origin + '/lk/profile?type=Personalization', {
       method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
     });
     assert.equal(theme.status, 303);
