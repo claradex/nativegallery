@@ -1,3 +1,4 @@
+import { CommentFeedInteractions } from './CommentFeedInteractions';
 import { CommentText } from './CommentText';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
 
@@ -38,6 +39,6 @@ export async function CommentFeed() {
     <div id="upd_anchor"></div>
     {comments.map(comment => <FeedComment key={comment.id} comment={comment} />)}
     <div id="scroll_anchor"></div><div id="loader-anchor"></div>
-    <script src="/frontend-scripts/CommentFeed.js" defer />
+    <CommentFeedInteractions />
   </td></tr>;
 }
