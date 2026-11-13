@@ -53,7 +53,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                         {random.map(photo => <RandomPhoto key={photo.id} photo={photo} />)}
                     </div>
                     <style>{contestStyle}</style>
-                    {contest && <HomeContest contest={contest} />}
+                    {contest && <HomeContest title={process.env.SITE_TITLE ?? 'NativeGallery'} contest={contest} />}
                     <br />
                     <h4 style={{ clear: 'both' }}><a href="/update">Недавно добавленные фотографии</a></h4>
                     <div id="recent-photos" className="ix-photos ix-photos-multiline shine" {...{ lastpid: String((recent[0]?.id ?? 0) + 1), firstpid: String(recent.at(-1)?.id ?? '') }}>

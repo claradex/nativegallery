@@ -117,8 +117,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/lk/history', 200, 'Покинуло очередь'],
       ['/lk/pday', 200, 'История изменения индекса загрузки'],
       ['/lk/profile?type=Personalization', 200, 'action="/lk/profile/theme"'],
-      ['/voting', 200, 'data-contest-time="4102444800"'],
-      ['/voting.php', 200, 'data-contest-time="4102444800"'],
+      ['/voting', 200, '<h1 id="countdown"'],
+      ['/voting.php', 200, '<h1 id="countdown"'],
       ['/voting/results', 200, 'Победители фотоконкурса'],
       ['/voting/waiting', 200, 'Претенденты на участие в конкурсе'],
       ['/vehicle/5', 200, 'Тестовая модель'],
@@ -226,7 +226,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal((await fetch(origin + '/photo/999')).status, 404);
     const tour = await fetch(origin + '/tour');
     const tourHtml = await tour.text();
-    assert.ok(tourHtml.includes('src="/frontend-scripts/TourLogin.js"'));
+    assert.doesNotMatch(tourHtml, /src="\/frontend-scripts\/TourLogin\.js"/);
+    assert.match(tourHtml, /id="start" class="tabcontent" style="display:block"/);
     assert.equal((tourHtml.match(/id="backgr"/g) ?? []).length, 1);
     for (const [route, button] of [['/register', 'regbtn'], ['/login', 'loginbtn']]) {
       const response = await fetch(origin + route);

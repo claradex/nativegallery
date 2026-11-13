@@ -1,3 +1,4 @@
+import { Countdown } from './Countdown';
 import { headers } from 'next/headers';
 import { legacyDate } from '@nativegallery/contracts';
 
@@ -38,7 +39,7 @@ export async function ContestVoting() {
     <div style={{ marginTop: 20 }}>Чтобы проголосовать, отметьте одну, две или три фотографии, которые Вам понравились</div><br /><br />
     {data.contest === null ? <>
       <div className="p20"><h4>Сейчас конкурс не проводится. Пожалуйста, заходите позже.</h4></div>
-      {data.startsAt && <><h2>Следующий Фотоконкурс будет через:</h2><h1 id="countdown" /><script src="/frontend-scripts/ContestVoting.js" data-contest-time={data.startsAt} defer /></>}
+      {data.startsAt && <><h2>Следующий Фотоконкурс будет через:</h2><Countdown as="h1" until={data.startsAt} /></>}
     </> : <div data-contest={data.contest}>
       <div id="tip" role="status"><span id="img" /></div>
       {data.photos.map(photo => <CandidateRow key={photo.id} photo={photo} signedIn={data.signedIn} />)}
