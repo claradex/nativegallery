@@ -1,5 +1,6 @@
 'use client';
 
+import Script from 'next/script';
 import { useState, type FormEvent } from 'react';
 
 export interface VehicleRequestData {
@@ -74,6 +75,6 @@ export function VehicleRequestForm({ data, id }: { data: VehicleRequestData; id:
         <li>Если Вы обладаете информацией о приписке данного ТС, а поле «Депо/Парк» отсутствует, укажите эти данные в поле «Примечание».</li>
       </ul>
     </div>
-    {data.siteKey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer />}
+    {data.siteKey && <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />}
   </td></tr>;
 }

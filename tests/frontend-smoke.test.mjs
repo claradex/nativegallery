@@ -142,6 +142,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.match(response.headers.get('content-type'), /text\/html/);
       const html = await response.text();
       assert.ok(html.includes(marker), path);
+      assert.doesNotMatch(html, /<script[^>]+src="\/frontend-scripts\//);
       assert.doesNotMatch(html, /__SCRIPT_|<(?:script|link)[^>]+jquery/i);
     }
     const homeHtml = await (await fetch(origin + '/')).text();
