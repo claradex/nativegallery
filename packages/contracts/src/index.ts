@@ -85,6 +85,8 @@ export interface PhotoPageData {
   priority: number;
   contestEntry: boolean;
   contestPlaces: number[];
+  previousId: number | null;
+  nextId: number | null;
   views: number;
   favorite: boolean;
   signedIn: boolean;

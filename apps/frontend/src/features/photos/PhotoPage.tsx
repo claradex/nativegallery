@@ -6,11 +6,11 @@ import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
 import { NotFound } from '../site/StaticPages';
 
-function PhotoContent({ photo, comments }: { photo: PhotoPageData; comments: PhotoCommentData[] }) {
+function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; comments: PhotoCommentData[]; scope: string }) {
   return <tr><td className="main">
     {!photo.published && <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff', textAlign: 'center' }}>Изображение находится на модерации</div>}
     <div id="err" />
-    <PhotoMedia photo={photo} />
+    <PhotoMedia photo={photo} scope={scope} />
     <div id="pmain">
       <table className="pwrite"><tbody><tr>
         <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>
@@ -58,7 +58,14 @@ function PhotoContent({ photo, comments }: { photo: PhotoPageData; comments: Pho
 
 export async function PhotoPage(request: Request, api: string, id: string) {
   const init = { cache: 'no-store' as const, headers: { cookie: request.headers.get('cookie') ?? '' } };
-  const response = await fetch(api + '/api/internal/photo-page/' + id, init).catch(() => null);
+  const query = new URL(request.url).searchParams;
+  const scope = new URLSearchParams();
+  for (const key of ['vid', 'gid', 'aid', 'upd']) {
+    const value = query.get(key);
+    if (value && /^\d{1,10}$/.test(value)) scope.set(key, value);
+  }
+  const suffix = scope.size ? '?' + scope : '';
+  const response = await fetch(api + '/api/internal/photo-page/' + id + suffix, init).catch(() => null);
   if (response?.status === 404) return NotFound(request);
   if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
   const photo: PhotoPageData = await response.json();
@@ -70,6 +77,6 @@ export async function PhotoPage(request: Request, api: string, id: string) {
   }
   return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
     '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<PhotoContent photo={photo} comments={comments} />) +
+    renderToStaticMarkup(<PhotoContent photo={photo} comments={comments} scope={suffix} />) +
     '<tr>__FOOTER__</tr></table>__SCRIPT_PhotoActions__</body></html>';
 }
