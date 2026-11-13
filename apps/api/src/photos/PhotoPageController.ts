@@ -2,6 +2,7 @@ import { Controller, Get, Header, NotFoundException, Param, Query, Req } from '@
 import type { Request } from 'express';
 import type { PhotoPageData } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
+import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
 
 @Controller('api/internal')
@@ -18,7 +19,7 @@ export class PhotoPageController {
       where: { id },
       select: { id: true, user_id: true, photourl: true, place: true, postbody: true,
         posted_at: true, timeupload: true, moderated: true, content: true, priority: true, on_contest: true,
-        gallery_id: true, entitydata_id: true },
+        gallery_id: true, entitydata_id: true, exif: true },
     });
     if (!photo || (photo.moderated !== 1 && (photo.moderated !== 0 ||
       (!viewer?.admin && viewer?.id !== photo.user_id)))) throw new NotFoundException();
@@ -39,12 +40,14 @@ export class PhotoPageController {
     ]);
     let commentsEnabled = true;
     let ratingEnabled = true;
+    let exifEnabled = true;
     let videoUrl: string | null = null;
     let contestPlaces: number[] = [];
     try {
       const content = JSON.parse(photo.content);
       commentsEnabled = content?.comments !== 'disabled';
       ratingEnabled = content?.rating !== 'disabled';
+      exifEnabled = content?.type !== 'none';
       if (typeof content?.videourl === 'string') videoUrl = content.videourl;
       if (Array.isArray(content?.contests)) {
         contestPlaces = content.contests.map((entry: { place?: unknown } | null) => entry?.place)
@@ -72,6 +75,7 @@ export class PhotoPageController {
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
       published: photo.moderated === 1, videoUrl, priority: photo.priority,
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
+      exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],
       canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
     };
   }

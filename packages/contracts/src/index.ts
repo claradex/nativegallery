@@ -85,6 +85,7 @@ export interface PhotoPageData {
   priority: number;
   contestEntry: boolean;
   contestPlaces: number[];
+  exif: { label: string; value: string }[];
   previousId: number | null;
   nextId: number | null;
   views: number;

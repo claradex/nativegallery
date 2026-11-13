@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
+import { PhotoExif } from './PhotoExif';
 import { PhotoMedia } from './PhotoMedia';
 import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
@@ -41,6 +42,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
           <PhotoRating photo={photo} />
         </td>
         <td id="pp-main-col">
+          <PhotoExif fields={photo.exif} />
           <div className="p0" id="pp-item-comments">
             <h4 className="pp-item-header">Комментарии{photo.commentsEnabled && <span id="commcount" style={{ fontWeight: 'normal' }}>
               {' '}<span style={{ color: '#aaa' }}>·</span> {comments.length}
