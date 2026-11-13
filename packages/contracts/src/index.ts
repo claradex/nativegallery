@@ -124,3 +124,19 @@ export interface PhotoSearchResult {
   pages: number;
   photos: { id: number; photourl: string; place: string; postbody: string; timeupload: number; author: string; views: number; comments: number }[];
 }
+export interface UploadHistoryPhoto {
+  id: number;
+  photourl: string;
+  place: string;
+  posted_at: number;
+  endmoderation: number;
+  moderated: number;
+  declineReason: number;
+  declineComment: string | null;
+  rating: string;
+}
+
+export interface UploadHistoryData {
+  author: { id: number; username: string };
+  photos: UploadHistoryPhoto[];
+}

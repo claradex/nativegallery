@@ -2,14 +2,7 @@ import { All, BadRequestException, Body, Controller, ForbiddenException, Get, He
 import type { Request, Response } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-
-function photoContent(raw: string): Record<string, unknown> {
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as Record<string, unknown>;
-  } catch {}
-  return {};
-}
+import { photoContent } from './PhotoContent';
 
 @Controller('api/admin/images')
 export class PhotoModerationController {

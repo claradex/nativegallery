@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server';
+import { UploadHistory } from './UploadHistory';
 
 interface Summary { id: number; username: string; published: number; pending: number; uploadIndex: number | null }
 interface IndexEvent { id: number; oldindex: number; newindex: number; date: number; type: number; photo_id: number }
@@ -44,13 +45,15 @@ function IndexHistory({ events }: { events: IndexEvent[] }) {
   </div>;
 }
 
-export async function Account(request: Request, api: string, history: boolean) {
-  const response = await fetch(api + '/api/internal/account' + (history ? '/upload-index' : ''), {
+export async function Account(request: Request, api: string, section: '' | 'upload-index' | 'uploads') {
+  const response = await fetch(api + '/api/internal/account' + (section ? '/' + section : ''), {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
   if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
   if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
-  const content = history ? <IndexHistory events={await response.json()} /> : <AccountSummary data={await response.json()} />;
+  const data = await response.json();
+  const content = section === 'uploads' ? <UploadHistory {...data} />
+    : section === 'upload-index' ? <IndexHistory events={data} /> : <AccountSummary data={data} />;
   return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
     renderToStaticMarkup(<tr><td className="main">{content}</td></tr>) +
     '<tr>__FOOTER__</tr></table></body></html>';

@@ -66,7 +66,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
-  const followed = path === 'lk' || path === 'lk/pday' ? await Account(request, api, path === 'lk/pday')
+  const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
+    ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
