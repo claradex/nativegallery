@@ -21,6 +21,7 @@ import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
+import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
@@ -64,7 +65,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
-  const followed = authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
+  const followed = path === 'search' ? await PhotoSearch(request, api)
+    : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
     : path === 'voting' ? await ContestVoting(request, api)
     : path === 'voting/results' ? await ContestResults(api)

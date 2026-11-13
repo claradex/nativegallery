@@ -116,3 +116,11 @@ export interface ContestWinnerData {
   photoUrl: string;
   theme: string;
 }
+
+export interface PhotoSearchResult {
+  authorId: number;
+  total: number;
+  page: number;
+  pages: number;
+  photos: { id: number; photourl: string; place: string; postbody: string; timeupload: number; author: string; views: number; comments: number }[];
+}

@@ -8,5 +8,7 @@ import { AdminUsersController } from './AdminUsersController';
 
 import { AuthorController } from './AuthorController';
 
-@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController] })
+import { PhotoSearchController } from './PhotoSearchController';
+
+@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController] })
 export class CatalogModule {}
