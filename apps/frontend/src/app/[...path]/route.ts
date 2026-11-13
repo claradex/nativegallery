@@ -10,7 +10,7 @@ import { AdminModels } from '../../features/admin/AdminModels';
 import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
-import { NotFound, Tour } from '../../features/site/StaticPages';
+import { NotFound } from '../../features/site/StaticPages';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
@@ -64,7 +64,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : vehicleId ? await VehiclePage(request, api, vehicleId)
     : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( path === 'tour' ? Tour() : undefined);
+  const markup = followed;
   if (!markup) return NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',

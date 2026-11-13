@@ -1,5 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
-
 const tourStyles = `
 .tablinks {
                 color: #000;
@@ -267,6 +265,7 @@ function TourContent({ title }: { title: string }) {
   return (
 <tr>
     <td className="main">
+      <style>{tourStyles}</style>
 
         <div className="wrap2">
             <div className="wrap1">
@@ -590,6 +589,7 @@ function TourContent({ title }: { title: string }) {
                 </div>
             </div>
         </div>
+      <script src="/frontend-scripts/TourLogin.js" defer />
     </td>
 </tr>
   );
@@ -597,7 +597,5 @@ function TourContent({ title }: { title: string }) {
 
 export function Tour() {
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<><div id="backgr"></div><style>{tourStyles}</style><TourContent title={title} /></>) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_TourLogin__</body></html>';
+  return <TourContent title={title} />;
 }

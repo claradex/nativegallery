@@ -160,6 +160,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(photoHtml, /id="navbard" style="display:none"|style="display:none" id="navbard"/);
     assert.match(photoHtml, /<script src="\/frontend-scripts\/PhotoActions.js"/);
     assert.equal((await fetch(origin + '/photo/999')).status, 404);
+    const tour = await fetch(origin + '/tour');
+    const tourHtml = await tour.text();
+    assert.ok(tourHtml.includes('src="/frontend-scripts/TourLogin.js"'));
+    assert.equal((tourHtml.match(/id="backgr"/g) ?? []).length, 1);
     const script = await fetch(origin + '/frontend-scripts/Register.js');
     assert.equal(script.status, 200);
     assert.match(await script.text(), /addEventListener/);

@@ -14,7 +14,6 @@ const scripts: Record<string, boolean> = {
   "ContestCountdown": false,
   "Login": false,
   "Register": false,
-  "TourLogin": false,
   "ContestAccepting": true,
   "ContestVoting": true
 };
