@@ -2,6 +2,7 @@ import { Controller, Get, Header, NotFoundException, Param, Query, Req } from '@
 import type { Request } from 'express';
 import type { PhotoPageData } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
+import { photoVehicle } from './PhotoVehicle';
 import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
 
@@ -31,16 +32,18 @@ export class PhotoPageController {
     const requested = groups.find(([key, , value]) => value > 0 && scope[key] === String(value));
     const group = requested ?? (photo.entitydata_id > 0 ? groups[0] : undefined);
     const neighbors = { moderated: 1, ...(group ? { [group[1]]: group[2] } : {}) };
-    const [author, views, favorite, previous, next] = await Promise.all([
+    const [author, views, favorite, previous, next, vehicle] = await Promise.all([
       database.user.findUnique({ where: { id: photo.user_id }, select: { username: true } }),
       database.photoView.count({ where: { photo_id: id } }),
       viewer ? database.photoFavorite.findFirst({ where: { photo_id: id, user_id: viewer.id }, select: { id: true } }) : null,
       database.photo.findFirst({ where: { ...neighbors, id: { gt: id } }, orderBy: { id: 'asc' }, select: { id: true } }),
       database.photo.findFirst({ where: { ...neighbors, id: { lt: id } }, orderBy: { id: 'desc' }, select: { id: true } }),
+      photoVehicle(photo.entitydata_id),
     ]);
     let commentsEnabled = true;
     let ratingEnabled = true;
     let exifEnabled = true;
+    let vehicleRoute = '';
     let videoUrl: string | null = null;
     let contestPlaces: number[] = [];
     try {
@@ -48,6 +51,9 @@ export class PhotoPageController {
       commentsEnabled = content?.comments !== 'disabled';
       ratingEnabled = content?.rating !== 'disabled';
       exifEnabled = content?.type !== 'none';
+      if (typeof content?.entityroute === 'string' || typeof content?.entityroute === 'number') {
+        vehicleRoute = String(content.entityroute);
+      }
       if (typeof content?.videourl === 'string') videoUrl = content.videourl;
       if (Array.isArray(content?.contests)) {
         contestPlaces = content.contests.map((entry: { place?: unknown } | null) => entry?.place)
@@ -75,6 +81,7 @@ export class PhotoPageController {
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
       published: photo.moderated === 1, videoUrl, priority: photo.priority,
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
+      vehicle, vehicleRoute,
       exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],
       canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
     };

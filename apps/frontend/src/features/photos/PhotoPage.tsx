@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
+import { PhotoVehicle, PhotoVehicleRoute } from './PhotoVehicle';
 import { PhotoExif } from './PhotoExif';
 import { PhotoMedia } from './PhotoMedia';
 import { PhotoRating } from "./PhotoRating";
@@ -16,7 +17,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
       <table className="pwrite"><tbody><tr>
         <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>
         <td>{photo.description}</td>
-      </tr></tbody></table>
+      </tr>{photo.vehicle && <PhotoVehicleRoute vehicle={photo.vehicle} route={photo.vehicleRoute} />}</tbody></table>
       <div>Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a>
         {'         Дата: '}<b>{photo.takenAt === 943909200 ? 'дата не указана' : legacyDate(photo.takenAt)}</b>
       </div>
@@ -42,6 +43,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
           <PhotoRating photo={photo} />
         </td>
         <td id="pp-main-col">
+          {photo.vehicle && <PhotoVehicle vehicle={photo.vehicle} />}
           <PhotoExif fields={photo.exif} />
           <div className="p0" id="pp-item-comments">
             <h4 className="pp-item-header">Комментарии{photo.commentsEnabled && <span id="commcount" style={{ fontWeight: 'normal' }}>
