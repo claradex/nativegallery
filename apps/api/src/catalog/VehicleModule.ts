@@ -6,5 +6,7 @@ import { VehicleSearchController } from "./VehicleSearchController";
 
 import { VehicleRequestController } from './VehicleRequestController';
 
-@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController] })
+import { VehicleModerationController } from "./VehicleModerationController";
+
+@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController, VehicleModerationController] })
 export class VehicleModule {}
