@@ -65,8 +65,11 @@ export class AuthService {
   async login(body: Partial<LoginRequest>, response: Response): Promise<LoginResponse> {
     if (typeof body?.username !== 'string' || !body.username || body.username.length > 255 ||
         typeof body?.password !== 'string' || !body.password || body.password.length > 1024) return failure;
+    // Exact match only (case-insensitive under utf8mb4_unicode_ci), trimmed like registration does.
+    // The PHP version used LIKE '%…%', so a fragment such as "a" signed in as the first matching account.
+    const login = body.username.trim();
     const user = await database.user.findFirst({
-      where: { OR: [{ username: { contains: body.username } }, { email: { contains: body.username } }] },
+      where: { OR: [{ username: login }, { email: login }] },
       orderBy: { id: 'asc' },
     });
     if (!user || user.status === 1 || !await compare(body.password, user.password.replace(/^\$2y\$/, () => '$2b$'))) return failure;
