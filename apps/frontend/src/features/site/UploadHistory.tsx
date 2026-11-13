@@ -32,7 +32,7 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
       'в порядке загрузки', 'в порядке выхода из очереди', 'сначала неопубликованные (в порядке загрузки)',
     ].map((label, index) => <Fragment key={label}>
       {index > 0 && <>&ensp;·&ensp;</>}
-      {String(index) === sort ? <b>{label}</b> : <a href={'/set.php?lk_upl_sort=' + index}>{label}</a>}
+      {String(index) === sort ? <b>{label}</b> : <a href={'/api/internal/account/upload-sort?lk_upl_sort=' + index}>{label}</a>}
     </Fragment>)}</div><br />
     <div className="p20w" style={{ display: 'block' }}>
       <table><tbody>

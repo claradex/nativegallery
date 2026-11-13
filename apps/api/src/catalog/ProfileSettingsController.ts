@@ -1,10 +1,15 @@
-import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import { profileFields } from '@nativegallery/contracts';
 import { AuthService } from '../auth/AuthService';
 import { storeAvatar } from './ProfileAvatar';
+
+const themes = new Set(['standard', 'nativegallery-dark']);
+
+export const preferenceCookie = (path: string) =>
+  ({ path, httpOnly: true, sameSite: 'lax' as const, secure: process.env.COOKIE_SECURE === 'true' });
 
 function profileContent(raw: string): Record<string, unknown> {
   try {
@@ -31,6 +36,16 @@ export class ProfileSettingsController {
       return [key, typeof value === 'string' || typeof value === 'number' ? String(value) : ''];
     }));
     return { id: viewer.id, username: viewer.username, photourl: user.photourl, fields };
+  }
+
+  /** Theme choice lives in a cookie so the frontend can pick the stylesheet scope before any API call. */
+  @Post('theme')
+  async theme(@Req() request: Request, @Res() response: Response, @Body('theme_id') theme?: unknown) {
+    response.setHeader('Cache-Control', 'private, no-store');
+    if (!(await this.auth.viewer(request))) return response.redirect(303, '/login');
+    if (typeof theme !== 'string' || !themes.has(theme)) throw new BadRequestException();
+    response.cookie('NGALLERYTHEME', theme, preferenceCookie('/'));
+    response.redirect(303, '/lk/profile?type=Personalization');
   }
 
   @Post('update')

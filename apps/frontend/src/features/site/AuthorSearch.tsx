@@ -14,7 +14,7 @@ export async function AuthorSearch({ searchParams }: { searchParams: Promise<{ q
   }) : [];
   return <tr><td className="main">
     <h1>Поиск авторов</h1>
-    <form method="get" action="/authors.php" className="p20">
+    <form method="get" action="/authors" className="p20">
       <label htmlFor="author-query">Имя автора&nbsp;</label>
       <input type="search" id="author-query" name="q" maxLength={255} defaultValue={query} required />
       {' '}<button type="submit">Найти</button>

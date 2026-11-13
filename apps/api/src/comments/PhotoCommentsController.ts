@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Header, NotFoundException, Param, Req } from '@nestjs/common';
+import { Controller, Get, Header, NotFoundException, Param, Req } from '@nestjs/common';
 import type { PhotoCommentData } from "@nativegallery/contracts";
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
@@ -21,18 +21,7 @@ export class PhotoCommentsController {
   @Get('photo-comments/:id')
   @Header('Cache-Control', 'private, no-store')
   async list(@Param('id') value: string, @Req() request: Request): Promise<PhotoCommentData[]> {
-    return this.load(value, await this.auth.viewer(request));
-  }
-
-  @Get('legacy-photo-comments/:id')
-  @Header('Cache-Control', 'private, no-store')
-  async legacy(@Param('id') value: string, @Req() request: Request) {
     const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    return this.load(value, viewer);
-  }
-
-  private async load(value: string, viewer: Awaited<ReturnType<AuthService['viewer']>>): Promise<PhotoCommentData[]> {
     const id = Number(value);
     if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
     const photo = await database.photo.findUnique({

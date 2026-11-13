@@ -37,6 +37,20 @@ test('production NestJS registers public and protected routes', { timeout: 15_00
       assert.equal(response.status, 403, path);
     }
 
+    const robots = await fetch(origin + '/api/robots.txt', { headers: { 'x-forwarded-host': 'gallery.test' } });
+    assert.equal(robots.headers.get('content-type'), 'text/plain; charset=utf-8');
+    assert.match(await robots.text(), /Disallow: \/lk\/[\s\S]*Host: https:\/\/gallery\.test$/);
+    const sort = await fetch(origin + '/api/internal/account/upload-sort?lk_upl_sort=2', { redirect: 'manual' });
+    assert.equal(sort.status, 302);
+    assert.equal(sort.headers.get('location'), '/lk/history');
+    assert.match(sort.headers.get('set-cookie'), /^lk_upl_sort=2; Path=\/lk; HttpOnly; SameSite=Lax$/);
+    assert.equal((await fetch(origin + '/api/internal/account/upload-sort?lk_upl_sort=9')).status, 400);
+    const theme = await fetch(origin + '/api/profile/theme', {
+      method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
+    });
+    assert.equal(theme.status, 303);
+    assert.equal(theme.headers.get('location'), '/login');
+
     const invalid = await fetch(origin + '/api/users/emailverify?token=invalid');
     assert.equal(invalid.status, 404);
     const missing = await fetch(origin + '/api/users/load/invalid');

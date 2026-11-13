@@ -14,5 +14,5 @@ export async function VehicleRequest({ searchParams }: { searchParams: Promise<R
   const data = await apiGet<VehicleRequestData>('/api/vehicles/requests/' + id + '?' + search, {
     auth: true, login: true, missing: true, error: 'Could not load vehicle data',
   });
-  return <VehicleRequestForm data={data} action={'/vehicle/dbedit?' + new URLSearchParams({ type: id, ...Object.fromEntries(search) })} />;
+  return <VehicleRequestForm data={data} action={'/api/vehicles/requests/' + id} />;
 }

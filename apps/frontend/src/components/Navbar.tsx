@@ -70,8 +70,8 @@ export function Navbar({ path, title: siteTitle, viewer }: { path: string; title
                     <ul className="mm-level-2">
                         <li><a href="/news.php" className="mm-item"><span className="mm-label">Новости и хронология</span></a></li>
                         <li><a href="/misc/" className="mm-item"><span className="mm-label">Разные фотогалереи</span></a></li>
-                        <li><a href="/voting.php" className="mm-item"><span className="mm-label">Фотоконкурс</span></a></li>
-                        <li><a href="/news2.php" className="mm-item"><span className="mm-label">Новости сайта</span></a></li>
+                        <li><a href="/voting" className="mm-item"><span className="mm-label">Фотоконкурс</span></a></li>
+                        <li><a href="/news" className="mm-item"><span className="mm-label">Новости сайта</span></a></li>
                         <li><a href="/links.php" className="mm-item"><span className="mm-label">Ссылки</span></a></li>
                     </ul>
                 </div>
@@ -80,10 +80,10 @@ export function Navbar({ path, title: siteTitle, viewer }: { path: string; title
             <li><a href="#" className="mm-item"><span className="mm-label">Обновления</span><Notice count={viewer?.unreadPhotos ?? 0} /></a>
                 <div>
                     <ul className="mm-level-2">
-                        <li><a href="/update.php?time=24" className="mm-item"><span className="mm-label">Новые фотографии</span></a></li>
+                        <li><a href="/update?time=24" className="mm-item"><span className="mm-label">Новые фотографии</span></a></li>
                         <li><a href="/feed" className="mm-item"><span className="mm-label">Лента обновлений</span></a></li>
                         <li><a href="/fav_authors" className="mm-item"><span className="mm-label">Фотографии избранных авторов</span><Notice count={viewer?.unreadPhotos ?? 0} /></a></li>
-                        <li><a href="/update.php" className="mm-item"><span className="mm-label">Архив обновлений по датам</span></a></li>
+                        <li><a href="/update" className="mm-item"><span className="mm-label">Архив обновлений по датам</span></a></li>
                     </ul>
                 </div>
             </li>
@@ -97,13 +97,13 @@ export function Navbar({ path, title: siteTitle, viewer }: { path: string; title
                     </ul>
                 </div>
             </li>
-            <li><a href="/search.php" className="mm-item"><span className="mm-label">Поиск</span></a>
+            <li><a href="/search" className="mm-item"><span className="mm-label">Поиск</span></a>
                 <div>
                     <ul className="mm-level-2">
-                        <li><a href="/search.php" className="mm-item"><span className="mm-label">Поиск фотографий</span></a></li>
+                        <li><a href="/search" className="mm-item"><span className="mm-label">Поиск фотографий</span></a></li>
                         <li><a href="/vsearch.php" className="mm-item"><span className="mm-label">Поиск ТС</span></a></li>
                         <li><a href="/csearch.php" className="mm-item"><span className="mm-label">Поиск комментариев</span></a></li>
-                        <li><a href="/authors.php" className="mm-item"><span className="mm-label">Поиск авторов</span></a></li>
+                        <li><a href="/authors" className="mm-item"><span className="mm-label">Поиск авторов</span></a></li>
                     </ul>
                 </div>
             </li>

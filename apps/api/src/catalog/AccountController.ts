@@ -1,5 +1,6 @@
-import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
-import type { Request } from 'express';
+import { BadRequestException, Controller, ForbiddenException, Get, Header, Query, Req, Res } from '@nestjs/common';
+import type { Request, Response } from 'express';
+import { preferenceCookie } from './ProfileSettingsController';
 import type { UploadHistoryData } from '@nativegallery/contracts';
 import { photoContent } from '../photos/PhotoContent';
 import { database } from '@nativegallery/database';
@@ -32,6 +33,15 @@ export class AccountController {
       where: { user_id: viewer.id }, orderBy: { id: 'desc' },
       select: { id: true, oldindex: true, newindex: true, date: true, type: true, photo_id: true },
     });
+  }
+
+  /** Remembers the upload history ordering for pages under /lk, as the legacy set.php did. */
+  @Get('upload-sort')
+  uploadSort(@Query('lk_upl_sort') sort: string | undefined, @Res() response: Response) {
+    if (sort !== '0' && sort !== '1' && sort !== '2') throw new BadRequestException();
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.cookie('lk_upl_sort', sort, preferenceCookie('/lk'));
+    response.redirect(302, '/lk/history');
   }
 
   @Get('uploads')

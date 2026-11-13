@@ -19,17 +19,15 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       response.end();
       return;
     }
-    response.setHeader('Content-Type', 'application/json');
-    if (request.url === '/api/vehicles/requests/5' && request.method === 'POST') {
-      let body = '';
-      for await (const chunk of request) body += chunk;
-      if (request.headers.cookie !== 'test-viewer=1' || new URLSearchParams(body).get('base_nid') !== '0') {
-        response.writeHead(403).end();
-      } else {
-        response.writeHead(200).end('{}');
-      }
+    if (request.url === '/api/internal/account/upload-sort?lk_upl_sort=2') {
+      response.writeHead(302, { Location: '/lk/history', 'Set-Cookie': 'lk_upl_sort=2; Path=/lk; HttpOnly' }).end();
       return;
     }
+    if (request.url === '/api/robots.txt') {
+      response.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' }).end('User-Agent: *\nDisallow: /lk/\n');
+      return;
+    }
+    response.setHeader('Content-Type', 'application/json');
     const fixtures = {
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
@@ -37,10 +35,6 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/account/photos/7': { id: 7, place: 'Место съёмки', postbody: 'Подпись' },
       '/api/admin/news': [],
       '/api/internal/comment-feed': [],
-      '/api/internal/comment-feed?before=9': [{
-        id: 8, photoId: 3, photoUrl: '/static/img/avatar.png', authorId: 9, author: 'Автор',
-        admin: 0, photoCount: 1, body: 'Комментарий для подгрузки', postedAt: 0, positive: 0, negative: 0,
-      }],
       '/api/internal/vehicle/5': { vehicle: { id: 5, title: 'Тестовая модель', fields: [] }, photos: [] },
       '/api/internal/vehicle-models': [],
       '/api/vehicles/requests/5?num=42': { labels: [], vehicles: [], limited: false, siteKey: 'test-key' },
@@ -77,13 +71,6 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       commentsEnabled: true, canComment: false, rating: null,
     };
     fixtures['/api/internal/photo-comments/3'] = [];
-    if (request.url === '/api/internal/legacy-photo-comments/3') {
-      if (request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
-      fixtures[request.url] = [{
-        id: 17, authorId: 9, author: null, body: 'Тестовый комментарий', publishedPhotos: 0,
-        postedAt: 0, pinned: true, positive: 0, negative: 0, ownVote: null,
-      }];
-    }
     if (['/api/internal/photo-page/999', '/api/internal/author/999'].includes(request.url)) response.statusCode = 404;
     if (['/api/internal/favorite-photos', '/api/internal/followed-photos'].includes(request.url) &&
         request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
@@ -133,7 +120,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/lk', 200, 'Общая информация'],
       ['/lk/history', 200, 'Покинуло очередь'],
       ['/lk/pday', 200, 'История изменения индекса загрузки'],
-      ['/lk/profile?type=Personalization', 200, 'action="/lk/profile?type=Personalization"'],
+      ['/lk/profile?type=Personalization', 200, 'action="/api/profile/theme"'],
       ['/voting', 200, '<h1 id="countdown"'],
       ['/voting.php', 200, '<h1 id="countdown"'],
       ['/voting/results', 200, 'Победители фотоконкурса'],
@@ -166,11 +153,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(homeHtml, /id="recent-photos"/);
     assert.match(homeHtml, /id="loadmore"/);
     assert.doesNotMatch(homeHtml, /src="\/frontend-scripts\/RecentPhotos\.js"/);
-    const vehicleRequest = await fetch(origin + '/vehicle/dbedit?type=5&num=42', {
-      method: 'POST', headers: { cookie: 'test-viewer=1' }, body: new URLSearchParams({ base_nid: '0', create: '1' }),
-    });
-    assert.equal(vehicleRequest.status, 200);
-    assert.match(await vehicleRequest.text(), /Заявка на рассмотрение успешно отправлена/);
+    const vehicleHtml = await (await fetch(origin + '/vehicle/dbedit?type=5&num=42')).text();
+    assert.ok(vehicleHtml.includes('action="/api/vehicles/requests/5"'));
     const history = await fetch(origin + '/lk/history');
     const historyHtml = await history.text();
     assert.match(historyHtml, /Видео обрабатывается/);
@@ -179,12 +163,6 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal(sort.status, 302);
     assert.equal(sort.headers.get('location'), '/lk/history');
     assert.match(sort.headers.get('set-cookie'), /^lk_upl_sort=2;/);
-    const theme = await fetch(origin + '/lk/profile?type=Personalization', {
-      method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
-    });
-    assert.equal(theme.status, 303);
-    assert.equal(theme.headers.get('location'), '/lk/profile?type=Personalization');
-    assert.match(theme.headers.get('set-cookie'), /NGALLERYTHEME=nativegallery-dark/);
     for (const [path, heading] of [['/fav', 'Избранные фотографии'], ['/fav_authors', 'Фотографии избранных авторов']]) {
       const guest = await fetch(origin + path, { redirect: 'manual' });
       assert.equal(guest.status, 307, path);
@@ -192,14 +170,6 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       const member = await fetch(origin + path, { headers: { cookie: 'test-viewer=1' } });
       assert.equal(member.status, 200, path);
       assert.ok((await member.text()).includes(heading), path);
-    }
-    for (const route of ['/comments', '/comments.php']) {
-      const fragment = await fetch(origin + route + '?ajax=1&before=9');
-      assert.equal(fragment.status, 200);
-      assert.equal(fragment.headers.get('cache-control'), 'no-store');
-      const html = await fragment.text();
-      assert.ok(html.includes('data-comment-id="8"'));
-      assert.ok(!html.includes('<html'));
     }
     const admin = await fetch(origin + '/admin?type=News', { redirect: 'manual' });
     assert.equal(admin.status, 307);
@@ -251,12 +221,6 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(photoHtml, /id="navbard" style="display:none"|style="display:none" id="navbard"/);
     assert.doesNotMatch(photoHtml, /src="\/frontend-scripts\/(PhotoActions|CommentEmoji)\.js"/);
     assert.equal((await fetch(origin + '/photo/999')).status, 404);
-    const fragmentUrl = origin + '/api/photo/getcomments/3';
-    assert.equal((await fetch(fragmentUrl, { method: 'POST' })).status, 403);
-    const fragment = await fetch(fragmentUrl, { method: 'POST', headers: { cookie: 'test-viewer=1' } });
-    assert.equal(fragment.status, 200);
-    assert.match(fragment.headers.get('content-type'), /text\/html/);
-    assert.match(await fragment.text(), /class="s1 comment" data-comment-id="17"/);
     const tour = await fetch(origin + '/tour');
     const tourHtml = await tour.text();
     assert.doesNotMatch(tourHtml, /src="\/frontend-scripts\/TourLogin\.js"/);

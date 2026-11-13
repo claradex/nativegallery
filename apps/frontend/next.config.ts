@@ -1,22 +1,20 @@
 import type { NextConfig } from 'next';
 
+/** Old PHP page addresses served by their clean App Router pages. API traffic is forwarded by src/proxy.ts. */
+const legacyPages: Record<string, string> = {
+  '/authors.php': '/authors',
+  '/comments.php': '/comments',
+  '/news2.php': '/news',
+  '/search.php': '/search',
+  '/update.php': '/update',
+  '/voting.php': '/voting',
+};
+
 const config: NextConfig = {
   experimental: { authInterrupts: true, globalNotFound: true },
   skipTrailingSlashRedirect: true,
   async rewrites() {
-    const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-    return {
-      beforeFiles: [
-        ...['/comments', '/comments.php'].map(source => ({
-          source, has: [{ type: 'query' as const, key: 'ajax', value: '1' }], destination: '/comments/fragment',
-        })),
-        { source: '/api/photo/getcomments/:id', destination: '/photo-comments-fragment/:id' },
-        { source: '/api/:path*', destination: apiOrigin + '/api/:path*' },
-        { source: '/uploads/cdn/img/:filename', destination: apiOrigin + '/uploads/cdn/img/:filename' },
-        { source: '/uploads/cdn/pages/:filename', destination: apiOrigin + '/uploads/cdn/pages/:filename' },
-        { source: '/uploads/cdn/video/:filename', destination: apiOrigin + '/uploads/cdn/video/:filename' },
-      ],
-    };
+    return { beforeFiles: Object.entries(legacyPages).map(([source, destination]) => ({ source, destination })) };
   },
 };
 

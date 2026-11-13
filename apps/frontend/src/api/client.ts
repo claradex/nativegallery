@@ -3,7 +3,9 @@ import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 
 /** Origin of the external NestJS API. The frontend never serves API routes itself. */
-export const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+import { apiOrigin } from './origin';
+
+export { apiOrigin };
 
 /** Cookie header of the incoming request, read once per render. */
 export const requestCookie = cache(async () => (await headers()).get('cookie') ?? '');
