@@ -17,7 +17,7 @@ export class PhotoPageController {
     const photo = await database.photo.findUnique({
       where: { id },
       select: { id: true, user_id: true, photourl: true, place: true, postbody: true,
-        posted_at: true, timeupload: true, moderated: true, content: true },
+        posted_at: true, timeupload: true, moderated: true, content: true, priority: true, on_contest: true },
     });
     if (!photo || (photo.moderated !== 1 && (photo.moderated !== 0 ||
       (!viewer?.admin && viewer?.id !== photo.user_id)))) throw new NotFoundException();
@@ -28,10 +28,17 @@ export class PhotoPageController {
     ]);
     let commentsEnabled = true;
     let ratingEnabled = true;
+    let videoUrl: string | null = null;
+    let contestPlaces: number[] = [];
     try {
       const content = JSON.parse(photo.content);
       commentsEnabled = content?.comments !== 'disabled';
       ratingEnabled = content?.rating !== 'disabled';
+      if (typeof content?.videourl === 'string') videoUrl = content.videourl;
+      if (Array.isArray(content?.contests)) {
+        contestPlaces = content.contests.map((entry: { place?: unknown } | null) => entry?.place)
+          .filter((place: unknown): place is number => place === 1 || place === 2 || place === 3);
+      }
     } catch {}
     let rating: PhotoPageData['rating'] = null;
     if (photo.moderated === 1 && ratingEnabled) {
@@ -52,7 +59,8 @@ export class PhotoPageController {
     return {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
-      published: photo.moderated === 1, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
+      published: photo.moderated === 1, videoUrl, priority: photo.priority,
+      contestEntry: photo.on_contest === 2, contestPlaces, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
       canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
     };
   }

@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
+import { PhotoMedia } from './PhotoMedia';
 import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
 import { NotFound } from '../site/StaticPages';
@@ -9,13 +10,7 @@ function PhotoContent({ photo, comments }: { photo: PhotoPageData; comments: Pho
   return <tr><td className="main">
     {!photo.published && <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff', textAlign: 'center' }}>Изображение находится на модерации</div>}
     <div id="err" />
-    <div id="photobar">
-      <div id="prev" title="Переход по профилю ТС"><span>&lt;</span></div>
-      <div id="next" title="Переход по профилю ТС"><span>&gt;</span></div>
-      <div id="underphoto_frame"><div id="ph_frame">
-        <img id="ph" src={photo.url} alt="" title="Фотография" loading="lazy" />
-      </div></div>
-    </div>
+    <PhotoMedia photo={photo} />
     <div id="pmain">
       <table className="pwrite"><tbody><tr>
         <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>

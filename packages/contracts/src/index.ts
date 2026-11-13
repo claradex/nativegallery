@@ -81,6 +81,10 @@ export interface PhotoPageData {
   takenAt: number;
   publishedAt: number;
   published: boolean;
+  videoUrl: string | null;
+  priority: number;
+  contestEntry: boolean;
+  contestPlaces: number[];
   views: number;
   favorite: boolean;
   signedIn: boolean;
