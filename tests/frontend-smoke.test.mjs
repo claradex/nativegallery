@@ -144,6 +144,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes(marker), path);
       assert.doesNotMatch(html, /__SCRIPT_|<(?:script|link)[^>]+jquery/i);
     }
+    const homeHtml = await (await fetch(origin + '/')).text();
+    assert.match(homeHtml, /id="recent-photos"/);
+    assert.match(homeHtml, /id="loadmore"/);
+    assert.doesNotMatch(homeHtml, /src="\/frontend-scripts\/RecentPhotos\.js"/);
     const history = await fetch(origin + '/lk/history');
     const historyHtml = await history.text();
     assert.match(historyHtml, /Видео обрабатывается/);

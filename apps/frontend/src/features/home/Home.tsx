@@ -1,3 +1,4 @@
+import { RecentPhotos } from './RecentPhotos';
 import { Fragment } from 'react';
 import { legacyDate } from '@nativegallery/contracts';
 import { NewsItem } from '../site/NewsPage';
@@ -56,9 +57,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                     {contest && <HomeContest title={process.env.SITE_TITLE ?? 'NativeGallery'} contest={contest} />}
                     <br />
                     <h4 style={{ clear: 'both' }}><a href="/update">Недавно добавленные фотографии</a></h4>
-                    <div id="recent-photos" className="ix-photos ix-photos-multiline shine" {...{ lastpid: String((recent[0]?.id ?? 0) + 1), firstpid: String(recent.at(-1)?.id ?? '') }}>
-                    </div>
-                    <div style={{ textAlign: 'center', margin: '10px 0' }}><input type="button" name="button" id="loadmore" className="" value="Загрузить ещё" /></div>
+                    <RecentPhotos lastId={(recent[0]?.id ?? 0) + 1} firstId={recent.at(-1)?.id} />
                     <h4>Сейчас на сайте ({online.length})</h4>
                     <div>
                         {online.map(user => <Fragment key={user.id}><a href={'/author/' + user.id + '/'}>{user.username}</a>{', '}</Fragment>)}
@@ -72,7 +71,6 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                 </td>
             </tr>
         </tbody></table>
-        <script src="/frontend-scripts/RecentPhotos.js" defer />
     </td>
 </tr>
   );
