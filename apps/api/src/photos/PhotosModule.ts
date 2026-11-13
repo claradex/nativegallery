@@ -14,5 +14,7 @@ import { UpdatesController } from './UpdatesController';
 
 import { AdminGalleriesController } from './AdminGalleriesController';
 
-@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController, FeedController, UpdatesController, AdminGalleriesController] })
+import { PhotoMapController } from './PhotoMapController';
+
+@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController, FeedController, UpdatesController, AdminGalleriesController, PhotoMapController] })
 export class PhotosModule {}
