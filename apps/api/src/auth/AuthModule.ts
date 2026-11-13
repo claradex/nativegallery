@@ -4,5 +4,7 @@ import { AuthController } from './AuthController';
 
 import { RegisterController } from './RegisterController';
 
-@Module({ controllers: [AuthController, RegisterController], providers: [AuthService], exports: [AuthService] })
+import { EmailVerificationController } from './EmailVerificationController';
+
+@Module({ controllers: [AuthController, RegisterController, EmailVerificationController], providers: [AuthService], exports: [AuthService] })
 export class AuthModule {}
