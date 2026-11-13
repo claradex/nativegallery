@@ -27,6 +27,16 @@ test('production NestJS registers public and protected routes', { timeout: 15_00
       await response.text();
     }
 
+    const vote = await fetch(origin + '/api/photo/comment/rate?wid=1&vote=1');
+    assert.equal(vote.status, 403);
+    for (const path of ['', '/1/edit', '/1/delete', '/1/pin']) {
+      const response = await fetch(origin + '/api/photo/comment' + path, {
+        method: 'POST',
+        body: new URLSearchParams({ id: '1', wtext: 'test', value: 'test' }),
+      });
+      assert.equal(response.status, 403, path);
+    }
+
     const invalid = await fetch(origin + '/api/users/emailverify?token=invalid');
     assert.equal(invalid.status, 404);
     const missing = await fetch(origin + '/api/users/load/invalid');
