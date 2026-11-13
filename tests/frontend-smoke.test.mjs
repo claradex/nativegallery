@@ -158,6 +158,9 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes('data-comment-id="8"'));
       assert.ok(!html.includes('<html'));
     }
+    const admin = await fetch(origin + '/admin?type=News', { redirect: 'manual' });
+    assert.equal(admin.status, 302);
+    assert.equal(new URL(admin.headers.get('location'), origin).pathname, '/login');
     const robots = await fetch(origin + '/robots.txt');
     assert.equal(robots.status, 200);
     assert.equal(robots.headers.get('content-type'), 'text/plain; charset=utf-8');
