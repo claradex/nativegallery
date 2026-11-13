@@ -13,7 +13,7 @@ function GuestMenu() {
   </>;
 }
 
-function EmailVerification() {
+export function EmailVerification() {
   return <>
 <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff' }}>
 <center><h4 style={{ color: '#fff', marginBottom: 3 }}>Пожалуйста, подтвердите свою почту</h4>
@@ -54,16 +54,20 @@ function MemberMenu({ viewer, verify }: { viewer: Viewer; verify: boolean }) {
   </>;
 }
 
-export function Navbar({ path, title: siteTitle, viewer }: { path: string; title: string; viewer: Viewer | null }) {
+export function NavbarStyle() {
+  return <style>{'[data-ajax-loader] { transition: opacity 0.3s, transform 0.3s; }'}</style>;
+}
+
+export function Navbar({ path, title: siteTitle, viewer, native = false }: { path: string; title: string; viewer: Viewer | null; native?: boolean }) {
   const photo = path.split('/')[1] === 'photo';
   const hidden = { display: 'none' };
   const verify = process.env.EMAIL_VERIFY === 'true' && viewer?.status === 3;
   const logo = process.env.SITE_LOGO ?? '/static/img/logosmall.png';
   const title = process.env.SITE_SHOW_TITLE === 'false' ? '' : siteTitle;
   return <>
-<style>{'[data-ajax-loader] { transition: opacity 0.3s, transform 0.3s; }'}</style>
+{!native && <NavbarStyle />}
 <tr>
-{verify && <EmailVerification />}
+{verify && !native && <EmailVerification />}
     <td id="navbar" className="mm-bar">
     <a style={photo ? undefined : hidden} id="title-small" href="/"><img src={logo} />{title}</a>
         <ul className="mm mm-level-1">

@@ -1,5 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
-
 function GeneralRules() {
   return <>
     <h1>Правила сайта</h1>
@@ -35,10 +33,6 @@ const pages = new Map([
   ['rules/pub', PublicationRules],
 ]);
 
-export function Rules(path: string) {
-  const Page = pages.get(path);
-  if (!Page) return undefined;
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<tr><td className="main"><Page /></td></tr>) +
-    '<tr>__FOOTER__</tr></table></body></html>';
+export function rulesContent(path: string) {
+  return pages.get(path);
 }

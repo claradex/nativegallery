@@ -41,7 +41,6 @@ import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
-import { Rules } from '../../features/rules/Rules';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
   ['comments.php', 'comments'],
@@ -119,7 +118,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : Rules(path));
+  const markup = followed ?? ( login ? Login() : path === '' ? await Home(api) : path === 'about' ? await About(api) : path === 'top30' ? await TopPhotos(api) : path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
   if (!markup) return path === '' || path === 'about' || path === 'top30' || path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
