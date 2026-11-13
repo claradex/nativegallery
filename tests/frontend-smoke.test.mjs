@@ -17,6 +17,15 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/about': { users: 5, photos: 8, online: 1, staff: [] },
     };
+    fixtures['/api/internal/photo-page/3?aid=9'] = {
+      id: 3, authorId: 9, author: 'Автор снимка', url: '/static/img/avatar.png',
+      place: 'Место съёмки', description: '', takenAt: 0, publishedAt: 0, published: true,
+      videoUrl: null, priority: 0, contestEntry: false, contestPlaces: [], exif: [], vehicle: null,
+      vehicleRoute: '', previousId: 2, nextId: null, views: 1, favorite: false, signedIn: false,
+      commentsEnabled: true, canComment: false, rating: null,
+    };
+    fixtures['/api/internal/photo-comments/3'] = [];
+    if (request.url === '/api/internal/photo-page/999') response.statusCode = 404;
     response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
@@ -56,6 +65,14 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes(marker), path);
       assert.doesNotMatch(html, /__SCRIPT_|<script[^>]+jquery/i);
     }
+    const photo = await fetch(origin + '/photo/3?aid=9');
+    assert.equal(photo.status, 200);
+    const photoHtml = await photo.text();
+    assert.match(photoHtml, /Место съёмки/);
+    assert.ok(photoHtml.includes('/photo/2/?aid=9'));
+    assert.match(photoHtml, /id="navbard" style="display:none"|style="display:none" id="navbard"/);
+    assert.match(photoHtml, /<script src="\/frontend-scripts\/PhotoActions.js"/);
+    assert.equal((await fetch(origin + '/photo/999')).status, 404);
     const script = await fetch(origin + '/frontend-scripts/Register.js');
     assert.equal(script.status, 200);
     assert.match(await script.text(), /addEventListener/);

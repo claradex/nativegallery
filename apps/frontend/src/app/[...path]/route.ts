@@ -33,7 +33,6 @@ import { FeedPage } from '../../features/photos/FeedPage';
 import { GalleryDirectory } from '../../features/photos/GalleryDirectory';
 import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
-import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
 
@@ -81,7 +80,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const sitePageId = path.match(/^page\/(\d+)$/)?.[1];
   const galleryId = path.match(/^article\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
@@ -106,7 +104,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'voting/results' ? await ContestResults(api)
     : path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
     : path === 'vehicle/edit' ? await VehicleEdit(request, api)
-    : vehicleId ? await VehiclePage(request, api, vehicleId) : photoId ? await PhotoPage(request, api, photoId)
+    : vehicleId ? await VehiclePage(request, api, vehicleId)
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;

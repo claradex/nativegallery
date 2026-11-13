@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
 import { PhotoVehicle, PhotoVehicleRoute } from './PhotoVehicle';
@@ -6,7 +5,8 @@ import { PhotoExif } from './PhotoExif';
 import { PhotoMedia } from './PhotoMedia';
 import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
-import { NotFound } from '../site/StaticPages';
+import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 
 function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; comments: PhotoCommentData[]; scope: string }) {
   return <tr><td className="main">
@@ -57,30 +57,35 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
         </td>
       </tr></tbody></table>
     </div>
+    <script src="/frontend-scripts/PhotoActions.js" defer />
+    <script src="/frontend-scripts/CommentEmoji.js" defer />
   </td></tr>;
 }
 
-export async function PhotoPage(request: Request, api: string, id: string) {
-  const init = { cache: 'no-store' as const, headers: { cookie: request.headers.get('cookie') ?? '' } };
-  const query = new URL(request.url).searchParams;
+export async function PhotoPage({ params, searchParams }: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { id } = await params;
+  if (!/^\d{1,10}$/.test(id)) notFound();
+  const query = await searchParams;
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+  const init = { cache: 'no-store' as const, headers: { cookie: (await headers()).get('cookie') ?? '' } };
   const scope = new URLSearchParams();
   for (const key of ['vid', 'gid', 'aid', 'upd']) {
-    const value = query.get(key);
-    if (value && /^\d{1,10}$/.test(value)) scope.set(key, value);
+    const value = query[key];
+    if (typeof value === 'string' && /^\d{1,10}$/.test(value)) scope.set(key, value);
   }
   const suffix = scope.size ? '?' + scope : '';
   const response = await fetch(api + '/api/internal/photo-page/' + id + suffix, init).catch(() => null);
-  if (response?.status === 404) return NotFound(request);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 404) notFound();
+  if (!response?.ok) throw new Error('Could not load the photo page');
   const photo: PhotoPageData = await response.json();
   let comments: PhotoCommentData[] = [];
   if (photo.commentsEnabled && photo.published) {
     const result = await fetch(api + '/api/internal/photo-comments/' + id, init).catch(() => null);
-    if (!result?.ok) return new Response('Service Unavailable', { status: 503 });
+    if (!result?.ok) throw new Error('Could not load the photo page');
     comments = await result.json();
   }
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<PhotoContent photo={photo} comments={comments} scope={suffix} />) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_PhotoActions____SCRIPT_CommentEmoji__</body></html>';
+  return <PhotoContent photo={photo} comments={comments} scope={suffix} />;
 }
