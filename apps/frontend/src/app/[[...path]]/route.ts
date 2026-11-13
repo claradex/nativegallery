@@ -23,6 +23,7 @@ import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
+import { UploadPage } from '../../features/photos/upload/UploadPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
@@ -69,6 +70,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
+    : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'

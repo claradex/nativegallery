@@ -149,3 +149,10 @@ export interface ProfileSettingsData {
   photourl: string;
   fields: Record<typeof profileFields[number], string>;
 }
+export interface UploadOptionsData {
+  galleries: { id: number; title: string }[];
+  entities: { id: number; title: string; color: string }[];
+  username: string;
+  uploadIndex: number;
+  directUpload: boolean;
+}

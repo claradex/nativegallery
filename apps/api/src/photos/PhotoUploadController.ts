@@ -1,8 +1,10 @@
-import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import type { UploadOptionsData } from '@nativegallery/contracts';
+import { photoContent } from './PhotoContent';
 import { uploadPhoto } from './PhotoUpload';
 
 @Controller('api/upload')
@@ -11,9 +13,29 @@ export class PhotoUploadController {
 
   @Get('options')
   @Header('Cache-Control', 'private, no-store')
-  async options(@Req() request: Request) {
+  async options(@Req() request: Request): Promise<UploadOptionsData> {
+    const viewer = await this.auth.viewer(request);
+    if (!viewer) throw new ForbiddenException();
+    const [galleries, entities, user] = await Promise.all([
+      database.gallery.findMany({ where: { opened: 1 }, orderBy: { id: 'asc' }, select: { id: true, title: true } }),
+      database.entity.findMany({ orderBy: { id: 'asc' }, select: { id: true, title: true, color: true } }),
+      database.user.findUniqueOrThrow({ where: { id: viewer.id }, select: { uploadindex: true, content: true } }),
+    ]);
+    return { galleries, entities, username: viewer.username, uploadIndex: user.uploadindex,
+      directUpload: process.env.PHOTO_PREMODERATION !== 'false' && photoContent(user.content).premoderation === 'true' };
+  }
+
+  @Get('entities')
+  @Header('Cache-Control', 'private, no-store')
+  async entities(@Req() request: Request, @Query('type') type: string, @Query('q') query: string) {
     if (!await this.auth.viewer(request)) throw new ForbiddenException();
-    return database.gallery.findMany({ where: { opened: 1 }, orderBy: { id: 'asc' }, select: { id: true, title: true } });
+    const entityid = Number(type);
+    if (!Number.isInteger(entityid) || entityid < 1 || entityid > 2147483647 || typeof query !== 'string' || !query.trim() || query.length > 50) return [];
+    const id = Number(query);
+    return database.entityData.findMany({
+      where: { entityid, OR: [{ title: { contains: query } }, ...(Number.isInteger(id) && id > 0 && id <= 2147483647 ? [{ id }] : [])] },
+      orderBy: { id: 'asc' }, take: 30, select: { id: true, title: true },
+    });
   }
 
   @Post()
