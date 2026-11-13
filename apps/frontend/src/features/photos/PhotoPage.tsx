@@ -1,3 +1,4 @@
+import { PhotoInteractions } from './PhotoInteractions';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
 import { PhotoVehicle, PhotoVehicleRoute } from './PhotoVehicle';
@@ -57,8 +58,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
         </td>
       </tr></tbody></table>
     </div>
-    <script src="/frontend-scripts/PhotoActions.js" defer />
-    <script src="/frontend-scripts/CommentEmoji.js" defer />
+    <PhotoInteractions key={photo.id} />
   </td></tr>;
 }
 

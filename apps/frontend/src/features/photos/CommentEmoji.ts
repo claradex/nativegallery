@@ -1,26 +1,30 @@
-(() => {
+export function bindCommentEmoji(signal: AbortSignal) {
   const toggle = document.getElementById('showPicker');
-  if (!toggle) return;
   const picker = document.getElementById('picker');
   const editor = document.getElementById('wtext');
-  let catalog;
-  let caret;
+  if (!toggle || !picker || !editor) return;
+  const pickerElement = picker;
+  const toggleElement = toggle;
+  const editable = editor;
+  let catalog: Promise<void> | undefined;
+  let caret: Range | undefined;
   document.addEventListener('selectionchange', () => {
     const selection = window.getSelection();
-    if (selection?.rangeCount && editor.contains(selection.anchorNode) && editor.contains(selection.focusNode)) {
+    if (selection?.rangeCount && editable.contains(selection.anchorNode) && editable.contains(selection.focusNode)) {
       caret = selection.getRangeAt(0).cloneRange();
     }
-  });
+  }, { signal });
   function close() {
-    picker.classList.remove('active');
-    toggle.setAttribute('aria-expanded', 'false');
+    pickerElement.classList.remove('active');
+    toggleElement.setAttribute('aria-expanded', 'false');
   }
-  function insert(url, code) {
+  function insert(url: string, code: string) {
     const selection = window.getSelection();
-    editor.focus();
-    const range = caret && editor.contains(caret.commonAncestorContainer) ? caret : document.createRange();
+    if (!selection) return;
+    editable.focus();
+    const range = caret && editable.contains(caret.commonAncestorContainer) ? caret : document.createRange();
     if (range !== caret) {
-      range.selectNodeContents(editor);
+      range.selectNodeContents(editable);
       range.collapse(false);
     }
     const image = document.createElement('img');
@@ -36,9 +40,9 @@
     close();
   }
   async function load() {
-    const response = await fetch('/api/emoji/load');
+    const response = await fetch('/api/emoji/load', { signal });
     if (!response.ok) throw new Error('Emoji catalog unavailable');
-    const { data } = await response.json();
+    const { data }: { data: { url: string }[] } = await response.json();
     const options = document.createDocumentFragment();
     for (const entry of data) {
       const match = /^\/static\/img\/smileys\/(1\/[\w-]+)\.gif$/.exec(entry.url);
@@ -54,30 +58,31 @@
       image.alt = image.title = code;
       image.loading = 'lazy';
       button.append(image);
-      button.addEventListener('click', () => insert(entry.url, code));
+      button.addEventListener('click', () => insert(entry.url, code), { signal });
       options.append(button);
     }
-    picker.replaceChildren(options);
+    if (!signal.aborted) pickerElement.replaceChildren(options);
   }
-  toggle.addEventListener('click', async () => {
-    if (picker.classList.contains('active')) return close();
-    picker.classList.add('active');
-    toggle.setAttribute('aria-expanded', 'true');
+  toggleElement.addEventListener('click', async () => {
+    if (pickerElement.classList.contains('active')) return close();
+    pickerElement.classList.add('active');
+    toggleElement.setAttribute('aria-expanded', 'true');
     try {
       catalog ??= load();
       await catalog;
     } catch {
       catalog = undefined;
-      picker.textContent = 'Не удалось загрузить эмодзи.';
+      if (signal.aborted) return;
+      pickerElement.textContent = 'Не удалось загрузить эмодзи.';
     }
-  });
+  }, { signal });
   document.addEventListener('click', event => {
-    if (!picker.contains(event.target) && !toggle.contains(event.target)) close();
-  });
+    if (event.target instanceof Node && !pickerElement.contains(event.target) && !toggleElement.contains(event.target)) close();
+  }, { signal });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && picker.classList.contains('active')) {
+    if (event.key === 'Escape' && pickerElement.classList.contains('active')) {
       close();
-      toggle.focus();
+      toggleElement.focus();
     }
-  });
-})();
+  }, { signal });
+}

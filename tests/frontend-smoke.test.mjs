@@ -226,7 +226,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(photoHtml, /Место съёмки/);
     assert.ok(photoHtml.includes('/photo/2/?aid=9'));
     assert.match(photoHtml, /id="navbard" style="display:none"|style="display:none" id="navbard"/);
-    assert.match(photoHtml, /<script src="\/frontend-scripts\/PhotoActions.js"/);
+    assert.doesNotMatch(photoHtml, /src="\/frontend-scripts\/(PhotoActions|CommentEmoji)\.js"/);
     assert.equal((await fetch(origin + '/photo/999')).status, 404);
     const tour = await fetch(origin + '/tour');
     const tourHtml = await tour.text();
