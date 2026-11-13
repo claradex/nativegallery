@@ -96,6 +96,11 @@ NativeGallery - это реверсивный open-source движок попу�
 
 
 
+# Запуск в Docker
+* `docker compose up -d --build` — поднимает MySQL (`nativegallery-db`), применяет миграции (`nativegallery-migrate`) и запускает `nativegallery-api`, `nativegallery-crons`, `nativegallery-media-worker` и `nativegallery-frontend`.
+* Сайт открывается на http://localhost:3080 (порт меняется переменной `SITE_PORT`).
+* Настройки сайта берутся из `.env`, если он есть; медиафайлы хранятся в папке `uploads/`, база — в томе `db-data`.
+
 # Установка
 * Убедитесь, что вы предварительно установили на своём сервере Node.js 22, MySQL версии 8.0 и выше и ffmpeg.
 * Скачайте или склонируйте репозиторий.

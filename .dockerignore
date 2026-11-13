@@ -1,0 +1,15 @@
+.git
+.osp
+**/node_modules
+**/dist
+**/.next
+**/*.tsbuildinfo
+apps/frontend/next-env.d.ts
+.env
+*.zip
+ngallery.yaml
+uploads
+cdn
+storage
+vendor
+logs
