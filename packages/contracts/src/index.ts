@@ -170,3 +170,16 @@ export interface GalleryData {
     views: number;
   }[];
 }
+export interface CommentFeedEntry {
+  id: number;
+  photoId: number;
+  photoUrl: string;
+  authorId: number;
+  author: string;
+  admin: number;
+  photoCount: number;
+  body: string;
+  postedAt: number;
+  positive: number;
+  negative: number;
+}
