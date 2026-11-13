@@ -19,5 +19,5 @@ export async function VehicleRequest({ searchParams }: { searchParams: Promise<R
   if (response?.status === 404) notFound();
   if (!response?.ok) throw new Error('Could not load vehicle data');
   const data: VehicleRequestData = await response.json();
-  return <VehicleRequestForm data={data} id={id} />;
+  return <VehicleRequestForm data={data} action={'/vehicle/dbedit?' + new URLSearchParams({ type: id, ...Object.fromEntries(search) })} />;
 }

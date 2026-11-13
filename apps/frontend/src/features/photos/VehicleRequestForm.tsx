@@ -10,7 +10,7 @@ export interface VehicleRequestData {
   siteKey: string;
 }
 
-export function VehicleRequestForm({ data, id }: { data: VehicleRequestData; id: string }) {
+export function VehicleRequestForm({ data, action }: { data: VehicleRequestData; action: string }) {
   const [values, setValues] = useState<string[]>([]);
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -21,6 +21,10 @@ export function VehicleRequestForm({ data, id }: { data: VehicleRequestData; id:
     const form = event.currentTarget;
     const body = new URLSearchParams();
     for (const [name, value] of new FormData(form)) body.append(name, String(value));
+    if (event.nativeEvent instanceof SubmitEvent && event.nativeEvent.submitter instanceof HTMLInputElement) {
+      const { name, value } = event.nativeEvent.submitter;
+      if (name) body.append(name, value);
+    }
     setPending(true);
     try {
       const response = await fetch(form.action, { method: 'POST', body });
@@ -40,7 +44,7 @@ export function VehicleRequestForm({ data, id }: { data: VehicleRequestData; id:
       Заявки можно отправлять раз в 24 часа
     </div> : sent ? <div style={{ border: 'solid 1px rgb(0,140,86)', padding: '6px 10px 7px', marginBottom: 13, backgroundColor: 'rgb(137,216,150)' }}>
       Заявка на рассмотрение успешно отправлена
-    </div> : <form method="post" id="mform" onSubmit={submit} action={'/api/vehicles/requests/' + id}>
+    </div> : <form method="post" id="mform" onSubmit={submit} action={action}>
       <h4>Какую запись вы хотите уточнить?</h4>
       <div className="p20w"><table><tbody>
         <tr><th /><th>№</th><th>Название</th></tr>

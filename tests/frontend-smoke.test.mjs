@@ -10,7 +10,7 @@ const frontend = new URL('../apps/frontend/', import.meta.url);
 const require = createRequire(new URL('package.json', frontend));
 
 test('production frontend serves legacy HTML and native scripts', { timeout: 20_000 }, async () => {
-  const api = createServer((request, response) => {
+  const api = createServer(async (request, response) => {
     if (request.url === '/api/internal/logout' && request.headers.cookie === 'test-viewer=1') {
       response.writeHead(302, {
         Location: '/',
@@ -20,6 +20,16 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       return;
     }
     response.setHeader('Content-Type', 'application/json');
+    if (request.url === '/api/vehicles/requests/5' && request.method === 'POST') {
+      let body = '';
+      for await (const chunk of request) body += chunk;
+      if (request.headers.cookie !== 'test-viewer=1' || new URLSearchParams(body).get('base_nid') !== '0') {
+        response.writeHead(403).end();
+      } else {
+        response.writeHead(200).end('{}');
+      }
+      return;
+    }
     const fixtures = {
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
@@ -156,6 +166,11 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(homeHtml, /id="recent-photos"/);
     assert.match(homeHtml, /id="loadmore"/);
     assert.doesNotMatch(homeHtml, /src="\/frontend-scripts\/RecentPhotos\.js"/);
+    const vehicleRequest = await fetch(origin + '/vehicle/dbedit?type=5&num=42', {
+      method: 'POST', headers: { cookie: 'test-viewer=1' }, body: new URLSearchParams({ base_nid: '0', create: '1' }),
+    });
+    assert.equal(vehicleRequest.status, 200);
+    assert.match(await vehicleRequest.text(), /Заявка на рассмотрение успешно отправлена/);
     const history = await fetch(origin + '/lk/history');
     const historyHtml = await history.text();
     assert.match(historyHtml, /Видео обрабатывается/);
