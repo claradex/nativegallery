@@ -8,5 +8,7 @@ import { VehicleRequestController } from './VehicleRequestController';
 
 import { VehicleModerationController } from "./VehicleModerationController";
 
-@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController, VehicleModerationController] })
+import { AdminVehicleEditorController } from './AdminVehicleEditorController';
+
+@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController, VehicleModerationController, AdminVehicleEditorController] })
 export class VehicleModule {}

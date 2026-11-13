@@ -29,6 +29,7 @@ export async function AdminModels(request: Request, api: string) {
         </a>
       </div></div></div></div>
       {active === 'list' ? <div id="list__block" className="active__block">
+        <a href="/admin?type=ModelsCreate" className="btn btn-primary mt-3">Создать</a>
         <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
           <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '20%' }}>Название</th><th style={{ width: '50%' }}>Сущность</th><th>Действия</th></tr>
           {models.map(model => <tr key={model.id} id={'pht' + model.id}>
