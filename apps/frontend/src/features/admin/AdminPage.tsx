@@ -14,7 +14,6 @@ export async function AdminPage(title: string, script: string | null,
   return <>
     <title>{title}</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" defer />
-    <script src="/frontend-scripts/AdminSidebar.js" defer />
     {script && <script src={'/frontend-scripts/' + script + '.js'} defer />}
     <div className="container">
       <AdminSidebar title={process.env.SITE_TITLE ?? 'NativeGallery'} pending={viewer.pendingPhotos} />

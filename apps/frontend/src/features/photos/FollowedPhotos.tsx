@@ -1,3 +1,4 @@
+import { MarkFollowedPhotos } from './MarkFollowedPhotos';
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -29,9 +30,8 @@ export async function FollowedPhotos() {
   return <tr><td className="main">
       <h1>Фотографии избранных авторов</h1>
       {photos.length > 0
-        ? <div className="mark-btn"><a className="button" href="#">Отметить все фотографии просмотренными</a></div>
+        ? <MarkFollowedPhotos />
         : <div className="p20" style={{ marginBottom: 15 }} id="no_photos"><h4>Новых фотографий пока нет.</h4></div>}
       {photos.map(photo => <FollowedPhoto key={photo.id} photo={photo} />)}
-      <script src="/frontend-scripts/FollowedPhotos.js" defer />
     </td></tr>;
 }

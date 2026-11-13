@@ -1,8 +1,8 @@
+import { EntryForm } from './EntryForm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 interface Candidate { id: number; url: string; body: string; place: string; views: number }
-interface EntryOptions { contests: { id: number; title: string }[]; photos: { id: number; place: string }[] }
 
 function Links() {
   return <p className="narrow" style={{ fontSize: 19 }}>
@@ -28,32 +28,6 @@ function Candidates({ contest, photos }: { contest: number | null; photos: Candi
   </div>;
 }
 
-function EntryForm({ contests, photos }: EntryOptions) {
-  return <>
-    <h1>Принять участие в Фотоконкурсе</h1>
-    {!contests.length ? <div className="p20">Приём заявок сейчас закрыт.</div> :
-      <form id="contest-entry" action="/api/photo/contests/sendpretend" method="post">
-        <h4>В каком Фотоконкурсе вы хотите принять участие?</h4>
-        <div className="p20w"><table><tbody>
-          <tr><th /><th>№</th><th>Тема</th></tr>
-          {contests.map((contest, index) => <tr key={contest.id}>
-            <td className="ds"><input type="radio" name="cid" value={contest.id} defaultChecked={index === 0} /></td>
-            <td className="n">{contest.id}</td><td className="ds">{contest.title}</td>
-          </tr>)}
-        </tbody></table></div>
-        <br /><div className="p20">
-          <label htmlFor="photoId">Фотография&nbsp;</label>
-          <select id="photoId" name="photo_id" defaultValue="" required>
-            <option value="" disabled>Выберите фотографию</option>
-            {photos.map(photo => <option key={photo.id} value={photo.id}>{photo.id} — {photo.place}</option>)}
-          </select>
-          <p><button type="submit" disabled={!photos.length}>Отправить</button></p>
-          <p role="status" id="contest-entry-status" />
-        </div>
-      </form>}
-  </>;
-}
-
 export async function ContestEntries({ submit }: { submit: boolean }) {
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/contests/' + (submit ? 'entry-options' : 'entries'), {
@@ -62,5 +36,5 @@ export async function ContestEntries({ submit }: { submit: boolean }) {
   if (response?.status === 403) redirect('/login');
   if (!response?.ok) throw new Error('Could not load contest data');
   const data = await response.json();
-  return <tr><td className="main">{submit ? <EntryForm {...data} /> : <Candidates {...data} />}{submit && <script src="/frontend-scripts/ContestEntry.js" defer />}</td></tr>;
+  return <tr><td className="main">{submit ? <EntryForm {...data} /> : <Candidates {...data} />}</td></tr>;
 }

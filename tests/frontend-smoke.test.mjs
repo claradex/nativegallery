@@ -122,7 +122,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/voting/results', 200, 'Победители фотоконкурса'],
       ['/voting/waiting', 200, 'Претенденты на участие в конкурсе'],
       ['/vehicle/5', 200, 'Тестовая модель'],
-      ['/vehicle/edit', 200, 'src="/frontend-scripts/VehicleEdit.js"'],
+      ['/vehicle/edit', 200, 'id="mform"'],
       ['/vehicle/dbedit?type=5&num=42', 200, 'data-sitekey="test-key"'],
       ['/comments', 200, 'Лента комментариев'],
       ['/comments.php', 200, 'Лента комментариев'],
