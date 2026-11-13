@@ -7,7 +7,12 @@ const config: NextConfig = {
   },
   async rewrites() {
     const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-    return [{ source: '/api/:path*', destination: apiOrigin + '/api/:path*' }];
+    return {
+      beforeFiles: [
+        { source: '/api/:path*', destination: apiOrigin + '/api/:path*' },
+        { source: '/uploads/cdn/img/:filename', destination: apiOrigin + '/uploads/cdn/img/:filename' },
+      ],
+    };
   },
 };
 
