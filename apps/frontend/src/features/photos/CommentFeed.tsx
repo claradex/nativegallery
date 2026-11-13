@@ -7,7 +7,7 @@ function FeedComment({ comment }: { comment: CommentFeedEntry }) {
     ? '/api/photo/compress?url=' + encodeURIComponent(comment.photoUrl) : comment.photoUrl;
   const score = comment.positive - comment.negative;
   const role = comment.admin === 1 ? ' · Администратор сервера' : comment.admin === 2 ? ' · Фотомодератор' : '';
-  return <div className="p-comment p20p">
+  return <div className="p-comment p20p" data-comment-id={comment.id}>
     <div className="pc-photo"><a href={href} target="_blank" className="prw"><img src={thumbnail} className="f" /></a></div>
     <div className="pc-content">
       <a className="pc-topost" href={href + '#' + comment.id} target="_blank">Ссылка</a>
@@ -28,10 +28,25 @@ function FeedComment({ comment }: { comment: CommentFeedEntry }) {
   </div>;
 }
 
-export async function CommentFeed(api: string) {
-  const response = await fetch(api + '/api/internal/comment-feed', { cache: 'no-store' }).catch(() => null);
+export async function CommentFeed(request: Request, api: string) {
+  const query = new URL(request.url).searchParams;
+  const fragment = query.get('ajax') === '1';
+  const search = new URLSearchParams();
+  if (fragment) {
+    for (const key of ['before', 'after']) {
+      const value = query.get(key);
+      if (value !== null) search.set(key, value);
+    }
+  }
+  const response = await fetch(api + '/api/internal/comment-feed?' + search, { cache: 'no-store' }).catch(() => null);
+  if (response?.status === 400) return new Response(null, { status: 400 });
   if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
   const comments: CommentFeedEntry[] = await response.json();
+  if (fragment) {
+    return new Response(renderToStaticMarkup(<>{comments.map(comment => <FeedComment key={comment.id} comment={comment} />)}</>), {
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
   const content = renderToStaticMarkup(<tr><td className="main">
     <h1>Лента комментариев</h1>
     <div id="upd_anchor"></div>

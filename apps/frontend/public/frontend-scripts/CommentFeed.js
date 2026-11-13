@@ -29,3 +29,60 @@ document.addEventListener('click', async event => {
     delete widget.dataset.pending;
   }
 });
+
+const updates = document.getElementById('upd_anchor');
+const end = document.getElementById('scroll_anchor');
+if (updates && end) {
+  const ids = Array.from(document.querySelectorAll('[data-comment-id]'), row => Number(row.dataset.commentId));
+  let newest = ids[0] ?? 0;
+  let oldest = ids.at(-1);
+  let loadingOlder = false;
+  let loadingNewer = false;
+
+  async function readComments(direction, cursor) {
+    const query = new URLSearchParams({ ajax: '1', [direction]: cursor });
+    const response = await fetch('/comments.php?' + query, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Unable to load comments');
+    const fragment = document.createElement('template');
+    fragment.innerHTML = await response.text();
+    const rows = Array.from(fragment.content.children);
+    return { fragment, rows };
+  }
+
+  const observer = new IntersectionObserver(async ([entry]) => {
+    if (!entry.isIntersecting || loadingOlder || oldest === undefined) return;
+    loadingOlder = true;
+    try {
+      const { fragment, rows } = await readComments('before', oldest);
+      if (rows.length) {
+        oldest = Number(rows.at(-1).dataset.commentId);
+        end.before(fragment.content);
+      }
+      if (rows.length < 30) observer.disconnect();
+    } catch {
+      // Keep the observer active so a later scroll can retry.
+    } finally {
+      loadingOlder = false;
+    }
+  });
+  if (ids.length === 30) observer.observe(end);
+
+  setInterval(async () => {
+    if (loadingNewer || document.hidden) return;
+    loadingNewer = true;
+    try {
+      const { fragment, rows } = await readComments('after', newest);
+      if (!rows.length) return;
+      newest = Number(rows[0].dataset.commentId);
+      if (oldest === undefined) {
+        oldest = Number(rows.at(-1).dataset.commentId);
+        if (rows.length === 30) observer.observe(end);
+      }
+      updates.after(fragment.content);
+    } catch {
+      // The next interval can retry with the same cursor.
+    } finally {
+      loadingNewer = false;
+    }
+  }, 30_000);
+}

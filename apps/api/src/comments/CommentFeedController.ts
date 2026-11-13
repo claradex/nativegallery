@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import type { CommentFeedEntry } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 
@@ -7,7 +7,13 @@ type FeedRow = Omit<CommentFeedEntry, 'photoCount' | 'positive' | 'negative'>;
 @Controller('api/internal/comment-feed')
 export class CommentFeedController {
   @Get()
-  async list(): Promise<CommentFeedEntry[]> {
+  async list(@Query('before') before?: string, @Query('after') after?: string): Promise<CommentFeedEntry[]> {
+    const valid = (value: string | undefined) => value === undefined ||
+      (typeof value === 'string' && /^\d{1,10}$/.test(value) && Number(value) <= 2147483647);
+    if (!valid(before) || !valid(after) || (before !== undefined && after !== undefined)) throw new BadRequestException();
+    const cursor = before !== undefined ? Prisma.sql`AND c.id < ${Number(before)}`
+      : after !== undefined ? Prisma.sql`AND c.id > ${Number(after)}` : Prisma.empty;
+    const order = after === undefined ? Prisma.sql`DESC` : Prisma.sql`ASC`;
     const rows = await database.$queryRaw<FeedRow[]>(Prisma.sql`
       SELECT c.id, c.photo_id AS photoId, p.photourl AS photoUrl,
         c.user_id AS authorId, COALESCE(u.username, '') AS author,
@@ -18,8 +24,10 @@ export class CommentFeedController {
       WHERE COALESCE(JSON_UNQUOTE(JSON_EXTRACT(
         CASE WHEN JSON_VALID(c.content) THEN c.content ELSE '{}' END, '$.deleted'
       )), '') <> 'true'
-      ORDER BY c.id DESC LIMIT 30
+      ${cursor}
+      ORDER BY c.id ${order} LIMIT 30
     `);
+    if (after !== undefined) rows.reverse();
     const [counts, votes] = await Promise.all([
       database.photo.groupBy({
         by: ['user_id'], where: { user_id: { in: [...new Set(rows.map(row => row.authorId))] } }, _count: { _all: true },

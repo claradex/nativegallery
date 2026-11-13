@@ -76,7 +76,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
-    : path === 'comments' || path === 'comments.php' ? await CommentFeed(api)
+    : path === 'comments' || path === 'comments.php' ? await CommentFeed(request, api)
     : path === 'feed' ? await FeedPage(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)
