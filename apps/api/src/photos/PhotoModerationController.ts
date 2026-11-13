@@ -2,6 +2,7 @@ import { All, BadRequestException, Body, Controller, ForbiddenException, Get, He
 import type { Request, Response } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { notifyPhotoFollowers } from './PhotoPublication';
 import { photoContent } from './PhotoContent';
 
 @Controller('api/admin/images')
@@ -56,15 +57,7 @@ export class PhotoModerationController {
         content,
       } });
       if (!firstPublication || data.subsnotify === 'disabled') return;
-      const [followers, notified] = await Promise.all([
-        tx.follower.findMany({ where: { user_id: photo.user_id }, select: { follower_id: true } }),
-        tx.followerNotification.findMany({ where: { photo_id: id }, select: { follower_id: true } }),
-      ]);
-      const existing = new Set(notified.map(row => row.follower_id));
-      const recipients = [...new Set(followers.map(row => row.follower_id))].filter(follower => !existing.has(follower));
-      if (recipients.length) await tx.followerNotification.createMany({
-        data: recipients.map(follower_id => ({ follower_id, user_id: photo.user_id, photo_id: id, checked: 0 })),
-      });
+      await notifyPhotoFollowers(tx, id, photo.user_id);
     });
     response.setHeader('Cache-Control', 'private, no-store');
     return response.redirect(303, '/admin?type=Photo');

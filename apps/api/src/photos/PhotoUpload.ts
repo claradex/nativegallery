@@ -5,6 +5,7 @@ import sharp from 'sharp';
 import { database } from '@nativegallery/database';
 import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
+import { notifyPhotoFollowers } from './PhotoPublication';
 import { photoContent } from './PhotoContent';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
@@ -81,10 +82,7 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
         payload: { input, output, preview, format: video }, available_at: new Date(),
       } });
       if (moderated === 1 && allowed('disablesubsnotify') === 'allowed') {
-        const followers = await tx.follower.findMany({ where: { user_id: userId }, distinct: ['follower_id'], select: { follower_id: true } });
-        if (followers.length) await tx.followerNotification.createMany({
-          data: followers.map(({ follower_id }) => ({ user_id: userId, follower_id, photo_id: photo.id, checked: 0 })),
-        });
+        await notifyPhotoFollowers(tx, photo.id, userId);
       }
       return photo;
     });
