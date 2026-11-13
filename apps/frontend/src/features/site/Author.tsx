@@ -3,7 +3,9 @@ import { legacyDate } from '@nativegallery/contracts';
 
 interface Profile {
   id: number; username: string; admin: number; photourl: string; online: number;
-  registered: number; city: string; languages: string; about: string; badge: string;
+  registered: number; city: string; birthday: string; languages: string; about: string; badge: string;
+  contacts: { label: string; value: string; email: boolean }[];
+  favorites: { label: string; value: string }[];
   own: boolean; signedIn: boolean; followers: number; subscribed: boolean;
 }
 
@@ -29,10 +31,15 @@ function ProfileContent({ profile }: { profile: Profile }) {
             ['Дата регистрации:', legacyDate(profile.registered)],
             ['Был на сайте:', <>{legacyDate(profile.online)} {Date.now() / 1000 - profile.online <= 300 && <>(<b>online</b>)</>}</>],
           ]} />
-          {(profile.city || profile.languages) && <Details rows={[
+          {(profile.city || profile.birthday || profile.languages) && <Details rows={[
             ...(profile.city ? [['Откуда:', profile.city] as [string, string]] : []),
+            ...(profile.birthday ? [['День рождения:', profile.birthday] as [string, string]] : []),
             ...(profile.languages ? [['Владение языками:', profile.languages] as [string, string]] : []),
           ]} />}
+          {profile.contacts.length > 0 && <Details rows={profile.contacts.map(({ label, value, email }) => [
+            label, email && /^[^\s@?&#]+@[^\s@?&#]+$/.test(value) ? <a href={'mailto:' + value}>{value}</a> : value,
+          ])} />}
+          {profile.favorites.length > 0 && <Details rows={profile.favorites.map(({ label, value }) => [label, value])} />}
         </td>
         <td style={{ verticalAlign: 'top' }}><a href={avatar}><img src={avatar} alt="" id="userphoto_img" className="f"
           data-avatar-fallback style={{ width: 'auto', maxWidth: 100 }} loading="lazy" /></a></td>

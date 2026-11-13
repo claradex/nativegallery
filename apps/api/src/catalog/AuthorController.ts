@@ -3,16 +3,71 @@ import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 
+const profileLabels = [
+  [
+    "abouttelegram",
+    "Telegram:"
+  ],
+  [
+    "aboutvk",
+    "ВКонтакте:"
+  ],
+  [
+    "abouttwitter",
+    "Twitter/X:"
+  ],
+  [
+    "aboutyoutube",
+    "YouTube:"
+  ],
+  [
+    "aboutemail",
+    "Почта:"
+  ],
+  [
+    "aboutinstagram",
+    "Instagram:"
+  ],
+  [
+    "abouttransphoto",
+    "TransPhoto:"
+  ],
+  [
+    "aboutwebsite",
+    "Личный сайт:"
+  ],
+  [
+    "aboutfavs_trains",
+    "Любимые модели поездов:"
+  ],
+  [
+    "aboutfavs_countries",
+    "Любимые страны:"
+  ],
+  [
+    "aboutfavs_cities",
+    "Любимые города:"
+  ]
+] as const;
+
 function profileFields(raw: string) {
   let content: Record<string, unknown> = {};
   try { content = JSON.parse(raw) ?? {}; } catch {}
   function field(key: string) {
     const item = content[key];
+    if (item && typeof item === 'object' && 'private' in item && (item.private === true || item.private === 'true')) return '';
     const value = item && typeof item === 'object' && 'value' in item ? item.value : item;
     return typeof value === 'string' ? value : '';
   }
-  return { registered: typeof content.regdate === 'number' ? content.regdate : 0,
-    city: field('aboutlive'), languages: field('aboutlangs'), about: field('about'), badge: field('badge') };
+  const registered = Number(content.regdate);
+  const contacts = profileLabels.slice(0, 8).map(([key, label]) => ({ label, value: field(key), email: key === 'aboutemail' }));
+  const favorites = profileLabels.slice(8).map(([key, label]) => ({ label, value: field(key) }));
+  return {
+    registered: Number.isSafeInteger(registered) && registered > 0 && registered <= 2147483647 ? registered : 0,
+    city: field('aboutlive'), birthday: field('aboutbirthday'), languages: field('aboutlangs'),
+    about: field('aboutmemo') || field('about'), badge: field('badge'),
+    contacts: contacts.filter(item => item.value), favorites: favorites.filter(item => item.value),
+  };
 }
 
 @Controller('api/internal')
