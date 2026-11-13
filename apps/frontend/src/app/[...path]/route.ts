@@ -1,9 +1,6 @@
 import { Document, type PageContext } from '../../components/Document';
 import { AdminModelCreate } from '../../features/admin/AdminModelCreate';
 import { AdminEntities } from '../../features/admin/AdminEntities';
-import { ContestEntries } from '../../features/contests/ContestEntries';
-import { ContestVoting } from '../../features/contests/ContestVoting';
-import { ContestResults } from '../../features/contests/ContestResults';
 import { AdminContests } from '../../features/admin/AdminContests';
 import { AdminSettings } from '../../features/admin/AdminSettings';
 import { AdminUsers } from '../../features/admin/AdminUsers';
@@ -21,7 +18,6 @@ import { CommentFeed } from '../../features/photos/CommentFeed';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
   ['comments.php', 'comments'],
-  ['voting.php', 'voting'],
 ]);
 
 export const dynamic = 'force-dynamic';
@@ -63,10 +59,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   }
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const followed = path === 'comments' ? await CommentFeed(request, api)
-    : path === 'voting/waiting' || path === 'voting/sendpretend'
-    ? await ContestEntries(request, api, path === 'voting/sendpretend')
-    : path === 'voting' ? await ContestVoting(request, api)
-    : path === 'voting/results' ? await ContestResults(api)
     : path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
     : path === 'vehicle/edit' ? await VehicleEdit(request, api)
     : vehicleId ? await VehiclePage(request, api, vehicleId)

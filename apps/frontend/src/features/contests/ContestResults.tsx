@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import type { ContestWinnerData } from '@nativegallery/contracts';
 
 const dates = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -27,9 +26,10 @@ function ResultGroup({ winners }: { winners: ContestWinnerData[] }) {
   </>;
 }
 
-export async function ContestResults(api: string) {
+export async function ContestResults() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const result = await fetch(api + '/api/contests/results', { cache: 'no-store' }).catch(() => null);
-  if (!result?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (!result?.ok) throw new Error('Could not load contest data');
   const rows: ContestWinnerData[] = await result.json();
   const groups = new Map<number, ContestWinnerData[]>();
   for (const winner of rows) {
@@ -37,12 +37,9 @@ export async function ContestResults(api: string) {
     if (group) group.push(winner);
     else groups.set(winner.contestId, [winner]);
   }
-  const content = renderToStaticMarkup(<tr><td className="main"><div style={{ textAlign: 'center' }}>
+  return <tr><td className="main"><div style={{ textAlign: 'center' }}>
     <h1>Победители фотоконкурса</h1><ResultLinks />
     {[...groups].map(([id, winners]) => <ResultGroup key={id} winners={winners} />)}
     <ResultLinks />
-  </div></td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' + content +
-    '<tr>__FOOTER__</tr></table></body></html>';
+  </div></td></tr>;
 }

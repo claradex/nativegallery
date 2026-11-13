@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 interface Candidate { id: number; url: string; body: string; place: string; views: number }
 interface EntryOptions { contests: { id: number; title: string }[]; photos: { id: number; place: string }[] }
@@ -53,14 +54,13 @@ function EntryForm({ contests, photos }: EntryOptions) {
   </>;
 }
 
-export async function ContestEntries(request: Request, api: string, submit: boolean) {
+export async function ContestEntries({ submit }: { submit: boolean }) {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/contests/' + (submit ? 'entry-options' : 'entries'), {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load contest data');
   const data = await response.json();
-  const content = renderToStaticMarkup(<tr><td className="main">{submit ? <EntryForm {...data} /> : <Candidates {...data} />}</td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">' +
-    '__NAVBAR__' + content + '<tr>__FOOTER__</tr></table>' + (submit ? '__SCRIPT_ContestEntry__' : '') + '</body></html>';
+  return <tr><td className="main">{submit ? <EntryForm {...data} /> : <Candidates {...data} />}{submit && <script src="/frontend-scripts/ContestEntry.js" defer />}</td></tr>;
 }

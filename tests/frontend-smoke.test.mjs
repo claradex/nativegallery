@@ -16,6 +16,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/contests/voting': { contest: null, startsAt: 4102444800 },
+      '/api/contests/results': [],
+      '/api/contests/entries': { contest: null, photos: [] },
+      '/api/contests/entry-options': { contests: [], photos: [] },
       '/api/internal/photo-search?id=9&page=2': { authorId: 9, total: 60, page: 2, pages: 2, photos: [] },
       '/api/internal/favorite-photos': [],
       '/api/internal/followed-photos': [],
@@ -49,6 +53,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     if (request.url === '/api/internal/viewer' && request.headers.cookie === 'test-viewer=1') {
       fixtures[request.url] = { viewer: { id: 9, username: 'Автор', status: 0, admin: 0, unreadPhotos: 0, pendingPhotos: 0 }, databaseVersion: 'test' };
     }
+    if (request.url === '/api/contests/entry-options' && request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
     response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
@@ -88,6 +93,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/lk/history', 200, 'Покинуло очередь'],
       ['/lk/pday', 200, 'История изменения индекса загрузки'],
       ['/lk/profile?type=Personalization', 200, 'action="/lk/profile/theme"'],
+      ['/voting', 200, 'data-contest-time="4102444800"'],
+      ['/voting.php', 200, 'data-contest-time="4102444800"'],
+      ['/voting/results', 200, 'Победители фотоконкурса'],
+      ['/voting/waiting', 200, 'Претенденты на участие в конкурсе'],
       ['/feed', 200, 'Лента обновлений'],
       ['/misc/', 200, '/article/7'],
       ['/article/7', 200, 'Тестовая галерея'],
@@ -120,6 +129,12 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.equal(member.status, 200, path);
       assert.ok((await member.text()).includes(heading), path);
     }
+    const guestEntry = await fetch(origin + '/voting/sendpretend', { redirect: 'manual' });
+    assert.equal(guestEntry.status, 307);
+    assert.equal(guestEntry.headers.get('location'), '/login');
+    const memberEntry = await fetch(origin + '/voting/sendpretend', { headers: { cookie: 'test-viewer=1' } });
+    assert.equal(memberEntry.status, 200);
+    assert.match(await memberEntry.text(), /Приём заявок сейчас закрыт/);
     const guestSearch = await fetch(origin + '/search.php?id=9', { redirect: 'manual' });
     assert.equal(guestSearch.status, 307);
     assert.equal(guestSearch.headers.get('location'), '/login');
