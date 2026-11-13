@@ -183,3 +183,7 @@ export interface CommentFeedEntry {
   positive: number;
   negative: number;
 }
+export interface SitePageData {
+  title: string;
+  html: string;
+}

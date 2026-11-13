@@ -15,6 +15,7 @@ import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
+import { SitePage } from '../../features/site/SitePage';
 import { Account } from '../../features/site/Account';
 import { Author } from '../../features/site/Author';
 import { About } from '../../features/site/About';
@@ -70,6 +71,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     });
   }
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
+  const sitePageId = path.match(/^page\/(\d+)$/)?.[1];
   const galleryId = path.match(/^article\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
@@ -80,6 +82,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'comments' || path === 'comments.php' ? await CommentFeed(request, api)
     : path === 'update' || path === 'update.php' ? await UpdatesPage(api)
     : path === 'feed' ? await FeedPage(api)
+    : sitePageId ? await SitePage(request, api, sitePageId)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
