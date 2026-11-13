@@ -22,6 +22,7 @@ import { ProfileSettings } from '../../features/site/ProfileSettings';
 import { NewsPage } from '../../features/site/NewsPage';
 import { SitePage } from '../../features/site/SitePage';
 import { Account } from '../../features/site/Account';
+import { AuthorSearch } from '../../features/site/AuthorSearch';
 import { Author } from '../../features/site/Author';
 import { About } from '../../features/site/About';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
@@ -106,6 +107,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'news2.php' ? await NewsPage(api)
     : path === 'misc' ? await GalleryDirectory(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
+    : path === 'authors.php' ? await AuthorSearch(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
