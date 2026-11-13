@@ -5,6 +5,7 @@ import { NotFound, Tour } from '../../features/site/StaticPages';
 import { About } from '../../features/site/About';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
+import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { PhotoPage } from '../../features/photos/PhotoPage';
@@ -35,7 +36,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   }
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
-  const followed = path === 'vehicle/edit' ? await VehicleEdit(request, api)
+  const followed = path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
+    : path === 'vehicle/edit' ? await VehicleEdit(request, api)
     : vehicleId ? await VehiclePage(request, api, vehicleId) : photoId ? await PhotoPage(request, api, photoId)
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
