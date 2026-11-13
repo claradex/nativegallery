@@ -1,5 +1,6 @@
 import type { UploadOptionsData } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from '../../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { UploadMedia } from './UploadMedia';
 import { UploadOptions } from './UploadOptions';
 import { UploadLocation } from './UploadLocation';
@@ -7,6 +8,7 @@ import { UploadLocation } from './UploadLocation';
 function UploadForm({ data }: { data: UploadOptionsData }) {
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
   return <tr><td className="main">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <h1>Предложить медиа на публикацию</h1>
     <p>Ваш текущий индекс загрузки: <b>{data.uploadIndex}</b></p>
     <div id="formtable">
@@ -42,17 +44,19 @@ function UploadForm({ data }: { data: UploadOptionsData }) {
     <div id="loadtable" className="p20" style={{ display: 'none', paddingBottom: 20, marginBottom: 15 }}>
       <h4>Загруженные фотографии</h4><div id="loadbox" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}></div>
     </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer />
+    <script src="/static/js/exif.js" defer />
+    <script src="/frontend-scripts/PhotoUpload.js" defer />
   </td></tr>;
 }
 
-export async function UploadPage(request: Request, api: string) {
+export async function UploadPage() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/upload/options', {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load upload options');
   const data: UploadOptionsData = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"></head>' +
-    '<body><div id="backgr"></div><table class="tmain">__NAVBAR__' + renderToStaticMarkup(<UploadForm data={data} />) +
-    '<tr>__FOOTER__</tr></table><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script><script src="/static/js/exif.js" defer></script>__SCRIPT_PhotoUpload__</body></html>';
+  return <UploadForm data={data} />;
 }
