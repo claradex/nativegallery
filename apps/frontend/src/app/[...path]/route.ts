@@ -16,7 +16,6 @@ import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
 import { Account } from '../../features/site/Account';
-import { Author } from '../../features/site/Author';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
@@ -26,7 +25,6 @@ import { UploadPage } from '../../features/photos/upload/UploadPage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
 import { MapMedia } from '../../features/photos/MapMedia';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
-import { PhotoDetails } from '../../features/photos/PhotoDetails';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
   ['comments.php', 'comments'],
@@ -72,7 +70,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     });
   }
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
-  const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
     : path === 'lk/upload' ? await UploadPage(request, api)
@@ -80,7 +77,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'comments' ? await CommentFeed(request, api)
     : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
-    : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
+    : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
     : path === 'voting' ? await ContestVoting(request, api)
     : path === 'voting/results' ? await ContestResults(api)
@@ -90,8 +87,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'fav_authors' ? await FollowedPhotos(request, api)
     : path === 'fav' ? await FavoritePhotos(request, api) : undefined;
   if (followed instanceof Response) return followed;
-  const markup = followed ?? ( path === 'photoext' ? await PhotoDetails(request, api) : path === 'tour' ? Tour() : undefined);
-  if (!markup) return path === 'photoext' ? new Response('Service Unavailable', { status: 503 }) : NotFound(request);
+  const markup = followed ?? ( path === 'tour' ? Tour() : undefined);
+  if (!markup) return NotFound(request);
   const response = await fetch(api + '/api/internal/viewer', {
     headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);

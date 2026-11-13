@@ -16,6 +16,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/internal/photo-details/3': { id: 3, author: 'Автор снимка', url: '/static/img/avatar.png', publishedAt: 0, views: 10, comments: 2 },
+      '/api/internal/author/9': { id: 9, username: 'Автор снимка', photourl: '', admin: 0, registered: 0, online: 0, followers: 3, contacts: [], favorites: [] },
       '/api/internal/updates': [],
       '/api/internal/top30': [],
       '/api/users/search?q=Anna': [{ id: 12, username: 'Anna', photourl: '' }],
@@ -33,7 +35,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       commentsEnabled: true, canComment: false, rating: null,
     };
     fixtures['/api/internal/photo-comments/3'] = [];
-    if (request.url === '/api/internal/photo-page/999') response.statusCode = 404;
+    if (['/api/internal/photo-page/999', '/api/internal/author/999'].includes(request.url)) response.statusCode = 404;
     response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
@@ -64,6 +66,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/update.php?time=24', 200, 'Новые фотографии за 72 часа'],
       ['/top30', 200, '30 самых просматриваемых фото'],
       ['/authors.php?q=Anna', 200, '/author/12/'],
+      ['/author/9/', 200, 'Подписка на новые фотографии этого автора'],
+      ['/author/999', 200, 'Пользователь не найден'],
+      ['/photoext?id=3', 200, '/api/photo/stats?id=3'],
+      ['/photoext', 200, 'Изображение не найдено'],
       ['/feed', 200, 'Лента обновлений'],
       ['/misc/', 200, '/article/7'],
       ['/article/7', 200, 'Тестовая галерея'],

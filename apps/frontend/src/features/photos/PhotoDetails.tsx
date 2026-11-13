@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import type { PhotoDetailsData } from '@nativegallery/contracts';
 
 const dateFormat = new Intl.DateTimeFormat('ru-RU', {
@@ -51,21 +50,17 @@ function MissingPhoto() {
   );
 }
 
-export async function PhotoDetails(request: Request, api: string) {
-  const id = new URL(request.url).searchParams.get('id') ?? '';
+export async function PhotoDetails({ searchParams }: { searchParams: Promise<{ id?: string | string[] }> }) {
+  const { id } = await searchParams;
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   let photo: PhotoDetailsData | null = null;
-  if (/^\d+$/.test(id)) {
+  if (typeof id === 'string' && /^\d+$/.test(id)) {
     const response = await fetch(api + '/api/internal/photo-details/' + id, { cache: 'no-store' }).catch(() => null);
     if (response?.ok) photo = await response.json();
-    else if (response?.status !== 404) return null;
+    else if (response?.status !== 404) throw new Error('Could not load photo details');
   }
 
-  const markup = renderToStaticMarkup(
-    <tr><td className="main"><div style={{ textAlign: 'center' }}>
-      {photo ? <Details photo={photo} /> : <MissingPhoto />}
-    </div></td></tr>,
-  );
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' + markup +
-    '<tr>__FOOTER__</tr></table></body></html>';
+  return <tr><td className="main"><div style={{ textAlign: 'center' }}>
+    {photo ? <Details photo={photo} /> : <MissingPhoto />}
+  </div></td></tr>;
 }

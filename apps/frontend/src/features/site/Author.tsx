@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { notFound } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
 
 interface Profile {
@@ -58,17 +59,19 @@ function ProfileContent({ profile }: { profile: Profile }) {
   </>;
 }
 
-export async function Author(request: Request, api: string, id: string) {
+export async function Author({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!/^\d{1,10}$/.test(id)) notFound();
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/author/' + id, {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (!response || (!response.ok && response.status !== 404)) return new Response('Service Unavailable', { status: 503 });
+  if (!response || (!response.ok && response.status !== 404)) throw new Error('Could not load the author profile');
   const profile: Profile | null = response.ok ? await response.json() : null;
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     {profile ? <ProfileContent profile={profile} /> : <div style={{ textAlign: 'center' }}>
       <h1>Пользователь не найден</h1><img src="/static/img/404.jpg" alt="" loading="lazy" />
     </div>}
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">' +
-    '__NAVBAR__' + content + '<tr>__FOOTER__</tr></table>__SCRIPT_Author__</body></html>';
+    {profile && <script src="/frontend-scripts/Author.js" defer />}
+  </td></tr>;
 }
