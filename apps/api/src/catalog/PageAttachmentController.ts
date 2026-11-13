@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { BadRequestException, Body, Controller, ForbiddenException, Header, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Header, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request } from 'express';
 import sharp from 'sharp';
@@ -28,7 +28,7 @@ export class PageAttachmentController {
   @Header('Cache-Control', 'private, no-store')
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 32 * 1024 * 1024, fields: 1, fieldSize: 16 } }))
   async upload(@Req() request: Request, @Body('kind') kind: unknown, @UploadedFile() file?: { buffer: Buffer }) {
-    if ((await this.auth.viewer(request))?.admin !== 1) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'owner');
     if (!file) throw new BadRequestException();
     const extension = await attachmentExtension(kind, file.buffer);
     if (!extension) throw new BadRequestException();

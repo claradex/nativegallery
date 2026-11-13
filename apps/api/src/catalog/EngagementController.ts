@@ -1,14 +1,9 @@
-import { Controller, ForbiddenException, Get, Header, Param, Query, Req } from '@nestjs/common';
+import { Controller, Get, Header, Param, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import type { TopPhoto } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-
-function parseId(value: unknown): number | undefined {
-  if (typeof value !== 'string' || !/^\d+$/.test(value)) return;
-  const id = Number(value);
-  return id > 0 && id <= 2147483647 ? id : undefined;
-}
+import { parseId } from '../common/ids';
 
 @Controller('api')
 export class EngagementController {
@@ -17,8 +12,7 @@ export class EngagementController {
   @Get('internal/favorite-photos')
   @Header('Cache-Control', 'private, no-store')
   async favorites(@Req() request: Request): Promise<TopPhoto[]> {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const rows = await database.$queryRaw<(Omit<TopPhoto, 'views'> & { views: bigint })[]>(Prisma.sql`
       SELECT p.id, p.photourl, p.place, p.postbody, p.posted_at AS timeupload, p.user_id AS authorId,
              COALESCE(u.username, '') AS author,
@@ -36,8 +30,7 @@ export class EngagementController {
   @Get('photo/:id/favorite')
   @Header('Cache-Control', 'private, no-store')
   async favorite(@Req() request: Request, @Param('id') id: string) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const photoId = parseId(id);
     if (!photoId) return '';
     return database.$transaction(async tx => {
@@ -53,8 +46,7 @@ export class EngagementController {
   @Get('subscribe')
   @Header('Cache-Control', 'private, no-store')
   async subscribe(@Req() request: Request, @Query('id') id: unknown) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const authorId = parseId(id);
     if (!authorId || authorId === viewer.id) return '';
     return database.$transaction(async tx => {

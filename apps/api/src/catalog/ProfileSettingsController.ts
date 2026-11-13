@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, HttpCode, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, HttpCode, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
@@ -26,8 +26,7 @@ export class ProfileSettingsController {
   @Get('settings')
   @Header('Cache-Control', 'private, no-store')
   async settings(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const user = await database.user.findUniqueOrThrow({ where: { id: viewer.id }, select: { content: true, photourl: true } });
     const content = profileContent(user.content);
     const fields = Object.fromEntries(profileFields.map(key => {
@@ -41,8 +40,7 @@ export class ProfileSettingsController {
   @Get('sessions')
   @Header('Cache-Control', 'private, no-store')
   async sessions(@Req() request: Request): Promise<ProfileSession[]> {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const current = 'v2:' + sessionToken(request);
     const rows = await database.loginToken.findMany({
       where: { user_id: viewer.id }, orderBy: { last_activity: 'desc' },
@@ -80,8 +78,7 @@ export class ProfileSettingsController {
   @Header('Content-Type', 'text/plain; charset=utf-8')
   @UseInterceptors(FileInterceptor('userphoto', { limits: { fileSize: 200 * 1024, fields: 30, fieldSize: 65535 } }))
   async update(@Req() request: Request, @Body() body: Record<string, unknown>, @UploadedFile() file?: { buffer: Buffer }) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const avatar = file && await storeAvatar(file.buffer);
     if (file && !avatar) return 'Требуется изображение JPEG шириной до 800 пикселей.';
     try {

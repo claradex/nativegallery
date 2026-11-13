@@ -2,6 +2,7 @@ import { Controller, Get, Header, NotFoundException, Param, Req } from '@nestjs/
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { requireId } from '../common/ids';
 
 const profileLabels = [
   [
@@ -77,8 +78,7 @@ export class AuthorController {
   @Get('author/:id')
   @Header('Cache-Control', 'private, no-store')
   async author(@Req() request: Request, @Param('id') raw: string) {
-    const id = Number(raw);
-    if (!/^\d{1,10}$/.test(raw) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const id = requireId(raw);
     const [viewer, user, followers] = await Promise.all([
       this.auth.viewer(request),
       database.user.findUnique({ where: { id }, select: { id: true, username: true, admin: true, photourl: true, online: true, content: true } }),

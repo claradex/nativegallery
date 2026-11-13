@@ -1,4 +1,4 @@
-import { All, Controller, ForbiddenException, Get, Header, Param, Req } from '@nestjs/common';
+import { All, Controller, Get, Header, Param, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -12,8 +12,7 @@ export class VehicleModerationController {
   @Get('requests')
   @Header('Cache-Control', 'private, no-store')
   async pending(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'editor');
     const rows = await database.entityRequest.findMany({ where: { status: 0 }, orderBy: { id: 'desc' } });
     const models = await database.entity.findMany({ where: { id: { in: [...new Set(rows.map(row => row.entityid))] } } });
     const byId = new Map(models.map(model => [model.id, model]));
@@ -33,8 +32,7 @@ export class VehicleModerationController {
   @Get('catalog')
   @Header('Cache-Control', 'private, no-store')
   async catalog(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'editor');
     return database.$queryRaw<{ id: number; title: string; model: string }[]>(Prisma.raw('SELECT v.id, v.title, COALESCE(e.title, \'\') AS model FROM entities_data v LEFT JOIN entities e ON e.id = v.entityid ORDER BY v.id DESC'));
   }
 
@@ -42,8 +40,7 @@ export class VehicleModerationController {
   @Header('Content-Type', 'text/html; charset=utf-8')
   @Header('Cache-Control', 'private, no-store')
   async decide(@Req() request: Request, @Param('id') value: string, @Param('action') action: string) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'editor');
 
     const id = Number(value);
     if (!/^\d+$/.test(value) || id < 1 || id > 2147483647 ||

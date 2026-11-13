@@ -5,6 +5,7 @@ import { database } from '@nativegallery/database';
 import { findVehicle } from '../catalog/VehicleData';
 import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
+import { requireId } from '../common/ids';
 
 /** One view per viewer per photo per 24 hours; guests share user id 0, as in the PHP version. */
 async function recordView(photo_id: number, user_id: number) {
@@ -22,8 +23,7 @@ export class PhotoPageController {
   @Get('photo-page/:id')
   @Header('Cache-Control', 'private, no-store')
   async getPhoto(@Param('id') rawId: string, @Req() request: Request, @Query() scope: Record<string, unknown>): Promise<PhotoPageData> {
-    const id = Number(rawId);
-    if (!/^\d+$/.test(rawId) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const id = requireId(rawId);
     const viewer = await this.auth.viewer(request);
     const photo = await database.photo.findUnique({
       where: { id },

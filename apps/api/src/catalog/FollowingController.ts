@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Header, Redirect, Req } from '@nestjs/common';
+import { Controller, Get, Header, Redirect, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import type { TopPhoto } from '@nativegallery/contracts';
@@ -11,8 +11,7 @@ export class FollowingController {
   @Get('internal/followed-photos')
   @Header('Cache-Control', 'private, no-store')
   async photos(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     return database.$queryRaw<TopPhoto[]>(Prisma.sql`
       SELECT p.id, p.photourl, p.place, p.postbody, p.timeupload, p.user_id AS authorId,
              COALESCE(u.username, '') AS author,
@@ -29,8 +28,7 @@ export class FollowingController {
   @Redirect('/fav_authors', 302)
   @Header('Cache-Control', 'private, no-store')
   async markRead(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     await database.followerNotification.updateMany({
       where: { follower_id: viewer.id, checked: 0 },
       data: { checked: 1 },

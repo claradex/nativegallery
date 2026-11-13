@@ -2,6 +2,7 @@ import { BadRequestException, Body, Controller, ForbiddenException, Get, Header,
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { requireId } from '../common/ids';
 
 const userFields = { id: true, username: true, email: true, photourl: true, admin: true, status: true, online: true, content: true } as const;
 
@@ -13,26 +14,14 @@ function metadata(content: string): Record<string, unknown> {
   return {};
 }
 
-function userId(value: string) {
-  const id = Number(value);
-  if (!/^\d{1,10}$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
-  return id;
-}
-
 @Controller('api/admin/users')
 export class AdminUsersController {
   constructor(private readonly auth: AuthService) {}
 
-  private async requireAdmin(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (viewer?.admin !== 1) throw new ForbiddenException();
-    return viewer;
-  }
-
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
-    await this.requireAdmin(request);
+    await this.auth.requireAdmin(request, 'owner');
     const users = await database.user.findMany({ select: userFields, orderBy: { id: 'asc' } });
     return users.map(({ content, ...user }) => ({ ...user, directUpload: metadata(content).premoderation === 'true' }));
   }
@@ -40,8 +29,8 @@ export class AdminUsersController {
   @Get(':id')
   @Header('Cache-Control', 'private, no-store')
   async detail(@Req() request: Request, @Param('id') value: string) {
-    const viewer = await this.requireAdmin(request);
-    const user = await database.user.findUnique({ where: { id: userId(value) }, select: userFields });
+    const viewer = await this.auth.requireAdmin(request, 'owner');
+    const user = await database.user.findUnique({ where: { id: requireId(value) }, select: userFields });
     if (!user) throw new NotFoundException();
     const { content, ...fields } = user;
     return { ...fields, directUpload: metadata(content).premoderation === 'true', canChangeAccess: user.id !== viewer.id };
@@ -49,8 +38,8 @@ export class AdminUsersController {
 
   @Patch(':id')
   async update(@Req() request: Request, @Param('id') value: string, @Body() body: Record<string, unknown>) {
-    const viewer = await this.requireAdmin(request);
-    const id = userId(value);
+    const viewer = await this.auth.requireAdmin(request, 'owner');
+    const id = requireId(value);
     const { premoderation, accountstatus, admin } = body ?? {};
     if (premoderation !== 'true' && premoderation !== 'false') throw new BadRequestException();
     if (accountstatus !== undefined && accountstatus !== '0' && accountstatus !== '1') throw new BadRequestException();

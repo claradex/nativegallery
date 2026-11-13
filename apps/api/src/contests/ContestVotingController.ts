@@ -1,12 +1,8 @@
-import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-
-function parseId(value: unknown) {
-  const id = typeof value === 'string' && /^\d{1,10}$/.test(value) ? Number(value) : 0;
-  return id > 0 && id <= 2147483647 ? id : 0;
-}
+import { parseId } from '../common/ids';
 
 @Controller('api')
 export class ContestVotingController {
@@ -41,8 +37,7 @@ export class ContestVotingController {
   @Get('photo/contests/rate')
   @Header('Cache-Control', 'private, no-store')
   async vote(@Req() request: Request, @Query('kid') kid: unknown, @Query('pid') pid: unknown) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const contest_id = parseId(kid);
     const photo_id = parseId(pid);
     if (!contest_id || !photo_id) return '';

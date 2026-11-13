@@ -3,6 +3,7 @@ import type { PhotoCommentData } from "@nativegallery/contracts";
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { requireId } from '../common/ids';
 
 function parseContent(value: string): Record<string, unknown> {
   try {
@@ -22,8 +23,7 @@ export class PhotoCommentsController {
   @Header('Cache-Control', 'private, no-store')
   async list(@Param('id') value: string, @Req() request: Request): Promise<PhotoCommentData[]> {
     const viewer = await this.auth.viewer(request);
-    const id = Number(value);
-    if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const id = requireId(value);
     const photo = await database.photo.findUnique({
       where: { id }, select: { user_id: true, moderated: true, pinnedcomment_id: true },
     });

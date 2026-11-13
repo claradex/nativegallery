@@ -5,26 +5,21 @@ import { database, Prisma } from '@nativegallery/database';
 import { unlink } from 'node:fs/promises';
 import { storeCommentAttachment } from './CommentAttachment';
 import { AuthService } from '../auth/AuthService';
-import { failure, idOf, metadata } from './CommentMetadata';
+import { failure, metadata } from './CommentMetadata';
+import { parseId } from '../common/ids';
 
 @Controller('api/photo/comment')
 export class CommentCreateController {
   constructor(private readonly auth: AuthService) {}
-
-  private async viewer(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    return viewer;
-  }
 
   @Post()
   @HttpCode(200)
   @Header('Content-Type', 'text/html; charset=utf-8')
   @UseInterceptors(FileInterceptor('filebody', { limits: { fields: 12, fieldSize: 65535, parts: 13, fileSize: 32 * 1024 * 1024 } }))
   async create(@Req() request: Request, @Body() body: { id?: unknown; wtext?: unknown }, @UploadedFile() file?: { buffer: Buffer }) {
-    const viewer = await this.viewer(request);
+    const viewer = await this.auth.requireViewer(request);
     if (process.env.EMAIL_VERIFY === 'true' && viewer.status === 3) throw new ForbiddenException();
-    const id = idOf(body?.id);
+    const id = parseId(body?.id);
     const message = typeof body?.wtext === 'string' ? body.wtext : '';
     if (!id) return '{"errorcode":"3","error":1}';
     if (!message.trim() && !file) return failure;

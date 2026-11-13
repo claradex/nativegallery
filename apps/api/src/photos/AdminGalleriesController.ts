@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { requireId } from '../common/ids';
 
 type GalleryInput = { title?: unknown; opened?: unknown };
 
@@ -17,21 +18,17 @@ function galleryInput(form: GalleryInput) {
 export class AdminGalleriesController {
   constructor(private readonly auth: AuthService) {}
 
-  private async requireAdmin(request: Request) {
-    if ((await this.auth.viewer(request))?.admin !== 1) throw new ForbiddenException();
-  }
-
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
-    await this.requireAdmin(request);
+    await this.auth.requireAdmin(request, 'owner');
     return database.gallery.findMany({ orderBy: { id: 'asc' } });
   }
 
   @Post()
   @Header('Cache-Control', 'private, no-store')
   async create(@Req() request: Request, @Body() form: GalleryInput, @Res() response: Response) {
-    await this.requireAdmin(request);
+    await this.auth.requireAdmin(request, 'owner');
     await database.gallery.create({ data: galleryInput(form) });
     response.redirect(303, '/admin?type=Galleries');
   }
@@ -40,9 +37,8 @@ export class AdminGalleriesController {
   @Header('Cache-Control', 'private, no-store')
   async update(@Req() request: Request, @Param('id') rawId: string,
     @Body() form: GalleryInput, @Res() response: Response) {
-    await this.requireAdmin(request);
-    const id = Number(rawId);
-    if (!/^\d{1,10}$/.test(rawId) || id < 1 || id > 2147483647) throw new NotFoundException();
+    await this.auth.requireAdmin(request, 'owner');
+    const id = requireId(rawId);
     const result = await database.gallery.updateMany({ where: { id }, data: galleryInput(form) });
     if (!result.count) throw new NotFoundException();
     response.redirect(303, '/admin?type=Galleries');

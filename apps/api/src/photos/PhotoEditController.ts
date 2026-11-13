@@ -1,18 +1,17 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 import { photoContent } from './PhotoContent';
+import { requireId } from '../common/ids';
 
 @Controller('api/account/photos')
 export class PhotoEditController {
   constructor(private readonly auth: AuthService) {}
 
   private async ownedPhoto(request: Request, rawId: string) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    const id = Number(rawId);
-    if (!/^\d{1,10}$/.test(rawId) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const viewer = await this.auth.requireViewer(request);
+    const id = requireId(rawId);
     return { id, user_id: viewer.id };
   }
 

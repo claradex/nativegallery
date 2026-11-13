@@ -1,13 +1,8 @@
-import { All, BadRequestException, Body, ConflictException, Controller, Delete, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-
-function parseId(raw: unknown) {
-  const id = Number(raw);
-  if (typeof raw !== 'string' || !/^\d{1,10}$/.test(raw) || id < 1 || id > 2147483647) throw new BadRequestException();
-  return id;
-}
+import { requireId } from '../common/ids';
 
 function escape(value: string) {
   return value.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char] ?? char);
@@ -16,11 +11,6 @@ function escape(value: string) {
 @Controller('api/admin')
 export class AdminVehicleEditorController {
   constructor(private readonly auth: AuthService) {}
-
-  private async authorize(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
-  }
 
   private async fields(id: number) {
     const entity = await database.entity.findUnique({ where: { id }, select: { sampledata: true } });
@@ -37,8 +27,8 @@ export class AdminVehicleEditorController {
 
   @Get('models/fields/:id')
   async modelFields(@Req() request: Request, @Param('id') id: string) {
-    await this.authorize(request);
-    return this.fields(parseId(id));
+    await this.auth.requireAdmin(request, 'editor');
+    return this.fields(requireId(id, BadRequestException));
   }
 
   @All('getvehicleinputs/:id')
@@ -54,9 +44,9 @@ export class AdminVehicleEditorController {
   @Get('models/catalog/:id')
   @Header('Cache-Control', 'private, no-store')
   async getModel(@Req() request: Request, @Param('id') rawId: string) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     const model = await database.entityData.findUnique({
-      where: { id: parseId(rawId) }, select: { id: true, entityid: true, title: true, comment: true, content: true },
+      where: { id: requireId(rawId, BadRequestException) }, select: { id: true, entityid: true, title: true, comment: true, content: true },
     });
     if (!model) throw new NotFoundException();
     return model;
@@ -64,8 +54,8 @@ export class AdminVehicleEditorController {
 
   @Patch('models/catalog/:id')
   async update(@Req() request: Request, @Param('id') rawId: string, @Body() body: Record<string, unknown>) {
-    await this.authorize(request);
-    const id = parseId(rawId);
+    await this.auth.requireAdmin(request, 'editor');
+    const id = requireId(rawId, BadRequestException);
     const model = await database.entityData.findUnique({ where: { id }, select: { entityid: true } });
     if (!model) throw new NotFoundException();
     const data = await this.modelData(model.entityid, body);
@@ -76,8 +66,8 @@ export class AdminVehicleEditorController {
 
   @Delete('models/catalog/:id')
   async remove(@Req() request: Request, @Param('id') rawId: string) {
-    await this.authorize(request);
-    const id = parseId(rawId);
+    await this.auth.requireAdmin(request, 'editor');
+    const id = requireId(rawId, BadRequestException);
     await database.$transaction(async tx => {
       const [model] = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`
         SELECT id FROM entities_data WHERE id = ${id} FOR UPDATE
@@ -92,8 +82,8 @@ export class AdminVehicleEditorController {
 
   @Post('models/catalog')
   async create(@Req() request: Request, @Body() body: Record<string, unknown>) {
-    await this.authorize(request);
-    const entityid = parseId(body?.entityid);
+    await this.auth.requireAdmin(request, 'editor');
+    const entityid = requireId(body?.entityid, BadRequestException);
     const data = await this.modelData(entityid, body);
     return database.entityData.create({
       data: { ...data, entityid, createdate: BigInt(Math.floor(Date.now() / 1000)) }, select: { id: true },

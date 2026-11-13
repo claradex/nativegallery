@@ -1,13 +1,8 @@
-import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-
-function id(value: unknown) {
-  if (typeof value !== 'string' || !/^\d+$/.test(value)) return 0;
-  const result = Number(value);
-  return result <= 2147483647 ? result : 0;
-}
+import { parseId } from '../common/ids';
 
 @Controller('api/photo')
 export class PhotoRatingsController {
@@ -16,10 +11,9 @@ export class PhotoRatingsController {
   @Get('vote')
   @Header('Cache-Control', 'private, no-store')
   async vote(@Req() request: Request, @Query() query: Record<string, unknown>) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    const photoId = id(query.pid);
-    const contestId = id(query.cid);
+    const viewer = await this.auth.requireViewer(request);
+    const photoId = parseId(query.pid);
+    const contestId = parseId(query.cid);
     const contest = query.action === 'vote-konk';
     if (!photoId || (query.vote !== '0' && query.vote !== '1') || (contest && !contestId)) return '';
     const type = Number(query.vote);

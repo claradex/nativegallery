@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, Header, Query, Req, Res } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Header, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { preferenceCookie } from './ProfileSettingsController';
 import type { UploadHistoryData } from '@nativegallery/contracts';
@@ -13,8 +13,7 @@ export class AccountController {
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async summary(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const [published, pending, user] = await Promise.all([
       database.photo.count({ where: { user_id: viewer.id, moderated: 1 } }),
       database.photo.count({ where: { moderated: 0 } }),
@@ -27,8 +26,7 @@ export class AccountController {
   @Get('upload-index')
   @Header('Cache-Control', 'private, no-store')
   async indexHistory(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     return database.uploadIndexHistory.findMany({
       where: { user_id: viewer.id }, orderBy: { id: 'desc' },
       select: { id: true, oldindex: true, newindex: true, date: true, type: true, photo_id: true },
@@ -47,8 +45,7 @@ export class AccountController {
   @Get('uploads')
   @Header('Cache-Control', 'private, no-store')
   async uploadHistory(@Req() request: Request, @Query('sort') sort?: string): Promise<UploadHistoryData> {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const photos = await database.photo.findMany({
       where: { user_id: viewer.id },
       orderBy: sort === '1' ? [{ endmoderation: 'desc' }, { id: 'desc' }] : { id: 'desc' },

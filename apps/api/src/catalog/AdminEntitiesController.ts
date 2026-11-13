@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, Post, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -7,21 +7,16 @@ import { AuthService } from '../auth/AuthService';
 export class AdminEntitiesController {
   constructor(private readonly auth: AuthService) {}
 
-  private async authorize(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
-  }
-
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     return database.entity.findMany({ select: { id: true, title: true }, orderBy: { id: 'desc' } });
   }
 
   @Post()
   async create(@Req() request: Request, @Body() body: Record<string, unknown>) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     const { title, color } = body ?? {};
     if (typeof title !== 'string' || !title.trim() || title.length > 255 ||
         typeof color !== 'string' || !/^#[a-f0-9]{6}$/i.test(color)) throw new BadRequestException();

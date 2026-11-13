@@ -56,6 +56,7 @@ test('production NestJS registers public and protected routes', { timeout: 15_00
     const missing = await fetch(origin + '/api/users/load/invalid');
     assert.equal(missing.status, 200);
     assert.equal((await missing.json()).error, 1);
+    assert.deepEqual(await (await fetch(origin + '/api/users/search')).json(), []);
   } finally {
     await app.close();
   }

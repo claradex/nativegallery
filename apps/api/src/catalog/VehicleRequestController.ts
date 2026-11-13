@@ -1,8 +1,9 @@
-import { BadRequestException, Body, ConflictException, Controller, ForbiddenException, Get, Header, HttpCode, NotFoundException, Param, Post, Query, Req, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Get, Header, HttpCode, NotFoundException, Param, Post, Query, Req, ServiceUnavailableException } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 import { findVehicle } from './VehicleData';
+import { requireId } from '../common/ids';
 
 const timestamp = () => BigInt(Math.floor(Date.now() / 1000));
 const recent = (user_id: number) => ({ user_id, created_at: { gt: timestamp() - 82800n } });
@@ -12,10 +13,8 @@ export class VehicleRequestController {
   constructor(private readonly auth: AuthService) {}
 
   private async context(request: Request, value: string) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    const id = Number(value);
-    if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const viewer = await this.auth.requireViewer(request);
+    const id = requireId(value);
     const model = await database.entity.findUnique({ where: { id } });
     if (!model) throw new NotFoundException();
     let schema: unknown;

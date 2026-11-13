@@ -1,9 +1,10 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, Param, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, Get, Header, Param, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { legacyDate } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 import { newsHtml } from './NewsHtml';
+import { requireId } from '../common/ids';
 
 const success = '{"errorcode":0,"error":0}';
 
@@ -11,14 +12,10 @@ const success = '{"errorcode":0,"error":0}';
 export class AdminNewsController {
   constructor(private readonly auth: AuthService) {}
 
-  private async requireAdmin(request: Request) {
-    if (!(await this.auth.viewer(request))?.admin) throw new ForbiddenException();
-  }
-
   @Get('news')
   @Header('Cache-Control', 'private, no-store')
   async news(@Req() request: Request) {
-    await this.requireAdmin(request);
+    await this.auth.requireAdmin(request, 'moderator');
     const rows = await database.news.findMany({ orderBy: { id: 'asc' } });
     return rows.map(row => ({ ...row, body: newsHtml(row.body) }));
   }
@@ -37,7 +34,7 @@ export class AdminNewsController {
   @Header('Cache-Control', 'private, no-store')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async create(@Req() request: Request, @Body('body') value: unknown) {
-    await this.requireAdmin(request);
+    await this.auth.requireAdmin(request, 'moderator');
     if (typeof value !== 'string' || Buffer.byteLength(value) > 256_000) throw new BadRequestException();
     const body = newsHtml(value).trim();
     if (!body) throw new BadRequestException();
@@ -49,9 +46,8 @@ export class AdminNewsController {
   @Header('Cache-Control', 'private, no-store')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async remove(@Req() request: Request, @Param('id') value: string) {
-    await this.requireAdmin(request);
-    const id = Number(value);
-    if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new BadRequestException();
+    await this.auth.requireAdmin(request, 'moderator');
+    const id = requireId(value, BadRequestException);
     await database.news.deleteMany({ where: { id } });
     return success;
   }

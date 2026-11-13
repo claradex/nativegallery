@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -16,7 +16,7 @@ export class PhotoMapController {
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async load(@Req() request: Request, @Query() query: Record<string, unknown>) {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    await this.auth.requireViewer(request);
     const north = bound(query.north, 90, 90);
     const south = bound(query.south, -90, 90);
     const west = bound(query.west, -180, 180);

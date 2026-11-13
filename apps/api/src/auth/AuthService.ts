@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { compare } from 'bcryptjs';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
@@ -9,6 +9,17 @@ const sessionAge = 50 * 50 * 54 * 72 * 1000;
 const failure: LoginResponse = { errorcode: '1', error: 1 };
 const sessionCookie = 'NGALLERYSESS';
 export const sessionCookies = [sessionCookie, 'NGALLERYSERVICE', 'NGALLERYSESS_', 'NGALLERYID'];
+
+/** Admin levels: 1 is a full administrator, 2 a photo moderator, any other non-zero level an editor. */
+const adminRoles = {
+  /** Any staff level, including photo moderators. */
+  moderator: (admin: number) => admin !== 0,
+  /** Staff who may edit the catalog, contests and geo data; photo moderators may not. */
+  editor: (admin: number) => admin !== 0 && admin !== 2,
+  /** Full administrators only. */
+  owner: (admin: number) => admin === 1,
+};
+export type AdminRole = keyof typeof adminRoles;
 
 export function sessionToken(request: Request) {
   return request.headers.cookie?.match(/(?:^|;\s*)NGALLERYSESS=([a-f0-9-]{36})(?:;|$)/i)?.[1];
@@ -35,6 +46,20 @@ export class AuthService {
       database.user.update({ where: { id: user.id }, data: { online: now } }),
     ]);
     return { ...user, unreadPhotos, pendingPhotos };
+  }
+
+  /** The signed-in viewer, or 403 for guests. */
+  async requireViewer(request: Request): Promise<Viewer> {
+    const viewer = await this.viewer(request);
+    if (!viewer) throw new ForbiddenException();
+    return viewer;
+  }
+
+  /** The signed-in viewer if their admin level grants `role`, otherwise 403. */
+  async requireAdmin(request: Request, role: AdminRole): Promise<Viewer> {
+    const viewer = await this.viewer(request);
+    if (!viewer || !adminRoles[role](viewer.admin)) throw new ForbiddenException();
+    return viewer;
   }
 
   async login(body: Partial<LoginRequest>, response: Response): Promise<LoginResponse> {

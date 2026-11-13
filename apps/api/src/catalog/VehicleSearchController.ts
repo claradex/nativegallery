@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -34,7 +34,7 @@ export class VehicleSearchController {
   @Header('Content-Type', 'text/html; charset=utf-8')
   @Header('Cache-Control', 'private, no-store')
   async load(@Req() request: Request, @Query('type') type: unknown, @Query('num') num: unknown) {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    await this.auth.requireViewer(request);
     if (typeof num !== 'string' && num !== undefined) return '<table></table>';
     const query = '%' + (num ?? '') + '%';
     const modelId = typeof type === 'string' && /^\d{1,10}$/.test(type) ? Number(type) : 0;

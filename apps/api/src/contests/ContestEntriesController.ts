@@ -1,15 +1,12 @@
-import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { parseId } from '../common/ids';
 
 const now = () => Math.floor(Date.now() / 1000);
 const open = () => ({ status: 1, openpretendsdate: { lte: now() }, closepretendsdate: { gte: now() } });
 const invalid = { errorcode: 1, error: 0 };
-
-function id(value: unknown) {
-  return typeof value === 'string' && /^\d{1,10}$/.test(value) && Number(value) <= 2147483647 ? Number(value) : 0;
-}
 
 @Controller('api')
 export class ContestEntriesController {
@@ -32,8 +29,7 @@ export class ContestEntriesController {
   @Get('contests/entry-options')
   @Header('Cache-Control', 'private, no-store')
   async options(@Req() request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
+    const viewer = await this.auth.requireViewer(request);
     const [contests, photos] = await Promise.all([
       database.contest.findMany({ where: open(), orderBy: { id: 'asc' } }),
       database.photo.findMany({
@@ -51,10 +47,9 @@ export class ContestEntriesController {
   @HttpCode(200)
   @Header('Content-Type', 'text/html; charset=utf-8')
   async submit(@Req() request: Request, @Body('cid') cid: unknown, @Body('photo_id') photo: unknown) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    const contest = id(cid);
-    const photoId = id(photo);
+    const viewer = await this.auth.requireViewer(request);
+    const contest = parseId(cid);
+    const photoId = parseId(photo);
     if (!contest || !photoId) return JSON.stringify(invalid);
     const saved = await database.$transaction(async tx => {
       const time = now();

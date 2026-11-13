@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import type { PhotoSearchResult } from '@nativegallery/contracts';
@@ -11,7 +11,7 @@ export class PhotoSearchController {
   @Get('photo-search')
   @Header('Cache-Control', 'private, no-store')
   async search(@Req() request: Request, @Query('id') raw: unknown, @Query('page') rawPage: unknown): Promise<PhotoSearchResult> {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    await this.auth.requireViewer(request);
     const id = typeof raw === 'string' && /^\d{1,10}$/.test(raw) ? Number(raw) : 0;
     const page = rawPage === undefined ? 1 : typeof rawPage === 'string' && /^\d{1,7}$/.test(rawPage) ? Number(rawPage) : 0;
     if (id < 1 || id > 2147483647 || page < 1) throw new BadRequestException();

@@ -1,9 +1,10 @@
-import { Controller, ForbiddenException, Get, Header, NotFoundException, Param, Req } from '@nestjs/common';
+import { Controller, Get, Header, NotFoundException, Param, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import type { VehiclePageData } from '@nativegallery/contracts';
 import { AuthService } from '../auth/AuthService';
 import { findVehicle } from './VehicleData';
+import { requireId } from '../common/ids';
 
 @Controller('api/internal')
 export class VehicleController {
@@ -12,16 +13,15 @@ export class VehicleController {
   @Get('vehicle-models')
   @Header('Cache-Control', 'private, no-store')
   async models(@Req() request: Request) {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    await this.auth.requireViewer(request);
     return database.entity.findMany({ select: { id: true, title: true, color: true }, orderBy: { id: 'asc' } });
   }
 
   @Get('vehicle/:id')
   @Header('Cache-Control', 'private, no-store')
   async getVehicle(@Param('id') rawId: string, @Req() request: Request): Promise<VehiclePageData> {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
-    const id = Number(rawId);
-    if (!/^\d+$/.test(rawId) || id < 1 || id > 2147483647) throw new NotFoundException();
+    await this.auth.requireViewer(request);
+    const id = requireId(rawId);
     const vehicle = await findVehicle(id);
     if (!vehicle) throw new NotFoundException();
 

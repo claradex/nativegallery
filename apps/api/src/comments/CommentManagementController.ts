@@ -1,18 +1,13 @@
-import { Body, Controller, ForbiddenException, Header, HttpCode, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Header, HttpCode, Param, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-import { failure, idOf, metadata } from './CommentMetadata';
+import { failure, metadata } from './CommentMetadata';
+import { parseId } from '../common/ids';
 
 @Controller('api/photo/comment')
 export class CommentManagementController {
   constructor(private readonly auth: AuthService) {}
-
-  private async viewer(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    return viewer;
-  }
 
   @Post(':id/edit')
   @HttpCode(200)
@@ -30,8 +25,8 @@ export class CommentManagementController {
   }
 
   private async change(request: Request, rawId: string, body?: string) {
-    const viewer = await this.viewer(request);
-    const id = idOf(rawId);
+    const viewer = await this.auth.requireViewer(request);
+    const id = parseId(rawId);
     return database.$transaction(async tx => {
       const [comment] = await tx.$queryRaw<{ content: string; body: string }[]>(Prisma.sql`
         SELECT content, body FROM photos_comments WHERE id = ${id} AND user_id = ${viewer.id} FOR UPDATE`);
@@ -48,8 +43,8 @@ export class CommentManagementController {
   @HttpCode(200)
   @Header('Content-Type', 'text/html; charset=utf-8')
   async pin(@Req() request: Request, @Param('id') rawId: string) {
-    const viewer = await this.viewer(request);
-    const id = idOf(rawId);
+    const viewer = await this.auth.requireViewer(request);
+    const id = parseId(rawId);
     return database.$transaction(async tx => {
       const [photo] = await tx.$queryRaw<{ id: number; pinnedcomment_id: number }[]>(Prisma.sql`
         SELECT p.id, p.pinnedcomment_id FROM photos p

@@ -1,5 +1,6 @@
 import { Controller, Get, Header, Param, Query } from '@nestjs/common';
 import { database } from '@nativegallery/database';
+import { parseId } from '../common/ids';
 
 const publicFields = { id: true, username: true, photourl: true } as const;
 const missing = { error: 1, errorcode: 'Пользователь не найден' };
@@ -28,8 +29,8 @@ export class PublicUsersController {
   @Get('load/:id')
   @Header('Cache-Control', 'no-store')
   async load(@Param('id') rawId: string) {
-    const id = Number(rawId);
-    if (!/^\d{1,10}$/.test(rawId) || id < 1 || id > 2147483647) return missing;
+    const id = parseId(rawId);
+    if (!id) return missing;
     const user = await database.user.findUnique({
       where: { id }, select: { ...publicFields, online: true, content: true },
     });

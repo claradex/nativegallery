@@ -1,4 +1,4 @@
-import { Controller, ForbiddenException, Get, Header, Req } from '@nestjs/common';
+import { Controller, Get, Header, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -10,7 +10,7 @@ export class ContestsController {
   @Get('getinfo')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async info(@Req() request: Request) {
-    if (!await this.auth.viewer(request)) throw new ForbiddenException();
+    await this.auth.requireViewer(request);
     const contest = await database.contest.findFirst({
       where: { status: { in: [0, 1, 2] } }, orderBy: [{ status: 'asc' }, { id: 'asc' }],
     });

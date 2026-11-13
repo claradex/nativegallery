@@ -1,24 +1,19 @@
-import { Controller, ForbiddenException, Get, Header, Query, Req } from '@nestjs/common';
+import { Controller, Get, Header, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-import { idOf, metadata } from './CommentMetadata';
+import { metadata } from './CommentMetadata';
+import { parseId } from '../common/ids';
 
 @Controller('api/photo/comment')
 export class CommentVotesController {
   constructor(private readonly auth: AuthService) {}
 
-  private async viewer(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer) throw new ForbiddenException();
-    return viewer;
-  }
-
   @Get('rate')
   @Header('Cache-Control', 'private, no-store')
   async rate(@Req() request: Request, @Query('wid') rawId: unknown, @Query('vote') vote: unknown) {
-    const viewer = await this.viewer(request);
-    const id = idOf(rawId);
+    const viewer = await this.auth.requireViewer(request);
+    const id = parseId(rawId);
     if (!id || (vote !== '0' && vote !== '1')) return '';
     const type = Number(vote);
     return database.$transaction(async tx => {

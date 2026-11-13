@@ -1,13 +1,13 @@
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import type { PhotoDetailsData } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
+import { requireId } from '../common/ids';
 
 @Controller('api/internal')
 export class PhotoDetailsController {
   @Get('photo-details/:id')
   async details(@Param('id') value: string): Promise<PhotoDetailsData> {
-    const id = Number(value);
-    if (!/^\d+$/.test(value) || id < 1 || id > 2147483647) throw new NotFoundException();
+    const id = requireId(value);
     return database.$transaction(async tx => {
       const photo = await tx.photo.findFirst({
         where: { id, moderated: 1 },

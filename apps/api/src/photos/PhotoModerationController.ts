@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Query, Req, Res } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, Get, Header, NotFoundException, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { notifyPhotoFollowers, database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -11,7 +11,7 @@ export class PhotoModerationController {
   @Get('pending')
   @Header('Cache-Control', 'private, no-store')
   async pending(@Req() request: Request) {
-    if (!(await this.auth.viewer(request))?.admin) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'moderator');
     return database.photo.findMany({
       where: { moderated: 0 }, orderBy: { id: 'desc' },
       select: { id: true, photourl: true, place: true, postbody: true, user_id: true },
@@ -21,8 +21,7 @@ export class PhotoModerationController {
   @All('setvisibility')
   async setVisibility(@Req() request: Request, @Res() response: Response,
     @Query() query: Record<string, unknown>, @Body('comment') comment: unknown) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin) throw new ForbiddenException();
+    await this.auth.requireAdmin(request, 'moderator');
     const { id: rawId, mod, reason, irate, krate } = query;
     const id = typeof rawId === 'string' && /^\d{1,10}$/.test(rawId) ? Number(rawId) : 0;
     if (!id || id > 2147483647 || (mod !== '0' && mod !== '1' && mod !== '2')) throw new BadRequestException();

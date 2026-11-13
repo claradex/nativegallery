@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, Get, Header, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -14,15 +14,10 @@ function timestamp(value: unknown) {
 export class AdminContestsController {
   constructor(private readonly auth: AuthService) {}
 
-  private async authorize(request: Request) {
-    const viewer = await this.auth.viewer(request);
-    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
-  }
-
   @Get()
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     const [contests, themes, schedule] = await Promise.all([
       database.contest.findMany({ orderBy: { id: 'desc' } }),
       database.contestTheme.findMany({ orderBy: { id: 'asc' } }),
@@ -34,7 +29,7 @@ export class AdminContestsController {
   @All('createtheme')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async createTheme(@Req() request: Request, @Body('body') title: unknown, @Body('active') active: unknown) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     if (typeof title !== 'string' || !title.trim() || Buffer.byteLength(title) > 65535) throw new BadRequestException();
     await database.contestTheme.create({ data: { title: title.trim(), status: active === '1' ? 1 : 0 } });
     return '{"errorcode":0,"error":0}';
@@ -43,7 +38,7 @@ export class AdminContestsController {
   @All('create')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async create(@Req() request: Request, @Body() body: Record<string, unknown>) {
-    await this.authorize(request);
+    await this.auth.requireAdmin(request, 'editor');
     const themeid = Number(body?.themeid);
     if (!Number.isInteger(themeid) || themeid < 1 || themeid > 2147483647) throw new BadRequestException();
     const openpretendsdate = timestamp(body.openpretendsdate);
