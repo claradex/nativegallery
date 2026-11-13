@@ -14,6 +14,7 @@ import { AdminNews } from '../../features/admin/AdminNews';
 import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
+import { Author } from '../../features/site/Author';
 import { About } from '../../features/site/About';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
@@ -62,7 +63,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   }
   const photoId = path.match(/^photo\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
-  const followed = path === 'voting/waiting' || path === 'voting/sendpretend'
+  const authorId = path.match(/^author\/(\d+)$/)?.[1];
+  const followed = authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
     ? await ContestEntries(request, api, path === 'voting/sendpretend')
     : path === 'voting' ? await ContestVoting(request, api)
     : path === 'voting/results' ? await ContestResults(api)
