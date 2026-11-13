@@ -1,27 +1,9 @@
 import { Countdown } from './Countdown';
 import { headers } from 'next/headers';
-import { legacyDate } from '@nativegallery/contracts';
+import { Ballot, type Candidate } from './Ballot';
 
-interface Candidate {
-  id: number; url: string; place: string; body: string; date: number;
-  authorId: number; author: string; views: number; voted: boolean;
-}
 type Voting = { contest: null; startsAt: number | null }
   | { contest: number; signedIn: boolean; voters: number; votes: number; photos: Candidate[] };
-
-function CandidateRow({ photo, signedIn }: { photo: Candidate; signedIn: boolean }) {
-  return <div className="p20p"><table><tbody><tr>
-    <td><a href={signedIn ? '#' : '/login'} data-contest-photo={signedIn ? photo.id : undefined}
-      aria-label="Голосовать за фотографию" className={'contestBtn' + (photo.voted ? ' voted' : '')} /></td>
-    <td className="pb_photo"><a href={'/photo/' + photo.id + '/'} target="_blank" className="prw">
-      <img className="f" src={'/api/photo/compress?url=' + encodeURIComponent(photo.url)} alt="630 КБ" loading="lazy" />
-      <div className="hpshade"><div className="eye-icon">{photo.views}</div></div>
-    </a></td>
-    <td className="pb_descr"><p>{photo.body}</p><p><b className="pw-place">{photo.place}</b></p>
-      <p className="sm"><b>{legacyDate(photo.date)}</b><br />Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a></p>
-    </td>
-  </tr></tbody></table></div>;
-}
 
 export async function ContestVoting() {
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
@@ -40,10 +22,6 @@ export async function ContestVoting() {
     {data.contest === null ? <>
       <div className="p20"><h4>Сейчас конкурс не проводится. Пожалуйста, заходите позже.</h4></div>
       {data.startsAt && <><h2>Следующий Фотоконкурс будет через:</h2><Countdown as="h1" until={data.startsAt} /></>}
-    </> : <div data-contest={data.contest}>
-      <div id="tip" role="status"><span id="img" /></div>
-      {data.photos.map(photo => <CandidateRow key={photo.id} photo={photo} signedIn={data.signedIn} />)}
-      <br />Число проголосовавших: <b>{data.voters}</b><br />Число голосов: <b>{data.votes}</b><br /><br />
-    </div>}
-  </div><script src="/frontend-scripts/ContestBallot.js" defer /></td></tr>;
+    </> : <Ballot {...data} />}
+  </div></td></tr>;
 }

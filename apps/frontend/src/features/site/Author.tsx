@@ -1,3 +1,4 @@
+import { AuthorSubscription } from './AuthorSubscription';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
@@ -50,12 +51,7 @@ function ProfileContent({ profile }: { profile: Profile }) {
       <span style={{ whiteSpace: 'pre-line' }}>{profile.about}</span></div>}
     <div style={{ marginTop: 25 }}><b><a href={'/search?id=' + profile.id}>Найти все фотографии, сделанные этим пользователем</a></b></div>
     {profile.own ? <div style={{ marginTop: 8 }}>Пользователей, подписанных на мои фотографии: <b>{profile.followers}</b></div>
-      : <div style={{ marginTop: 8 }} data-author-subscription={profile.signedIn ? profile.id : undefined}>
-        <div className={'toggle' + (profile.subscribed ? ' on' : '')} role="switch" tabIndex={0} aria-label="Подписка"
-          aria-checked={profile.subscribed}><div className="handle" /></div>&nbsp;
-        <label className="toggle-label"><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt">{profile.followers}</b>)</label>
-        {!profile.signedIn && <> <a href="/login">Войти</a></>}
-      </div>}
+      : <AuthorSubscription id={profile.id} signedIn={profile.signedIn} subscribed={profile.subscribed} followers={profile.followers} />}
   </>;
 }
 
@@ -72,6 +68,5 @@ export async function Author({ params }: { params: Promise<{ id: string }> }) {
     {profile ? <ProfileContent profile={profile} /> : <div style={{ textAlign: 'center' }}>
       <h1>Пользователь не найден</h1><img src="/static/img/404.jpg" alt="" loading="lazy" />
     </div>}
-    {profile && <script src="/frontend-scripts/Author.js" defer />}
   </td></tr>;
 }
