@@ -24,6 +24,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/account/photos/7': { id: 7, place: 'Место съёмки', postbody: 'Подпись' },
       '/api/admin/news': [],
       '/api/internal/comment-feed': [],
       '/api/internal/comment-feed?before=9': [{
@@ -111,6 +112,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/photoext?id=3', 200, '/api/photo/stats?id=3'],
       ['/photoext', 200, 'Изображение не найдено'],
       ['/lk/upload', 200, 'action="/api/upload"'],
+      ['/lk/editimage?id=7', 200, 'action="/api/account/photos/7"'],
       ['/lk', 200, 'Общая информация'],
       ['/lk/history', 200, 'Покинуло очередь'],
       ['/lk/pday', 200, 'История изменения индекса загрузки'],

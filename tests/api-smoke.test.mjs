@@ -21,7 +21,7 @@ test('production NestJS registers public and protected routes', { timeout: 15_00
     assert.equal(typeof (await options.json()).open, 'boolean');
     assert.equal(options.headers.get('cache-control'), 'private, no-store');
 
-    for (const path of ['/api/upload/options', '/api/photo/loadmap', '/api/admin/pages', '/api/admin/galleries']) {
+    for (const path of ['/api/upload/options', '/api/photo/loadmap', '/api/admin/pages', '/api/admin/galleries', '/api/account/photos/7']) {
       const response = await fetch(origin + path);
       assert.equal(response.status, 403, path);
       await response.text();
