@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type PhotoSearchResult } from '@nativegallery/contracts';
 
 function SearchForm({ authorId }: { authorId?: string }) {

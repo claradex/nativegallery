@@ -24,7 +24,7 @@ export class VehicleModerationController {
       return { id: row.id, title: row.title, model: model?.title ?? '',
         fields: Object.values(schema).map((field, index) => ({
           label: typeof field?.name === 'string' ? field.name : '',
-          value: typeof values[index + 1]?.value === 'string' ? values[index + 1].value : '',
+          value: String(values[index + 1]?.value ?? ''),
         })),
       };
     });

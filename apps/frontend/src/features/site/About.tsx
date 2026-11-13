@@ -1,5 +1,5 @@
 import type { SiteOverview } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 const roles = [
   { id: 1, icon: '220.ico', label: 'Администраторы' },

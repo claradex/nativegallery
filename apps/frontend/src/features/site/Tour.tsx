@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 const tourStyles = `
 .tablinks {
@@ -440,7 +440,7 @@ function TourContent({ title }: { title: string }) {
                                 <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme_picker.png" /></center>
                                 <p className="big">Каталог тем доступен в разделе "Мои Настройки" во вкладке "Интерфейс" </p><br />
                                 <img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme3.png" width="460" />
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme1.png" style={{"float":"left"}} width="220" /></td>
@@ -464,7 +464,7 @@ function TourContent({ title }: { title: string }) {
                                     <li><span><b>Совет:</b> перед установкой фона, поэкспериментируйте с разметкой: попробуйте отзеркалить будущую фоновую картинку, или вообще просто создайте красивый градиент</span></li>
                                 </ul>
                                 <br />
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/backdrop_ex.png" width="440" /></td>
@@ -485,7 +485,7 @@ function TourContent({ title }: { title: string }) {
                                     <li><span>Данные настройки будут видны только вам</span></li>
                                 </ul>
                                 <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/avatar_picker.png" /></center><br />
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/avatars_def.png" style={{"float":"left"}} width="220" /></td>
@@ -499,7 +499,7 @@ function TourContent({ title }: { title: string }) {
                                     <li><span>При необходимости вы можете скрыть ненужные разделы сайта</span></li>
                                     <li><span><b>Напоминание: </b>Разделы первой необходимости (Моя Страница; Мои Друзья; Мои Ответы; Мои Настройки) скрыть нельзя</span></li>
                                 </ul>
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/leftmenu.png" style={{"float":"left"}} width="220" /></td>
@@ -514,7 +514,7 @@ function TourContent({ title }: { title: string }) {
                                     <li><span><b>Обратите внимание</b>, что если выбран старый вид отображения постов, то последние комментарии подгружаться не будут</span></li>
                                 </ul>
                                 <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/wall_pick.png" /></center><br />
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/wall_old.png" style={{"float":"left"}} width="220" />
@@ -557,7 +557,7 @@ function TourContent({ title }: { title: string }) {
                                     <li><span>OpenVK Legacy - это мобильное приложение OpenVK для ретро-устройств на Android с дизайном ВКонтакте 3.0.4 из 2013 года</span></li>
                                     <li><span>Минимально поддерживаемой версией является Android 2.1 Eclair, то есть аппараты времён начала 2010-ых вполне пригодятся</span></li>
                                 </ul>
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/app1.png" style={{"float":"left"}} width="210" /></td>
@@ -565,7 +565,7 @@ function TourContent({ title }: { title: string }) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table cellSpacing="5" border="0">
+                                <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
                                             <td><img src="https://ovk.to/assets/packages/static/openvk/img/tour/app3.png" width="425" /></td>

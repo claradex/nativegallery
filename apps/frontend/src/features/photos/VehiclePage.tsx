@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type VehiclePageData } from '@nativegallery/contracts';
 import { NotFound } from '../site/StaticPages';
 

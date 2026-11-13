@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { UploadHistory } from './UploadHistory';
 
 interface Summary { id: number; username: string; published: number; pending: number; uploadIndex: number | null }

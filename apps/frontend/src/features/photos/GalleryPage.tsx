@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { type GalleryData } from '@nativegallery/contracts';
 import { NotFound } from '../site/StaticPages';
 

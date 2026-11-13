@@ -1,5 +1,5 @@
 import type { TopPhoto } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { PublishedPhoto } from './PublishedPhoto';
 
 export async function FavoritePhotos(request: Request, api: string) {

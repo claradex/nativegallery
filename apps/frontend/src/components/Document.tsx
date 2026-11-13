@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from './RenderMarkup';
 import { PageScripts } from './PageScripts';
 import { Footer } from './Footer';
 import { LoadHead } from './LoadHead';

@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 interface Candidate { id: number; url: string; body: string; place: string; views: number }
 interface EntryOptions { contests: { id: number; title: string }[]; photos: { id: number; place: string }[] }

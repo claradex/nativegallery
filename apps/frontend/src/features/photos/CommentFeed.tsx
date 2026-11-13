@@ -1,5 +1,5 @@
 import { CommentText } from './CommentText';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
 
 function FeedComment({ comment }: { comment: CommentFeedEntry }) {

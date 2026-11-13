@@ -12,11 +12,11 @@ function id(value: unknown) {
 }
 
 @Controller('api')
-@Header('Cache-Control', 'private, no-store')
 export class ContestEntriesController {
   constructor(private readonly auth: AuthService) {}
 
   @Get('contests/entries')
+  @Header('Cache-Control', 'private, no-store')
   async entries() {
     const contest = await database.contest.findFirst({ where: { status: 1 }, orderBy: { id: 'asc' } });
     if (!contest) return { contest: null, photos: [] };
@@ -30,6 +30,7 @@ export class ContestEntriesController {
   }
 
   @Get('contests/entry-options')
+  @Header('Cache-Control', 'private, no-store')
   async options(@Req() request: Request) {
     const viewer = await this.auth.viewer(request);
     if (!viewer) throw new ForbiddenException();
@@ -46,6 +47,7 @@ export class ContestEntriesController {
   }
 
   @Post('photo/contests/sendpretend')
+  @Header('Cache-Control', 'private, no-store')
   @HttpCode(200)
   @Header('Content-Type', 'text/html; charset=utf-8')
   async submit(@Req() request: Request, @Body('cid') cid: unknown, @Body('photo_id') photo: unknown) {

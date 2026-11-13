@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type GalleryData } from '@nativegallery/contracts';
 
 type UpdatePhoto = GalleryData['photos'][number] & { comments: number };

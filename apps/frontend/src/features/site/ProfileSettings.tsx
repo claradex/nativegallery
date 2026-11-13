@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { profileFields, type ProfileSettingsData } from '@nativegallery/contracts';
 import { profileCountries } from './ProfileCountries';
 

@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 export function EmailVerified() {
   const content = renderToStaticMarkup(<tr><td className="main">

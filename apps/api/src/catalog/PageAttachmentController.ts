@@ -21,11 +21,11 @@ async function attachmentExtension(kind: unknown, buffer: Buffer) {
 }
 
 @Controller('api/admin/pages/attachments')
-@Header('Cache-Control', 'private, no-store')
 export class PageAttachmentController {
   constructor(private readonly auth: AuthService) {}
 
   @Post()
+  @Header('Cache-Control', 'private, no-store')
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 32 * 1024 * 1024, fields: 1, fieldSize: 16 } }))
   async upload(@Req() request: Request, @Body('kind') kind: unknown, @UploadedFile() file?: { buffer: Buffer }) {
     if ((await this.auth.viewer(request))?.admin !== 1) throw new ForbiddenException();

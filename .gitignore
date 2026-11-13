@@ -22,3 +22,4 @@ dist/
 .next/
 .env
 *.tsbuildinfo
+/apps/frontend/next-env.d.ts

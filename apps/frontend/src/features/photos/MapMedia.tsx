@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 const leaflet = 'https://unpkg.com/leaflet@1.7.1/dist/';
 const cluster = 'https://unpkg.com/leaflet.markercluster@1.4.1/dist/';

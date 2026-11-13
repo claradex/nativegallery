@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate } from '@nativegallery/contracts';
 
 export function NewsItem({ body, time }: { body: string; time: number }) {

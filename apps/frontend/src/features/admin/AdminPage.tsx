@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import type { Viewer } from '@nativegallery/contracts';
 import { AdminSidebar } from './AdminSidebar';
 import { escapeHtml } from '../../components/Html';

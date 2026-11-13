@@ -1,9 +1,9 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 function RegisterForm({ title }: { title: string }) {
   return <center>
     <h1><b>Регистрация</b></h1>
-    <table cellSpacing="10" cellPadding="0" {...{ border: '0', align: 'center' }} style={{ margin: 9 }}><tbody><tr>
+    <table cellSpacing="10" cellPadding="0" {...{ border: 0, align: 'center' }} style={{ margin: 9 }}><tbody><tr>
       <td><img src="/static/img/logocube.png" style={{ width: 32 }} {...{ align: 'middle' }} /></td>
       <td><b>{title} — это универсальное средство для размещения своих фотографий и видеороликов, созданное на базе движка СТТС.</b><br />
         Публикуйте свои самые лучшие фотографии и великолепные видео на наш портал, чтобы их увидели все желающие.

@@ -1,5 +1,5 @@
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 
 function FollowedPhoto({ photo }: { photo: TopPhoto }) {
   return <div className="p20p"><table><tbody><tr>

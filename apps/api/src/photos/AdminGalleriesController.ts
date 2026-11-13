@@ -14,7 +14,6 @@ function galleryInput(form: GalleryInput) {
 }
 
 @Controller('api/admin/galleries')
-@Header('Cache-Control', 'private, no-store')
 export class AdminGalleriesController {
   constructor(private readonly auth: AuthService) {}
 
@@ -23,12 +22,14 @@ export class AdminGalleriesController {
   }
 
   @Get()
+  @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
     await this.requireAdmin(request);
     return database.gallery.findMany({ orderBy: { id: 'asc' } });
   }
 
   @Post()
+  @Header('Cache-Control', 'private, no-store')
   async create(@Req() request: Request, @Body() form: GalleryInput, @Res() response: Response) {
     await this.requireAdmin(request);
     await database.gallery.create({ data: galleryInput(form) });
@@ -36,6 +37,7 @@ export class AdminGalleriesController {
   }
 
   @Post(':id')
+  @Header('Cache-Control', 'private, no-store')
   async update(@Req() request: Request, @Param('id') rawId: string,
     @Body() form: GalleryInput, @Res() response: Response) {
     await this.requireAdmin(request);

@@ -16,7 +16,6 @@ function pageInput(form: PageForm) {
 }
 
 @Controller('api/admin/pages')
-@Header('Cache-Control', 'private, no-store')
 export class AdminPagesController {
   constructor(private readonly auth: AuthService) {}
 
@@ -27,6 +26,7 @@ export class AdminPagesController {
   }
 
   @Get()
+  @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
     await this.administrator(request);
     return database.page.findMany({
@@ -35,6 +35,7 @@ export class AdminPagesController {
   }
 
   @Post('preview')
+  @Header('Cache-Control', 'private, no-store')
   @HttpCode(200)
   async preview(@Req() request: Request, @Body() form: PageForm) {
     await this.administrator(request);
@@ -43,6 +44,7 @@ export class AdminPagesController {
   }
 
   @Post()
+  @Header('Cache-Control', 'private, no-store')
   async create(@Req() request: Request, @Body() form: PageForm, @Res() response: Response) {
     const viewer = await this.administrator(request);
     const { title, body } = pageInput(form);

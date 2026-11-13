@@ -8,7 +8,6 @@ import { newsHtml } from './NewsHtml';
 const success = '{"errorcode":0,"error":0}';
 
 @Controller('api/admin')
-@Header('Cache-Control', 'private, no-store')
 export class AdminNewsController {
   constructor(private readonly auth: AuthService) {}
 
@@ -17,6 +16,7 @@ export class AdminNewsController {
   }
 
   @Get('news')
+  @Header('Cache-Control', 'private, no-store')
   async news(@Req() request: Request) {
     await this.requireAdmin(request);
     const rows = await database.news.findMany({ orderBy: { id: 'asc' } });
@@ -24,6 +24,7 @@ export class AdminNewsController {
   }
 
   @All('loadnews')
+  @Header('Cache-Control', 'private, no-store')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async load(@Req() request: Request) {
     return (await this.news(request)).map(row =>
@@ -33,6 +34,7 @@ export class AdminNewsController {
   }
 
   @All('news/create')
+  @Header('Cache-Control', 'private, no-store')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async create(@Req() request: Request, @Body('body') value: unknown) {
     await this.requireAdmin(request);
@@ -44,6 +46,7 @@ export class AdminNewsController {
   }
 
   @All('news/:id/delete')
+  @Header('Cache-Control', 'private, no-store')
   @Header('Content-Type', 'text/html; charset=utf-8')
   async remove(@Req() request: Request, @Param('id') value: string) {
     await this.requireAdmin(request);

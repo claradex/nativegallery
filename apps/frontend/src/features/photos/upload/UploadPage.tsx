@@ -1,5 +1,5 @@
 import type { UploadOptionsData } from '@nativegallery/contracts';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../../components/RenderMarkup';
 import { UploadMedia } from './UploadMedia';
 import { UploadOptions } from './UploadOptions';
 import { UploadLocation } from './UploadLocation';

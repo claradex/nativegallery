@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
 import { PhotoVehicle, PhotoVehicleRoute } from './PhotoVehicle';

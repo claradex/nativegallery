@@ -14,9 +14,9 @@ function registrationDate(content: string) {
 }
 
 @Controller('api/users')
-@Header('Cache-Control', 'no-store')
 export class PublicUsersController {
   @Get('search')
+  @Header('Cache-Control', 'no-store')
   async search(@Query('q') raw: unknown) {
     if (typeof raw !== 'string' || raw.length > 255 || !raw.trim()) return [];
     return database.user.findMany({
@@ -26,6 +26,7 @@ export class PublicUsersController {
   }
 
   @Get('load/:id')
+  @Header('Cache-Control', 'no-store')
   async load(@Param('id') rawId: string) {
     const id = Number(rawId);
     if (!/^\d{1,10}$/.test(rawId) || id < 1 || id > 2147483647) return missing;

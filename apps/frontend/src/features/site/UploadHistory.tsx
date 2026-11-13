@@ -26,11 +26,11 @@ export function UploadHistory({ author, photos }: UploadHistoryData) {
     <div className="sm">
       {statuses.map(([code, label]) => <div key={code} className={'p20 s' + code}
         style={{ float: 'left', padding: '1px 5px 2px', marginRight: 15 }}>{label}</div>)}
-    </div><br {...{ clear: 'all' }} /><br />
+    </div><br {...{ style: undefined, clear: 'all' }} /><br />
     <div className="sm">Сортировка фотографий:&ensp;<b>в порядке загрузки</b>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=1">в порядке выхода из очереди</a>&ensp;·&ensp;<a href="/set.php?lk_upl_sort=2">сначала неопубликованные (в порядке загрузки)</a></div><br />
     <div className="p20w" style={{ display: 'block' }}>
       <table><tbody>
-        <tr><th width="100">Изображение</th><th width="90%">Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
+        <tr><th {...{ width: '100' }}>Изображение</th><th {...{ width: '90%' }}>Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
         {photos.map(photo => <tr key={photo.id} className={photo.moderated === 0 ? 's0' : photo.moderated === 2 ? 's15' : 's12'}>
           <td className="pb-photo pb_photo"><a href={'/photo/' + photo.id + '/'} target="_blank" className="prw">
             <img src={photo.photourl} className="f" />

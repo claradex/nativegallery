@@ -1,4 +1,4 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import type { PhotoDetailsData } from '@nativegallery/contracts';
 
 const dateFormat = new Intl.DateTimeFormat('ru-RU', {

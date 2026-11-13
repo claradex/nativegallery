@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate } from '@nativegallery/contracts';
 import { NewsItem } from '../site/NewsPage';
 import { HomeContest } from './HomeContest';
