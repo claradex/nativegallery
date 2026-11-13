@@ -1,3 +1,4 @@
+import { UploadInteractions } from './UploadInteractions';
 import type { UploadOptionsData } from '@nativegallery/contracts';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -44,9 +45,7 @@ function UploadForm({ data }: { data: UploadOptionsData }) {
     <div id="loadtable" className="p20" style={{ display: 'none', paddingBottom: 20, marginBottom: 15 }}>
       <h4>Загруженные фотографии</h4><div id="loadbox" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}></div>
     </div>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer />
-    <script src="/static/js/exif.js" defer />
-    <script src="/frontend-scripts/PhotoUpload.js" defer />
+    <UploadInteractions />
   </td></tr>;
 }
 
