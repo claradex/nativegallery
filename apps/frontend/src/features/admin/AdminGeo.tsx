@@ -1,7 +1,7 @@
 import { AdminPage } from './AdminPage';
 
-export function AdminGeo(request: Request, api: string) {
-  return AdminPage(request, api, 'GeoDB', 'AdminGeo', async options => {
+export function AdminGeo(api: string) {
+  return AdminPage('GeoDB', 'AdminGeo', async options => {
     const response = await fetch(api + '/api/admin/geodb', options).catch(() => null);
     if (!response?.ok) return null;
     const entries: { id: number; title: string }[] = await response.json();

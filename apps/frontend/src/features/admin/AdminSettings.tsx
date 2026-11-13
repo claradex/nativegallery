@@ -5,8 +5,8 @@ interface Task {
   enabled: boolean;
 }
 
-export function AdminSettings(request: Request, api: string) {
-  return AdminPage(request, api, 'Настройки', 'AdminSettings', async options => {
+export function AdminSettings(api: string) {
+  return AdminPage('Настройки', 'AdminSettings', async options => {
     const response = await fetch(api + '/api/admin/settings/tasks', options).catch(() => null);
     if (!response?.ok) return null;
     const tasks: Task[] = await response.json();

@@ -34,8 +34,8 @@ function NewsCards({ items }: { items: NewsItem[] }) {
   </div></div>)}</div>;
 }
 
-export async function AdminNews(request: Request, api: string) {
-  return AdminPage(request, api, 'Новости сайта', 'AdminNews', async options => {
+export async function AdminNews(api: string) {
+  return AdminPage('Новости сайта', 'AdminNews', async options => {
     const response = await fetch(api + '/api/admin/news', options).catch(() => null);
     if (!response?.ok) return null;
     const items: NewsItem[] = await response.json();

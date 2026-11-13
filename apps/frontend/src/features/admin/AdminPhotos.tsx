@@ -48,8 +48,8 @@ interface PendingPhoto {
   user_id: number;
 }
 
-export function AdminPhotos(request: Request, api: string) {
-  return AdminPage(request, api, 'Фотографии', 'AdminPhotos', async options => {
+export function AdminPhotos(api: string) {
+  return AdminPage('Фотографии', 'AdminPhotos', async options => {
     const response = await fetch(api + '/api/admin/images/pending', options).catch(() => null);
     if (!response?.ok) return null;
     const photos: PendingPhoto[] = await response.json();

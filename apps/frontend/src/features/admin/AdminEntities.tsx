@@ -43,8 +43,8 @@ function EntityForm() {
   </>;
 }
 
-export function AdminEntities(request: Request, api: string, create: boolean) {
-  return AdminPage(request, api, create ? 'Создание сущности' : 'Сущности', 'AdminEntities', async options => {
+export function AdminEntities(api: string, create: boolean) {
+  return AdminPage(create ? 'Создание сущности' : 'Сущности', 'AdminEntities', async options => {
     if (create) return <EntityForm />;
     const response = await fetch(api + '/api/admin/entities', options).catch(() => null);
     if (!response?.ok) return null;

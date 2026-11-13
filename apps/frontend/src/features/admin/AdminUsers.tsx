@@ -1,5 +1,5 @@
+import { notFound, forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
-import { NotFound } from '../site/StaticPages';
 import { AdminPage } from './AdminPage';
 
 interface UserRow {
@@ -54,13 +54,12 @@ function UserEditor({ user, origin }: { user: UserDetails; origin: string }) {
   </form>;
 }
 
-export function AdminUsers(request: Request, api: string, id?: string) {
-  if (id !== undefined && !/^\d{1,10}$/.test(id)) return NotFound(request);
-  const origin = process.env.SITE_ORIGIN ?? new URL(request.url).origin;
-  return AdminPage(request, api, 'Пользователи', 'AdminUsers', async options => {
+export function AdminUsers(api: string, origin: string, id?: string) {
+  if (id !== undefined && !/^\d{1,10}$/.test(id)) notFound();
+  return AdminPage('Пользователи', 'AdminUsers', async options => {
     const response = await fetch(api + '/api/admin/users' + (id ? '/' + id : ''), options).catch(() => null);
-    if (response?.status === 403) return new Response('Forbidden', { status: 403 });
-    if (response?.status === 404) return NotFound(request);
+    if (response?.status === 403) forbidden();
+    if (response?.status === 404) notFound();
     if (!response?.ok) return null;
     return id ? <UserEditor user={await response.json()} origin={origin} />
       : <UserList users={await response.json()} origin={origin} />;

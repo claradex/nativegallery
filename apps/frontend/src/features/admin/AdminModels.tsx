@@ -8,8 +8,8 @@ interface PendingRequest {
   fields: { label: string; value: string }[];
 }
 
-export async function AdminModels(request: Request, api: string) {
-  return AdminPage(request, api, 'База моделей', 'AdminModels', async options => {
+export async function AdminModels(api: string, query: URLSearchParams) {
+  return AdminPage('База моделей', 'AdminModels', async options => {
     const [requests, catalog] = await Promise.all([
       fetch(api + '/api/admin/models/requests', options).catch(() => null),
       fetch(api + '/api/admin/models/catalog', options).catch(() => null),
@@ -17,7 +17,7 @@ export async function AdminModels(request: Request, api: string) {
     if (!requests?.ok || !catalog?.ok) return null;
     const rows: PendingRequest[] = await requests.json();
     const models: { id: number; title: string; model: string }[] = await catalog.json();
-    const active = new URL(request.url).searchParams.get('tab') === 'moderate' ? 'moderate' : 'list';
+    const active = query.get('tab') === 'moderate' ? 'moderate' : 'list';
     return <>
       <h1><b>Модели</b></h1>
       <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">

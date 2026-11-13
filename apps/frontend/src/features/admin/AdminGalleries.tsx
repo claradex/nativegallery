@@ -1,3 +1,4 @@
+import { forbidden } from 'next/navigation';
 import { AdminPage } from './AdminPage';
 
 interface Gallery {
@@ -25,10 +26,10 @@ function GalleryForm({ gallery }: { gallery?: Gallery }) {
   </form>;
 }
 
-export async function AdminGalleries(request: Request, api: string) {
-  return AdminPage(request, api, 'Галереи', null, async options => {
+export async function AdminGalleries(api: string) {
+  return AdminPage('Галереи', null, async options => {
     const response = await fetch(api + '/api/admin/galleries', options).catch(() => null);
-    if (response?.status === 403) return new Response('Forbidden', { status: 403 });
+    if (response?.status === 403) forbidden();
     if (!response?.ok) return null;
     const galleries: Gallery[] = await response.json();
     return <>

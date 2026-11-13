@@ -1,19 +1,19 @@
-import { NotFound } from '../site/StaticPages';
+import { notFound } from 'next/navigation';
 import { AdminPage } from './AdminPage';
 
 interface Entity { id: number; title: string; color: string }
 
-export function AdminModelCreate(request: Request, api: string, id?: string) {
-  if (id !== undefined && !/^\d{1,10}$/.test(id)) return NotFound(request);
+export function AdminModelCreate(api: string, id?: string) {
+  if (id !== undefined && !/^\d{1,10}$/.test(id)) notFound();
   const heading = id ? 'Редактирование модели' : 'Создание модели';
-  return AdminPage(request, api, heading, 'AdminModelCreate', async options => {
+  return AdminPage(heading, 'AdminModelCreate', async options => {
     const response = await fetch(api + '/api/internal/vehicle-models', options).catch(() => null);
     if (!response?.ok) return null;
     const entities: Entity[] = await response.json();
     let model: { entityid: number; title: string; comment: string | null; content: string | null } | undefined;
     if (id) {
       const result = await fetch(api + '/api/admin/models/catalog/' + id, options).catch(() => null);
-      if (result?.status === 404) return NotFound(request);
+      if (result?.status === 404) notFound();
       if (!result?.ok) return null;
       model = await result.json();
     }

@@ -1,3 +1,4 @@
+import { forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
 import { AdminPage } from './AdminPage';
 
@@ -61,10 +62,10 @@ function PageEditor() {
   </dialog></>;
 }
 
-export async function AdminPages(request: Request, api: string, create: boolean) {
-  return AdminPage(request, api, 'Страницы', create ? 'AdminPages' : null, async options => {
+export async function AdminPages(api: string, create: boolean) {
+  return AdminPage('Страницы', create ? 'AdminPages' : null, async options => {
     const response = await fetch(api + '/api/admin/pages', options).catch(() => null);
-    if (response?.status === 403) return new Response('Forbidden', { status: 403 });
+    if (response?.status === 403) forbidden();
     if (!response?.ok) return null;
     if (create) return <PageEditor />;
     const pages: PageSummary[] = await response.json();

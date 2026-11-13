@@ -20,12 +20,12 @@ function Editor({ id, title, endpoint, children }: { id: string; title: string; 
   </div>;
 }
 
-export function AdminContests(request: Request, api: string) {
-  return AdminPage(request, api, 'Фотоконкурсы', 'AdminContests', async options => {
+export function AdminContests(api: string, query: URLSearchParams) {
+  return AdminPage('Фотоконкурсы', 'AdminContests', async options => {
     const result = await fetch(api + '/api/admin/contests', options).catch(() => null);
     if (!result?.ok) return null;
     const { contests, themes, enabled }: { contests: Contest[]; themes: Theme[]; enabled: boolean } = await result.json();
-    const categories = new URL(request.url).searchParams.get('tab') === 'categories';
+    const categories = query.get('tab') === 'categories';
     const tabClass = (active: boolean) => 'v-tab v-tab-b' + (active ? ' v-tab--active' : '');
     const titles = new Map(themes.map(theme => [theme.id, theme.title]));
     return <>

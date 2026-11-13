@@ -24,6 +24,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/admin/news': [],
       '/api/internal/comment-feed': [],
       '/api/internal/comment-feed?before=9': [{
         id: 8, photoId: 3, photoUrl: '/static/img/avatar.png', authorId: 9, author: 'Автор',
@@ -70,6 +71,9 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       fixtures[request.url] = { viewer: { id: 9, username: 'Автор', status: 0, admin: 0, unreadPhotos: 0, pendingPhotos: 0 }, databaseVersion: 'test' };
     }
     if (request.url === '/api/contests/entry-options' && request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
+    if (request.url === '/api/internal/viewer' && ['test-admin=1', 'test-admin=2'].includes(request.headers.cookie)) {
+      fixtures[request.url] = { viewer: { id: 7, username: 'Администратор', status: 0, admin: Number(request.headers.cookie.at(-1)), unreadPhotos: 0, pendingPhotos: 0 }, databaseVersion: 'test' };
+    }
     response.end(JSON.stringify(fixtures[request.url] ?? { viewer: null, databaseVersion: 'test' }));
   });
   api.listen(0, '127.0.0.1');
@@ -159,8 +163,16 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(!html.includes('<html'));
     }
     const admin = await fetch(origin + '/admin?type=News', { redirect: 'manual' });
-    assert.equal(admin.status, 302);
+    assert.equal(admin.status, 307);
     assert.equal(new URL(admin.headers.get('location'), origin).pathname, '/login');
+    const nonAdmin = await fetch(origin + '/admin?type=News', { headers: { cookie: 'test-viewer=1' } });
+    assert.equal(nonAdmin.status, 403);
+    const moderator = await fetch(origin + '/admin?type=News', { headers: { cookie: 'test-admin=2' }, redirect: 'manual' });
+    assert.equal(moderator.status, 307);
+    assert.equal(moderator.headers.get('location'), '/admin?type=Photo');
+    const newsAdmin = await fetch(origin + '/admin?type=News', { headers: { cookie: 'test-admin=1' } });
+    assert.equal(newsAdmin.status, 200);
+    assert.ok((await newsAdmin.text()).includes('id="create-news"'));
     const robots = await fetch(origin + '/robots.txt');
     assert.equal(robots.status, 200);
     assert.equal(robots.headers.get('content-type'), 'text/plain; charset=utf-8');
