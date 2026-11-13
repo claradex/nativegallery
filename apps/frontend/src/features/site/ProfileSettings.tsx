@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { profileFields, type ProfileSettingsData } from '@nativegallery/contracts';
 import { profileCountries } from './ProfileCountries';
 
@@ -55,22 +56,24 @@ function ProfileForm({ data }: { data: ProfileSettingsData }) {
   </>;
 }
 
-export async function ProfileSettings(request: Request, api: string) {
+export async function ProfileSettings({ searchParams }: { searchParams: Promise<{ type?: string | string[] }> }) {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+  const cookie = (await headers()).get('cookie');
   const response = await fetch(api + '/api/profile/settings', {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: cookie ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
-  const type = new URL(request.url).searchParams.get('type');
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load profile settings');
+  const { type } = await searchParams;
   const data: ProfileSettingsData = await response.json();
   const personalization = type === 'Personalization';
-  const theme = request.headers.get('cookie')?.match(/(?:^|;\s*)NGALLERYTHEME=([^;]+)/)?.[1];
-  const markup = renderToStaticMarkup(<tr><td className="main"><center><div className="tabs">
+  const theme = cookie?.match(/(?:^|;\s*)NGALLERYTHEME=([^;]+)/)?.[1];
+  return <tr><td className="main"><center><div className="tabs">
     <nav className="tab-nav">
-      <a href="/lk/profile" className={type === null ? 'tab-item active' : 'tab-item'}>Профиль</a>
+      <a href="/lk/profile" className={type === undefined ? 'tab-item active' : 'tab-item'}>Профиль</a>
       <a href="?type=Personalization" className={personalization ? 'tab-item active' : 'tab-item'}>Внешний вид</a>
     </nav>
-    <div className="tab-content">{personalization ? <form method="post" name="form" id="form" encType="multipart/form-data" style={{ display: 'inline-block' }}>
+    <div className="tab-content">{personalization ? <form method="post" action="/lk/profile/theme" name="form" id="form" encType="multipart/form-data" style={{ display: 'inline-block' }}>
       <div className="p20" style={panel}>
         <h4>Оформление сайта</h4>
         <div style={fieldLabel}>Тема</div>
@@ -83,7 +86,5 @@ export async function ProfileSettings(request: Request, api: string) {
         <div><span style={{ color: 'red', fontWeight: 'bold', display: 'none' }} id="errors"></span><span style={{ display: 'none', fontWeight: 'bold', color: 'green' }} id="applied">✔&ensp;Изменения внесены</span></div>
       </div>
     </form> : <ProfileForm data={data} />}</div>
-  </div></center></td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    markup + '<tr>__FOOTER__</tr></table>__SCRIPT_ProfileSettings__</body></html>';
+  </div></center><script src="/frontend-scripts/ProfileSettings.js" defer /></td></tr>;
 }

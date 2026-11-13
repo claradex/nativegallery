@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { UploadHistory } from './UploadHistory';
 
 interface Summary { id: number; username: string; published: number; pending: number; uploadIndex: number | null }
@@ -45,16 +46,15 @@ function IndexHistory({ events }: { events: IndexEvent[] }) {
   </div>;
 }
 
-export async function Account(request: Request, api: string, section: '' | 'upload-index' | 'uploads') {
+export async function Account({ section = '' }: { section?: '' | 'upload-index' | 'uploads' }) {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/account' + (section ? '/' + section : ''), {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load the account');
   const data = await response.json();
   const content = section === 'uploads' ? <UploadHistory {...data} />
     : section === 'upload-index' ? <IndexHistory events={data} /> : <AccountSummary data={data} />;
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<tr><td className="main">{content}</td></tr>) +
-    '<tr>__FOOTER__</tr></table></body></html>';
+  return <tr><td className="main">{content}</td></tr>;
 }

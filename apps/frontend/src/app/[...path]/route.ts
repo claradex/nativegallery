@@ -14,8 +14,6 @@ import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound, Tour } from '../../features/site/StaticPages';
-import { ProfileSettings } from '../../features/site/ProfileSettings';
-import { Account } from '../../features/site/Account';
 import { FavoritePhotos } from '../../features/photos/FavoritePhotos';
 import { FollowedPhotos } from '../../features/photos/FollowedPhotos';
 import { VehicleRequest } from '../../features/photos/VehicleRequest';
@@ -70,10 +68,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     });
   }
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
-  const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
-    ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
-    : path === 'lk/upload' ? await UploadPage(request, api)
-    : path === 'lk/profile' ? await ProfileSettings(request, api)
+  const followed = path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'comments' ? await CommentFeed(request, api)
     : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
@@ -95,25 +90,4 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
   const context: PageContext = await response.json();
   return Document(request, markup, context);
-}
-
-export async function POST(request: Request, route: { params: Promise<{ path?: string[] }> }) {
-  const path = (await route.params).path?.join('/');
-  const url = new URL(request.url);
-  if (path !== 'lk/profile' || url.searchParams.get('type') !== 'Personalization') return NotFound(request);
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const viewer = await fetch(api + '/api/profile/settings', {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (viewer?.status === 403) return Response.redirect(new URL('/login', url), 303);
-  if (!viewer?.ok) return new Response('Service Unavailable', { status: 503 });
-  const form = await request.formData().catch(() => null);
-  const theme = form?.get('theme_id');
-  if (theme !== 'standard' && theme !== 'nativegallery-dark') return new Response(null, { status: 400 });
-  const secure = process.env.COOKIE_SECURE === 'true' ? '; Secure' : '';
-  return new Response(null, { status: 303, headers: {
-    Location: '/lk/profile?type=Personalization',
-    'Set-Cookie': 'NGALLERYTHEME=' + theme + '; Path=/; HttpOnly; SameSite=Lax' + secure,
-    'Cache-Control': 'private, no-store',
-  } });
 }

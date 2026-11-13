@@ -16,6 +16,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/internal/account': { id: 9, username: 'Автор', published: 1, pending: 0, uploadIndex: null },
+      '/api/internal/account/uploads': { author: { id: 9, username: 'Автор' }, photos: [] },
+      '/api/internal/account/upload-index': [],
+      '/api/profile/settings': { id: 9, username: 'Автор', photourl: '', fields: {} },
       '/api/internal/photo-details/3': { id: 3, author: 'Автор снимка', url: '/static/img/avatar.png', publishedAt: 0, views: 10, comments: 2 },
       '/api/internal/author/9': { id: 9, username: 'Автор снимка', photourl: '', admin: 0, registered: 0, online: 0, followers: 3, contacts: [], favorites: [] },
       '/api/internal/updates': [],
@@ -70,6 +74,10 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/author/999', 200, 'Пользователь не найден'],
       ['/photoext?id=3', 200, '/api/photo/stats?id=3'],
       ['/photoext', 200, 'Изображение не найдено'],
+      ['/lk', 200, 'Общая информация'],
+      ['/lk/history', 200, 'Покинуло очередь'],
+      ['/lk/pday', 200, 'История изменения индекса загрузки'],
+      ['/lk/profile?type=Personalization', 200, 'action="/lk/profile/theme"'],
       ['/feed', 200, 'Лента обновлений'],
       ['/misc/', 200, '/article/7'],
       ['/article/7', 200, 'Тестовая галерея'],
@@ -88,6 +96,12 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes(marker), path);
       assert.doesNotMatch(html, /__SCRIPT_|<script[^>]+jquery/i);
     }
+    const theme = await fetch(origin + '/lk/profile/theme', {
+      method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
+    });
+    assert.equal(theme.status, 303);
+    assert.equal(theme.headers.get('location'), '/lk/profile?type=Personalization');
+    assert.match(theme.headers.get('set-cookie'), /NGALLERYTHEME=nativegallery-dark/);
     const photo = await fetch(origin + '/photo/3?aid=9');
     assert.equal(photo.status, 200);
     const photoHtml = await photo.text();
