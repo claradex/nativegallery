@@ -6,6 +6,7 @@ dist/
 /apps/frontend/next-env.d.ts
 *.zip
 logs
+.osp/
 
 # Runtime data: user media and leftovers of the PHP version
 /uploads/*
