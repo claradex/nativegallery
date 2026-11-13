@@ -1,6 +1,6 @@
 const links = [
   ['', 'user-pin', 'Пользователи'], ['Photo', 'camera', 'Фотографии'],
-  ['Galleries', 'images', 'Галереи'], ['News', 'news', 'Новости сайта'],
+  ['Galleries', 'images', 'Галереи'], ['News', 'news', 'Новости сайта'], ['Pages', 'file', 'Страницы'],
   ['Contests', 'party', 'Фотоконкурсы'], ['Entities', 'package', 'Сущности'],
   ['Models', 'data', 'База моделей'], ['GeoDB', 'world', 'GeoDB'], ['Settings', 'cog', 'Настройки'],
 ];

@@ -16,5 +16,7 @@ import { ProfileSettingsController } from './ProfileSettingsController';
 
 import { SitePageController } from './SitePageController';
 
-@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController, ProfileSettingsController, SitePageController] })
+import { AdminPagesController } from './AdminPagesController';
+
+@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController, ProfileSettingsController, SitePageController, AdminPagesController] })
 export class CatalogModule {}

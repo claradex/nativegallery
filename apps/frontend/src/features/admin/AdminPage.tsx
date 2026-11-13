@@ -4,7 +4,7 @@ import type { Viewer } from '@nativegallery/contracts';
 import { AdminSidebar } from './AdminSidebar';
 import { escapeHtml } from '../../components/Html';
 
-const head = (title: string, script: string) => '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+const head = (title: string, script: string | null) => '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
   '<title>' + escapeHtml(title) + '</title><link rel="stylesheet" href="https://rsms.me/inter/inter.css">' +
   '<link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">' +
   '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">' +
@@ -12,9 +12,9 @@ const head = (title: string, script: string) => '<meta charset="utf-8"><meta nam
   '<style>body{font-family:Inter!important}</style>' +
   '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" defer></script>' +
   '<script src="/frontend-scripts/AdminSidebar.js" defer></script>' +
-  '<script src="/frontend-scripts/' + script + '.js" defer></script>';
+  (script ? '<script src="/frontend-scripts/' + script + '.js" defer></script>' : '');
 
-export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo' | 'AdminPhotos' | 'AdminUsers' | 'AdminSettings' | 'AdminContests',
+export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo' | 'AdminPhotos' | 'AdminUsers' | 'AdminSettings' | 'AdminContests' | null,
   load: (options: RequestInit) => Promise<ReactNode | Response>) {
   const options = { headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store' as const };
   const viewerResponse = await fetch(api + '/api/internal/viewer', options).catch(() => null);

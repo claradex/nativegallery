@@ -10,6 +10,7 @@ import { AdminUsers } from '../../features/admin/AdminUsers';
 import { AdminPhotos } from '../../features/admin/AdminPhotos';
 import { AdminGeo } from '../../features/admin/AdminGeo';
 import { AdminModels } from '../../features/admin/AdminModels';
+import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
@@ -43,6 +44,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   if (path === 'admin') {
     const section = new URL(request.url).searchParams.get('type');
+    if (section === 'Pages' || section === 'PageCreate') return AdminPages(request, api, section === 'PageCreate');
     if (section === 'News') return AdminNews(request, api);
     if (section === 'EntityEdit') return AdminModelCreate(request, api, new URL(request.url).searchParams.get('id') ?? '');
     if (section === 'ModelsCreate') return AdminModelCreate(request, api);
