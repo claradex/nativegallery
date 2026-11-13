@@ -138,7 +138,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.match(response.headers.get('content-type'), /text\/html/);
       const html = await response.text();
       assert.ok(html.includes(marker), path);
-      assert.doesNotMatch(html, /__SCRIPT_|<script[^>]+jquery/i);
+      assert.doesNotMatch(html, /__SCRIPT_|<(?:script|link)[^>]+jquery/i);
     }
     const theme = await fetch(origin + '/lk/profile/theme', {
       method: 'POST', body: new URLSearchParams({ theme_id: 'nativegallery-dark' }), redirect: 'manual',
