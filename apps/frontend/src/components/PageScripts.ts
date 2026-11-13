@@ -1,5 +1,6 @@
 const scripts: Record<string, boolean> = {
   "Head": false,
+  "ProfileSettings": false,
   "Author": false,
   "ContestEntry": false,
   "ContestBallot": false,

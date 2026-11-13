@@ -140,3 +140,12 @@ export interface UploadHistoryData {
   author: { id: number; username: string };
   photos: UploadHistoryPhoto[];
 }
+
+export const profileFields = ["aboutrid","aboutlive","aboutbirthday","aboutlangs","aboutmemo","abouttelegram","aboutvk","abouttwitter","aboutyoutube","aboutemail","aboutinstagram","abouttransphoto","aboutwebsite","aboutfavs_trains","aboutfavs_countries","aboutfavs_cities"] as const;
+
+export interface ProfileSettingsData {
+  id: number;
+  username: string;
+  photourl: string;
+  fields: Record<typeof profileFields[number], string>;
+}

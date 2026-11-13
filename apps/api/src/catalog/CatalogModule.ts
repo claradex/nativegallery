@@ -12,5 +12,7 @@ import { PhotoSearchController } from './PhotoSearchController';
 
 import { AccountController } from './AccountController';
 
-@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController] })
+import { ProfileSettingsController } from './ProfileSettingsController';
+
+@Module({ imports: [AuthModule], controllers: [CatalogController, AdminGeoController, AdminUsersController, AuthorController, PhotoSearchController, AccountController, ProfileSettingsController] })
 export class CatalogModule {}
