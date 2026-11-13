@@ -2,7 +2,7 @@ import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req,
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-import { newsHtml } from '../news/NewsHtml';
+import { sitePageHtml } from './SitePageHtml';
 
 type PageForm = { title?: unknown; bodypost?: unknown };
 
@@ -10,7 +10,7 @@ function pageInput(form: PageForm) {
   if (typeof form?.title !== 'string' || typeof form?.bodypost !== 'string') throw new BadRequestException();
   const title = form.title.trim();
   if (!title || title.length > 255 || Buffer.byteLength(form.bodypost) > 65535) throw new BadRequestException();
-  const body = newsHtml(form.bodypost).trim();
+  const body = sitePageHtml(form.bodypost).trim();
   if (!body || Buffer.byteLength(body) > 65535) throw new BadRequestException();
   return { title, body };
 }

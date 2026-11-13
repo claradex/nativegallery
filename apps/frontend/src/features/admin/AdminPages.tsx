@@ -11,8 +11,14 @@ const formatting = [
   ['a', 'link', 'Ссылка'],
 ];
 
+const attachments = [
+  ['img', 'image-alt', 'Прикрепление фотографии'],
+  ['video', 'video', 'Прикрепление видео'],
+  ['audio', 'music', 'Прикрепление музыки'],
+];
+
 function PageEditor() {
-  return <form id="page-editor" method="post" action="/api/admin/pages">
+  return <><form id="page-editor" method="post" action="/api/admin/pages">
     <div className="mb-3">
       <label htmlFor="title" className="form-label">Заголовок</label>
       <input name="title" id="title" className="form-control" maxLength={255} required />
@@ -20,6 +26,10 @@ function PageEditor() {
     <div className="col-md-auto d-flex align-items-center">
       {formatting.map(([tag, icon, label]) => <button key={tag} type="button" data-format={tag} aria-label={label}
         className="btn btn-primary btn-sm mb-2" style={{ marginRight: tag === 'a' ? 36 : 6 }}>
+        <i className={'bx bx-' + icon} />
+      </button>)}
+      {attachments.map(([tag, icon, title]) => <button key={tag} type="button" data-attachment={tag} data-title={title}
+        aria-label={title} className="btn btn-primary btn-sm mb-2" style={{ marginRight: 6 }}>
         <i className={'bx bx-' + icon} />
       </button>)}
     </div>
@@ -34,7 +44,18 @@ function PageEditor() {
       <div id="preview-content"></div>
       <button type="button" id="close-preview" className="btn btn-secondary mt-3">Закрыть</button>
     </dialog>
-  </form>;
+  </form>
+  <dialog id="page-attachment" aria-labelledby="attachment-title" className="border rounded p-3">
+    <form id="page-attachment-form">
+      <h5 id="attachment-title"></h5>
+      <label htmlFor="attachment-url" className="form-label">Адрес файла</label>
+      <input id="attachment-url" className="form-control" type="url" required />
+      <div className="mt-3">
+        <button type="button" id="cancel-attachment" className="btn btn-secondary me-2">Отмена</button>
+        <button type="submit" className="btn btn-primary">Прикрепить</button>
+      </div>
+    </form>
+  </dialog></>;
 }
 
 export async function AdminPages(request: Request, api: string, create: boolean) {

@@ -19,6 +19,40 @@ if (editor) {
     });
   }
 
+  const attachment = document.getElementById('page-attachment');
+  const address = document.getElementById('attachment-url');
+  let attachmentTag;
+  for (const button of editor.querySelectorAll('[data-attachment]')) {
+    button.addEventListener('click', () => {
+      attachmentTag = button.dataset.attachment;
+      address.value = '';
+      address.setCustomValidity('');
+      document.getElementById('attachment-title').textContent = button.dataset.title;
+      attachment.showModal();
+    });
+  }
+  address.addEventListener('input', () => address.setCustomValidity(''));
+  document.getElementById('cancel-attachment').addEventListener('click', () => attachment.close());
+  document.getElementById('page-attachment-form').addEventListener('submit', event => {
+    event.preventDefault();
+    const url = new URL(address.value);
+    if (!url || !['https:', 'http:'].includes(url.protocol)) {
+      address.setCustomValidity('Укажите адрес HTTP или HTTPS.');
+      address.reportValidity();
+      return;
+    }
+    const element = document.createElement(attachmentTag);
+    element.setAttribute('src', url.href);
+    if (attachmentTag === 'img') element.setAttribute('alt', '');
+    else {
+      element.setAttribute('controls', '');
+      element.setAttribute('preload', 'metadata');
+    }
+    body.setRangeText(element.outerHTML, body.selectionStart, body.selectionEnd, 'end');
+    attachment.close();
+    body.focus();
+  });
+
   document.getElementById('close-preview').addEventListener('click', () => preview.close());
   previewButton.addEventListener('click', async () => {
     if (!editor.reportValidity()) return;
