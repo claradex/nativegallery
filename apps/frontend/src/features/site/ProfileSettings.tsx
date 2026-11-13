@@ -1,20 +1,14 @@
 import { ProfileForm, ProfileThemeForm } from './ProfileForm';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { type ProfileSettingsData } from '@nativegallery/contracts';
+import { apiGet, readCookie, requestCookie } from '../../api/client';
 
 export async function ProfileSettings({ searchParams }: { searchParams: Promise<{ type?: string | string[] }> }) {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const cookie = (await headers()).get('cookie');
-  const response = await fetch(api + '/api/profile/settings', {
-    headers: { cookie: cookie ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (!response?.ok) throw new Error('Could not load profile settings');
-  const { type } = await searchParams;
-  const data: ProfileSettingsData = await response.json();
+  const [data, { type }, cookie] = await Promise.all([
+    apiGet<ProfileSettingsData>('/api/profile/settings', { auth: true, login: true, error: 'Could not load profile settings' }),
+    searchParams, requestCookie(),
+  ]);
   const personalization = type === 'Personalization';
-  const theme = cookie?.match(/(?:^|;\s*)NGALLERYTHEME=([^;]+)/)?.[1];
+  const theme = readCookie(cookie, 'NGALLERYTHEME');
   return <tr><td className="main"><center><div className="tabs">
     <nav className="tab-nav">
       <a href="/lk/profile" className={type === undefined ? 'tab-item active' : 'tab-item'}>Профиль</a>

@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { notFound, forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
 import { AdminPage } from './AdminPage';
@@ -54,10 +55,10 @@ function UserEditor({ user, origin }: { user: UserDetails; origin: string }) {
   </form>;
 }
 
-export function AdminUsers(api: string, origin: string, id?: string) {
+export function AdminUsers(origin: string, id?: string) {
   if (id !== undefined && !/^\d{1,10}$/.test(id)) notFound();
-  return AdminPage('Пользователи', 'AdminUsers', async options => {
-    const response = await fetch(api + '/api/admin/users' + (id ? '/' + id : ''), options).catch(() => null);
+  return AdminPage('Пользователи', 'AdminUsers', async () => {
+    const response = await apiFetch('/api/admin/users' + (id ? '/' + id : ''), { auth: true });
     if (response?.status === 403) forbidden();
     if (response?.status === 404) notFound();
     if (!response?.ok) return null;

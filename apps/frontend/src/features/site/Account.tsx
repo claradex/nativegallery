@@ -1,5 +1,4 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { apiGet, readCookie, requestCookie } from '../../api/client';
 import { UploadHistory } from './UploadHistory';
 
 interface Summary { id: number; username: string; published: number; pending: number; uploadIndex: number | null }
@@ -47,16 +46,12 @@ function IndexHistory({ events }: { events: IndexEvent[] }) {
 }
 
 export async function Account({ section = '' }: { section?: '' | 'upload-index' | 'uploads' }) {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const cookie = (await headers()).get('cookie') ?? '';
-  const sort = cookie.match(/(?:^|;\s*)lk_upl_sort=([12])(?:;|$)/)?.[1] ?? '0';
+  const stored = readCookie(await requestCookie(), 'lk_upl_sort');
+  const sort = stored === '1' || stored === '2' ? stored : '0';
   const query = section === 'uploads' ? '?sort=' + sort : '';
-  const response = await fetch(api + '/api/internal/account' + (section ? '/' + section : '') + query, {
-    headers: { cookie }, cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (!response?.ok) throw new Error('Could not load the account');
-  const data = await response.json();
+  const data = await apiGet<any>('/api/internal/account' + (section ? '/' + section : '') + query, {
+    auth: true, login: true, error: 'Could not load the account',
+  });
   const content = section === 'uploads' ? <UploadHistory {...data} sort={sort} />
     : section === 'upload-index' ? <IndexHistory events={data} /> : <AccountSummary data={data} />;
   return <tr><td className="main">{content}</td></tr>;

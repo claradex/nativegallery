@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 import type { SiteOverview } from '@nativegallery/contracts';
 
 const roles = [
@@ -47,10 +48,7 @@ function AboutContent({ data, title, description }: { data: SiteOverview; title:
 }
 
 export async function About() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/about', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load site information');
-  const data: SiteOverview = await response.json();
+  const data = await apiGet<SiteOverview>('/api/internal/about', { error: 'Could not load site information' });
   return <tr><td className="main">
     <AboutContent data={data} title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />
   </td></tr>;

@@ -13,30 +13,29 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 
 export default async function Admin({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const query = new URLSearchParams();
   for (const [name, value] of Object.entries(await searchParams)) {
     const first = Array.isArray(value) ? value[0] : value;
     if (first !== undefined) query.set(name, first);
   }
   const section = query.get('type');
-  if (section === 'Galleries') return AdminGalleries(api);
-  if (section === 'Pages' || section === 'PageCreate') return AdminPages(api, section === 'PageCreate');
-  if (section === 'News') return AdminNews(api);
-  if (section === 'EntityEdit') return AdminModelCreate(api, query.get('id') ?? '');
-  if (section === 'ModelsCreate') return AdminModelCreate(api);
-  if (section === 'Entities' || section === 'EntityCreate') return AdminEntities(api, section === 'EntityCreate');
+  if (section === 'Galleries') return AdminGalleries();
+  if (section === 'Pages' || section === 'PageCreate') return AdminPages(section === 'PageCreate');
+  if (section === 'News') return AdminNews();
+  if (section === 'EntityEdit') return AdminModelCreate(query.get('id') ?? '');
+  if (section === 'ModelsCreate') return AdminModelCreate();
+  if (section === 'Entities' || section === 'EntityCreate') return AdminEntities(section === 'EntityCreate');
   if (!section || section === 'General' || section === 'UserEdit') {
     const requestHeaders = await headers();
     const host = requestHeaders.get('host');
     const scheme = requestHeaders.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
     const origin = process.env.SITE_ORIGIN || (host ? scheme + '://' + host : '');
-    return AdminUsers(api, origin, section === 'UserEdit' ? query.get('user_id') ?? '' : undefined);
+    return AdminUsers(origin, section === 'UserEdit' ? query.get('user_id') ?? '' : undefined);
   }
-  if (section === 'Contests') return AdminContests(api, query);
-  if (section === 'Settings') return AdminSettings(api);
-  if (section === 'Photo') return AdminPhotos(api);
-  if (section === 'GeoDB') return AdminGeo(api);
-  if (section === 'Models') return AdminModels(api, query);
+  if (section === 'Contests') return AdminContests(query);
+  if (section === 'Settings') return AdminSettings();
+  if (section === 'Photo') return AdminPhotos();
+  if (section === 'GeoDB') return AdminGeo();
+  if (section === 'Models') return AdminModels(query);
   notFound();
 }

@@ -1,5 +1,5 @@
 import { AuthorSubscription } from './AuthorSubscription';
-import { headers } from 'next/headers';
+import { apiFind, isId } from '../../api/client';
 import { notFound } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
 
@@ -57,13 +57,8 @@ function ProfileContent({ profile }: { profile: Profile }) {
 
 export async function Author({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!/^\d{1,10}$/.test(id)) notFound();
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/author/' + id, {
-    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (!response || (!response.ok && response.status !== 404)) throw new Error('Could not load the author profile');
-  const profile: Profile | null = response.ok ? await response.json() : null;
+  if (!isId(id)) notFound();
+  const profile = await apiFind<Profile>('/api/internal/author/' + id, { auth: true, error: 'Could not load the author profile' });
   return <tr><td className="main">
     {profile ? <ProfileContent profile={profile} /> : <div style={{ textAlign: 'center' }}>
       <h1>Пользователь не найден</h1><img src="/static/img/404.jpg" alt="" loading="lazy" />

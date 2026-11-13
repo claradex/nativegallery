@@ -1,3 +1,4 @@
+import { apiFind } from '../../api/client';
 import type { PhotoDetailsData } from '@nativegallery/contracts';
 
 const dateFormat = new Intl.DateTimeFormat('ru-RU', {
@@ -52,13 +53,9 @@ function MissingPhoto() {
 
 export async function PhotoDetails({ searchParams }: { searchParams: Promise<{ id?: string | string[] }> }) {
   const { id } = await searchParams;
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  let photo: PhotoDetailsData | null = null;
-  if (typeof id === 'string' && /^\d+$/.test(id)) {
-    const response = await fetch(api + '/api/internal/photo-details/' + id, { cache: 'no-store' }).catch(() => null);
-    if (response?.ok) photo = await response.json();
-    else if (response?.status !== 404) throw new Error('Could not load photo details');
-  }
+  const photo = typeof id === 'string' && /^\d+$/.test(id)
+    ? await apiFind<PhotoDetailsData>('/api/internal/photo-details/' + id, { error: 'Could not load photo details' })
+    : null;
 
   return <tr><td className="main"><div style={{ textAlign: 'center' }}>
     {photo ? <Details photo={photo} /> : <MissingPhoto />}

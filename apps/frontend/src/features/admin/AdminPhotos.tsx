@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
 const publish = ['Нормальная публикация', 'Условная публикация', 'Временная публикация', 'Техническая публикация'];
@@ -48,9 +49,9 @@ interface PendingPhoto {
   user_id: number;
 }
 
-export function AdminPhotos(api: string) {
-  return AdminPage('Фотографии', 'AdminPhotos', async options => {
-    const response = await fetch(api + '/api/admin/images/pending', options).catch(() => null);
+export function AdminPhotos() {
+  return AdminPage('Фотографии', 'AdminPhotos', async () => {
+    const response = await apiFetch('/api/admin/images/pending', { auth: true });
     if (!response?.ok) return null;
     const photos: PendingPhoto[] = await response.json();
     return <>

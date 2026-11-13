@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 import { RecentPhotos } from './RecentPhotos';
 import { Fragment } from 'react';
 import { legacyDate } from '@nativegallery/contracts';
@@ -77,9 +78,6 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
 }
 
 export async function Home() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/home', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load the home page');
-  const data: HomeData = await response.json();
+  const data = await apiGet<HomeData>('/api/internal/home', { error: 'Could not load the home page' });
   return <HomeContent {...data} />;
 }

@@ -1,7 +1,6 @@
 import { MarkFollowedPhotos } from './MarkFollowedPhotos';
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { apiGet } from '../../api/client';
 
 function FollowedPhoto({ photo }: { photo: TopPhoto }) {
   return <div className="p20p"><table><tbody><tr>
@@ -18,15 +17,9 @@ function FollowedPhoto({ photo }: { photo: TopPhoto }) {
 }
 
 export async function FollowedPhotos() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/followed-photos', {
-    headers: { cookie: (await headers()).get('cookie') ?? '' },
-    cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (!response?.ok) throw new Error('Could not load saved photos');
-
-  const photos: TopPhoto[] = await response.json();
+  const photos = await apiGet<TopPhoto[]>('/api/internal/followed-photos', {
+    auth: true, login: true, error: 'Could not load saved photos',
+  });
   return <tr><td className="main">
       <h1>Фотографии избранных авторов</h1>
       {photos.length > 0

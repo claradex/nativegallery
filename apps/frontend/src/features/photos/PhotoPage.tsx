@@ -7,7 +7,7 @@ import { PhotoMedia } from './PhotoMedia';
 import { PhotoRating } from "./PhotoRating";
 import { PhotoComments } from './PhotoComments';
 import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
+import { apiFetch, apiGet, isId } from '../../api/client';
 
 function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; comments: PhotoCommentData[]; scope: string }) {
   return <tr><td className="main">
@@ -67,24 +67,23 @@ export async function PhotoPage({ params, searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-  if (!/^\d{1,10}$/.test(id)) notFound();
+  if (!isId(id)) notFound();
   const query = await searchParams;
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const init = { cache: 'no-store' as const, headers: { cookie: (await headers()).get('cookie') ?? '' } };
   const scope = new URLSearchParams();
   for (const key of ['vid', 'gid', 'aid', 'upd']) {
     const value = query[key];
-    if (typeof value === 'string' && /^\d{1,10}$/.test(value)) scope.set(key, value);
+    if (isId(value)) scope.set(key, value);
   }
   const suffix = scope.size ? '?' + scope : '';
-  const response = await fetch(api + '/api/internal/photo-page/' + id + suffix, init).catch(() => null);
-  if (response?.status === 404) notFound();
-  if (!response?.ok) throw new Error('Could not load the photo page');
-  const photo: PhotoPageData = await response.json();
+  const error = 'Could not load the photo page';
+  // Comments are requested alongside the photo; they are only used when the photo allows them.
+  const [photo, result] = await Promise.all([
+    apiGet<PhotoPageData>('/api/internal/photo-page/' + id + suffix, { auth: true, missing: true, error }),
+    apiFetch('/api/internal/photo-comments/' + id, { auth: true }),
+  ]);
   let comments: PhotoCommentData[] = [];
   if (photo.commentsEnabled && photo.published) {
-    const result = await fetch(api + '/api/internal/photo-comments/' + id, init).catch(() => null);
-    if (!result?.ok) throw new Error('Could not load the photo page');
+    if (!result?.ok) throw new Error(error);
     comments = await result.json();
   }
   return <PhotoContent photo={photo} comments={comments} scope={suffix} />;

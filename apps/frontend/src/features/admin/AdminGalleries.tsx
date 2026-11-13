@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { forbidden } from 'next/navigation';
 import { AdminPage } from './AdminPage';
 
@@ -26,9 +27,9 @@ function GalleryForm({ gallery }: { gallery?: Gallery }) {
   </form>;
 }
 
-export async function AdminGalleries(api: string) {
-  return AdminPage('Галереи', null, async options => {
-    const response = await fetch(api + '/api/admin/galleries', options).catch(() => null);
+export async function AdminGalleries() {
+  return AdminPage('Галереи', null, async () => {
+    const response = await apiFetch('/api/admin/galleries', { auth: true });
     if (response?.status === 403) forbidden();
     if (!response?.ok) return null;
     const galleries: Gallery[] = await response.json();

@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import type { ReactNode } from 'react';
 import { AdminPage } from './AdminPage';
 
@@ -20,9 +21,9 @@ function Editor({ id, title, endpoint, children }: { id: string; title: string; 
   </div>;
 }
 
-export function AdminContests(api: string, query: URLSearchParams) {
-  return AdminPage('Фотоконкурсы', 'AdminContests', async options => {
-    const result = await fetch(api + '/api/admin/contests', options).catch(() => null);
+export function AdminContests(query: URLSearchParams) {
+  return AdminPage('Фотоконкурсы', 'AdminContests', async () => {
+    const result = await apiFetch('/api/admin/contests', { auth: true });
     if (!result?.ok) return null;
     const { contests, themes, enabled }: { contests: Contest[]; themes: Theme[]; enabled: boolean } = await result.json();
     const categories = query.get('tab') === 'categories';

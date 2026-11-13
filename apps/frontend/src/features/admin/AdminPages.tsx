@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
 import { AdminPage } from './AdminPage';
@@ -62,9 +63,9 @@ function PageEditor() {
   </dialog></>;
 }
 
-export async function AdminPages(api: string, create: boolean) {
-  return AdminPage('Страницы', create ? 'AdminPages' : null, async options => {
-    const response = await fetch(api + '/api/admin/pages', options).catch(() => null);
+export async function AdminPages(create: boolean) {
+  return AdminPage('Страницы', create ? 'AdminPages' : null, async () => {
+    const response = await apiFetch('/api/admin/pages', { auth: true });
     if (response?.status === 403) forbidden();
     if (!response?.ok) return null;
     if (create) return <PageEditor />;

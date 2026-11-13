@@ -1,4 +1,5 @@
 import type { ContestWinnerData } from '@nativegallery/contracts';
+import { apiGet } from '../../api/client';
 
 const dates = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', day: '2-digit', month: '2-digit', year: 'numeric' });
 
@@ -27,10 +28,7 @@ function ResultGroup({ winners }: { winners: ContestWinnerData[] }) {
 }
 
 export async function ContestResults() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const result = await fetch(api + '/api/contests/results', { cache: 'no-store' }).catch(() => null);
-  if (!result?.ok) throw new Error('Could not load contest data');
-  const rows: ContestWinnerData[] = await result.json();
+  const rows = await apiGet<ContestWinnerData[]>('/api/contests/results', { error: 'Could not load contest data' });
   const groups = new Map<number, ContestWinnerData[]>();
   for (const winner of rows) {
     const group = groups.get(winner.contestId);

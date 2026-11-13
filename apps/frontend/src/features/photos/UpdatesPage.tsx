@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 import { legacyDate, type GalleryData } from '@nativegallery/contracts';
 
 type UpdatePhoto = GalleryData['photos'][number] & { comments: number };
@@ -21,10 +22,7 @@ function UpdateCard({ photo }: { photo: UpdatePhoto }) {
 }
 
 export async function UpdatesPage() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/updates', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load photo updates');
-  const photos: UpdatePhoto[] = await response.json();
+  const photos = await apiGet<UpdatePhoto[]>('/api/internal/updates', { error: 'Could not load photo updates' });
   return <tr><td className="main">
     <h1>Новые фотографии за 72 часа</h1>
     {photos.map(photo => <UpdateCard key={photo.id} photo={photo} />)}

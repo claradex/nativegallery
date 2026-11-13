@@ -1,17 +1,12 @@
-import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { apiGet, isId } from '../../../../api/client';
 
 export default async function EditPhoto({ searchParams }: { searchParams: Promise<{ id?: string | string[] }> }) {
   const { id } = await searchParams;
-  if (typeof id !== 'string' || !/^\d{1,10}$/.test(id)) notFound();
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/account/photos/' + id, {
-    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
+  if (!isId(id)) notFound();
+  const photo = await apiGet<{ id: number; place: string; postbody: string }>('/api/account/photos/' + id, {
+    auth: true, login: true, missing: true, error: 'Could not load photo editing form',
   });
-  if (response.status === 403) redirect('/login');
-  if (response.status === 404) notFound();
-  if (!response.ok) throw new Error('Could not load photo editing form');
-  const photo: { id: number; place: string; postbody: string } = await response.json();
 
   return <tr><td className="main">
     <h1>Редактирование фотографии</h1>

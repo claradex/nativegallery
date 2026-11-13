@@ -1,6 +1,5 @@
 import { EntryForm } from './EntryForm';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { apiGet } from '../../api/client';
 
 interface Candidate { id: number; url: string; body: string; place: string; views: number }
 
@@ -29,12 +28,8 @@ function Candidates({ contest, photos }: { contest: number | null; photos: Candi
 }
 
 export async function ContestEntries({ submit }: { submit: boolean }) {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/contests/' + (submit ? 'entry-options' : 'entries'), {
-    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (!response?.ok) throw new Error('Could not load contest data');
-  const data = await response.json();
+  const data = await apiGet<any>('/api/contests/' + (submit ? 'entry-options' : 'entries'), {
+    auth: true, login: true, error: 'Could not load contest data',
+  });
   return <tr><td className="main">{submit ? <EntryForm {...data} /> : <Candidates {...data} />}</td></tr>;
 }

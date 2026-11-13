@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
 
 function RankedPhoto({ photo, rank }: { photo: TopPhoto; rank: number }) {
@@ -40,9 +41,6 @@ function TopPhotosContent({ photos }: { photos: TopPhoto[] }) {
 }
 
 export async function TopPhotos() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/top30', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load popular photos');
-  const photos: TopPhoto[] = await response.json();
+  const photos = await apiGet<TopPhoto[]>('/api/internal/top30', { error: 'Could not load popular photos' });
   return <TopPhotosContent photos={photos} />;
 }

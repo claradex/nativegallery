@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
 interface Task {
@@ -5,9 +6,9 @@ interface Task {
   enabled: boolean;
 }
 
-export function AdminSettings(api: string) {
-  return AdminPage('Настройки', 'AdminSettings', async options => {
-    const response = await fetch(api + '/api/admin/settings/tasks', options).catch(() => null);
+export function AdminSettings() {
+  return AdminPage('Настройки', 'AdminSettings', async () => {
+    const response = await apiFetch('/api/admin/settings/tasks', { auth: true });
     if (!response?.ok) return null;
     const tasks: Task[] = await response.json();
     return <>

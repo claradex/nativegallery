@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 
 interface AuthorResult {
   id: number;
@@ -6,16 +7,11 @@ interface AuthorResult {
 }
 
 export async function AuthorSearch({ searchParams }: { searchParams: Promise<{ q?: string | string[] }> }) {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const { q } = await searchParams;
   const query = typeof q === 'string' ? q.trim() : '';
-  let authors: AuthorResult[] = [];
-  if (query) {
-    const search = new URLSearchParams({ q: query });
-    const response = await fetch(api + '/api/users/search?' + search, { cache: 'no-store' }).catch(() => null);
-    if (!response?.ok) throw new Error('Could not load author search results');
-    authors = await response.json();
-  }
+  const authors = query ? await apiGet<AuthorResult[]>('/api/users/search?' + new URLSearchParams({ q: query }), {
+    error: 'Could not load author search results',
+  }) : [];
   return <tr><td className="main">
     <h1>Поиск авторов</h1>
     <form method="get" action="/authors.php" className="p20">

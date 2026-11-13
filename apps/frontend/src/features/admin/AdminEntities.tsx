@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
 function VariableFields() {
@@ -43,10 +44,10 @@ function EntityForm() {
   </>;
 }
 
-export function AdminEntities(api: string, create: boolean) {
-  return AdminPage(create ? 'Создание сущности' : 'Сущности', 'AdminEntities', async options => {
+export function AdminEntities(create: boolean) {
+  return AdminPage(create ? 'Создание сущности' : 'Сущности', 'AdminEntities', async () => {
     if (create) return <EntityForm />;
-    const response = await fetch(api + '/api/admin/entities', options).catch(() => null);
+    const response = await apiFetch('/api/admin/entities', { auth: true });
     if (!response?.ok) return null;
     const items: { id: number; title: string }[] = await response.json();
     return <>

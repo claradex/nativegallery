@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 import { CommentFeedInteractions } from './CommentFeedInteractions';
 import { CommentText } from './CommentText';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
@@ -30,10 +31,7 @@ export function FeedComment({ comment }: { comment: CommentFeedEntry }) {
 }
 
 export async function CommentFeed() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/comment-feed', { cache: 'no-store' });
-  if (!response.ok) throw new Error('Could not load comments');
-  const comments: CommentFeedEntry[] = await response.json();
+  const comments = await apiGet<CommentFeedEntry[]>('/api/internal/comment-feed', { error: 'Could not load comments' });
   return <tr><td className="main">
     <h1>Лента комментариев</h1>
     <div id="upd_anchor"></div>

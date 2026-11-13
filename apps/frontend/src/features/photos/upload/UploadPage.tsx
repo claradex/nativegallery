@@ -1,7 +1,6 @@
 import { UploadInteractions } from './UploadInteractions';
 import type { UploadOptionsData } from '@nativegallery/contracts';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { apiGet } from '../../../api/client';
 import { UploadMedia } from './UploadMedia';
 import { UploadOptions } from './UploadOptions';
 import { UploadLocation } from './UploadLocation';
@@ -50,12 +49,8 @@ function UploadForm({ data }: { data: UploadOptionsData }) {
 }
 
 export async function UploadPage() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/upload/options', {
-    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (!response?.ok) throw new Error('Could not load upload options');
-  const data: UploadOptionsData = await response.json();
+  const data = await apiGet<UploadOptionsData>('/api/upload/options', {
+    auth: true, login: true, error: 'Could not load upload options',
+  });
   return <UploadForm data={data} />;
 }

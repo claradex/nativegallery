@@ -1,8 +1,9 @@
+import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
-export function AdminGeo(api: string) {
-  return AdminPage('GeoDB', 'AdminGeo', async options => {
-    const response = await fetch(api + '/api/admin/geodb', options).catch(() => null);
+export function AdminGeo() {
+  return AdminPage('GeoDB', 'AdminGeo', async () => {
+    const response = await apiFetch('/api/admin/geodb', { auth: true });
     if (!response?.ok) return null;
     const entries: { id: number; title: string }[] = await response.json();
     return <>

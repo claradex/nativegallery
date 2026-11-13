@@ -1,5 +1,5 @@
-import { notFound, redirect } from 'next/navigation';
-import { headers } from 'next/headers';
+import { notFound } from 'next/navigation';
+import { apiGet, isId } from '../../api/client';
 import { legacyDate, type VehiclePageData } from '@nativegallery/contracts';
 
 function VehiclePhoto({ photo, vehicleId }: { photo: VehiclePageData['photos'][number]; vehicleId: number }) {
@@ -36,14 +36,9 @@ function VehicleContent({ vehicle, photos }: VehiclePageData) {
 
 export async function VehiclePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!/^\d{1,10}$/.test(id)) notFound();
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/vehicle/' + id, {
-    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (response?.status === 403) redirect('/login');
-  if (response?.status === 404) notFound();
-  if (!response?.ok) throw new Error('Could not load vehicle data');
-  const data: VehiclePageData = await response.json();
+  if (!isId(id)) notFound();
+  const data = await apiGet<VehiclePageData>('/api/internal/vehicle/' + id, {
+    auth: true, login: true, missing: true, error: 'Could not load vehicle data',
+  });
   return <VehicleContent {...data} />;
 }

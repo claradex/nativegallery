@@ -1,18 +1,19 @@
+import { apiFetch } from '../../api/client';
 import { notFound } from 'next/navigation';
 import { AdminPage } from './AdminPage';
 
 interface Entity { id: number; title: string; color: string }
 
-export function AdminModelCreate(api: string, id?: string) {
+export function AdminModelCreate(id?: string) {
   if (id !== undefined && !/^\d{1,10}$/.test(id)) notFound();
   const heading = id ? 'Редактирование модели' : 'Создание модели';
-  return AdminPage(heading, 'AdminModelCreate', async options => {
-    const response = await fetch(api + '/api/internal/vehicle-models', options).catch(() => null);
+  return AdminPage(heading, 'AdminModelCreate', async () => {
+    const response = await apiFetch('/api/internal/vehicle-models', { auth: true });
     if (!response?.ok) return null;
     const entities: Entity[] = await response.json();
     let model: { entityid: number; title: string; comment: string | null; content: string | null } | undefined;
     if (id) {
-      const result = await fetch(api + '/api/admin/models/catalog/' + id, options).catch(() => null);
+      const result = await apiFetch('/api/admin/models/catalog/' + id, { auth: true });
       if (result?.status === 404) notFound();
       if (!result?.ok) return null;
       model = await result.json();

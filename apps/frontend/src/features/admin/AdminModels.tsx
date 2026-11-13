@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { Fragment } from 'react';
 import { AdminPage } from './AdminPage';
 
@@ -8,11 +9,11 @@ interface PendingRequest {
   fields: { label: string; value: string }[];
 }
 
-export async function AdminModels(api: string, query: URLSearchParams) {
-  return AdminPage('База моделей', 'AdminModels', async options => {
+export async function AdminModels(query: URLSearchParams) {
+  return AdminPage('База моделей', 'AdminModels', async () => {
     const [requests, catalog] = await Promise.all([
-      fetch(api + '/api/admin/models/requests', options).catch(() => null),
-      fetch(api + '/api/admin/models/catalog', options).catch(() => null),
+      apiFetch('/api/admin/models/requests', { auth: true }),
+      apiFetch('/api/admin/models/catalog', { auth: true }),
     ]);
     if (!requests?.ok || !catalog?.ok) return null;
     const rows: PendingRequest[] = await requests.json();

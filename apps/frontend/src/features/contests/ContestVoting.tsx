@@ -1,17 +1,12 @@
 import { Countdown } from './Countdown';
-import { headers } from 'next/headers';
+import { apiGet } from '../../api/client';
 import { Ballot, type Candidate } from './Ballot';
 
 type Voting = { contest: null; startsAt: number | null }
   | { contest: number; signedIn: boolean; voters: number; votes: number; photos: Candidate[] };
 
 export async function ContestVoting() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/contests/voting', {
-    cache: 'no-store', headers: { cookie: (await headers()).get('cookie') ?? '' },
-  }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load contest data');
-  const data: Voting = await response.json();
+  const data = await apiGet<Voting>('/api/contests/voting', { auth: true, error: 'Could not load contest data' });
   return <tr><td className="main"><div style={{ textAlign: 'center' }}>
     <h1>Фотоконкурс</h1>
     <p className="narrow" style={{ fontSize: 19 }}><b>Голосование</b>&nbsp; · &nbsp;

@@ -1,3 +1,4 @@
+import { apiGet } from '../../api/client';
 
 interface GallerySummary {
   id: number;
@@ -5,10 +6,7 @@ interface GallerySummary {
 }
 
 export async function GalleryDirectory() {
-  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  const response = await fetch(api + '/api/internal/galleries', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) throw new Error('Could not load this page');
-  const galleries: GallerySummary[] = await response.json();
+  const galleries = await apiGet<GallerySummary[]>('/api/internal/galleries');
   return <tr><td className="main">
     <h1>Разные фотогалереи</h1>
     <div className="p20">

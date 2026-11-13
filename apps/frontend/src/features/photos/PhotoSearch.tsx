@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { apiFetch } from '../../api/client';
 import { siteContext } from '../site/SiteContext';
 import { legacyDate, type PhotoSearchResult } from '@nativegallery/contracts';
 
@@ -39,7 +40,7 @@ function Results({ data }: { data: PhotoSearchResult }) {
 export async function PhotoSearch({ searchParams }: {
   searchParams: Promise<{ id?: string | string[]; page?: string | string[] }>;
 }) {
-  const { viewer, cookie } = await siteContext();
+  const { viewer } = await siteContext();
   if (!viewer) redirect('/login');
 
   const query = await searchParams;
@@ -48,11 +49,7 @@ export async function PhotoSearch({ searchParams }: {
   let data: PhotoSearchResult | null = null;
   let invalid = false;
   if (id !== undefined) {
-    const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-    const search = new URLSearchParams({ id, page });
-    const response = await fetch(api + '/api/internal/photo-search?' + search, {
-      cache: 'no-store', headers: { cookie: cookie ?? '' },
-    }).catch(() => null);
+    const response = await apiFetch('/api/internal/photo-search?' + new URLSearchParams({ id, page }), { auth: true });
     if (response?.status === 403) redirect('/login');
     if (response?.ok) data = await response.json();
     else if (response?.status === 400) invalid = true;

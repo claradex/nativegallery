@@ -1,3 +1,4 @@
+import { apiFetch } from '../../api/client';
 import { legacyDate } from '@nativegallery/contracts';
 import { AdminPage } from './AdminPage';
 
@@ -34,9 +35,9 @@ function NewsCards({ items }: { items: NewsItem[] }) {
   </div></div>)}</div>;
 }
 
-export async function AdminNews(api: string) {
-  return AdminPage('Новости сайта', 'AdminNews', async options => {
-    const response = await fetch(api + '/api/admin/news', options).catch(() => null);
+export async function AdminNews() {
+  return AdminPage('Новости сайта', 'AdminNews', async () => {
+    const response = await apiFetch('/api/admin/news', { auth: true });
     if (!response?.ok) return null;
     const items: NewsItem[] = await response.json();
     return <><NewsEditor /><NewsCards items={items} /></>;
