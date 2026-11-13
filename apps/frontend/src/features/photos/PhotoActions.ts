@@ -116,6 +116,10 @@ export function bindPhotoActions(signal: AbortSignal) {
     voting = true;
     try {
       const query = new URLSearchParams({ pid: photoVote.dataset.photoVote ?? '', vote: button.dataset.vote ?? '' });
+      if (button.classList.contains('konk_btn')) {
+        query.set('action', 'vote-konk');
+        query.set('cid', photoVote.dataset.contestId ?? '');
+      }
       const response = await fetch('/api/photo/vote?' + query, { cache: 'no-store' });
       if (!response.ok || !(await response.json())?.buttons) throw new Error();
       location.reload();

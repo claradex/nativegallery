@@ -28,7 +28,7 @@ export class PhotoPageController {
     const photo = await database.photo.findUnique({
       where: { id },
       select: { id: true, user_id: true, photourl: true, place: true, postbody: true,
-        posted_at: true, timeupload: true, moderated: true, content: true, priority: true, on_contest: true,
+        posted_at: true, timeupload: true, moderated: true, content: true, priority: true, on_contest: true, contest_id: true,
         gallery_id: true, entitydata_id: true, exif: true },
     });
     if (!photo || (photo.moderated !== 1 && (![0, -1].includes(photo.moderated) ||
@@ -72,7 +72,13 @@ export class PhotoPageController {
     } catch {}
     let rating: PhotoPageData['rating'] = null;
     if (photo.moderated === 1 && ratingEnabled) {
-      const votes = await database.photoRate.findMany({ where: { photo_id: id }, orderBy: { id: 'desc' } });
+      const [votes, contestVote] = await Promise.all([
+        database.photoRate.findMany({ where: { photo_id: id }, orderBy: { id: 'desc' } }),
+        viewer ? database.photoContestRate.findFirst({
+          where: { photo_id: id, user_id: viewer.id, contest_id: photo.contest_id }, orderBy: { id: 'asc' }, select: { type: true },
+        }) : null,
+      ]);
+      const showContest = (!videoUrl && viewer?.id !== photo.user_id) || photo.on_contest !== 2;
       const users = await database.user.findMany({
         where: { id: { in: [...new Set(votes.map(vote => vote.user_id))] } },
         select: { id: true, username: true },
@@ -84,6 +90,7 @@ export class PhotoPageController {
         votes: votes.filter(vote => vote.contest === 0).map(vote => ({
           id: vote.id, authorId: vote.user_id, author: names.get(vote.user_id) ?? '', type: vote.type,
         })),
+        contest: showContest ? { id: photo.contest_id, current: contestVote?.type ?? null } : null,
       };
     }
     return {

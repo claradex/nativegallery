@@ -100,6 +100,8 @@ export interface PhotoPageData {
     total: number;
     current: number | null;
     votes: { id: number; authorId: number; author: string; type: number }[];
+    /** Contest voting buttons: shown unless this is the viewer's own contest video. */
+    contest: { id: number; current: number | null } | null;
   } | null;
 }
 

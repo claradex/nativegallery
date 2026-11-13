@@ -87,10 +87,10 @@ a.underphoto:hover { background-color:#888; }
 
 .vote a > span { display:block; text-align:center; margin-bottom:1px; }
 
-.vote_btn[vote="1"] { grid-row-start:1; border-color:#8ecd87 !important; } .vote_btn[vote="1"]:hover { background-color:#8ecd87; } .vote_btn[vote="1"].voted, .vote_btn[vote="1"].voted:hover { border-color:#00aa00 !important; background-color:#00aa00; }
-.vote_btn[vote="0"] { grid-row-start:2; border-color:#e9a19e !important; } .vote_btn[vote="0"]:hover { background-color:#e9a19e; } .vote_btn[vote="0"].voted, .vote_btn[vote="0"].voted:hover { border-color:#dd0000 !important; background-color:#dd0000; }
-.konk_btn[vote="1"] { grid-row-start:1; border-color:#e7cd6e !important; } .konk_btn[vote="1"]:hover { background-color:#e7cd6e; } .konk_btn[vote="1"].voted, .konk_btn[vote="1"].voted:hover { border-color:#edad23 !important; background-color:#edad23; }
-.konk_btn[vote="0"] { grid-row-start:2; border-color:#a0bcdf !important; } .konk_btn[vote="0"]:hover { background-color:#a0bcdf; } .konk_btn[vote="0"].voted, .konk_btn[vote="0"].voted:hover { border-color:#0077ee !important; background-color:#0077ee; }
+.vote_btn[data-vote="1"] { grid-row-start:1; border-color:#8ecd87 !important; } .vote_btn[data-vote="1"]:hover { background-color:#8ecd87; } .vote_btn[data-vote="1"].voted, .vote_btn[data-vote="1"].voted:hover { border-color:#00aa00 !important; background-color:#00aa00; }
+.vote_btn[data-vote="0"] { grid-row-start:2; border-color:#e9a19e !important; } .vote_btn[data-vote="0"]:hover { background-color:#e9a19e; } .vote_btn[data-vote="0"].voted, .vote_btn[data-vote="0"].voted:hover { border-color:#dd0000 !important; background-color:#dd0000; }
+.konk_btn[data-vote="1"] { grid-row-start:1; border-color:#e7cd6e !important; } .konk_btn[data-vote="1"]:hover { background-color:#e7cd6e; } .konk_btn[data-vote="1"].voted, .konk_btn[data-vote="1"].voted:hover { border-color:#edad23 !important; background-color:#edad23; }
+.konk_btn[data-vote="0"] { grid-row-start:2; border-color:#a0bcdf !important; } .konk_btn[data-vote="0"]:hover { background-color:#a0bcdf; } .konk_btn[data-vote="0"].voted, .konk_btn[data-vote="0"].voted:hover { border-color:#0077ee !important; background-color:#0077ee; }
 
 .ds { padding-left:11px; }
 .linetable td { border-top:solid 1px #f7f7f7; }

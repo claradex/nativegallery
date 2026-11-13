@@ -31,10 +31,10 @@ function CommentVote({ id, positive: initialPositive, negative: initialNegative 
   }
 
   return <div className="wvote" {...{ wid: String(id) }}>
-    <a href="#" {...{ vote: '1' }} className={'w-btn s2' + (selected[1] ? ' active' : '')} onClick={event => vote(event, '1')}><span>+</span></a>
+    <a href="#" data-vote="1" className={'w-btn s2' + (selected[1] ? ' active' : '')} onClick={event => vote(event, '1')}><span>+</span></a>
     <div className={'w-rating ' + (score > 0 ? 'pro ' : score < 0 ? 'con ' : '') + 'active'}>{score > 0 ? '+' : ''}{score}</div>
     <div className="w-rating-ext"><div><span className="pro">+{counts[1]}</span> / <span className="con">{-counts[0] || 0}</span></div></div>
-    <a href="#" {...{ vote: '0' }} className={'w-btn s5' + (selected[0] ? ' active' : '')} onClick={event => vote(event, '0')}><span>–</span></a>
+    <a href="#" data-vote="0" className={'w-btn s5' + (selected[0] ? ' active' : '')} onClick={event => vote(event, '0')}><span>–</span></a>
   </div>;
 }
 

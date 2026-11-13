@@ -8,9 +8,13 @@ export function PhotoRating({ photo }: { photo: PhotoPageData }) {
     <div className="sm">
       <div className="rtext">Рейтинг: <b id="rating">{rating.total}</b></div>
       <div className="star" />
-      {photo.canComment && <div className="vote" data-photo-vote={photo.id}>
+      {photo.canComment && <div className="vote" data-photo-vote={photo.id} data-contest-id={rating.contest?.id}>
         <a href="#" data-vote="1" className={'vote_btn' + (rating.current === 1 ? ' voted' : '')}><span>Интересная фотография!</span></a>
         <a href="#" data-vote="0" className={'vote_btn' + (rating.current === 0 ? ' voted' : '')}><span>Мне не&nbsp;нравится</span></a>
+        {rating.contest && <>
+          <a href="#" data-vote="1" className={'konk_btn' + (rating.contest.current === 1 ? ' voted' : '')}><span>Красиво, на&nbsp;конкурс!</span></a>
+          <a href="#" data-vote="0" className={'konk_btn' + (rating.contest.current === 0 ? ' voted' : '')}><span>Неконкурсное фото</span></a>
+        </>}
       </div>}
     </div>
     <div id="votes" className="votes">

@@ -28,13 +28,13 @@
 .w-btn { display:block; height:0; position:absolute; transition:height 0.2s ease; overflow:hidden; outline:none; }
 .w-btn.voted, .w-btn.voted:hover { background-color:#d7d7d7 !important; }
 .w-btn.active { height:25px; }
-.w-btn[vote="1"] { bottom:15px; }
-.w-btn[vote="0"] { top:15px; }
+.w-btn[data-vote="1"] { bottom:15px; }
+.w-btn[data-vote="0"] { top:15px; }
 
 .w-btn span { color:#000; position:absolute; left:0; }
 .w-btn.voted span { color:#888; }
-.w-btn[vote="1"] span { top:4px; }
-.w-btn[vote="0"] span { bottom:4px; }
+.w-btn[data-vote="1"] span { top:4px; }
+.w-btn[data-vote="0"] span { bottom:4px; }
 
 .pro { color:#0a0; }
 .con { color:#d00; }
@@ -42,6 +42,11 @@
 .compl { display:block; box-sizing:border-box; border:solid 1px #ccc; width:16px; height:15px; font-weight:bold; font-size:10px; line-height:12px; text-align:center; }
 .compl:hover, .compl:visited:hover { border-color:#fa3; background-color:#fe9; }
 .gold, .compl { color:#edad23; }
+
+/* Comment "..." menu: pin / edit / delete */
+.dropdown { position:relative; display:inline-block; }
+.dropdown-content { display:none; position:absolute; background-color:#f9f9f9; min-width:160px; box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2); padding:12px 16px; z-index:1; }
+.dropdown:hover .dropdown-content { display:block; }
 .grey { color:#08e; }
 
 .wvote-tools { position:absolute; top:18px; right:37px; z-index:500; text-align:right; font-size:11px; padding:3px 6px; white-space:nowrap; }

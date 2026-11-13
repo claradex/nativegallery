@@ -282,33 +282,33 @@ html[data-theme="nativegallery-dark"] .vote a.voted:visited { color:#fff; }
 html[data-theme="nativegallery-dark"] .vote a.locked,
 html[data-theme="nativegallery-dark"] .vote a.locked:visited { color:grey; background-color:#ccc; cursor:default; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="1"] {  border-color:#8ecd87 !important; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="1"] {  border-color:#8ecd87 !important; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="1"]:hover { background-color:#8ecd87; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="1"]:hover { background-color:#8ecd87; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="1"].voted,
-html[data-theme="nativegallery-dark"] .vote_btn[vote="1"].voted:hover { border-color:#00aa00 !important; background-color:#00aa00; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="1"].voted,
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="1"].voted:hover { border-color:#00aa00 !important; background-color:#00aa00; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="0"] {  border-color:#e9a19e !important; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="0"] {  border-color:#e9a19e !important; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="0"]:hover { background-color:#e9a19e; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="0"]:hover { background-color:#e9a19e; }
 
-html[data-theme="nativegallery-dark"] .vote_btn[vote="0"].voted,
-html[data-theme="nativegallery-dark"] .vote_btn[vote="0"].voted:hover { border-color:#dd0000 !important; background-color:#dd0000; }
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="0"].voted,
+html[data-theme="nativegallery-dark"] .vote_btn[data-vote="0"].voted:hover { border-color:#dd0000 !important; background-color:#dd0000; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="1"] {  border-color:#e7cd6e !important; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="1"] {  border-color:#e7cd6e !important; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="1"]:hover { background-color:#e7cd6e; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="1"]:hover { background-color:#e7cd6e; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="1"].voted,
-html[data-theme="nativegallery-dark"] .konk_btn[vote="1"].voted:hover { border-color:#edad23 !important; background-color:#edad23; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="1"].voted,
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="1"].voted:hover { border-color:#edad23 !important; background-color:#edad23; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="0"] {  border-color:#a0bcdf !important; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="0"] {  border-color:#a0bcdf !important; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="0"]:hover { background-color:#a0bcdf; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="0"]:hover { background-color:#a0bcdf; }
 
-html[data-theme="nativegallery-dark"] .konk_btn[vote="0"].voted,
-html[data-theme="nativegallery-dark"] .konk_btn[vote="0"].voted:hover { border-color:#0077ee !important; background-color:#0077ee; }
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="0"].voted,
+html[data-theme="nativegallery-dark"] .konk_btn[data-vote="0"].voted:hover { border-color:#0077ee !important; background-color:#0077ee; }
 
 html[data-theme="nativegallery-dark"] .linetable td { border-top:none; }
 
