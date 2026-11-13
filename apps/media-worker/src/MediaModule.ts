@@ -5,6 +5,7 @@ import { basename, dirname, extname, isAbsolute, relative, resolve, sep } from '
 import { promisify } from 'node:util';
 import { Injectable, Module, OnApplicationShutdown, OnModuleInit } from '@nestjs/common';
 import type { JobKind } from '@nativegallery/contracts';
+import { database, notifyPhotoFollowers } from '@nativegallery/database';
 import { consume, enabled } from '@nativegallery/jobs';
 
 import { renderUploadedVideo } from './RenderUploadedVideo';
@@ -64,6 +65,20 @@ class MediaWorker implements OnModuleInit, OnApplicationShutdown {
         const preview = inside(root, payload.preview);
         const previewDirectory = await realpath(dirname(preview));
         await renderUploadedVideo(input, payload.format, output, inside(root, resolve(previewDirectory, basename(preview))));
+        const { photoId, moderation } = payload;
+        const previewUrl = '/uploads/' + payload.preview;
+        if (typeof photoId === 'number' && Number.isInteger(photoId) && (moderation === 0 || moderation === 1)) {
+          await database.$transaction(async tx => {
+            const changed = await tx.photo.updateMany({
+              where: { id: photoId, moderated: -1, photourl: previewUrl },
+              data: { moderated: moderation, timeupload: Math.floor(Date.now() / 1000) },
+            });
+            if (!changed.count || moderation === 0) return;
+            const photo = await tx.photo.findUniqueOrThrow({ where: { id: photoId }, select: { user_id: true, content: true } });
+            const settings = JSON.parse(photo.content);
+            if (settings.subsnotify !== 'disabled') await notifyPhotoFollowers(tx, photoId, photo.user_id);
+          });
+        }
         return;
       }
       const temporary = resolve(directory, '.' + randomUUID() + extname(output));

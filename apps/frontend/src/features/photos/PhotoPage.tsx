@@ -10,9 +10,9 @@ import { headers } from 'next/headers';
 
 function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; comments: PhotoCommentData[]; scope: string }) {
   return <tr><td className="main">
-    {!photo.published && <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff', textAlign: 'center' }}>Изображение находится на модерации</div>}
+    {!photo.published && <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff', textAlign: 'center' }}>{photo.processing ? 'Видео обрабатывается' : 'Изображение находится на модерации'}</div>}
     <div id="err" />
-    <PhotoMedia photo={photo} scope={scope} />
+    {!photo.processing && <PhotoMedia photo={photo} scope={scope} />}
     <div id="pmain">
       <table className="pwrite"><tbody><tr>
         <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>

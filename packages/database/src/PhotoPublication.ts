@@ -1,4 +1,4 @@
-import type { Prisma } from '@nativegallery/database';
+import type { Prisma } from '@prisma/client';
 
 export async function notifyPhotoFollowers(tx: Prisma.TransactionClient, photoId: number, userId: number) {
   const [followers, notified] = await Promise.all([

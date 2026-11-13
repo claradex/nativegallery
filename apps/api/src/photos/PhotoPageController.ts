@@ -22,7 +22,7 @@ export class PhotoPageController {
         posted_at: true, timeupload: true, moderated: true, content: true, priority: true, on_contest: true,
         gallery_id: true, entitydata_id: true, exif: true },
     });
-    if (!photo || (photo.moderated !== 1 && (photo.moderated !== 0 ||
+    if (!photo || (photo.moderated !== 1 && (![0, -1].includes(photo.moderated) ||
       (!viewer?.admin && viewer?.id !== photo.user_id)))) throw new NotFoundException();
     const groups = [
       ['vid', 'entitydata_id', photo.entitydata_id],
@@ -79,7 +79,7 @@ export class PhotoPageController {
     return {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
-      published: photo.moderated === 1, videoUrl, priority: photo.priority,
+      published: photo.moderated === 1, processing: photo.moderated === -1, videoUrl, priority: photo.priority,
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
       vehicle, vehicleRoute,
       exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],

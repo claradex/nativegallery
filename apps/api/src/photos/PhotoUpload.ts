@@ -2,10 +2,9 @@ import { randomBytes } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { database } from '@nativegallery/database';
+import { notifyPhotoFollowers, database } from '@nativegallery/database';
 import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
-import { notifyPhotoFollowers } from './PhotoPublication';
 import { photoContent } from './PhotoContent';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
@@ -69,7 +68,7 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       const moderated = process.env.PHOTO_PREMODERATION !== 'false' && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
         user_id: userId, postbody: description, photourl: '/uploads/' + preview, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
-        exif, priority: 0, moderated, endmoderation: moderated === 0 ? -1 : 0, place, gallery_id: gallery, entitydata_id: entity,
+        exif, priority: 0, moderated: video ? -1 : moderated, endmoderation: moderated === 0 ? -1 : 0, place, gallery_id: gallery, entitydata_id: entity,
         content: JSON.stringify({
           type: video ? 'video' : 'image', videourl: video ? '/uploads/' + output : null, copyright: text(body.license), comment: description,
           lat: body.nomap ? null : text(body.lat), lng: body.nomap ? null : text(body.lng),
@@ -79,9 +78,9 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       }, select: { id: true } });
       if (video) await tx.job.create({ data: {
         kind: 'RenderVideo', dedupe_key: 'render-video:' + photo.id,
-        payload: { input, output, preview, format: video }, available_at: new Date(),
+        payload: { input, output, preview, format: video, photoId: photo.id, moderation: moderated }, available_at: new Date(),
       } });
-      if (moderated === 1 && allowed('disablesubsnotify') === 'allowed') {
+      if (!video && moderated === 1 && allowed('disablesubsnotify') === 'allowed') {
         await notifyPhotoFollowers(tx, photo.id, userId);
       }
       return photo;

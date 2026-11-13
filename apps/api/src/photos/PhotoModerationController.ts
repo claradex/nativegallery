@@ -1,8 +1,7 @@
 import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { database, Prisma } from '@nativegallery/database';
+import { notifyPhotoFollowers, database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
-import { notifyPhotoFollowers } from './PhotoPublication';
 import { photoContent } from './PhotoContent';
 
 @Controller('api/admin/images')
@@ -40,6 +39,7 @@ export class PhotoModerationController {
         SELECT user_id, moderated, content FROM photos WHERE id = ${id} FOR UPDATE
       `);
       if (!photo) throw new NotFoundException();
+      if (photo.moderated === -1) throw new BadRequestException();
       const data = photoContent(photo.content);
       if (!Object.hasOwn(data, 'iRate')) data.iRate = irate ?? null;
       if (!Object.hasOwn(data, 'kRate')) data.kRate = krate ?? null;
