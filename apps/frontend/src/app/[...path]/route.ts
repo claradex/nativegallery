@@ -15,8 +15,6 @@ import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
-import { NewsPage } from '../../features/site/NewsPage';
-import { SitePage } from '../../features/site/SitePage';
 import { Account } from '../../features/site/Account';
 import { AuthorSearch } from '../../features/site/AuthorSearch';
 import { Author } from '../../features/site/Author';
@@ -29,9 +27,6 @@ import { UploadPage } from '../../features/photos/upload/UploadPage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
 import { UpdatesPage } from '../../features/photos/UpdatesPage';
 import { MapMedia } from '../../features/photos/MapMedia';
-import { FeedPage } from '../../features/photos/FeedPage';
-import { GalleryDirectory } from '../../features/photos/GalleryDirectory';
-import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
@@ -80,8 +75,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const sitePageId = path.match(/^page\/(\d+)$/)?.[1];
-  const galleryId = path.match(/^article\/(\d+)$/)?.[1];
   const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const authorId = path.match(/^author\/(\d+)$/)?.[1];
   const followed = path === 'lk' || path === 'lk/pday' || path === 'lk/history'
@@ -91,11 +84,6 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'comments' ? await CommentFeed(request, api)
     : path === 'update' ? await UpdatesPage(api)
     : path === 'mapmedia' ? await MapMedia(request, api)
-    : path === 'feed' ? await FeedPage(api)
-    : sitePageId ? await SitePage(request, api, sitePageId)
-    : path === 'news2.php' ? await NewsPage(api)
-    : path === 'misc' ? await GalleryDirectory(api)
-    : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'authors.php' ? await AuthorSearch(request, api)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'

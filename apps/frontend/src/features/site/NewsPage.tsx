@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate } from '@nativegallery/contracts';
 
 export function NewsItem({ body, time }: { body: string; time: number }) {
@@ -8,16 +7,15 @@ export function NewsItem({ body, time }: { body: string; time: number }) {
   </div>;
 }
 
-export async function NewsPage(api: string) {
+export async function NewsPage() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/news', { cache: 'no-store' }).catch(() => null);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (!response?.ok) throw new Error('Could not load this page');
   const items: { id: number; body: string; time: number }[] = await response.json();
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     <h1>Новости сайта</h1>
     <div className="sm" style={{ marginBottom: 15, lineHeight: '13px', whiteSpace: 'normal' }}>
       {items.map(item => <NewsItem key={item.id} body={item.body} time={item.time} />)}
     </div>
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    content + '<tr>__FOOTER__</tr></table></body></html>';
+  </td></tr>;
 }

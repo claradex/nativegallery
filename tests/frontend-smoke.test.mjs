@@ -15,6 +15,11 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     const fixtures = {
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
+      '/api/internal/feed': [],
+      '/api/internal/galleries': [{ id: 7, title: 'Тестовая галерея' }],
+      '/api/internal/galleries/7': { title: 'Тестовая галерея', photos: [] },
+      '/api/internal/news': [{ id: 1, time: 0, body: '<b>Тестовая новость</b>' }],
+      '/api/internal/pages/4': { title: 'Тестовая страница', html: '<p>Материал</p>' },
       '/api/internal/about': { users: 5, photos: 8, online: 1, staff: [] },
     };
     fixtures['/api/internal/photo-page/3?aid=9'] = {
@@ -52,6 +57,11 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     for (const [path, status, marker] of [
       ['/', 200, 'Недавно добавленные фотографии'],
       ['/about', 200, 'Зарегистрировано пользователей'],
+      ['/feed', 200, 'Лента обновлений'],
+      ['/misc/', 200, '/article/7'],
+      ['/article/7', 200, 'Тестовая галерея'],
+      ['/news2.php', 200, '<b>Тестовая новость</b>'],
+      ['/page/4', 200, '<p>Материал</p>'],
       ['/rules', 200, 'Правила сайта'],
       ['/tour', 200, 'data-tour-tab'],
       ['/login', 200, 'loginbtn'],
