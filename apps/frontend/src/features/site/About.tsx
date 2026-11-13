@@ -1,6 +1,5 @@
 import type { SiteOverview } from '@nativegallery/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { readTemplate } from '../../components/ReadTemplate';
 
 const roles = [
   { id: 1, icon: '220.ico', label: 'Администраторы' },
@@ -52,7 +51,9 @@ export async function About(api: string) {
   const response = await fetch(api + '/api/internal/about', { cache: 'no-store' }).catch(() => null);
   if (!response?.ok) return null;
   const data: SiteOverview = await response.json();
-  const content = renderToStaticMarkup(<AboutContent data={data}
-    title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />);
-  return readTemplate('src/features/site/About.html').replace('__ABOUT_CONTENT__', () => content);
+  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
+    renderToStaticMarkup(<tr><td className="main">
+      <AboutContent data={data} title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />
+    </td></tr>) +
+    '<tr>__FOOTER__</tr></table></body></html>';
 }
