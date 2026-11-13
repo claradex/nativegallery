@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PhotosController } from './PhotosController';
+import { RecentPhotosController } from './RecentPhotosController';
+import { PhotoThumbnailController } from './PhotoThumbnailController';
 
 import { AuthModule } from '../auth/AuthModule';
 import { PhotoUploadController } from './PhotoUploadController';
@@ -18,5 +19,5 @@ import { PhotoMapController } from './PhotoMapController';
 
 import { PhotoEditController } from './PhotoEditController';
 
-@Module({ imports: [AuthModule], controllers: [PhotosController, PhotoUploadController, PublicMediaController, GalleryController, FeedController, UpdatesController, AdminGalleriesController, PhotoMapController, PhotoEditController] })
+@Module({ imports: [AuthModule], controllers: [RecentPhotosController, PhotoThumbnailController, PhotoUploadController, PublicMediaController, GalleryController, FeedController, UpdatesController, AdminGalleriesController, PhotoMapController, PhotoEditController] })
 export class PhotosModule {}
