@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, NotFoundException, Query, Req, Res } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -14,6 +14,16 @@ function photoContent(raw: string): Record<string, unknown> {
 @Controller('api/admin/images')
 export class PhotoModerationController {
   constructor(private readonly auth: AuthService) {}
+
+  @Get('pending')
+  @Header('Cache-Control', 'private, no-store')
+  async pending(@Req() request: Request) {
+    if (!(await this.auth.viewer(request))?.admin) throw new ForbiddenException();
+    return database.photo.findMany({
+      where: { moderated: 0 }, orderBy: { id: 'desc' },
+      select: { id: true, photourl: true, place: true, postbody: true, user_id: true },
+    });
+  }
 
   @All('setvisibility')
   async setVisibility(@Req() request: Request, @Res() response: Response,

@@ -14,14 +14,14 @@ const head = (title: string, script: string) => '<meta charset="utf-8"><meta nam
   '<script src="/frontend-scripts/AdminSidebar.js" defer></script>' +
   '<script src="/frontend-scripts/' + script + '.js" defer></script>';
 
-export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo',
+export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo' | 'AdminPhotos',
   load: (options: RequestInit) => Promise<ReactNode | Response>) {
   const options = { headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store' as const };
   const viewerResponse = await fetch(api + '/api/internal/viewer', options).catch(() => null);
   if (!viewerResponse?.ok) return new Response('Service Unavailable', { status: 503 });
   const { viewer }: { viewer: Viewer | null } = await viewerResponse.json();
   if (!viewer) return Response.redirect(new URL('/login', request.url), 302);
-  if (viewer.admin === 2) return Response.redirect(new URL('/admin?type=Photo', request.url), 302);
+  if (viewer.admin === 2 && script !== 'AdminPhotos') return Response.redirect(new URL('/admin?type=Photo', request.url), 302);
   if (!viewer.admin) return new Response('Forbidden', { status: 403 });
   const content = await load(options);
   if (content instanceof Response) return content;

@@ -1,6 +1,7 @@
 import { Document, type PageContext } from '../../components/Document';
 import { AdminModelCreate } from '../../features/admin/AdminModelCreate';
 import { AdminEntities } from '../../features/admin/AdminEntities';
+import { AdminPhotos } from '../../features/admin/AdminPhotos';
 import { AdminGeo } from '../../features/admin/AdminGeo';
 import { AdminModels } from '../../features/admin/AdminModels';
 import { AdminNews } from '../../features/admin/AdminNews';
@@ -30,6 +31,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     if (section === 'EntityEdit') return AdminModelCreate(request, api, new URL(request.url).searchParams.get('id') ?? '');
     if (section === 'ModelsCreate') return AdminModelCreate(request, api);
     if (section === 'Entities' || section === 'EntityCreate') return AdminEntities(request, api, section === 'EntityCreate');
+    if (section === 'Photo') return AdminPhotos(request, api);
     if (section === 'GeoDB') return AdminGeo(request, api);
     if (section === 'Models') return AdminModels(request, api);
   }
