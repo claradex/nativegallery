@@ -11,7 +11,9 @@ export function Document(request: Request, page: string, context: PageContext, s
   const path = new URL(request.url).pathname;
   const title = process.env.SITE_TITLE ?? 'NativeGallery';
   const parts: Record<string, string> = {
-    HEAD: LoadHead(title, request.headers.get('cookie')), NAVBAR: renderToStaticMarkup(<Navbar path={path} title={title} viewer={context.viewer} />), FOOTER: renderToStaticMarkup(<Footer databaseVersion={context.databaseVersion} />),
+    HEAD: renderToStaticMarkup(<LoadHead title={title} cookie={request.headers.get('cookie')} />),
+    NAVBAR: renderToStaticMarkup(<Navbar path={path} title={title} viewer={context.viewer} />),
+    FOOTER: renderToStaticMarkup(<Footer databaseVersion={context.databaseVersion} />),
   };
   return new Response(PageScripts(page.replaceAll(/__(HEAD|NAVBAR|FOOTER)__/g, (_, key) => parts[key])), {
     status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store' },
