@@ -1,8 +1,3 @@
-document.getElementById('header-toggle')?.addEventListener('click', event => {
-  document.getElementById('navbar')?.classList.toggle('show-menu');
-  event.currentTarget.classList.toggle('bx-x');
-});
-
 async function changeNews(url, body) {
   const response = await fetch(url, { method: 'POST', body });
   if (!response.ok || (await response.json()).error !== 0) throw new Error();

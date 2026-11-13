@@ -1,4 +1,5 @@
 import { Document, type PageContext } from '../../components/Document';
+import { AdminModels } from '../../features/admin/AdminModels';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
@@ -20,7 +21,11 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   const path = (await route.params).path?.join('/') ?? '';
   const login = path === 'login';
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
-  if (path === 'admin' && new URL(request.url).searchParams.get('type') === 'News') return AdminNews(request, api);
+  if (path === 'admin') {
+    const section = new URL(request.url).searchParams.get('type');
+    if (section === 'News') return AdminNews(request, api);
+    if (section === 'Models') return AdminModels(request, api);
+  }
   if (path === 'logout') {
     const response = await fetch(api + '/api/internal/logout', {
       headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store', redirect: 'manual',
