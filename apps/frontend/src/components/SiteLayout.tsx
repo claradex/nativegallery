@@ -1,3 +1,4 @@
+import { SiteInteractions } from './SiteInteractions';
 import type { ReactNode } from 'react';
 import { siteContext } from '../features/site/SiteContext';
 import { Footer } from './Footer';
@@ -11,6 +12,7 @@ export async function SiteLayout({ children, photo = false }: { children: ReactN
   return <html lang="ru">
     <head><LoadHead title={title} cookie={context.cookie} /></head>
     <body>
+      <SiteInteractions />
       <ProgressBar />
       <div id="backgr"></div>
       <NavbarStyle />

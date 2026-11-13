@@ -64,10 +64,7 @@ export function LoadHead({ title, cookie }: { title: string; cookie: string | nu
     <link rel="stylesheet" href={'/static/css/comments.css' + cache} />
     {darkTheme && <link rel="stylesheet" href="/static/themepacks/nativegallery-dark/root.css" />}
     <link rel="stylesheet" href={'/static/css/map.css' + cache} />
-    <script src={'/static/js/notie.js' + cache} data-restart defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <style>{progressStyles}</style>
-    <script src="/frontend-scripts/Head.js" defer />
-    <script src="/frontend-scripts/Navigation.js" defer />
   </>;
 }
