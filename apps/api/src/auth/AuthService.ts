@@ -45,17 +45,21 @@ export class AuthService {
       orderBy: { id: 'asc' },
     });
     if (!user || user.status === 1 || !await compare(body.password, user.password.replace(/^\$2y\$/, () => '$2b$'))) return failure;
+    return this.startSession(user.id, response);
+  }
+
+  async startSession(userId: number, response: Response): Promise<LoginResponse> {
     const token = randomUUID();
     const now = BigInt(Math.floor(Date.now() / 1000));
     await database.loginToken.create({
-      data: { token: 'v2:' + token, user_id: user.id, iv: new Uint8Array(16), device_name: '', os: '',
+      data: { token: 'v2:' + token, user_id: userId, iv: new Uint8Array(16), device_name: '', os: '',
         ip: '', location: '', created_at: now, last_activity: now },
     });
     const options = { httpOnly: true, sameSite: 'lax' as const, secure: process.env.COOKIE_SECURE === 'true', path: '/', maxAge: sessionAge };
     response.cookie(sessionCookie, token, options);
     response.cookie('NGALLERYSERVICE', randomUUID(), options);
     response.cookie('NGALLERYSESS_', '1', options);
-    response.cookie('NGALLERYID', String(user.id), options);
+    response.cookie('NGALLERYID', String(userId), options);
     return { errorcode: '0', error: 0, token };
   }
 }
