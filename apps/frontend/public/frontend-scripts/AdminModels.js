@@ -11,6 +11,12 @@ document.getElementById('moderate__block')?.addEventListener('click', async even
     });
     if (!response.ok || (await response.json()).error !== 0) throw new Error();
     row.remove();
+    const badge = document.getElementById('mdlnum');
+    if (badge) {
+      const count = document.querySelectorAll('[data-request]').length;
+      if (count) badge.textContent = String(count);
+      else badge.remove();
+    }
   } catch {
     delete row.dataset.pending;
     for (const control of buttons) control.disabled = false;

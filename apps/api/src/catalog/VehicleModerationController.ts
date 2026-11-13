@@ -5,11 +5,11 @@ import { AuthService } from '../auth/AuthService';
 
 const success = '{"errorcode":0,"error":0}';
 
-@Controller('api/admin/models/requests')
+@Controller('api/admin/models')
 export class VehicleModerationController {
   constructor(private readonly auth: AuthService) {}
 
-  @Get()
+  @Get('requests')
   @Header('Cache-Control', 'private, no-store')
   async pending(@Req() request: Request) {
     const viewer = await this.auth.viewer(request);
@@ -30,7 +30,15 @@ export class VehicleModerationController {
     });
   }
 
-  @All(':id/:action')
+  @Get('catalog')
+  @Header('Cache-Control', 'private, no-store')
+  async catalog(@Req() request: Request) {
+    const viewer = await this.auth.viewer(request);
+    if (!viewer?.admin || viewer.admin === 2) throw new ForbiddenException();
+    return database.$queryRaw<{ id: number; title: string; model: string }[]>(Prisma.raw('SELECT v.id, v.title, COALESCE(e.title, \'\') AS model FROM entities_data v LEFT JOIN entities e ON e.id = v.entityid ORDER BY v.id DESC'));
+  }
+
+  @All('requests/:id/:action')
   @Header('Content-Type', 'text/html; charset=utf-8')
   @Header('Cache-Control', 'private, no-store')
   async decide(@Req() request: Request, @Param('id') value: string, @Param('action') action: string) {

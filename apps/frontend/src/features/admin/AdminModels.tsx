@@ -10,12 +10,33 @@ interface PendingRequest {
 
 export async function AdminModels(request: Request, api: string) {
   return AdminPage(request, api, 'База моделей', 'AdminModels', async options => {
-    const response = await fetch(api + '/api/admin/models/requests', options).catch(() => null);
-    if (!response?.ok) return null;
-    const rows: PendingRequest[] = await response.json();
+    const [requests, catalog] = await Promise.all([
+      fetch(api + '/api/admin/models/requests', options).catch(() => null),
+      fetch(api + '/api/admin/models/catalog', options).catch(() => null),
+    ]);
+    if (!requests?.ok || !catalog?.ok) return null;
+    const rows: PendingRequest[] = await requests.json();
+    const models: { id: number; title: string; model: string }[] = await catalog.json();
+    const active = new URL(request.url).searchParams.get('tab') === 'moderate' ? 'moderate' : 'list';
     return <>
-      <h1><b>База моделей</b></h1>
-      <div id="moderate__block"><div className="p20w" style={{ display: 'block' }}>
+      <h1><b>Модели</b></h1>
+      <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
+        <a href="/admin?type=Models" id="list" className={'v-tab v-tab-b' + (active === 'list' ? ' v-tab--active' : '')}>
+          <span className="v-tab__label">Список</span>
+        </a>
+        <a href="/admin?type=Models&tab=moderate" id="moderate" className={'v-tab v-tab-b' + (active === 'moderate' ? ' v-tab--active' : '')}>
+          <span className="v-tab__label">Заявки на добавление {rows.length > 0 && <span id="mdlnum" className="badge text-bg-danger">{rows.length}</span>}</span>
+        </a>
+      </div></div></div></div>
+      {active === 'list' ? <div id="list__block" className="active__block">
+        <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
+          <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '20%' }}>Название</th><th style={{ width: '50%' }}>Сущность</th><th>Действия</th></tr>
+          {models.map(model => <tr key={model.id} id={'pht' + model.id}>
+            <td>{model.id}</td><td>{model.title}</td><td>{model.model}</td>
+            <td className="c"><a className="btn btn-primary" href={'/vehicle/' + model.id}>Открыть</a></td>
+          </tr>)}
+        </tbody></table></div><br />
+      </div> : <div id="moderate__block" className="active__block"><div className="p20w" style={{ display: 'block' }}>
         <table className="table"><tbody>
           <tr><th>ID</th><th>Название</th><th>Сущность</th><th>Данные</th><th>Действия</th></tr>
           {rows.map(row => <tr key={row.id} id={'mdl' + row.id} data-request={row.id}>
@@ -27,7 +48,7 @@ export async function AdminModels(request: Request, api: string) {
             </td>
           </tr>)}
         </tbody></table>
-      </div><br /></div>
+      </div><br /></div>}
     </>;
   });
 }
