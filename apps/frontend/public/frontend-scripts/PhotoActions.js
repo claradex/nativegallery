@@ -30,6 +30,12 @@ document.getElementById('pp-item-comments')?.addEventListener('click', event => 
 const commentsPanel = document.getElementById('pp-item-comments');
 const commentForm = commentsPanel?.querySelector('#f1');
 
+const commentFile = commentForm?.querySelector('#comment-file');
+commentForm?.querySelector('#attachFile')?.addEventListener('click', () => commentFile.click());
+commentFile?.addEventListener('change', () => {
+  commentForm.querySelector('#fileList').textContent = commentFile.files[0]?.name ?? '';
+});
+
 commentForm?.addEventListener('submit', async event => {
   event.preventDefault();
   const editor = commentForm.querySelector('#wtext');
