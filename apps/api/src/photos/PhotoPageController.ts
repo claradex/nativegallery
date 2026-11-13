@@ -6,6 +6,15 @@ import { findVehicle } from '../catalog/VehicleData';
 import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
 
+/** One view per viewer per photo per 24 hours; guests share user id 0, as in the PHP version. */
+async function recordView(photo_id: number, user_id: number) {
+  const now = Math.floor(Date.now() / 1000);
+  const last = await database.photoView.findFirst({
+    where: { user_id, photo_id }, orderBy: { id: 'desc' }, select: { time: true },
+  });
+  if (!last || last.time <= now - 86400) await database.photoView.create({ data: { user_id, photo_id, time: now } });
+}
+
 @Controller('api/internal')
 export class PhotoPageController {
   constructor(private readonly auth: AuthService) {}
@@ -32,6 +41,7 @@ export class PhotoPageController {
     const requested = groups.find(([key, , value]) => value > 0 && scope[key] === String(value));
     const group = requested ?? (photo.entitydata_id > 0 ? groups[0] : undefined);
     const neighbors = { moderated: 1, ...(group ? { [group[1]]: group[2] } : {}) };
+    if (photo.moderated === 1) await recordView(id, viewer?.id ?? 0);
     const [author, views, favorite, previous, next, vehicle] = await Promise.all([
       database.user.findUnique({ where: { id: photo.user_id }, select: { username: true } }),
       database.photoView.count({ where: { photo_id: id } }),

@@ -1,9 +1,9 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, Header, HttpCode, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
-import { profileFields } from '@nativegallery/contracts';
-import { AuthService } from '../auth/AuthService';
+import { profileFields, type ProfileSession } from '@nativegallery/contracts';
+import { AuthService, sessionToken } from '../auth/AuthService';
 import { storeAvatar } from './ProfileAvatar';
 
 const themes = new Set(['standard', 'nativegallery-dark']);
@@ -36,6 +36,32 @@ export class ProfileSettingsController {
       return [key, typeof value === 'string' || typeof value === 'number' ? String(value) : ''];
     }));
     return { id: viewer.id, username: viewer.username, photourl: user.photourl, fields };
+  }
+
+  @Get('sessions')
+  @Header('Cache-Control', 'private, no-store')
+  async sessions(@Req() request: Request): Promise<ProfileSession[]> {
+    const viewer = await this.auth.viewer(request);
+    if (!viewer) throw new ForbiddenException();
+    const current = 'v2:' + sessionToken(request);
+    const rows = await database.loginToken.findMany({
+      where: { user_id: viewer.id }, orderBy: { last_activity: 'desc' },
+      select: { id: true, token: true, device_name: true, os: true, last_activity: true },
+    });
+    return rows.map(row => ({ id: row.id, device: row.device_name, os: row.os,
+      lastActivity: Number(row.last_activity), current: row.token === current }));
+  }
+
+  /** Ends one of the viewer's other sessions; the current one is left to /logout. */
+  @Post('sessions/:id/delete')
+  async endSession(@Req() request: Request, @Res() response: Response, @Param('id', ParseIntPipe) id: number) {
+    response.setHeader('Cache-Control', 'private, no-store');
+    const viewer = await this.auth.viewer(request);
+    if (!viewer) return response.redirect(303, '/login');
+    await database.loginToken.deleteMany({
+      where: { id, user_id: viewer.id, NOT: { token: 'v2:' + sessionToken(request) } },
+    });
+    response.redirect(303, '/lk/profile?type=Security');
   }
 
   /** Theme choice lives in a cookie so the frontend can pick the stylesheet scope before any API call. */

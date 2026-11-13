@@ -1,0 +1,103 @@
+
+.session-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    padding: 18px;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+    position: relative;
+}
+
+.session-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+
+.device-icon, .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+    fill: #5f6368;
+}
+
+.trash-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: #fff;
+}
+
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.device-info {
+    display: flex;
+    align-items: center;
+}
+
+.device-meta h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #202124;
+}
+
+.os-version {
+    margin: 3px 0 0;
+    font-size: 14px;
+    color: #80868b;
+}
+
+
+.card-details {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #5f6368;
+}
+
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.delete-btn:hover {
+    background: #bb2d3b;
+}
+
+
+.session-status {
+    font-size: 13px;
+    color: #34a853;
+    background: #e8f6ef;
+    padding: 4px 10px;
+    border-radius: 15px;
+}
+
+
+.session-card.current {
+    border-left: 4px solid #4285f4;
+    background: #f8f9fe;
+}

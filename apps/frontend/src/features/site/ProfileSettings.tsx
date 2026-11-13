@@ -1,19 +1,24 @@
 import { ProfileForm, ProfileThemeForm } from './ProfileForm';
-import { type ProfileSettingsData } from '@nativegallery/contracts';
+import { ProfileSessions } from './ProfileSessions';
+import type { ProfileSession, ProfileSettingsData } from '@nativegallery/contracts';
 import { apiGet, readCookie, requestCookie } from '../../api/client';
 
+const tabs = [[undefined, 'Профиль'], ['Security', 'Безопасность'], ['Personalization', 'Внешний вид']] as const;
+
 export async function ProfileSettings({ searchParams }: { searchParams: Promise<{ type?: string | string[] }> }) {
-  const [data, { type }, cookie] = await Promise.all([
-    apiGet<ProfileSettingsData>('/api/profile/settings', { auth: true, login: true, error: 'Could not load profile settings' }),
-    searchParams, requestCookie(),
-  ]);
-  const personalization = type === 'Personalization';
-  const theme = readCookie(cookie, 'NGALLERYTHEME');
+  const { type } = await searchParams;
+  const load = { auth: true, login: true, error: 'Could not load profile settings' };
+  let content;
+  if (type === 'Security') content = <ProfileSessions sessions={await apiGet<ProfileSession[]>('/api/profile/sessions', load)} />;
+  else {
+    // The settings request also sends guests to the login page for the personalization tab.
+    const [data, cookie] = await Promise.all([apiGet<ProfileSettingsData>('/api/profile/settings', load), requestCookie()]);
+    content = type === 'Personalization' ? <ProfileThemeForm theme={readCookie(cookie, 'NGALLERYTHEME')} /> : <ProfileForm data={data} />;
+  }
   return <tr><td className="main"><center><div className="tabs">
-    <nav className="tab-nav">
-      <a href="/lk/profile" className={type === undefined ? 'tab-item active' : 'tab-item'}>Профиль</a>
-      <a href="?type=Personalization" className={personalization ? 'tab-item active' : 'tab-item'}>Внешний вид</a>
+    <nav className="tab-nav">{tabs.map(([tab, label]) =>
+      <a key={label} href={tab ? '?type=' + tab : '/lk/profile'} className={type === tab ? 'tab-item active' : 'tab-item'}>{label}</a>)}
     </nav>
-    <div className="tab-content">{personalization ? <ProfileThemeForm theme={theme} /> : <ProfileForm data={data} />}</div>
+    <div className="tab-content">{content}</div>
   </div></center></td></tr>;
 }

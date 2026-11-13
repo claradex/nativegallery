@@ -150,6 +150,13 @@ export interface ProfileSettingsData {
   photourl: string;
   fields: Record<typeof profileFields[number], string>;
 }
+export interface ProfileSession {
+  id: number;
+  device: string;
+  os: string;
+  lastActivity: number;
+  current: boolean;
+}
 export interface UploadOptionsData {
   galleries: { id: number; title: string }[];
   entities: { id: number; title: string; color: string }[];
