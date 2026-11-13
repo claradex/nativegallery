@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
 interface VehicleModel { id: number; title: string; color: string }
 
@@ -30,18 +31,17 @@ function VehicleEditForm({ models }: { models: VehicleModel[] }) {
       <input type="hidden" name="mid" value="0" />
     </form>
     <br style={{ clear: 'both' }} /><br />
+    <script src="/frontend-scripts/VehicleEdit.js" defer />
   </td></tr>;
 }
 
-export async function VehicleEdit(request: Request, api: string) {
+export async function VehicleEdit() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/vehicle-models', {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (!response?.ok) throw new Error('Could not load vehicle data');
   const models: VehicleModel[] = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<VehicleEditForm models={models} />) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_VehicleEdit__</body></html>';
+  return <VehicleEditForm models={models} />;
 }

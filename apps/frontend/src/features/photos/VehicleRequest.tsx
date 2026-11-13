@@ -1,5 +1,5 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
-import { NotFound } from '../site/StaticPages';
+import { notFound, redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
 interface FormData {
   labels: string[];
@@ -45,27 +45,27 @@ function Form({ data, id }: { data: FormData; id: string }) {
         <li>Если Вы обладаете информацией о приписке данного ТС, а поле «Депо/Парк» отсутствует, укажите эти данные в поле «Примечание».</li>
       </ul>
     </div>
+    {data.siteKey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer />}
+    <script src="/frontend-scripts/VehicleRequest.js" defer />
   </td></tr>;
 }
 
-export async function VehicleRequest(request: Request, api: string) {
-  const query = new URL(request.url).searchParams;
-  const id = query.get('type') ?? '';
-  if (!/^\d{1,10}$/.test(id)) return NotFound(request);
+export async function VehicleRequest({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+  const query = await searchParams;
+  const id = typeof query.type === 'string' ? query.type : '';
+  if (!/^\d{1,10}$/.test(id)) notFound();
   const search = new URLSearchParams();
   for (const key of ['num', 'gos']) {
-    const value = query.get(key);
-    if (value) search.set(key, value);
+    const value = query[key];
+    if (typeof value === 'string' && value) search.set(key, value);
   }
   const response = await fetch(api + '/api/vehicles/requests/' + id + '?' + search, {
-    cache: 'no-store', headers: { cookie: request.headers.get('cookie') ?? '' },
+    cache: 'no-store', headers: { cookie: (await headers()).get('cookie') ?? '' },
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (response?.status === 404) return NotFound(request);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (response?.status === 404) notFound();
+  if (!response?.ok) throw new Error('Could not load vehicle data');
   const data: FormData = await response.json();
-  const captcha = data.siteKey ? '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>' : '';
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__' + captcha + '</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' + renderToStaticMarkup(<Form data={data} id={id} />) +
-    '<tr>__FOOTER__</tr></table>__SCRIPT_VehicleRequest__</body></html>';
+  return <Form data={data} id={id} />;
 }

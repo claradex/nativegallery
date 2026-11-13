@@ -1,6 +1,6 @@
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
+import { notFound, redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { legacyDate, type VehiclePageData } from '@nativegallery/contracts';
-import { NotFound } from '../site/StaticPages';
 
 function VehiclePhoto({ photo, vehicleId }: { photo: VehiclePageData['photos'][number]; vehicleId: number }) {
   return <div className="p20p s11"><table><tbody><tr>
@@ -34,15 +34,16 @@ function VehicleContent({ vehicle, photos }: VehiclePageData) {
   </td></tr>;
 }
 
-export async function VehiclePage(request: Request, api: string, id: string) {
+export async function VehiclePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!/^\d{1,10}$/.test(id)) notFound();
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   const response = await fetch(api + '/api/internal/vehicle/' + id, {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
+    headers: { cookie: (await headers()).get('cookie') ?? '' }, cache: 'no-store',
   }).catch(() => null);
-  if (response?.status === 403) return Response.redirect(new URL('/login', request.url), 302);
-  if (response?.status === 404) return NotFound(request);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+  if (response?.status === 403) redirect('/login');
+  if (response?.status === 404) notFound();
+  if (!response?.ok) throw new Error('Could not load vehicle data');
   const data: VehiclePageData = await response.json();
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body>' +
-    '<div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    renderToStaticMarkup(<VehicleContent {...data} />) + '<tr>__FOOTER__</tr></table></body></html>';
+  return <VehicleContent {...data} />;
 }

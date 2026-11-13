@@ -11,9 +11,6 @@ import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound } from '../../features/site/StaticPages';
-import { VehicleRequest } from '../../features/photos/VehicleRequest';
-import { VehicleEdit } from '../../features/photos/VehicleEdit';
-import { VehiclePage } from '../../features/photos/VehiclePage';
 import { CommentFeed } from '../../features/photos/CommentFeed';
 
 const legacyPaths: ReadonlyMap<string, string> = new Map([
@@ -57,11 +54,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const vehicleId = path.match(/^vehicle\/(\d+)$/)?.[1];
   const followed = path === 'comments' ? await CommentFeed(request, api)
-    : path === 'vehicle/dbedit' ? await VehicleRequest(request, api)
-    : path === 'vehicle/edit' ? await VehicleEdit(request, api)
-    : vehicleId ? await VehiclePage(request, api, vehicleId)
     : undefined;
   if (followed instanceof Response) return followed;
   const markup = followed;
