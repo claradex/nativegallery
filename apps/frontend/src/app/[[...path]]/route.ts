@@ -25,6 +25,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
   if (path === 'admin') {
     const section = new URL(request.url).searchParams.get('type');
     if (section === 'News') return AdminNews(request, api);
+    if (section === 'EntityEdit') return AdminModelCreate(request, api, new URL(request.url).searchParams.get('id') ?? '');
     if (section === 'ModelsCreate') return AdminModelCreate(request, api);
     if (section === 'Models') return AdminModels(request, api);
   }

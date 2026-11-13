@@ -15,7 +15,7 @@ const head = (title: string, script: string) => '<meta charset="utf-8"><meta nam
   '<script src="/frontend-scripts/' + script + '.js" defer></script>';
 
 export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate',
-  load: (options: RequestInit) => Promise<ReactNode>) {
+  load: (options: RequestInit) => Promise<ReactNode | Response>) {
   const options = { headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store' as const };
   const viewerResponse = await fetch(api + '/api/internal/viewer', options).catch(() => null);
   if (!viewerResponse?.ok) return new Response('Service Unavailable', { status: 503 });
@@ -24,6 +24,7 @@ export async function AdminPage(request: Request, api: string, title: string, sc
   if (viewer.admin === 2) return Response.redirect(new URL('/admin?type=Photo', request.url), 302);
   if (!viewer.admin) return new Response('Forbidden', { status: 403 });
   const content = await load(options);
+  if (content instanceof Response) return content;
   if (!content) return new Response('Service Unavailable', { status: 503 });
   const body = renderToStaticMarkup(<div className="container">
     <AdminSidebar title={process.env.SITE_TITLE ?? 'NativeGallery'} pending={viewer.pendingPhotos} />

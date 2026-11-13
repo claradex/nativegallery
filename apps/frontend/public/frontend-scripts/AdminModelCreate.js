@@ -5,6 +5,9 @@
   const submit = document.getElementById('addButton');
   const status = document.getElementById('model-status');
   let fieldRequest;
+  const editing = form.dataset.edit === 'true';
+  let saved = {};
+  try { saved = JSON.parse(form.dataset.content ?? '{}') ?? {}; } catch {}
 
   function showError(message) {
     status.textContent = message;
@@ -25,7 +28,7 @@
       if (!response.ok) throw new Error();
       const schema = await response.json();
       if (request.signal.aborted) return;
-      for (const field of schema) {
+      for (const [index, field] of schema.entries()) {
         const group = document.createElement('div');
         group.className = 'mt-3';
         const label = document.createElement('label');
@@ -37,6 +40,7 @@
         input.id = input.name = field.name;
         input.placeholder = field.label;
         input.required = field.required;
+        if (editing) input.value = saved[index + 1]?.value ?? '';
         group.append(label, input);
         fields.append(group);
       }
@@ -55,13 +59,13 @@
     entity.disabled = true;
     status.hidden = true;
     try {
-      const response = await fetch(form.action, { method: 'POST', body });
+      const response = await fetch(form.action, { method: editing ? 'PATCH' : 'POST', body });
       if (!response.ok) throw new Error();
       location.assign('/admin?type=Models');
     } catch {
-      showError('Не удалось добавить модель.');
+      showError('Не удалось сохранить модель.');
       submit.disabled = false;
-      entity.disabled = false;
+      entity.disabled = editing;
     }
   });
   if (entity.value) entity.dispatchEvent(new Event('change'));

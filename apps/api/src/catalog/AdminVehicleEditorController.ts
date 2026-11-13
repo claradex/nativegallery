@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Param, Post, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, ForbiddenException, Get, Header, NotFoundException, Param, Patch, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -51,11 +51,41 @@ export class AdminVehicleEditorController {
       '" placeholder="' + escape(label) + '"' + (required ? ' required' : '') + '></div>').join('');
   }
 
+  @Get('models/catalog/:id')
+  @Header('Cache-Control', 'private, no-store')
+  async getModel(@Req() request: Request, @Param('id') rawId: string) {
+    await this.authorize(request);
+    const model = await database.entityData.findUnique({
+      where: { id: parseId(rawId) }, select: { id: true, entityid: true, title: true, comment: true, content: true },
+    });
+    if (!model) throw new NotFoundException();
+    return model;
+  }
+
+  @Patch('models/catalog/:id')
+  async update(@Req() request: Request, @Param('id') rawId: string, @Body() body: Record<string, unknown>) {
+    await this.authorize(request);
+    const id = parseId(rawId);
+    const model = await database.entityData.findUnique({ where: { id }, select: { entityid: true } });
+    if (!model) throw new NotFoundException();
+    const data = await this.modelData(model.entityid, body);
+    const result = await database.entityData.updateMany({ where: { id, entityid: model.entityid }, data });
+    if (!result.count) throw new NotFoundException();
+    return { id };
+  }
+
   @Post('models/catalog')
   async create(@Req() request: Request, @Body() body: Record<string, unknown>) {
     await this.authorize(request);
     const entityid = parseId(body?.entityid);
-    const title = body.title;
+    const data = await this.modelData(entityid, body);
+    return database.entityData.create({
+      data: { ...data, entityid, createdate: BigInt(Math.floor(Date.now() / 1000)) }, select: { id: true },
+    });
+  }
+
+  private async modelData(entityid: number, body: Record<string, unknown>) {
+    const title = body?.title;
     const comment = body.comment;
     if (typeof title !== 'string' || !title.trim() || Buffer.byteLength(title) > 65535 ||
         typeof comment !== 'string' || !comment.trim() || Buffer.byteLength(comment) > 65535) throw new BadRequestException();
@@ -68,10 +98,6 @@ export class AdminVehicleEditorController {
     });
     const content = JSON.stringify(Object.fromEntries(values));
     if (Buffer.byteLength(content) > 65535) throw new BadRequestException();
-    const model = await database.entityData.create({
-      data: { entityid, title: title.trim(), comment, content, createdate: BigInt(Math.floor(Date.now() / 1000)) },
-      select: { id: true },
-    });
-    return model;
+    return { title: title.trim(), comment, content };
   }
 }

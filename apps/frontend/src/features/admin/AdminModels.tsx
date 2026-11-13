@@ -34,7 +34,7 @@ export async function AdminModels(request: Request, api: string) {
           <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '20%' }}>Название</th><th style={{ width: '50%' }}>Сущность</th><th>Действия</th></tr>
           {models.map(model => <tr key={model.id} id={'pht' + model.id}>
             <td>{model.id}</td><td>{model.title}</td><td>{model.model}</td>
-            <td className="c"><a className="btn btn-primary" href={'/vehicle/' + model.id}>Открыть</a></td>
+            <td className="c"><a className="btn btn-primary" href={'/admin?type=EntityEdit&id=' + model.id + '&mod=1'}>Редактировать</a></td>
           </tr>)}
         </tbody></table></div><br />
       </div> : <div id="moderate__block" className="active__block"><div className="p20w" style={{ display: 'block' }}>
