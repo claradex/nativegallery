@@ -1,3 +1,4 @@
+import { MapMediaClient } from './MapMediaClient';
 import { redirect } from 'next/navigation';
 import { siteContext } from '../site/SiteContext';
 
@@ -126,8 +127,6 @@ export async function MapMedia() {
     <style>{styles}</style>
     <h1>Map Media</h1>
     <div id="mapd"></div>
-    <script src={leaflet + 'leaflet.js'} defer />
-    <script src={cluster + 'leaflet.markercluster.js'} defer />
-    <script src="/frontend-scripts/MapMedia.js" defer />
+    <MapMediaClient leaflet={leaflet} cluster={cluster} />
   </td></tr>;
 }

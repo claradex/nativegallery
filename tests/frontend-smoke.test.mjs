@@ -218,8 +218,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.equal(map.status, 200);
     const mapHtml = await map.text();
     assert.ok(mapHtml.includes('id="mapd"'));
-    assert.ok(mapHtml.indexOf('src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"') < mapHtml.indexOf('src="/frontend-scripts/MapMedia.js"'));
-    assert.ok(mapHtml.includes('src="/frontend-scripts/MapMedia.js"'));
+    assert.ok(mapHtml.includes('leaflet@1.7.1/dist/leaflet.css'));
+    assert.doesNotMatch(mapHtml, /src="\/frontend-scripts\/MapMedia\.js"/);
     const photo = await fetch(origin + '/photo/3?aid=9');
     assert.equal(photo.status, 200);
     const photoHtml = await photo.text();
