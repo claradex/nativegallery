@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 export class ProfileAvatarController {
   @Get(':filename')
   async avatar(@Param('filename') filename: string, @Res() response: Response) {
-    if (!/^(?:[a-f0-9]{64}|[a-f0-9]{128})\.jpe?g$/i.test(filename)) throw new NotFoundException();
+    if (!/^(?:[a-f0-9]{64}|[a-f0-9]{128})\.(?:jpe?g|png|gif|webp)$/i.test(filename)) throw new NotFoundException();
     const directory = await realpath(join(process.env.MEDIA_ROOT ?? '../../uploads', 'cdn', 'img')).catch(() => null);
     if (!directory) throw new NotFoundException();
     const file = await realpath(join(directory, filename)).catch(() => null);
