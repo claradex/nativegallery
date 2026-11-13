@@ -164,6 +164,7 @@ export interface GalleryData {
     postbody: string;
     place: string;
     postedAt: number;
+    uploadedAt: number;
     authorId: number;
     author: string;
     views: number;

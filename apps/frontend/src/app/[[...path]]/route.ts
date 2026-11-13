@@ -24,6 +24,7 @@ import { VehicleRequest } from '../../features/photos/VehicleRequest';
 import { VehicleEdit } from '../../features/photos/VehicleEdit';
 import { VehiclePage } from '../../features/photos/VehiclePage';
 import { UploadPage } from '../../features/photos/upload/UploadPage';
+import { FeedPage } from '../../features/photos/FeedPage';
 import { GalleryPage } from '../../features/photos/GalleryPage';
 import { PhotoSearch } from '../../features/photos/PhotoSearch';
 import { PhotoPage } from '../../features/photos/PhotoPage';
@@ -74,6 +75,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     ? await Account(request, api, path === 'lk/history' ? 'uploads' : path === 'lk/pday' ? 'upload-index' : '')
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
+    : path === 'feed' ? await FeedPage(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)
     : authorId ? await Author(request, api, authorId) : path === 'voting/waiting' || path === 'voting/sendpretend'
