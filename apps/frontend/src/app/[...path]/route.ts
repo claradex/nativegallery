@@ -1,4 +1,3 @@
-import { Document, type PageContext } from '../../components/Document';
 import { AdminModelCreate } from '../../features/admin/AdminModelCreate';
 import { AdminEntities } from '../../features/admin/AdminEntities';
 import { AdminContests } from '../../features/admin/AdminContests';
@@ -11,17 +10,11 @@ import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { NotFound } from '../../features/site/StaticPages';
-import { CommentFeed } from '../../features/photos/CommentFeed';
-
-const legacyPaths: ReadonlyMap<string, string> = new Map([
-  ['comments.php', 'comments'],
-]);
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request, route: { params: Promise<{ path?: string[] }> }) {
-  const requestedPath = (await route.params).path?.join('/') ?? '';
-  const path = legacyPaths.get(requestedPath) ?? requestedPath;
+  const path = (await route.params).path?.join('/') ?? '';
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   if (path === 'admin') {
     const section = new URL(request.url).searchParams.get('type');
@@ -54,15 +47,5 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   }
-  const followed = path === 'comments' ? await CommentFeed(request, api)
-    : undefined;
-  if (followed instanceof Response) return followed;
-  const markup = followed;
-  if (!markup) return NotFound(request);
-  const response = await fetch(api + '/api/internal/viewer', {
-    headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store',
-  }).catch(() => null);
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
-  const context: PageContext = await response.json();
-  return Document(request, markup, context);
+  return NotFound(request);
 }

@@ -6,6 +6,9 @@ const config: NextConfig = {
     const apiOrigin = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
     return {
       beforeFiles: [
+        ...['/comments', '/comments.php'].map(source => ({
+          source, has: [{ type: 'query' as const, key: 'ajax', value: '1' }], destination: '/comments/fragment',
+        })),
         { source: '/api/:path*', destination: apiOrigin + '/api/:path*' },
         { source: '/uploads/cdn/img/:filename', destination: apiOrigin + '/uploads/cdn/img/:filename' },
         { source: '/uploads/cdn/pages/:filename', destination: apiOrigin + '/uploads/cdn/pages/:filename' },

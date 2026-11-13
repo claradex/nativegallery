@@ -1,8 +1,7 @@
 import { CommentText } from './CommentText';
-import { renderToStaticMarkup } from '../../components/RenderMarkup';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
 
-function FeedComment({ comment }: { comment: CommentFeedEntry }) {
+export function FeedComment({ comment }: { comment: CommentFeedEntry }) {
   const href = '/photo/' + comment.photoId + '/?top=1';
   const thumbnail = comment.photoUrl.startsWith('/uploads/')
     ? '/api/photo/compress?url=' + encodeURIComponent(comment.photoUrl) : comment.photoUrl;
@@ -29,31 +28,16 @@ function FeedComment({ comment }: { comment: CommentFeedEntry }) {
   </div>;
 }
 
-export async function CommentFeed(request: Request, api: string) {
-  const query = new URL(request.url).searchParams;
-  const fragment = query.get('ajax') === '1';
-  const search = new URLSearchParams();
-  if (fragment) {
-    for (const key of ['before', 'after']) {
-      const value = query.get(key);
-      if (value !== null) search.set(key, value);
-    }
-  }
-  const response = await fetch(api + '/api/internal/comment-feed?' + search, { cache: 'no-store' }).catch(() => null);
-  if (response?.status === 400) return new Response(null, { status: 400 });
-  if (!response?.ok) return new Response('Service Unavailable', { status: 503 });
+export async function CommentFeed() {
+  const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
+  const response = await fetch(api + '/api/internal/comment-feed', { cache: 'no-store' });
+  if (!response.ok) throw new Error('Could not load comments');
   const comments: CommentFeedEntry[] = await response.json();
-  if (fragment) {
-    return new Response(renderToStaticMarkup(<>{comments.map(comment => <FeedComment key={comment.id} comment={comment} />)}</>), {
-      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
-    });
-  }
-  const content = renderToStaticMarkup(<tr><td className="main">
+  return <tr><td className="main">
     <h1>Лента комментариев</h1>
     <div id="upd_anchor"></div>
     {comments.map(comment => <FeedComment key={comment.id} comment={comment} />)}
     <div id="scroll_anchor"></div><div id="loader-anchor"></div>
-  </td></tr>);
-  return '<!DOCTYPE html><html lang="ru"><head>__HEAD__</head><body><div id="backgr"></div><table class="tmain">__NAVBAR__' +
-    content + '<tr>__FOOTER__</tr></table>__SCRIPT_CommentFeed__</body></html>';
+    <script src="/frontend-scripts/CommentFeed.js" defer />
+  </td></tr>;
 }

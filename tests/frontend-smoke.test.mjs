@@ -16,6 +16,11 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/register/options': { open: true },
       '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
       '/api/internal/feed': [],
+      '/api/internal/comment-feed': [],
+      '/api/internal/comment-feed?before=9': [{
+        id: 8, photoId: 3, photoUrl: '/static/img/avatar.png', authorId: 9, author: 'Автор',
+        admin: 0, photoCount: 1, body: 'Комментарий для подгрузки', postedAt: 0, positive: 0, negative: 0,
+      }],
       '/api/internal/vehicle/5': { vehicle: { id: 5, title: 'Тестовая модель', fields: [] }, photos: [] },
       '/api/internal/vehicle-models': [],
       '/api/vehicles/requests/5?num=42': { labels: [], vehicles: [], limited: false, siteKey: 'test-key' },
@@ -103,6 +108,8 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       ['/vehicle/5', 200, 'Тестовая модель'],
       ['/vehicle/edit', 200, 'src="/frontend-scripts/VehicleEdit.js"'],
       ['/vehicle/dbedit?type=5&num=42', 200, 'data-sitekey="test-key"'],
+      ['/comments', 200, 'Лента комментариев'],
+      ['/comments.php', 200, 'Лента комментариев'],
       ['/feed', 200, 'Лента обновлений'],
       ['/misc/', 200, '/article/7'],
       ['/article/7', 200, 'Тестовая галерея'],
@@ -134,6 +141,14 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       const member = await fetch(origin + path, { headers: { cookie: 'test-viewer=1' } });
       assert.equal(member.status, 200, path);
       assert.ok((await member.text()).includes(heading), path);
+    }
+    for (const route of ['/comments', '/comments.php']) {
+      const fragment = await fetch(origin + route + '?ajax=1&before=9');
+      assert.equal(fragment.status, 200);
+      assert.equal(fragment.headers.get('cache-control'), 'no-store');
+      const html = await fragment.text();
+      assert.ok(html.includes('data-comment-id="8"'));
+      assert.ok(!html.includes('<html'));
     }
     const guestEntry = await fetch(origin + '/voting/sendpretend', { redirect: 'manual' });
     assert.equal(guestEntry.status, 307);
