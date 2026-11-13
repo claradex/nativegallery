@@ -14,7 +14,7 @@ const head = (title: string, script: string | null) => '<meta charset="utf-8"><m
   '<script src="/frontend-scripts/AdminSidebar.js" defer></script>' +
   (script ? '<script src="/frontend-scripts/' + script + '.js" defer></script>' : '');
 
-export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo' | 'AdminPhotos' | 'AdminUsers' | 'AdminSettings' | 'AdminContests' | null,
+export async function AdminPage(request: Request, api: string, title: string, script: 'AdminNews' | 'AdminModels' | 'AdminModelCreate' | 'AdminEntities' | 'AdminGeo' | 'AdminPhotos' | 'AdminUsers' | 'AdminSettings' | 'AdminContests' | 'AdminPages' | null,
   load: (options: RequestInit) => Promise<ReactNode | Response>) {
   const options = { headers: { cookie: request.headers.get('cookie') ?? '' }, cache: 'no-store' as const };
   const viewerResponse = await fetch(api + '/api/internal/viewer', options).catch(() => null);

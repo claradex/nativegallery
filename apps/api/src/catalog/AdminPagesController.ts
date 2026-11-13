@@ -1,8 +1,19 @@
-import { Body, Controller, ForbiddenException, Get, Header, Post, Req, Res, BadRequestException } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Header, HttpCode, Post, Req, Res, BadRequestException } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 import { newsHtml } from '../news/NewsHtml';
+
+type PageForm = { title?: unknown; bodypost?: unknown };
+
+function pageInput(form: PageForm) {
+  if (typeof form?.title !== 'string' || typeof form?.bodypost !== 'string') throw new BadRequestException();
+  const title = form.title.trim();
+  if (!title || title.length > 255 || Buffer.byteLength(form.bodypost) > 65535) throw new BadRequestException();
+  const body = newsHtml(form.bodypost).trim();
+  if (!body || Buffer.byteLength(body) > 65535) throw new BadRequestException();
+  return { title, body };
+}
 
 @Controller('api/admin/pages')
 @Header('Cache-Control', 'private, no-store')
@@ -23,13 +34,18 @@ export class AdminPagesController {
     });
   }
 
+  @Post('preview')
+  @HttpCode(200)
+  async preview(@Req() request: Request, @Body() form: PageForm) {
+    await this.administrator(request);
+    const { title, body } = pageInput(form);
+    return { title, html: body };
+  }
+
   @Post()
-  async create(@Req() request: Request, @Body() form: { title?: unknown; bodypost?: unknown }, @Res() response: Response) {
+  async create(@Req() request: Request, @Body() form: PageForm, @Res() response: Response) {
     const viewer = await this.administrator(request);
-    if (typeof form?.title !== 'string' || typeof form?.bodypost !== 'string') throw new BadRequestException();
-    const title = form.title.trim();
-    const body = newsHtml(form.bodypost).trim();
-    if (!title || title.length > 255 || !body || Buffer.byteLength(body) > 65535) throw new BadRequestException();
+    const { title, body } = pageInput(form);
     await database.page.create({
       data: { title, body, created_by: viewer.id, created_at: Math.floor(Date.now() / 1000) },
     });
