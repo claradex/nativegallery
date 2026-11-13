@@ -67,6 +67,13 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       commentsEnabled: true, canComment: false, rating: null,
     };
     fixtures['/api/internal/photo-comments/3'] = [];
+    if (request.url === '/api/internal/legacy-photo-comments/3') {
+      if (request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
+      fixtures[request.url] = [{
+        id: 17, authorId: 9, author: null, body: 'Тестовый комментарий', publishedPhotos: 0,
+        postedAt: 0, pinned: true, positive: 0, negative: 0, ownVote: null,
+      }];
+    }
     if (['/api/internal/photo-page/999', '/api/internal/author/999'].includes(request.url)) response.statusCode = 404;
     if (['/api/internal/favorite-photos', '/api/internal/followed-photos'].includes(request.url) &&
         request.headers.cookie !== 'test-viewer=1') response.statusCode = 403;
@@ -229,6 +236,12 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     assert.match(photoHtml, /id="navbard" style="display:none"|style="display:none" id="navbard"/);
     assert.doesNotMatch(photoHtml, /src="\/frontend-scripts\/(PhotoActions|CommentEmoji)\.js"/);
     assert.equal((await fetch(origin + '/photo/999')).status, 404);
+    const fragmentUrl = origin + '/api/photo/getcomments/3';
+    assert.equal((await fetch(fragmentUrl, { method: 'POST' })).status, 403);
+    const fragment = await fetch(fragmentUrl, { method: 'POST', headers: { cookie: 'test-viewer=1' } });
+    assert.equal(fragment.status, 200);
+    assert.match(fragment.headers.get('content-type'), /text\/html/);
+    assert.match(await fragment.text(), /class="s1 comment" data-comment-id="17"/);
     const tour = await fetch(origin + '/tour');
     const tourHtml = await tour.text();
     assert.doesNotMatch(tourHtml, /src="\/frontend-scripts\/TourLogin\.js"/);

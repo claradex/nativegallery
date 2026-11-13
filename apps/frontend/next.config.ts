@@ -10,6 +10,7 @@ const config: NextConfig = {
         ...['/comments', '/comments.php'].map(source => ({
           source, has: [{ type: 'query' as const, key: 'ajax', value: '1' }], destination: '/comments/fragment',
         })),
+        { source: '/api/photo/getcomments/:id', destination: '/photo-comments-fragment/:id' },
         { source: '/api/:path*', destination: apiOrigin + '/api/:path*' },
         { source: '/uploads/cdn/img/:filename', destination: apiOrigin + '/uploads/cdn/img/:filename' },
         { source: '/uploads/cdn/pages/:filename', destination: apiOrigin + '/uploads/cdn/pages/:filename' },
