@@ -19,6 +19,7 @@ import { Login } from '../../features/auth/Login';
 import { Home } from '../../features/home/Home';
 import { NotFound, Tour } from '../../features/site/StaticPages';
 import { ProfileSettings } from '../../features/site/ProfileSettings';
+import { NewsPage } from '../../features/site/NewsPage';
 import { SitePage } from '../../features/site/SitePage';
 import { Account } from '../../features/site/Account';
 import { Author } from '../../features/site/Author';
@@ -102,6 +103,7 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'feed' ? await FeedPage(api)
     : sitePageId ? await SitePage(request, api, sitePageId)
+    : path === 'news2.php' ? await NewsPage(api)
     : path === 'misc' ? await GalleryDirectory(api)
     : galleryId ? await GalleryPage(request, api, galleryId)
     : path === 'search' ? await PhotoSearch(request, api)

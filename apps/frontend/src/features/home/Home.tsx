@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { legacyDate } from '@nativegallery/contracts';
+import { NewsItem } from '../site/NewsPage';
 import { HomeContest } from './HomeContest';
 
 interface HomeData {
@@ -66,9 +67,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                 <td style={{ paddingLeft: 20, width: 254, verticalAlign: 'top' }}>
                     <h4>Новости сайта</h4>
                     <div className="sm" style={{ marginBottom: 15, lineHeight: '13px', whiteSpace: 'normal' }}>
-                        {news.map((item, index) => <div className="ix-news-item" key={index}><b>{legacyDate(item.time)}</b>
-                          <div className="break-links" style={{ paddingTop: 3 }} dangerouslySetInnerHTML={{ __html: item.body }} />
-                        </div>)}
+                        {news.map((item, index) => <NewsItem key={index} body={item.body} time={item.time} />)}
                     </div>
                 </td>
             </tr>
