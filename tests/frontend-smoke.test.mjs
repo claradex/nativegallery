@@ -11,6 +11,14 @@ const require = createRequire(new URL('package.json', frontend));
 
 test('production frontend serves legacy HTML and native scripts', { timeout: 20_000 }, async () => {
   const api = createServer((request, response) => {
+    if (request.url === '/api/internal/logout' && request.headers.cookie === 'test-viewer=1') {
+      response.writeHead(302, {
+        Location: '/',
+        'Set-Cookie': ['NGALLERYSESS=; Max-Age=0; Path=/', 'NGALLERYID=; Max-Age=0; Path=/'],
+      });
+      response.end();
+      return;
+    }
     response.setHeader('Content-Type', 'application/json');
     const fixtures = {
       '/api/register/options': { open: true },
@@ -150,6 +158,14 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       assert.ok(html.includes('data-comment-id="8"'));
       assert.ok(!html.includes('<html'));
     }
+    const robots = await fetch(origin + '/robots.txt');
+    assert.equal(robots.status, 200);
+    assert.equal(robots.headers.get('content-type'), 'text/plain; charset=utf-8');
+    assert.ok((await robots.text()).includes('Disallow: /lk/'));
+    const logout = await fetch(origin + '/logout', { headers: { cookie: 'test-viewer=1' }, redirect: 'manual' });
+    assert.equal(logout.status, 302);
+    assert.equal(logout.headers.get('location'), '/');
+    assert.deepEqual(logout.headers.getSetCookie(), ['NGALLERYSESS=; Max-Age=0; Path=/', 'NGALLERYID=; Max-Age=0; Path=/']);
     const guestEntry = await fetch(origin + '/voting/sendpretend', { redirect: 'manual' });
     assert.equal(guestEntry.status, 307);
     assert.equal(guestEntry.headers.get('location'), '/login');
