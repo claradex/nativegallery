@@ -48,7 +48,7 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
             {photo.declineComment && <p className="sm"><b>Комментарий: </b> {photo.declineComment}</p>}
           </td>
           <td className="c" style={{ padding: 10 }}></td>
-          <td className="cs">{photo.endmoderation === -1 ? 'На модерации' : <>
+          <td className="cs">{(photo.moderated === 0 || photo.endmoderation === -1) ? 'На модерации' : <>
             {legacyDate(photo.endmoderation)}<div style={{ marginTop: 15 }}>Оценка<br /><b>И{photo.rating} К{photo.rating}</b></div>
           </>}</td>
           <td className="cs"><a type="button" href={'/lk/editimage?id=' + photo.id}>Редактировать</a></td>

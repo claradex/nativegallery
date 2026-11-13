@@ -47,11 +47,15 @@ export class PhotoModerationController {
       const content = JSON.stringify(data);
       if (Buffer.byteLength(content) > 65535) throw new BadRequestException();
       const firstPublication = mod === '1' && photo.moderated !== 1;
+      const nextStatus = Number(mod);
+      const now = Math.floor(Date.now() / 1000);
       await tx.photo.update({ where: { id }, data: {
-        moderated: Number(mod), priority: mod === '1' ? Number(reason ?? 0) : 0,
-        timeupload: photo.moderated !== Number(mod) ? Math.floor(Date.now() / 1000) : undefined, content,
+        moderated: nextStatus, priority: mod === '1' ? Number(reason ?? 0) : 0,
+        timeupload: photo.moderated !== nextStatus ? now : undefined,
+        endmoderation: nextStatus === 0 ? -1 : photo.moderated === 0 ? now : undefined,
+        content,
       } });
-      if (!firstPublication) return;
+      if (!firstPublication || data.subsnotify === 'disabled') return;
       const [followers, notified] = await Promise.all([
         tx.follower.findMany({ where: { user_id: photo.user_id }, select: { follower_id: true } }),
         tx.followerNotification.findMany({ where: { photo_id: id }, select: { follower_id: true } }),

@@ -68,11 +68,11 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       const moderated = process.env.PHOTO_PREMODERATION !== 'false' && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
         user_id: userId, postbody: description, photourl: '/uploads/' + preview, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
-        exif, priority: 0, moderated, place, gallery_id: gallery, entitydata_id: entity,
+        exif, priority: 0, moderated, endmoderation: moderated === 0 ? -1 : 0, place, gallery_id: gallery, entitydata_id: entity,
         content: JSON.stringify({
           type: video ? 'video' : 'image', videourl: video ? '/uploads/' + output : null, copyright: text(body.license), comment: description,
           lat: body.nomap ? null : text(body.lat), lng: body.nomap ? null : text(body.lng),
-          comments: allowed('disablecomments'), rating: allowed('disablerating'), showtop: allowed('disableshowtop'),
+          comments: allowed('disablecomments'), rating: allowed('disablerating'), showtop: allowed('disableshowtop'), subsnotify: allowed('disablesubsnotify'),
           entityroute: entity ? linkedValue('route') : null, entitycomment: entity ? linkedValue('notes') : null,
         }),
       }, select: { id: true } });
