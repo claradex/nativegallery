@@ -40,10 +40,18 @@ import { PhotoDetails } from '../../features/photos/PhotoDetails';
 import { TopPhotos } from '../../features/photos/TopPhotos';
 import { Rules } from '../../features/rules/Rules';
 
+const legacyPaths: ReadonlyMap<string, string> = new Map([
+  ['comments.php', 'comments'],
+  ['update.php', 'update'],
+  ['search.php', 'search'],
+  ['voting.php', 'voting'],
+]);
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request, route: { params: Promise<{ path?: string[] }> }) {
-  const path = (await route.params).path?.join('/') ?? '';
+  const requestedPath = (await route.params).path?.join('/') ?? '';
+  const path = legacyPaths.get(requestedPath) ?? requestedPath;
   const login = path === 'login';
   const api = process.env.API_ORIGIN ?? 'http://127.0.0.1:3001';
   if (path === 'admin') {
@@ -88,8 +96,8 @@ export async function GET(request: Request, route: { params: Promise<{ path?: st
     : path === 'register' ? await Register(api)
     : path === 'lk/upload' ? await UploadPage(request, api)
     : path === 'lk/profile' ? await ProfileSettings(request, api)
-    : path === 'comments' || path === 'comments.php' ? await CommentFeed(request, api)
-    : path === 'update' || path === 'update.php' ? await UpdatesPage(api)
+    : path === 'comments' ? await CommentFeed(request, api)
+    : path === 'update' ? await UpdatesPage(api)
     : path === 'mapmedia' ? await MapMedia(request, api)
     : path === 'feed' ? await FeedPage(api)
     : sitePageId ? await SitePage(request, api, sitePageId)
