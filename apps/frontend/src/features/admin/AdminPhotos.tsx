@@ -1,77 +1,50 @@
-import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
-import { AdminPage } from './AdminPage';
+import { AdminPage, adminData } from './AdminPage';
+import { PageHeader, SectionTabs } from './PageHeader';
+import { ModerationQueue } from './photos/ModerationQueue';
+import { PhotoArchive } from './photos/PhotoArchive';
+import type { PendingPhoto } from './photos/decisions';
+import { Pagination } from './ui/pagination';
+import { SearchForm } from './ui/search-form';
+import { plural } from './lib/format';
 
-const publish = ['Нормальная публикация', 'Условная публикация', 'Временная публикация', 'Техническая публикация'];
-const decline = ['Малоинформативный бред', 'Не подходит для сайта', 'Порнография', 'Травля/издевательство над человеком', 'Расчленёнка', 'Файл сломан'];
+const tabs = { moderate: 'На модерации', published: 'Опубликованные', declined: 'Отклонённые' } as const;
+type Tab = keyof typeof tabs;
 
-function Choices({ name, labels, start = 0, selected = 0 }: {
-  name: string; labels: string[]; start?: number; selected?: number;
-}) {
-  return labels.map((label, index) => <label key={label} className="form-check d-block">
-    <input name={name} value={index + start} type="radio" className="form-check-input" defaultChecked={index === selected} />
-    <span className="form-check-label">{label}</span>
-  </label>);
-}
+export function AdminPhotos(query: URLSearchParams) {
+  const tab: Tab = query.get('tab') === 'published' || query.get('tab') === 'declined' ? query.get('tab') as Tab : 'moderate';
+  const page = /^\d{1,5}$/.test(query.get('page') ?? '') ? Math.max(1, Number(query.get('page'))) : 1;
+  const search = (query.get('q') ?? '').trim().slice(0, 100);
+  const link = (target: Tab, params: Record<string, string> = {}) =>
+    '/admin?' + new URLSearchParams({ type: 'Photo', ...(target === 'moderate' ? {} : { tab: target }), ...params });
 
-function Decision({ id, accepted }: { id: number; accepted: boolean }) {
-  const modal = (accepted ? 'accept' : 'decline') + 'PhotoModal' + id;
-  return <div className="modal fade" id={modal} tabIndex={-1} aria-labelledby={modal + '-title'} aria-hidden="true">
-    <div className="modal-dialog"><form className="modal-content" data-photo-decision={id} data-status={accepted ? 1 : 2}>
-      <div className="modal-header">
-        <h1 className="modal-title fs-5" id={modal + '-title'}><b>{accepted ? 'Принятие фотографии' : 'Причина отклонения'}</b></h1>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" />
-      </div>
-      <div className="modal-body">
-        <Choices name="reason" labels={accepted ? publish : decline} start={accepted ? 0 : 1} selected={accepted ? 0 : 1} />
-        {accepted && <>
-          <h6 className="mt-3">Оценка</h6>
-          <div className="row">
-            <div className="col-6"><Choices name="irate" labels={['И-', 'И+']} selected={1} /></div>
-            <div className="col-6"><Choices name="krate" labels={['К-', 'К+']} selected={1} /></div>
-          </div>
-          <h6 className="mt-3">Другие действия</h6>
-        </>}
-        <label className="form-label d-block">Дополнительный комментарий<textarea name="comment" className="form-control" rows={3} /></label>
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-        <button type="submit" className="btn btn-primary">Сохранить</button>
-      </div>
-    </form></div>
-  </div>;
-}
-
-interface PendingPhoto {
-  id: number;
-  photourl: string;
-  place: string;
-  postbody: string;
-  user_id: number;
-}
-
-export function AdminPhotos() {
-  return AdminPage('Фотографии', 'AdminPhotos', async () => {
-    const response = await apiFetch('/api/admin/images/pending', { auth: true });
-    if (!response?.ok) return null;
-    const photos: PendingPhoto[] = await response.json();
+  return AdminPage('moderator', async () => {
+    const [queue, galleries] = await Promise.all([
+      adminData<PendingPhoto[]>('/api/admin/images/pending'),
+      apiFetch('/api/internal/galleries').then(response => response?.ok ? response.json() as Promise<{ id: number; title: string }[]> : []).catch(() => []),
+    ]);
+    const names = Object.fromEntries(galleries.map(gallery => [gallery.id, gallery.title]));
+    let body;
+    if (tab === 'moderate') body = <ModerationQueue photos={queue} galleries={names} />;
+    else {
+      const status = tab === 'published' ? 1 : 2;
+      const list = await adminData<{ total: number; page: number; pages: number; photos: PendingPhoto[] }>(
+        '/api/admin/images?' + new URLSearchParams({ status: String(status), page: String(page), q: search }));
+      body = <>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <SearchForm hidden={{ type: 'Photo', tab }} value={search} placeholder="Номер, место или описание" className="sm:w-80" />
+          <p className="text-[13px] text-muted-foreground">{search ? 'Найдено: ' : 'Всего: '}{plural(list.total, 'фотография', 'фотографии', 'фотографий')}</p>
+        </div>
+        <PhotoArchive photos={list.photos} status={status} query={search} />
+        <Pagination page={list.page} pages={list.pages} href={target => link(tab, { ...(search ? { q: search } : {}), page: String(target) })} />
+      </>;
+    }
     return <>
-      <h1><b>Фотографии</b></h1>
-      <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <Link id="moderate" href="/admin?type=Photo" className="v-tab v-tab-b v-tab--active"><span className="v-tab__label">На модерации</span></Link>
-      </div></div></div></div>
-      <div id="moderate__block" className="active__block"><div className="p20w"><table className="table"><tbody>
-        <tr><th style={{ width: 100 }}>Изображение</th><th style={{ width: '50%' }}>Информация</th><th>Действия</th></tr>
-        {photos.map(photo => <tr key={photo.id} id={'pht' + photo.id}>
-          <td><a href={'/photo/' + photo.id} target="_blank"><img src={photo.photourl} width={150} loading="lazy" alt="" /></a></td>
-          <td><b>{photo.place}</b><p>{photo.postbody}</p><Link href={'/author/' + photo.user_id}>Автор</Link></td>
-          <td className="c">
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target={'#acceptPhotoModal' + photo.id}>Принять</button>{' '}
-            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target={'#declinePhotoModal' + photo.id}>Отклонить</button>
-          </td>
-        </tr>)}
-      </tbody></table></div></div>
-      {photos.map(photo => <div key={photo.id}><Decision id={photo.id} accepted /><Decision id={photo.id} accepted={false} /></div>)}
+      <PageHeader title="Фотографии" description="Решения по новым загрузкам и пересмотр уже принятых." />
+      <SectionTabs tabs={(Object.keys(tabs) as Tab[]).map(key => ({
+        href: link(key), label: tabs[key], active: key === tab, count: key === 'moderate' ? queue.length : undefined,
+      }))} />
+      {body}
     </>;
   });
 }

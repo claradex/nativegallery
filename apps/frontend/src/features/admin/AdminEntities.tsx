@@ -1,63 +1,32 @@
+import { Plus } from 'lucide-react';
+import { notFound } from 'next/navigation';
 import Link from '../../components/Link';
-import { apiFetch } from '../../api/client';
-import { AdminPage } from './AdminPage';
+import { AdminPage, adminData } from './AdminPage';
+import { PageHeader } from './PageHeader';
+import { EntitiesTable, EntityForm, type EntityDetails, type EntityRow } from './entities/EntityViews';
+import { Button } from './ui/button';
 
-function VariableFields() {
-  return <>
-    <div className="col-md-3"><div className="mb-3">
-      <label htmlFor="variablename_1" className="form-label">Название переменной</label>
-      <input type="text" name="variablename_1" id="variablename_1" className="form-control" placeholder="#FFFFFF" maxLength={255} required />
-    </div></div>
-    <div className="col-md-3"><div className="mb-3">
-      <label htmlFor="variableid_1" className="form-label">ID</label>
-      <input type="text" name="variableid_1" id="variableid_1" className="form-control" placeholder="blablabla" maxLength={64} required />
-    </div></div>
-    <div className="col-md-3">
-      <label htmlFor="variabletype_1" className="form-label">Тип</label>
-      <select name="variabletype_1" id="variabletype_1" className="form-select"><option value="1">Строка</option><option value="2">Число</option></select>
-    </div>
-    <div className="col-md-3">
-      <label htmlFor="variableimportant_1" className="form-label">Обязателен?</label>
-      <select name="variableimportant_1" id="variableimportant_1" className="form-select"><option value="1">Да</option><option value="2">Нет</option></select>
-    </div>
-  </>;
-}
+const back = { href: '/admin?type=Entities', label: 'Все сущности' };
 
-function EntityForm() {
-  return <>
-    <h1><b>Создание сущности</b></h1>
-    <form id="entity-create" action="/api/admin/entities" method="post" style={{ display: 'inline-block', minWidth: 500 }}>
-      <div className="mb-3"><label htmlFor="entity-title" className="form-label">Название</label>
-        <input type="text" name="title" id="entity-title" className="form-control" placeholder="Вагон метро" maxLength={255} required />
-      </div>
-      <div className="mb-3"><label htmlFor="entity-color" className="form-label">Цвет</label>
-        <input name="color" id="entity-color" type="color" className="form-control form-control-color" defaultValue="#563d7c" />
-      </div>
-      <p>Вводимые переменные</p>
-      <div className="alert alert-dark" role="alert">
-        Добавляйте и регулируйте поля ввода, которые будут являться шаблонной формой для создания моделей к сущности.
-      </div>
-      <div className="row" id="entityform"><VariableFields /></div>
-      <button id="add-variable" type="button" className="btn btn-outline-primary">Добавить ещё</button>{' '}
-      <button type="submit" className="btn btn-primary">Создать сущность</button>
-      <p id="entity-status" role="status" hidden />
-    </form>
-  </>;
-}
-
-export function AdminEntities(create: boolean) {
-  return AdminPage(create ? 'Создание сущности' : 'Сущности', 'AdminEntities', async () => {
-    if (create) return <EntityForm />;
-    const response = await apiFetch('/api/admin/entities', { auth: true });
-    if (!response?.ok) return null;
-    const items: { id: number; title: string }[] = await response.json();
+export function AdminEntities(mode: 'list' | 'create' | 'edit', id?: string | null) {
+  if (mode === 'edit' && !/^\d{1,10}$/.test(id ?? '')) notFound();
+  return AdminPage('editor', async () => {
+    if (mode === 'create') return <>
+      <PageHeader title="Новая сущность" back={back} description="Тип подвижного состава и набор полей для его моделей." />
+      <EntityForm />
+    </>;
+    if (mode === 'edit') {
+      const entity = await adminData<EntityDetails>('/api/admin/entities/' + id);
+      return <>
+        <PageHeader title={entity.title} back={back} description={'Моделей с этой сущностью: ' + entity.models + '.'} />
+        <EntityForm entity={entity} />
+      </>;
+    }
+    const entities = await adminData<EntityRow[]>('/api/admin/entities');
+    const create = <Button asChild><Link href="/admin?type=EntityCreate"><Plus />Сущность</Link></Button>;
     return <>
-      <h1><b>Сущности</b></h1>
-      <Link href="/admin?type=EntityCreate" className="btn btn-primary">Создать</Link>
-      <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
-        <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '50%' }}>Название</th></tr>
-        {items.map(item => <tr key={item.id}><td>{item.id}</td><td>{item.title}</td></tr>)}
-      </tbody></table></div>
+      <PageHeader title="Сущности" description="Типы подвижного состава и поля, которые заполняются для их моделей." actions={create} />
+      <EntitiesTable entities={entities} create={create} />
     </>;
   });
 }

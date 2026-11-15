@@ -1,69 +1,31 @@
+import { TriangleAlert } from 'lucide-react';
 import Link from '../../components/Link';
-import { apiFetch } from '../../api/client';
-import type { ReactNode } from 'react';
-import { AdminPage } from './AdminPage';
-
-interface Theme { id: number; title: string; status: number }
-interface Contest { id: number; themeid: number; openpretendsdate: number; closepretendsdate: number; opendate: number; closedate: number; status: number }
-const dates = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Moscow' });
-const statuses = ['Ещё не проведён', 'Отбор кандидатов', 'Отбор победителей', 'Завершён'];
-const fields = [['openpretendsdate', 'Дата начала отбора'], ['closepretendsdate', 'Дата конца отбора'],
-  ['opendate', 'Дата начала'], ['closedate', 'Дата конца']];
-
-function Editor({ id, title, endpoint, children }: { id: string; title: string; endpoint: string; children: ReactNode }) {
-  return <div className="modal fade" id={id} tabIndex={-1} aria-labelledby={id + '-title'} aria-hidden="true">
-    <div className="modal-dialog"><form className="modal-content" action={'/api/admin/contests/' + endpoint} method="post" data-contest-editor>
-      <div className="modal-header"><h1 className="modal-title fs-5" id={id + '-title'}><b>{title}</b></h1>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" /></div>
-      <div className="modal-body">{children}</div>
-      <div className="modal-footer"><button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-        <button type="submit" className="btn btn-primary">Создать</button></div>
-    </form></div>
-  </div>;
-}
+import { AdminPage, adminData } from './AdminPage';
+import { PageHeader, SectionTabs } from './PageHeader';
+import { ContestsTable, NewContest, NewTheme, ThemesList, type Contest, type Theme } from './contests/ContestsView';
 
 export function AdminContests(query: URLSearchParams) {
-  return AdminPage('Фотоконкурсы', 'AdminContests', async () => {
-    const result = await apiFetch('/api/admin/contests', { auth: true });
-    if (!result?.ok) return null;
-    const { contests, themes, enabled }: { contests: Contest[]; themes: Theme[]; enabled: boolean } = await result.json();
-    const categories = query.get('tab') === 'categories';
-    const tabClass = (active: boolean) => 'v-tab v-tab-b' + (active ? ' v-tab--active' : '');
-    const titles = new Map(themes.map(theme => [theme.id, theme.title]));
+  const categories = query.get('tab') === 'categories';
+  return AdminPage('editor', async () => {
+    const { contests, themes, configured, enabled } =
+      await adminData<{ contests: Contest[]; themes: Theme[]; configured?: boolean; enabled: boolean }>('/api/admin/contests');
     return <>
-      <h1><b>Фотоконкурсы</b></h1>
-      <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <Link href="/admin?type=Contests" className={tabClass(!categories)}><span className="v-tab__label">Конкурсы</span></Link>
-        <Link href="/admin?type=Contests&tab=categories" className={tabClass(categories)}><span className="v-tab__label">Категории</span></Link>
-      </div></div></div></div>
-      {categories ? <div id="categories__block" className="kandle__block active__block"><div className="p20w">
-        <button type="button" className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createContestTheme">Создать</button>
-        <table className="table"><thead><tr><th>ID</th><th>Название</th><th>В автоматическом отборе</th></tr></thead>
-          <tbody>{themes.map(theme => <tr key={theme.id}><td>{theme.id}</td><td>{theme.title}</td><td>{theme.status === 1 ? 'Да' : 'Нет'}</td></tr>)}</tbody></table>
-        <Editor id="createContestTheme" title="Добавление категории конкурса" endpoint="createtheme">
-          <label className="form-label d-block">Содержание<input type="text" className="form-control" name="body" required /></label>
-          <label className="form-check"><input className="form-check-input" name="active" type="checkbox" value="1" defaultChecked />В автоматическом отборе</label>
-        </Editor>
-      </div></div> : <div id="contests__block" className="kandle__block active__block"><div className="p20w">
-        <button type="button" disabled={!enabled || !themes.length} className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createContest">Провести новый</button>
-        {!enabled && <div className="alert alert-warning mt-3" role="alert">Задача проведения конкурсов отключена. <Link href="/admin?type=Settings" className="btn btn-sm btn-outline-dark">Настройки</Link></div>}
-        <table className="table"><thead><tr><th>ID</th><th>Тема</th>{fields.map(([key, label]) => <th key={key}>{label}</th>)}<th>Статус</th></tr></thead>
-          <tbody>{contests.map(contest => <tr key={contest.id}>
-            <td>{contest.id}</td><td>{titles.get(contest.themeid)}</td>
-            {[contest.openpretendsdate, contest.closepretendsdate, contest.opendate, contest.closedate].map((date, index) =>
-              <td key={index}>{dates.format(date * 1000)}</td>)}
-            <td>{statuses[contest.status] ?? 'Сбой'}</td>
-          </tr>)}</tbody></table>
-        <Editor id="createContest" title="Создание конкурса" endpoint="create">
-          <label className="form-label d-block">Тема<select name="themeid" className="form-select" required>
-            {themes.map(theme => <option key={theme.id} value={theme.id}>{theme.title}</option>)}
-          </select></label>
-          {fields.map(([key, label]) => <label key={key} className="form-label d-block">{label}
-            <input name={key} type="datetime-local" className="form-select" required />
-          </label>)}
-          <label className="form-check"><input name="startContestNow" type="checkbox" value="1" className="form-check-input" />Начать конкурс сразу после отбора</label>
-        </Editor>
-      </div></div>}
+      <PageHeader title="Фотоконкурсы" description="Тематические конкурсы: отбор кандидатов и голосование за победителей."
+        actions={categories ? <NewTheme /> : <NewContest themes={themes} />} />
+      <SectionTabs tabs={[
+        { href: '/admin?type=Contests', label: 'Конкурсы', active: !categories, count: contests.filter(contest => contest.status === 1 || contest.status === 2).length },
+        { href: '/admin?type=Contests&tab=categories', label: 'Категории', active: categories },
+      ]} />
+      {!enabled && !categories && <div role="status" className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-warning-foreground/20 bg-warning px-4 py-3 text-sm text-warning-foreground">
+        <TriangleAlert className="size-4 shrink-0" />
+        {configured === false
+          ? <p className="flex-1">Конкурсы отключены в настройках сервера (переменная <code className="font-mono text-[13px]">CONTESTS_ENABLED</code>): они не будут переходить между этапами.</p>
+          : <>
+            <p className="flex-1">Фоновая задача проведения конкурсов выключена: конкурсы не будут переходить между этапами.</p>
+            <Link href="/admin?type=Settings" className="font-medium underline underline-offset-2">Фоновые задачи</Link>
+          </>}
+      </div>}
+      {categories ? <ThemesList themes={themes} contests={contests} /> : <ContestsTable contests={contests} themes={themes} />}
     </>;
   });
 }

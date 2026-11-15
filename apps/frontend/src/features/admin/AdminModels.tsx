@@ -1,59 +1,64 @@
+import { Plus } from 'lucide-react';
+import { notFound } from 'next/navigation';
 import Link from '../../components/Link';
-import { apiFetch } from '../../api/client';
-import { Fragment } from 'react';
-import { AdminPage } from './AdminPage';
+import { AdminPage, adminData } from './AdminPage';
+import { PageHeader, SectionTabs } from './PageHeader';
+import { ModelForm, ModelsTable, type EntityOption, type ModelDetails, type ModelRow } from './models/ModelViews';
+import { RequestsList, type VehicleRequest } from './models/RequestsList';
+import { Button } from './ui/button';
 
-interface PendingRequest {
-  id: number;
-  title: string;
-  model: string;
-  fields: { label: string; value: string }[];
+const back = { href: '/admin?type=Models', label: 'База моделей' };
+
+export function AdminModels(query: URLSearchParams) {
+  return AdminPage('editor', async () => {
+    const [models, entities] = await Promise.all([
+      adminData<ModelRow[]>('/api/admin/models/catalog'),
+      adminData<EntityOption[]>('/api/internal/vehicle-models'),
+    ]);
+    const create = entities.length
+      ? <Button asChild><Link href="/admin?type=ModelsCreate"><Plus />Модель</Link></Button>
+      : <Button disabled title="Сначала создайте сущность"><Plus />Модель</Button>;
+    const entity = query.get('entity') ?? '';
+    return <>
+      <PageHeader title="База моделей" description="Модели подвижного состава, к которым авторы привязывают фотографии." actions={create} />
+      <ModelsTable models={models} entities={entities} initialEntity={/^\d+$/.test(entity) ? entity : ''} create={create} />
+    </>;
+  });
 }
 
-export async function AdminModels(query: URLSearchParams) {
-  return AdminPage('База моделей', 'AdminModels', async () => {
-    const [requests, catalog] = await Promise.all([
-      apiFetch('/api/admin/models/requests', { auth: true }),
-      apiFetch('/api/admin/models/catalog', { auth: true }),
+export function AdminModelForm(id?: string | null) {
+  if (id !== undefined && !/^\d{1,10}$/.test(id ?? '')) notFound();
+  return AdminPage('editor', async () => {
+    const [entities, model] = await Promise.all([
+      adminData<EntityOption[]>('/api/internal/vehicle-models'),
+      id ? adminData<ModelDetails>('/api/admin/models/catalog/' + id) : Promise.resolve(undefined),
     ]);
-    if (!requests?.ok || !catalog?.ok) return null;
-    const rows: PendingRequest[] = await requests.json();
-    const models: { id: number; title: string; model: string }[] = await catalog.json();
-    const active = query.get('tab') === 'moderate' ? 'moderate' : 'list';
     return <>
-      <h1><b>Модели</b></h1>
-      <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <Link href="/admin?type=Models" id="list" className={'v-tab v-tab-b' + (active === 'list' ? ' v-tab--active' : '')}>
-          <span className="v-tab__label">Список</span>
-        </Link>
-        <Link href="/admin?type=Models&tab=moderate" id="moderate" className={'v-tab v-tab-b' + (active === 'moderate' ? ' v-tab--active' : '')}>
-          <span className="v-tab__label">Заявки на добавление {rows.length > 0 && <span id="mdlnum" className="badge text-bg-danger">{rows.length}</span>}</span>
-        </Link>
-      </div></div></div></div>
-      {active === 'list' ? <div id="list__block" className="active__block">
-        <Link href="/admin?type=ModelsCreate" className="btn btn-primary mt-3">Создать</Link>
-        <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
-          <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '20%' }}>Название</th><th style={{ width: '50%' }}>Сущность</th><th>Действия</th></tr>
-          {models.map(model => <tr key={model.id} id={'pht' + model.id}>
-            <td>{model.id}</td><td>{model.title}</td><td>{model.model}</td>
-            <td className="c"><Link className="btn btn-primary" href={'/admin?type=EntityEdit&id=' + model.id + '&mod=1'}>Редактировать</Link>{' '}
-              <button type="button" className="btn btn-danger" data-model-delete={model.id}>Удалить</button>
-            </td>
-          </tr>)}
-        </tbody></table></div><br />
-      </div> : <div id="moderate__block" className="active__block"><div className="p20w" style={{ display: 'block' }}>
-        <table className="table"><tbody>
-          <tr><th>ID</th><th>Название</th><th>Сущность</th><th>Данные</th><th>Действия</th></tr>
-          {rows.map(row => <tr key={row.id} id={'mdl' + row.id} data-request={row.id}>
-            <td>{row.id}</td><td>{row.title}</td><td>{row.model}</td>
-            <td>{row.fields.map(({ label, value }, index) => <Fragment key={index}><b>{label}: </b>{value}<br /></Fragment>)}</td>
-            <td className="c">
-              <button type="button" className="btn btn-primary" data-decision="accept">Принять</button>{' '}
-              <button type="button" className="btn btn-danger" data-decision="decline">Отклонить</button>
-            </td>
-          </tr>)}
-        </tbody></table>
-      </div><br /></div>}
+      <PageHeader title={model ? model.title : 'Новая модель'} back={back}
+        description={model ? 'Модель № ' + model.id + '. Сущность изменить нельзя.' : 'Заполните описание и характеристики по шаблону сущности.'} />
+      <ModelForm entities={entities} model={model} />
+    </>;
+  });
+}
+
+const requestTabs = [{ status: 0, label: 'Новые' }, { status: 1, label: 'Принятые' }, { status: 2, label: 'Отклонённые' }];
+
+export function AdminVehicleRequests(query: URLSearchParams) {
+  const status = query.get('status') === '1' ? 1 : query.get('status') === '2' ? 2 : 0;
+  return AdminPage('editor', async () => {
+    const [requests, pending] = await Promise.all([
+      adminData<VehicleRequest[]>('/api/admin/models/requests?status=' + status),
+      status ? adminData<VehicleRequest[]>('/api/admin/models/requests?status=0') : Promise.resolve(null),
+    ]);
+    return <>
+      <PageHeader title="Заявки на модели" description="Пользователи предлагают модели, которых нет в базе. Принятая заявка сразу становится моделью."
+        actions={<Button variant="outline" asChild><Link href="/admin?type=Models">База моделей</Link></Button>} />
+      <SectionTabs tabs={requestTabs.map(tab => ({
+        href: '/admin?type=VehicleRequests' + (tab.status ? '&status=' + tab.status : ''), label: tab.label, active: tab.status === status,
+        count: tab.status === 0 ? (pending ?? requests).length : undefined,
+      }))} />
+      {status > 0 && <p className="mb-4 text-[13px] text-muted-foreground">Показаны последние 100 заявок.</p>}
+      <RequestsList requests={requests} status={status} />
     </>;
   });
 }
