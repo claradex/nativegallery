@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { ProfileForm, ProfileThemeForm } from './ProfileForm';
 import { ProfileSessions } from './ProfileSessions';
 import type { ProfileSession, ProfileSettingsData } from '@nativegallery/contracts';
@@ -17,7 +18,7 @@ export async function ProfileSettings({ searchParams }: { searchParams: Promise<
   }
   return <tr><td className="main"><center><div className="tabs">
     <nav className="tab-nav">{tabs.map(([tab, label]) =>
-      <a key={label} href={tab ? '?type=' + tab : '/lk/profile'} className={type === tab ? 'tab-item active' : 'tab-item'}>{label}</a>)}
+      <Link key={label} href={tab ? '/lk/profile?type=' + tab : '/lk/profile'} className={type === tab ? 'tab-item active' : 'tab-item'}>{label}</Link>)}
     </nav>
     <div className="tab-content">{content}</div>
   </div></center></td></tr>;

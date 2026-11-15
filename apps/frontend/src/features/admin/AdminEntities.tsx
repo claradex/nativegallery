@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
@@ -52,7 +53,7 @@ export function AdminEntities(create: boolean) {
     const items: { id: number; title: string }[] = await response.json();
     return <>
       <h1><b>Сущности</b></h1>
-      <a href="/admin?type=EntityCreate" className="btn btn-primary">Создать</a>
+      <Link href="/admin?type=EntityCreate" className="btn btn-primary">Создать</Link>
       <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
         <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '50%' }}>Название</th></tr>
         {items.map(item => <tr key={item.id}><td>{item.id}</td><td>{item.title}</td></tr>)}

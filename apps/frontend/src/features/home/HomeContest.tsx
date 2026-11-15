@@ -1,5 +1,6 @@
 'use client';
 
+import Link from '../../components/Link';
 import { useEffect, useState } from 'react';
 import { Countdown } from '../contests/Countdown';
 
@@ -57,9 +58,9 @@ export function HomeContest({ contest, title }: { contest: Contest; title: strin
       : 'Лучшие фотографии по мнению сообщества ' + title + ' будут отмечены'}</b>
     <br /><br />
     <div id="contestBtns">{voting
-      ? <a href="/voting" style={linkStyle} type="button">Голосовать!</a>
-      : <><a href="/voting/sendpretend" style={linkStyle} type="button">Участвовать!</a>{' '}
-        <a href="/voting/waiting" style={linkStyle} type="button">Голосовать за претендентов</a></>}
+      ? <Link href="/voting" style={linkStyle} type="button">Голосовать!</Link>
+      : <><Link href="/voting/sendpretend" style={linkStyle} type="button">Участвовать!</Link>{' '}
+        <Link href="/voting/waiting" style={linkStyle} type="button">Голосовать за претендентов</Link></>}
     </div>
   </div>;
 }

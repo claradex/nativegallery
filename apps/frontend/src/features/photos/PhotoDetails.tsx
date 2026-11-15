@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFind } from '../../api/client';
 import type { PhotoDetailsData } from '@nativegallery/contracts';
 
@@ -19,9 +20,9 @@ function Details({ photo }: { photo: PhotoDetailsData }) {
     <>
       <h1>Информация об изображении</h1>
       <div style={{ display: 'inline-block' }}>
-        <a href={'/photo/' + photo.id + '/'}>
+        <Link href={'/photo/' + photo.id + '/'}>
           <img src={'/api/photo/compress?url=' + encodeURIComponent(photo.url)} width={250} alt="347 КБ" className="f" loading="lazy" />
-        </a>
+        </Link>
       </div>
       <br /><br />
       <table className="p20"><tbody>

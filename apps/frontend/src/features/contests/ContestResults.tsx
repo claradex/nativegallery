@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import type { ContestWinnerData } from '@nativegallery/contracts';
 import { apiGet } from '../../api/client';
 
@@ -5,8 +6,8 @@ const dates = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', day:
 
 function ResultLinks() {
   return <p className="narrow" style={{ fontSize: 19 }}>
-    <a href="/voting">Голосование</a>&nbsp; · &nbsp;<b>Победители</b>&nbsp; · &nbsp;
-    <a href="/voting/rating">Рейтинг</a>&nbsp; · &nbsp;<a href="/voting/waiting">Претенденты</a>
+    <Link href="/voting">Голосование</Link>&nbsp; · &nbsp;<b>Победители</b>&nbsp; · &nbsp;
+    <Link href="/voting/rating">Рейтинг</Link>&nbsp; · &nbsp;<Link href="/voting/waiting">Претенденты</Link>
   </p>;
 }
 
@@ -17,12 +18,12 @@ function ResultGroup({ winners }: { winners: ContestWinnerData[] }) {
       <a href={'#contest-' + first.contestId} title="Результаты конкурса">{dates.format(first.date * 1000)}</a>
     </b></span><br /><span className="sm">{first.theme}</span></p>
     <div style={{ display: 'table', marginInline: 'auto' }} id={'contest-' + first.contestId}>
-      {winners.map(winner => <a key={winner.id} href={'/photo/' + winner.photoId + '/'} className="p20"
+      {winners.map(winner => <Link key={winner.id} href={'/photo/' + winner.photoId + '/'} className="p20"
         style={{ display: 'table-cell', textAlign: 'center', verticalAlign: 'bottom', padding: '20px 20px 10px', fontSize: 17 }}>
         <img src={winner.photoUrl} className="f" style={{ marginBottom: 7 }} alt="" loading="lazy" /><br />
         <img src={'/static/img/vs' + (4 - winner.place) + '.png'} style={{ position: 'relative', top: -2 }}
           alt={winner.place + '-е место'} loading="lazy" /> &nbsp;
-      </a>)}
+      </Link>)}
     </div><br />
   </>;
 }

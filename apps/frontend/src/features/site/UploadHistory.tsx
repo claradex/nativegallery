@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { Fragment } from 'react';
 import { legacyDate, type UploadHistoryData } from '@nativegallery/contracts';
 
@@ -43,7 +44,7 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
           </a></td>
           <td className="d">
             <p><span style={{ wordSpacing: -1 }}><b>{photo.place}</b></span></p>
-            <p className="sm"><b>{legacyDate(photo.posted_at)}</b><br />Автор: <a href={'/author/' + author.id + '/'}>{author.username}</a></p>
+            <p className="sm"><b>{legacyDate(photo.posted_at)}</b><br />Автор: <Link href={'/author/' + author.id + '/'}>{author.username}</Link></p>
             {photo.moderated === 2 && <p className="sm"><b>Причина отклонения: {declineReasons[photo.declineReason] ?? declineReasons[0]}</b></p>}
             {photo.declineComment && <p className="sm"><b>Комментарий: </b> {photo.declineComment}</p>}
           </td>
@@ -51,7 +52,7 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
           <td className="cs">{photo.moderated === -1 ? 'В обработке' : (photo.moderated === 0 || photo.endmoderation === -1) ? 'На модерации' : <>
             {legacyDate(photo.endmoderation)}<div style={{ marginTop: 15 }}>Оценка<br /><b>И{photo.rating} К{photo.rating}</b></div>
           </>}</td>
-          <td className="cs">{photo.moderated !== -1 && <a type="button" href={'/lk/editimage?id=' + photo.id}>Редактировать</a>}</td>
+          <td className="cs">{photo.moderated !== -1 && <Link type="button" href={'/lk/editimage?id=' + photo.id}>Редактировать</Link>}</td>
         </tr>)}
       </tbody></table>
     </div><br />

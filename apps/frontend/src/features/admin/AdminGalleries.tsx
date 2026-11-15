@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { forbidden } from 'next/navigation';
 import { AdminPage } from './AdminPage';
@@ -13,7 +14,7 @@ function GalleryForm({ gallery }: { gallery?: Gallery }) {
   const openedId = 'gallery-opened-' + (gallery?.id ?? 'new');
   return <form className="card mb-3" method="post" action={'/api/admin/galleries' + (gallery ? '/' + gallery.id : '')}>
     <div className="card-body">
-      {gallery && <a href={'/article/' + gallery.id}>{gallery.title}</a>}
+      {gallery && <Link href={'/article/' + gallery.id}>{gallery.title}</Link>}
       <div className="mb-3">
         <label className="form-label" htmlFor={titleId}>Название</label>
         <input className="form-control" id={titleId} name="title" defaultValue={gallery?.title} maxLength={255} required />

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiGet, readCookie, requestCookie } from '../../api/client';
 import { UploadHistory } from './UploadHistory';
 
@@ -7,18 +8,18 @@ interface IndexEvent { id: number; oldindex: number; newindex: number; date: num
 function AccountSummary({ data }: { data: Summary }) {
   return <>
     <h1>Общая информация</h1>
-    <h4>Здравствуйте, <a href={'/author/' + data.id + '/'}>{data.username}</a>!</h4>
+    <h4>Здравствуйте, <Link href={'/author/' + data.id + '/'}>{data.username}</Link>!</h4>
     <p>Количество ваших фотографий на сайте: <b>{data.published}</b></p>
     <p>Всего фотографий в очереди на публикацию: <b>{data.pending}</b></p><br />
     {data.uploadIndex !== null && <>
       <h4>Индекс загрузки</h4>
-      <p>Текущее значение <a href="/page/111" className="und">индекса загрузки</a>: <b>{data.uploadIndex}</b></p>
+      <p>Текущее значение <Link href="/page/111" className="und">индекса загрузки</Link>: <b>{data.uploadIndex}</b></p>
       <div className="p20" style={{ float: 'left', padding: '15px 15px 20px', width: 240 }}>
         <div style={{ backgroundColor: '#fff', width: 240, height: 16 }} />
         <div style={{ backgroundColor: '#599fe7', width: 4 * data.uploadIndex, height: 14, position: 'relative', top: -15, marginBottom: -19 }} />
         <img src="/static/img/scale1.png" alt="" loading="lazy" style={{ position: 'relative', top: -12, marginLeft: -5, marginBottom: -22 }} />
       </div><br style={{ clear: 'both' }} />
-      <p><a href="/lk/pday" className="und">История изменения индекса загрузки</a></p>
+      <p><Link href="/lk/pday" className="und">История изменения индекса загрузки</Link></p>
     </>}
     <br style={{ clear: 'both' }} /><br /><br />&nbsp;
   </>;

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiGet } from '../../api/client';
 
 interface GallerySummary {
@@ -11,7 +12,7 @@ export async function GalleryDirectory() {
     <h1>Разные фотогалереи</h1>
     <div className="p20">
       <ul className="straight">
-        {galleries.map(gallery => <li key={gallery.id}><a href={'/article/' + gallery.id}>{gallery.title}</a></li>)}
+        {galleries.map(gallery => <li key={gallery.id}><Link href={'/article/' + gallery.id}>{gallery.title}</Link></li>)}
       </ul>
     </div>
   </td></tr>;

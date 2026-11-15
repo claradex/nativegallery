@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import type { PhotoPageData } from '@nativegallery/contracts';
 
 export function PhotoRating({ photo }: { photo: PhotoPageData }) {
@@ -20,7 +21,7 @@ export function PhotoRating({ photo }: { photo: PhotoPageData }) {
     <div id="votes" className="votes">
       {([1, 0] as const).map(type => <table key={type} className={'vblock ' + (type === 1 ? 'pro' : 'coN')}>
         <tbody>{rating.votes.filter(vote => vote.type === type).map(vote =>
-          <tr key={vote.id}><td><a href={'/author/' + vote.authorId + '/'}>{vote.author}</a></td>
+          <tr key={vote.id}><td><Link href={'/author/' + vote.authorId + '/'}>{vote.author}</Link></td>
             <td className="vv">{type === 1 ? '+1' : '-1'}</td></tr>)}</tbody>
       </table>)}
     </div>

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiGet } from '../../api/client';
 import type { SiteOverview } from '@nativegallery/contracts';
 
@@ -11,11 +12,11 @@ function StaffMember({ user }: { user: SiteOverview['staff'][number] }) {
   return (
     <li>
       <b>
-        <a href={'/author/' + user.id + '/'}>
+        <Link href={'/author/' + user.id + '/'}>
           <img src={user.photourl || '/static/img/avatar.png'} width={32} loading="lazy"
             data-avatar-fallback style={{ borderRadius: 3, marginRight: 5 }} />
           {user.username}
-        </a>
+        </Link>
       </b>
     </li>
   );

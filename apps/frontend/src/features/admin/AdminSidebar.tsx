@@ -1,5 +1,6 @@
 'use client';
 
+import Link from '../../components/Link';
 import { useState } from 'react';
 
 const links = [
@@ -18,14 +19,14 @@ export function AdminSidebar({ title, pending }: { title: string; pending: numbe
       </div></div>
     </header>
     <div className={open ? 'nav show-menu' : 'nav'} id="navbar"><nav className="nav__container"><div>
-      <a href="/admin" className="nav__link nav__logo"><h5><b>{title}</b></h5></a>
+      <Link href="/admin" className="nav__link nav__logo"><h5><b>{title}</b></h5></Link>
       <div className="nav__list"><div className="nav__items"><h3 className="nav__subtitle" />
-        {links.map(([section, icon, label]) => <a key={section} href={section ? '/admin?type=' + section : '/admin'} className="nav__link">
+        {links.map(([section, icon, label]) => <Link key={section} href={section ? '/admin?type=' + section : '/admin'} className="nav__link">
           <i className={'bx bx-' + icon + ' nav__icon'} />
           <span className="nav__name">{label}{section === 'Photo' && pending > 0 && <> <span className="badge text-bg-danger">{pending}</span></>}
             {['Contests', 'GeoDB', 'Settings'].includes(section) && <> <span className="badge text-bg-warning">BETA</span></>}
           </span>
-        </a>)}
+        </Link>)}
       </div></div>
     </div></nav></div>
   </div>;

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { notFound, forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
@@ -25,8 +26,8 @@ function UserList({ users, origin }: { users: UserRow[]; origin: string }) {
       <th scope="row">{user.id}</th>
       <td><img src={user.photourl} width={35} alt="" loading="lazy" /></td>
       <td>{user.username}</td><td>{user.email}</td><td>{user.directUpload ? 'Да' : 'Нет'}</td>
-      <td><a href={'/author/' + user.id}>{origin}/author/{user.id}</a></td>
-      <td><div className="cmt-submit"><a href={'/admin?type=UserEdit&user_id=' + user.id}>Редактировать</a></div></td>
+      <td><Link href={'/author/' + user.id}>{origin}/author/{user.id}</Link></td>
+      <td><div className="cmt-submit"><Link href={'/admin?type=UserEdit&user_id=' + user.id}>Редактировать</Link></div></td>
     </tr>)}</tbody>
   </table>;
 }
@@ -35,7 +36,7 @@ function UserEditor({ user, origin }: { user: UserDetails; origin: string }) {
   return <form action={'/api/admin/users/' + user.id} id="user-edit" style={{ display: 'inline-block', minWidth: 500 }}>
     <p><img src={user.photourl} width={50} alt="" loading="lazy" /> {user.username}</p>
     <p>Был в сети: <b>{legacyDate(user.online)} {user.online >= Date.now() / 1000 - 300 && <i>(online)</i>}</b></p>
-    <p>Ссылка на профиль: <b><a href={'/author/' + user.id}>{origin}/author/{user.id}</a></b></p>
+    <p>Ссылка на профиль: <b><Link href={'/author/' + user.id}>{origin}/author/{user.id}</Link></b></p>
     <div className="p20" style={{ textAlign: 'left', marginBottom: 15 }}>
       <h4 className="mt-3"><b>Настройки</b></h4>
       <label className="d-block mt-1">Прямая загрузка<select className="form-select" name="premoderation" defaultValue={String(user.directUpload)}>

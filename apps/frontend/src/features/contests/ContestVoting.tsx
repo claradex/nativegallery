@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { Countdown } from './Countdown';
 import { apiGet } from '../../api/client';
 import { Ballot, type Candidate } from './Ballot';
@@ -10,8 +11,8 @@ export async function ContestVoting() {
   return <tr><td className="main"><div style={{ textAlign: 'center' }}>
     <h1>Фотоконкурс</h1>
     <p className="narrow" style={{ fontSize: 19 }}><b>Голосование</b>&nbsp; · &nbsp;
-      <a href="/voting/results">Победители</a>&nbsp; · &nbsp;<a href="/voting/rating">Рейтинг</a>&nbsp; · &nbsp;
-      <a href="/voting/waiting">Претенденты</a>
+      <Link href="/voting/results">Победители</Link>&nbsp; · &nbsp;<Link href="/voting/rating">Рейтинг</Link>&nbsp; · &nbsp;
+      <Link href="/voting/waiting">Претенденты</Link>
     </p>
     <div style={{ marginTop: 20 }}>Чтобы проголосовать, отметьте одну, две или три фотографии, которые Вам понравились</div><br /><br />
     {data.contest === null ? <>

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiGet } from '../../api/client';
 
 interface AuthorResult {
@@ -21,10 +22,10 @@ export async function AuthorSearch({ searchParams }: { searchParams: Promise<{ q
     </form>
     {query && (authors.length ? <ul className="straight">
       {authors.map(author => <li key={author.id}>
-        <a href={'/author/' + author.id + '/'}>
+        <Link href={'/author/' + author.id + '/'}>
           <img src={author.photourl || '/static/img/avatar.png'} width={32} alt="" loading="lazy" data-avatar-fallback />{' '}
           {author.username}
-        </a>
+        </Link>
       </li>)}
     </ul> : <p>Авторы не найдены.</p>)}
   </td></tr>;

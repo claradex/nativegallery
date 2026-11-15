@@ -1,5 +1,6 @@
 'use client';
 
+import Link from '../../components/Link';
 import { useRef, useState } from 'react';
 
 export function AuthorSubscription({ id, signedIn, subscribed, followers }: {
@@ -36,6 +37,6 @@ export function AuthorSubscription({ id, signedIn, subscribed, followers }: {
             void change();
           } : undefined}><div className="handle" /></div>&nbsp;
         <label className="toggle-label" onClick={signedIn ? change : undefined}><b>Подписка на новые фотографии этого автора</b> (подписаны: <b id="subscr_cnt">{state.followers}</b>)</label>
-        {!signedIn && <> <a href="/login">Войти</a></>}
+        {!signedIn && <> <Link href="/login">Войти</Link></>}
       </div>;
 }

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { PhotoInteractions } from './PhotoInteractions';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
@@ -19,7 +20,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
         <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>
         <td>{photo.description}</td>
       </tr>{photo.vehicle && <PhotoVehicleRoute vehicle={photo.vehicle} route={photo.vehicleRoute} />}</tbody></table>
-      <div>Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a>
+      <div>Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
         {'         Дата: '}<b>{photo.takenAt === 943909200 ? 'дата не указана' : legacyDate(photo.takenAt)}</b>
       </div>
       <table id="pp-items"><tbody><tr>
@@ -30,7 +31,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
               <div style={{ marginBottom: 10 }}>Лицензия: <b>BY-NC</b></div>
               Опубликовано <b>{legacyDate(photo.publishedAt)}</b><br />
               Просмотров — {photo.views}<br /><br />
-              <a href={'/photoext?id=' + photo.id}>Подробная информация</a>
+              <Link href={'/photoext?id=' + photo.id}>Подробная информация</Link>
             </div>
           </div>
           {photo.signedIn && <div className="p0" id="pp-item-tools">

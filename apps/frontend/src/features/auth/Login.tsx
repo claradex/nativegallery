@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { LoginForm } from './LoginForm';
 import { redirect } from 'next/navigation';
 import { siteContext } from '../site/SiteContext';
@@ -10,7 +11,7 @@ function LoginContent() {
       <h1><b>Авторизация</b></h1>
       <div className="mf-center-block mf-label">
         <LoginForm />
-        <div style={{ marginTop: 15 }}><a href="/register" className="mf-button">Регистрация</a></div>
+        <div style={{ marginTop: 15 }}><Link href="/register" className="mf-button">Регистрация</Link></div>
       </div>
       <br />
     </div>

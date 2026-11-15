@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
@@ -57,13 +58,13 @@ export function AdminPhotos() {
     return <>
       <h1><b>Фотографии</b></h1>
       <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <a id="moderate" href="/admin?type=Photo" className="v-tab v-tab-b v-tab--active"><span className="v-tab__label">На модерации</span></a>
+        <Link id="moderate" href="/admin?type=Photo" className="v-tab v-tab-b v-tab--active"><span className="v-tab__label">На модерации</span></Link>
       </div></div></div></div>
       <div id="moderate__block" className="active__block"><div className="p20w"><table className="table"><tbody>
         <tr><th style={{ width: 100 }}>Изображение</th><th style={{ width: '50%' }}>Информация</th><th>Действия</th></tr>
         {photos.map(photo => <tr key={photo.id} id={'pht' + photo.id}>
           <td><a href={'/photo/' + photo.id} target="_blank"><img src={photo.photourl} width={150} loading="lazy" alt="" /></a></td>
-          <td><b>{photo.place}</b><p>{photo.postbody}</p><a href={'/author/' + photo.user_id}>Автор</a></td>
+          <td><b>{photo.place}</b><p>{photo.postbody}</p><Link href={'/author/' + photo.user_id}>Автор</Link></td>
           <td className="c">
             <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target={'#acceptPhotoModal' + photo.id}>Принять</button>{' '}
             <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target={'#declinePhotoModal' + photo.id}>Отклонить</button>

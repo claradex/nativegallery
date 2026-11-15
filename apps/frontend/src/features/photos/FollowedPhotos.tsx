@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { MarkFollowedPhotos } from './MarkFollowedPhotos';
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
 import { apiGet } from '../../api/client';
@@ -11,7 +12,7 @@ function FollowedPhoto({ photo }: { photo: TopPhoto }) {
     <td className="pb_descr">
       <p><b className="pw-place">{photo.place}</b></p>
       <span className="pw-descr">{photo.postbody}</span>
-      <p className="sm"><b>{legacyDate(photo.timeupload)}</b><br />Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a></p>
+      <p className="sm"><b>{legacyDate(photo.timeupload)}</b><br />Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link></p>
     </td>
   </tr></tbody></table></div>;
 }

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { Fragment } from 'react';
 import { AdminPage } from './AdminPage';
@@ -22,20 +23,20 @@ export async function AdminModels(query: URLSearchParams) {
     return <>
       <h1><b>Модели</b></h1>
       <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <a href="/admin?type=Models" id="list" className={'v-tab v-tab-b' + (active === 'list' ? ' v-tab--active' : '')}>
+        <Link href="/admin?type=Models" id="list" className={'v-tab v-tab-b' + (active === 'list' ? ' v-tab--active' : '')}>
           <span className="v-tab__label">Список</span>
-        </a>
-        <a href="/admin?type=Models&tab=moderate" id="moderate" className={'v-tab v-tab-b' + (active === 'moderate' ? ' v-tab--active' : '')}>
+        </Link>
+        <Link href="/admin?type=Models&tab=moderate" id="moderate" className={'v-tab v-tab-b' + (active === 'moderate' ? ' v-tab--active' : '')}>
           <span className="v-tab__label">Заявки на добавление {rows.length > 0 && <span id="mdlnum" className="badge text-bg-danger">{rows.length}</span>}</span>
-        </a>
+        </Link>
       </div></div></div></div>
       {active === 'list' ? <div id="list__block" className="active__block">
-        <a href="/admin?type=ModelsCreate" className="btn btn-primary mt-3">Создать</a>
+        <Link href="/admin?type=ModelsCreate" className="btn btn-primary mt-3">Создать</Link>
         <div className="p20w" style={{ display: 'block' }}><table className="table"><tbody>
           <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '20%' }}>Название</th><th style={{ width: '50%' }}>Сущность</th><th>Действия</th></tr>
           {models.map(model => <tr key={model.id} id={'pht' + model.id}>
             <td>{model.id}</td><td>{model.title}</td><td>{model.model}</td>
-            <td className="c"><a className="btn btn-primary" href={'/admin?type=EntityEdit&id=' + model.id + '&mod=1'}>Редактировать</a>{' '}
+            <td className="c"><Link className="btn btn-primary" href={'/admin?type=EntityEdit&id=' + model.id + '&mod=1'}>Редактировать</Link>{' '}
               <button type="button" className="btn btn-danger" data-model-delete={model.id}>Удалить</button>
             </td>
           </tr>)}

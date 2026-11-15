@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { AuthorSubscription } from './AuthorSubscription';
 import { apiFind, isId } from '../../api/client';
 import { notFound } from 'next/navigation';
@@ -23,7 +24,7 @@ function ProfileContent({ profile }: { profile: Profile }) {
   return <>
     <h1>{profile.username}{profile.admin === 1 && <img width={32} src="/static/img/star.png" alt="" loading="lazy" />}</h1>
     {profile.admin === 1 ? 'Администратор сервера' : profile.admin === 2 ? 'Фотомодератор' : null}
-    {profile.own && <p><b><a href="/lk/profile">Редактировать мой профиль</a></b></p>}
+    {profile.own && <p><b><Link href="/lk/profile">Редактировать мой профиль</Link></b></p>}
     <div className="p20" style={{ paddingRight: 12 }}>
       {profile.badge && <><div style={{ float: 'left', border: 'solid 1px #3b7dc1', padding: '6px 10px 7px',
         marginBottom: 13, backgroundColor: '#0199ff44', whiteSpace: 'pre-line' }}><b>{profile.badge}</b></div><br /></>}
@@ -49,7 +50,7 @@ function ProfileContent({ profile }: { profile: Profile }) {
     </div>
     {profile.about && <div className="p20" style={{ marginTop: 8 }}><h4>О себе</h4>
       <span style={{ whiteSpace: 'pre-line' }}>{profile.about}</span></div>}
-    <div style={{ marginTop: 25 }}><b><a href={'/search?id=' + profile.id}>Найти все фотографии, сделанные этим пользователем</a></b></div>
+    <div style={{ marginTop: 25 }}><b><Link href={'/search?id=' + profile.id}>Найти все фотографии, сделанные этим пользователем</Link></b></div>
     {profile.own ? <div style={{ marginTop: 8 }}>Пользователей, подписанных на мои фотографии: <b>{profile.followers}</b></div>
       : <AuthorSubscription id={profile.id} signedIn={profile.signedIn} subscribed={profile.subscribed} followers={profile.followers} />}
   </>;

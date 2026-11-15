@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
 import { legacyDate, type VehiclePageData } from '@nativegallery/contracts';
@@ -15,7 +16,7 @@ function VehiclePhoto({ photo, vehicleId }: { photo: VehiclePageData['photos'][n
       <p><b className="pw-place">{photo.place}</b></p>
       <span className="pw-descr">{photo.postbody}</span>
       <p className="sm"><b>{legacyDate(photo.timeupload)}</b><br />
-        Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a>
+        Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
       </p>
     </td>
   </tr></tbody></table></div>;

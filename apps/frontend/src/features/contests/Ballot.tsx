@@ -1,5 +1,6 @@
 'use client';
 
+import Link from '../../components/Link';
 import { useRef, useState } from 'react';
 import { legacyDate } from '@nativegallery/contracts';
 
@@ -18,7 +19,7 @@ function CandidateRow({ photo, signedIn, vote, voted }: { photo: Candidate; sign
       <div className="hpshade"><div className="eye-icon">{photo.views}</div></div>
     </a></td>
     <td className="pb_descr"><p>{photo.body}</p><p><b className="pw-place">{photo.place}</b></p>
-      <p className="sm"><b>{legacyDate(photo.date)}</b><br />Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a></p>
+      <p className="sm"><b>{legacyDate(photo.date)}</b><br />Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link></p>
     </td>
   </tr></tbody></table></div>;
 }

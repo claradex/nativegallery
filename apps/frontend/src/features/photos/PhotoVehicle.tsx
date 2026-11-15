@@ -1,9 +1,10 @@
+import Link from '../../components/Link';
 import type { PhotoPageData } from '@nativegallery/contracts';
 
 type Vehicle = NonNullable<PhotoPageData['vehicle']>;
 
 function VehicleLink({ vehicle }: { vehicle: Vehicle }) {
-  return <a href={'/vehicle/' + vehicle.id}>{vehicle.title}</a>;
+  return <Link href={'/vehicle/' + vehicle.id}>{vehicle.title}</Link>;
 }
 
 export function PhotoVehicleRoute({ vehicle, route }: { vehicle: Vehicle; route: string }) {

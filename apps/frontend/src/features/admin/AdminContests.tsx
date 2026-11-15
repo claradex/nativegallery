@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import type { ReactNode } from 'react';
 import { AdminPage } from './AdminPage';
@@ -32,8 +33,8 @@ export function AdminContests(query: URLSearchParams) {
     return <>
       <h1><b>Фотоконкурсы</b></h1>
       <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <a href="/admin?type=Contests" className={tabClass(!categories)}><span className="v-tab__label">Конкурсы</span></a>
-        <a href="/admin?type=Contests&tab=categories" className={tabClass(categories)}><span className="v-tab__label">Категории</span></a>
+        <Link href="/admin?type=Contests" className={tabClass(!categories)}><span className="v-tab__label">Конкурсы</span></Link>
+        <Link href="/admin?type=Contests&tab=categories" className={tabClass(categories)}><span className="v-tab__label">Категории</span></Link>
       </div></div></div></div>
       {categories ? <div id="categories__block" className="kandle__block active__block"><div className="p20w">
         <button type="button" className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createContestTheme">Создать</button>
@@ -45,7 +46,7 @@ export function AdminContests(query: URLSearchParams) {
         </Editor>
       </div></div> : <div id="contests__block" className="kandle__block active__block"><div className="p20w">
         <button type="button" disabled={!enabled || !themes.length} className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createContest">Провести новый</button>
-        {!enabled && <div className="alert alert-warning mt-3" role="alert">Задача проведения конкурсов отключена. <a href="/admin?type=Settings" className="btn btn-sm btn-outline-dark">Настройки</a></div>}
+        {!enabled && <div className="alert alert-warning mt-3" role="alert">Задача проведения конкурсов отключена. <Link href="/admin?type=Settings" className="btn btn-sm btn-outline-dark">Настройки</Link></div>}
         <table className="table"><thead><tr><th>ID</th><th>Тема</th>{fields.map(([key, label]) => <th key={key}>{label}</th>)}<th>Статус</th></tr></thead>
           <tbody>{contests.map(contest => <tr key={contest.id}>
             <td>{contest.id}</td><td>{titles.get(contest.themeid)}</td>

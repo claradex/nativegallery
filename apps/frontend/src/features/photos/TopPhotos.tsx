@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiGet } from '../../api/client';
 import { legacyDate, type TopPhoto } from '@nativegallery/contracts';
 
@@ -19,7 +20,7 @@ function RankedPhoto({ photo, rank }: { photo: TopPhoto; rank: number }) {
           <span className="pw-descr">{photo.postbody}</span>
           <p className="sm">
             <b>{legacyDate(photo.timeupload)}</b><br />
-            Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a>
+            Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
           </p>
         </td>
       </tr></tbody></table>

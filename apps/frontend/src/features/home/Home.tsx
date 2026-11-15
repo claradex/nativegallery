@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import './Home.css';
 import './HomeContest.css';
 import { apiGet } from '../../api/client';
@@ -25,7 +26,7 @@ function RandomPhoto({ photo }: { photo: HomeData['random'][number] }) {
     <div className="prw-wrapper">
       <span style={{ wordSpacing: -1 }}><b>{photo.place}</b></span><div>{label}</div>
     </div>
-    <a href={'/photo/' + photo.id} className="prw-animate" style={{ backgroundImage: 'url("' + thumbnail + '")' }}></a>
+    <Link href={'/photo/' + photo.id} className="prw-animate" style={{ backgroundImage: 'url("' + thumbnail + '")' }}></Link>
   </div>;
 }
 
@@ -37,31 +38,31 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
         <table id="idx-main"><tbody>
             <tr>
                 <td style={{ verticalAlign: 'top', paddingRight: 20 }}>
-                    <h4><a href="/top30">Самые популярные за 24 часа</a></h4>
+                    <h4><Link href="/top30">Самые популярные за 24 часа</Link></h4>
                     <div>
-                        {popular.map(photo => <a key={photo.id} href={'/photo/' + photo.id} className="prw pop-prw">
+                        {popular.map(photo => <Link key={photo.id} href={'/photo/' + photo.id} className="prw pop-prw">
                           <img width={250} loading="lazy" src={'/api/photo/compress?url=' + photo.photourl} />
                           <div className="hpshade"><div className="eye-icon">+{photo.views}</div></div>
                           {photo.priority === 1 && <div className="temp" style={{ backgroundImage: 'url(/static/img/cond.png)' }} />}
-                        </a>)}
+                        </Link>)}
                     </div>
                     <div style={{ textAlign: 'center', marginBottom: 20 }}>
                         <div style={{ width: 250 }}></div>
                     </div>
                 </td>
                 <td style={{ verticalAlign: 'top', width: '70%', paddingTop: 4 }}>
-                    <h4><a href="/photo/">Случайные фотографии</a></h4>
+                    <h4><Link href="/photo/">Случайные фотографии</Link></h4>
                     <div id="random-photos" className="ix-photos ix-photos-oneline">
                         {random.map(photo => <RandomPhoto key={photo.id} photo={photo} />)}
                     </div>
                     
                     {contest && <HomeContest title={process.env.SITE_TITLE ?? 'NativeGallery'} contest={contest} />}
                     <br />
-                    <h4 style={{ clear: 'both' }}><a href="/update">Недавно добавленные фотографии</a></h4>
+                    <h4 style={{ clear: 'both' }}><Link href="/update">Недавно добавленные фотографии</Link></h4>
                     <RecentPhotos lastId={(recent[0]?.id ?? 0) + 1} firstId={recent.at(-1)?.id} />
                     <h4>Сейчас на сайте ({online.length})</h4>
                     <div>
-                        {online.map(user => <Fragment key={user.id}><a href={'/author/' + user.id + '/'}>{user.username}</a>{', '}</Fragment>)}
+                        {online.map(user => <Fragment key={user.id}><Link href={'/author/' + user.id + '/'}>{user.username}</Link>{', '}</Fragment>)}
                     </div>
                 </td>
                 <td style={{ paddingLeft: 20, width: 254, verticalAlign: 'top' }}>

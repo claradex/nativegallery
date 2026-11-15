@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { CommentText } from './CommentText';
 import { legacyDate, type PhotoCommentData } from '@nativegallery/contracts';
 
@@ -41,7 +42,7 @@ function Comment({ comment, index }: { comment: PhotoCommentData; index: number 
       <div>
         <img src={safeMedia(author?.photourl) ?? '/static/img/avatar.png'} width={32} loading="lazy"
           alt="" data-avatar-fallback style={{ borderRadius: 3, marginRight: 5 }} />
-        <b><a href={'/author/' + comment.authorId + '/'} className="message_author">{author?.username}</a></b>{' · '}
+        <b><Link href={'/author/' + comment.authorId + '/'} className="message_author">{author?.username}</Link></b>{' · '}
         <span className="flag">{comment.edited && <><br />(отредактировано)</>}</span>
       </div>
       <div className="rank">Фото: {comment.publishedPhotos}

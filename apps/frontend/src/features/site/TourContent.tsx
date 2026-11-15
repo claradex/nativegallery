@@ -1,5 +1,6 @@
 'use client';
 
+import Link from '../../components/Link';
 import './TourContent.css';
 import { useState } from 'react';
 
@@ -39,7 +40,7 @@ export function TourContent({ title }: { title: string }) {
                                     <li><span>В качестве логина для входа на сайт, Вы можете использовать свой E-mail или никнейм, указанный при регистрации.</span></li>
                                 </ul>
                                 <img src="/static/img/tour1.png" width="440" />
-                                <p className="big">Регистрируясь на сайте, вы соглашаетесь с <a href="/rules">правилами сайта</a></p>
+                                <p className="big">Регистрируясь на сайте, вы соглашаетесь с <Link href="/rules">правилами сайта</Link></p>
                                 <div style={{"marginTop":"10px","paddingLeft":"175px"}}>
                                 </div>
                                 <br />
@@ -49,7 +50,7 @@ export function TourContent({ title }: { title: string }) {
                                 <ul className="listing">
                                     <li><span>Для взаимодействия с сайтом, у вас появляется профиль.</span></li>
                                     <li><span>Ваш профиль виден всем пользователям и даже гостям сайта. <b>В целях приватности и безопасности, пожалуйста, воздержитесь от публикации личной информации в профиле.</b></span></li>
-                                    <li><span>На Вас, как и Вы на других пользователей можете подписываться, чтобы следить за обновлениями во вкладке <b><a href="/fav_authors">Фотографии избранных авторов</a></b>.</span></li>
+                                    <li><span>На Вас, как и Вы на других пользователей можете подписываться, чтобы следить за обновлениями во вкладке <b><Link href="/fav_authors">Фотографии избранных авторов</Link></b>.</span></li>
                                 </ul>
                                 <img src="/static/img/tour2.png" width="440" />
                                 <br />
@@ -318,7 +319,7 @@ export function TourContent({ title }: { title: string }) {
                                 <ul className="listing">
                                     <li><span>Релизные версии скачиваются через официальный репозиторий F-Droid</span></li>
                                     <li><span>Если вы являетесь бета-тестировщиком приложения, то новые версии приложения выкладываются в отдельный канал обновления</span></li>
-                                    <li><span><b>Важно: </b>Приложение может иметь различные баги и недочёты, об ошибках сообщайте в <a href="/app">официальную группу приложения</a></span></li>
+                                    <li><span><b>Важно: </b>Приложение может иметь различные баги и недочёты, об ошибках сообщайте в <Link href="/app">официальную группу приложения</Link></span></li>
                                 </ul>
                                 <img src="https://ovk.to/assets/packages/static/openvk/img/tour/app4.jpeg" width="440" />
                                 <br />

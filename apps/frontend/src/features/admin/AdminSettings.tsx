@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { AdminPage } from './AdminPage';
 
@@ -14,7 +15,7 @@ export function AdminSettings() {
     return <>
       <h1><b>Настройки</b></h1>
       <div className="v-header__tabs"><div className="v-tabs"><div className="v-tabs__scroll"><div className="v-tabs__content">
-        <a href="/admin?type=Settings" id="tasks" className="v-tab v-tab-b v-tab--active"><span className="v-tab__label">Задачи</span></a>
+        <Link href="/admin?type=Settings" id="tasks" className="v-tab v-tab-b v-tab--active"><span className="v-tab__label">Задачи</span></Link>
       </div></div></div></div>
       <div className="active__block" id="tasks__block"><table className="table"><tbody>
         <tr><th style={{ width: 100 }}>ID</th><th style={{ width: '50%' }}>Статус</th><th>Действия</th></tr>

@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { legacyDate, type GalleryData } from '@nativegallery/contracts';
 
 export function PublishedPhoto({ photo, feed = false }: { photo: GalleryData['photos'][number]; feed?: boolean }) {
@@ -13,7 +14,7 @@ export function PublishedPhoto({ photo, feed = false }: { photo: GalleryData['ph
       <td className="pb_descr">
         <p>{photo.postbody}</p>
         <p><b className="pw-place">{photo.place}</b></p>
-        <p className="sm"><b>{legacyDate(photo.postedAt)}</b><br />Автор: <a href={'/author/' + photo.authorId + '/'}>{photo.author}</a></p>
+        <p className="sm"><b>{legacyDate(photo.postedAt)}</b><br />Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link></p>
       </td>
     </tr></tbody></table></div><br />
   </>;

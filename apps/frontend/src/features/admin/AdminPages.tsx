@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { apiFetch } from '../../api/client';
 import { forbidden } from 'next/navigation';
 import { legacyDate } from '@nativegallery/contracts';
@@ -74,7 +75,7 @@ export async function AdminPages(create: boolean) {
       <h1><b>Страницы</b></h1>
       <a href="?type=PageCreate" className="btn btn-primary mb-3">Создать</a>
       <div id="pages">{pages.map(page => <div key={page.id} className="card mb-3"><div className="card-body">
-        {legacyDate(page.created_at)}<br /><a href={'/page/' + page.id}>{page.title}</a>
+        {legacyDate(page.created_at)}<br /><Link href={'/page/' + page.id}>{page.title}</Link>
       </div></div>)}</div>
     </>;
   });

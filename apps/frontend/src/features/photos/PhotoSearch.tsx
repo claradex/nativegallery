@@ -1,3 +1,4 @@
+import Link from '../../components/Link';
 import { redirect } from 'next/navigation';
 import { apiFetch } from '../../api/client';
 import { siteContext } from '../site/SiteContext';
@@ -26,13 +27,13 @@ function Results({ data }: { data: PhotoSearchResult }) {
       <td className="pb_descr">
         <p><b className="pw-place">{photo.place}</b></p><span className="pw-descr">{photo.postbody}</span>
         <p className="sm"><b>{legacyDate(photo.timeupload)}</b><br />
-          Автор: <a href={'/author/' + data.authorId + '/'}>{photo.author}</a></p>
+          Автор: <Link href={'/author/' + data.authorId + '/'}>{photo.author}</Link></p>
       </td>
     </tr></tbody></table></div>)}
     {data.pages > 1 && <p>
-      {data.page > 1 && <a href={pageHref(data.page - 1)}>← Предыдущая</a>}
+      {data.page > 1 && <Link href={pageHref(data.page - 1)}>← Предыдущая</Link>}
       {' '}{data.page} / {data.pages}{' '}
-      {data.page < data.pages && <a href={pageHref(data.page + 1)}>Следующая →</a>}
+      {data.page < data.pages && <Link href={pageHref(data.page + 1)}>Следующая →</Link>}
     </p>}
   </>;
 }
