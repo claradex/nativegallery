@@ -22,8 +22,14 @@ export class AdminUsersController {
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
     await this.auth.requireAdmin(request, 'owner');
-    const users = await database.user.findMany({ select: userFields, orderBy: { id: 'asc' } });
-    return users.map(({ content, ...user }) => ({ ...user, directUpload: metadata(content).premoderation === 'true' }));
+    const [users, photos] = await Promise.all([
+      database.user.findMany({ select: userFields, orderBy: { id: 'asc' } }),
+      database.photo.groupBy({ by: ['user_id'], _count: { _all: true } }),
+    ]);
+    const counts = new Map(photos.map(row => [row.user_id, row._count._all]));
+    return users.map(({ content, ...user }) => ({
+      ...user, directUpload: metadata(content).premoderation === 'true', photos: counts.get(user.id) ?? 0,
+    }));
   }
 
   @Get(':id')
@@ -33,7 +39,12 @@ export class AdminUsersController {
     const user = await database.user.findUnique({ where: { id: requireId(value) }, select: userFields });
     if (!user) throw new NotFoundException();
     const { content, ...fields } = user;
-    return { ...fields, directUpload: metadata(content).premoderation === 'true', canChangeAccess: user.id !== viewer.id };
+    const [photos, pending, comments] = await Promise.all([
+      database.photo.count({ where: { user_id: user.id, moderated: 1 } }),
+      database.photo.count({ where: { user_id: user.id, moderated: 0 } }),
+      database.photoComment.count({ where: { user_id: user.id } }),
+    ]);
+    return { ...fields, photos, pending, comments, directUpload: metadata(content).premoderation === 'true', canChangeAccess: user.id !== viewer.id };
   }
 
   @Patch(':id')

@@ -22,7 +22,11 @@ export class AdminGalleriesController {
   @Header('Cache-Control', 'private, no-store')
   async list(@Req() request: Request) {
     await this.auth.requireAdmin(request, 'owner');
-    return database.gallery.findMany({ orderBy: { id: 'asc' } });
+    const [galleries, photos] = await Promise.all([
+      database.gallery.findMany({ orderBy: { id: 'asc' } }),
+      database.photo.groupBy({ by: ['gallery_id'], _count: { _all: true } }),
+    ]);
+    return galleries.map(gallery => ({ ...gallery, photos: photos.find(row => row.gallery_id === gallery.id)?._count._all ?? 0 }));
   }
 
   @Post()

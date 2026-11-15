@@ -1,4 +1,4 @@
-import { All, Controller, Get, Header, Param, Req } from '@nestjs/common';
+import { All, Controller, Get, Header, Param, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -9,18 +9,25 @@ const success = '{"errorcode":0,"error":0}';
 export class VehicleModerationController {
   constructor(private readonly auth: AuthService) {}
 
+  /** Vehicle requests sent by users: pending ones by default, `status=1`/`2` for accepted or declined history. */
   @Get('requests')
   @Header('Cache-Control', 'private, no-store')
-  async pending(@Req() request: Request) {
+  async pending(@Req() request: Request, @Query('status') rawStatus: unknown) {
     await this.auth.requireAdmin(request, 'editor');
-    const rows = await database.entityRequest.findMany({ where: { status: 0 }, orderBy: { id: 'desc' } });
-    const models = await database.entity.findMany({ where: { id: { in: [...new Set(rows.map(row => row.entityid))] } } });
+    const status = rawStatus === '1' || rawStatus === '2' ? Number(rawStatus) : 0;
+    const rows = await database.entityRequest.findMany({ where: { status }, orderBy: { id: 'desc' }, take: status ? 100 : undefined });
+    const [models, users] = await Promise.all([
+      database.entity.findMany({ where: { id: { in: [...new Set(rows.map(row => row.entityid))] } } }),
+      database.user.findMany({ where: { id: { in: [...new Set(rows.map(row => row.user_id))] } }, select: { id: true, username: true } }),
+    ]);
     const byId = new Map(models.map(model => [model.id, model]));
+    const names = new Map(users.map(user => [user.id, user.username]));
     return rows.map(row => {
       const model = byId.get(row.entityid);
       const schema = parseRecord(model?.sampledata);
       const values = parseRecord(row.data);
-      return { id: row.id, title: row.title, model: model?.title ?? '',
+      return { id: row.id, title: row.title, model: model?.title ?? '', color: model?.color ?? '', status: row.status,
+        userId: row.user_id, username: names.get(row.user_id) ?? '', createdAt: Number(row.created_at),
         fields: Object.values(schema).map((field, index) => ({
           label: typeof field?.name === 'string' ? field.name : '',
           value: String(values[index + 1]?.value ?? ''),
@@ -29,11 +36,29 @@ export class VehicleModerationController {
     });
   }
 
+  /** Counters for the admin menu badges. */
+  @Get('summary')
+  @Header('Cache-Control', 'private, no-store')
+  async summary(@Req() request: Request) {
+    const viewer = await this.auth.requireAdmin(request, 'moderator');
+    const [pendingPhotos, pendingRequests] = await Promise.all([
+      database.photo.count({ where: { moderated: 0 } }),
+      viewer.admin === 2 ? 0 : database.entityRequest.count({ where: { status: 0 } }),
+    ]);
+    return { pendingPhotos, pendingRequests };
+  }
+
   @Get('catalog')
   @Header('Cache-Control', 'private, no-store')
   async catalog(@Req() request: Request) {
     await this.auth.requireAdmin(request, 'editor');
-    return database.$queryRaw<{ id: number; title: string; model: string }[]>(Prisma.raw('SELECT v.id, v.title, COALESCE(e.title, \'\') AS model FROM entities_data v LEFT JOIN entities e ON e.id = v.entityid ORDER BY v.id DESC'));
+    const rows = await database.$queryRaw<{ id: number; title: string; model: string; entityid: number; color: string | null;
+      comment: string | null; photos: bigint }[]>(Prisma.sql`
+      SELECT v.id, v.title, COALESCE(e.title, '') AS model, v.entityid, e.color, v.comment,
+        (SELECT COUNT(*) FROM photos p WHERE p.entitydata_id = v.id) AS photos
+      FROM entities_data v LEFT JOIN entities e ON e.id = v.entityid ORDER BY v.id DESC
+    `);
+    return rows.map(row => ({ ...row, color: row.color ?? '', photos: Number(row.photos) }));
   }
 
   @All('requests/:id/:action')

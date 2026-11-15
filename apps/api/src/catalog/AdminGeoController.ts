@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, Get, Header, Query, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, Get, Header, NotFoundException, Param, Patch, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -42,5 +42,15 @@ export class AdminGeoController {
     const id = requireId(raw, BadRequestException);
     await database.geoEntry.deleteMany({ where: { id } });
     return '{"errorcode":0,"error":0}';
+  }
+
+  @Patch(':id')
+  async update(@Req() request: Request, @Param('id') rawId: string, @Body('body') title: unknown) {
+    await this.auth.requireAdmin(request, 'editor');
+    const id = requireId(rawId, BadRequestException);
+    if (typeof title !== 'string' || !title.trim() || Buffer.byteLength(title) > 65535) throw new BadRequestException();
+    const result = await database.geoEntry.updateMany({ where: { id }, data: { title: title.trim() } });
+    if (!result.count) throw new NotFoundException();
+    return { id };
   }
 }

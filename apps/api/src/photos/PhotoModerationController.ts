@@ -12,10 +12,36 @@ export class PhotoModerationController {
   @Header('Cache-Control', 'private, no-store')
   async pending(@Req() request: Request) {
     await this.auth.requireAdmin(request, 'moderator');
-    return database.photo.findMany({
+    const photos = await database.photo.findMany({
       where: { moderated: 0 }, orderBy: { id: 'desc' },
-      select: { id: true, photourl: true, place: true, postbody: true, user_id: true },
+      select: { id: true, photourl: true, place: true, postbody: true, user_id: true, posted_at: true, timeupload: true, gallery_id: true },
     });
+    return withAuthors(photos);
+  }
+
+  /** Every photo with the given moderation status, newest first, for re-moderating published or declined photos. */
+  @Get()
+  @Header('Cache-Control', 'private, no-store')
+  async list(@Req() request: Request, @Query('status') rawStatus: unknown, @Query('page') rawPage: unknown,
+    @Query('q') rawQuery: unknown) {
+    await this.auth.requireAdmin(request, 'moderator');
+    const status = rawStatus === '0' || rawStatus === '2' ? Number(rawStatus) : 1;
+    const page = typeof rawPage === 'string' && /^\d{1,5}$/.test(rawPage) ? Math.max(1, Number(rawPage)) : 1;
+    const query = typeof rawQuery === 'string' ? rawQuery.trim().slice(0, 100) : '';
+    const id = /^\d{1,10}$/.test(query) && Number(query) <= 2147483647 ? Number(query) : 0;
+    const where: Prisma.PhotoWhereInput = {
+      moderated: status,
+      ...(query ? { OR: [...(id ? [{ id }] : []), { place: { contains: query } }, { postbody: { contains: query } }] } : {}),
+    };
+    const size = 24;
+    const [total, photos] = await Promise.all([
+      database.photo.count({ where }),
+      database.photo.findMany({
+        where, orderBy: { id: 'desc' }, skip: (page - 1) * size, take: size,
+        select: { id: true, photourl: true, place: true, postbody: true, user_id: true, posted_at: true, timeupload: true, gallery_id: true },
+      }),
+    ]);
+    return { total, page, pages: Math.max(1, Math.ceil(total / size)), photos: await withAuthors(photos) };
   }
 
   @All('setvisibility')
@@ -61,4 +87,12 @@ export class PhotoModerationController {
     response.setHeader('Cache-Control', 'private, no-store');
     return response.redirect(303, '/admin?type=Photo');
   }
+}
+
+async function withAuthors<T extends { user_id: number }>(photos: T[]) {
+  const users = await database.user.findMany({
+    where: { id: { in: [...new Set(photos.map(photo => photo.user_id))] } }, select: { id: true, username: true },
+  });
+  const names = new Map(users.map(user => [user.id, user.username]));
+  return photos.map(photo => ({ ...photo, username: names.get(photo.user_id) ?? '' }));
 }

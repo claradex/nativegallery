@@ -1,4 +1,4 @@
-import { All, BadRequestException, Body, Controller, Get, Header, Param, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, Controller, Get, Header, NotFoundException, Param, Patch, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { legacyDate } from '@nativegallery/contracts';
 import { database } from '@nativegallery/database';
@@ -50,5 +50,18 @@ export class AdminNewsController {
     const id = requireId(value, BadRequestException);
     await database.news.deleteMany({ where: { id } });
     return success;
+  }
+
+  @Patch('news/:id')
+  @Header('Cache-Control', 'private, no-store')
+  async update(@Req() request: Request, @Param('id') value: string, @Body('body') raw: unknown) {
+    await this.auth.requireAdmin(request, 'moderator');
+    const id = requireId(value, BadRequestException);
+    if (typeof raw !== 'string' || Buffer.byteLength(raw) > 256_000) throw new BadRequestException();
+    const body = newsHtml(raw).trim();
+    if (!body) throw new BadRequestException();
+    const result = await database.news.updateMany({ where: { id }, data: { body } });
+    if (!result.count) throw new NotFoundException();
+    return { id };
   }
 }

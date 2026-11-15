@@ -1,4 +1,5 @@
-import { All, BadRequestException, Body, Controller, Get, Header, Req } from '@nestjs/common';
+import { All, BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Req } from '@nestjs/common';
+import { requireId } from '../common/ids';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
@@ -23,7 +24,9 @@ export class AdminContestsController {
       database.contestTheme.findMany({ orderBy: { id: 'asc' } }),
       database.jobSchedule.findUnique({ where: { kind: 'ExecContests' } }),
     ]);
-    return { contests, themes, enabled: process.env.CONTESTS_ENABLED === 'true' && (schedule?.enabled ?? true) };
+    // The contests job runs only when the server allows it (CONTESTS_ENABLED) and the admin switch is on.
+    const configured = process.env.CONTESTS_ENABLED === 'true';
+    return { contests, themes, configured, enabled: configured && (schedule?.enabled ?? true) };
   }
 
   @All('createtheme')
@@ -49,5 +52,27 @@ export class AdminContestsController {
     if (!await database.contestTheme.findUnique({ where: { id: themeid } })) throw new BadRequestException();
     await database.contest.create({ data: { themeid, openpretendsdate, closepretendsdate, opendate, closedate, status: 0 } });
     return '{"errorcode":0,"error":0}';
+  }
+
+  @Patch('themes/:id')
+  async updateTheme(@Req() request: Request, @Param('id') rawId: string, @Body('body') title: unknown, @Body('active') active: unknown) {
+    await this.auth.requireAdmin(request, 'editor');
+    const id = requireId(rawId, BadRequestException);
+    if (typeof title !== 'string' || !title.trim() || Buffer.byteLength(title) > 65535) throw new BadRequestException();
+    const result = await database.contestTheme.updateMany({ where: { id }, data: { title: title.trim(), status: active === '1' ? 1 : 0 } });
+    if (!result.count) throw new NotFoundException();
+    return { id };
+  }
+
+  /** Only a contest that has not started yet may be cancelled: later ones already have entries and votes. */
+  @Delete(':id')
+  async remove(@Req() request: Request, @Param('id') rawId: string) {
+    await this.auth.requireAdmin(request, 'editor');
+    const id = requireId(rawId, BadRequestException);
+    const contest = await database.contest.findUnique({ where: { id }, select: { status: true } });
+    if (!contest) throw new NotFoundException();
+    if (contest.status !== 0) throw new ConflictException('Конкурс уже начался, его нельзя отменить.');
+    await database.contest.deleteMany({ where: { id, status: 0 } });
+    return { id };
   }
 }
