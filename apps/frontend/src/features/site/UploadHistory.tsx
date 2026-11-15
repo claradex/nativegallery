@@ -35,8 +35,8 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
       {index > 0 && <>&ensp;·&ensp;</>}
       {String(index) === sort ? <b>{label}</b> : <a href={'/api/internal/account/upload-sort?lk_upl_sort=' + index}>{label}</a>}
     </Fragment>)}</div><br />
-    <div className="p20w scroll-x" style={{ display: 'block' }}>
-      <table><tbody>
+    <div className="p20w" style={{ display: 'block' }}>
+      <table className="upload-history"><tbody>
         <tr><th {...{ width: '100' }}>Изображение</th><th {...{ width: '90%' }}>Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
         {photos.map(photo => <tr key={photo.id} className={photo.moderated <= 0 ? 's0' : photo.moderated === 2 ? 's15' : 's12'}>
           <td className="pb-photo pb_photo"><a href={'/photo/' + photo.id + '/'} target="_blank" className="prw">

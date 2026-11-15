@@ -308,6 +308,17 @@
 
   /* Upload history: the legend wraps, the table scrolls. */
   .upload-legend > div { margin-bottom: 4px; }
+  .upload-history, .upload-history > tbody { display: block; }
+  .upload-history > tbody > tr:first-child { display: none; }
+  .upload-history > tbody > tr { display: grid; grid-template-columns: minmax(0, 110px) minmax(0, 1fr); column-gap: 12px; padding: 10px; border-bottom: solid 1px rgba(0, 0, 0, .12); }
+  .upload-history > tbody > tr > td { display: block; padding: 0 !important; text-align: left; border: none; }
+  .upload-history > tbody > tr > td.pb_photo { grid-row: span 3; }
+  .upload-history > tbody > tr > td.c { display: none; }
+  .upload-history > tbody > tr > td.cs { padding-top: 6px !important; }
+  .upload-history > tbody > tr > td.cs > div { display: inline-block; vertical-align: top; margin: 0 0 0 12px !important; }
+  .upload-history .pb_photo, .upload-history .prw { width: auto !important; min-width: 0; }
+  .upload-history .f { width: 100% !important; height: auto !important; }
+  .upload-history .d p { margin: 0 0 6px; }
 
   /* ---------- Forms laid out as label/field tables ---------- */
 
@@ -345,6 +356,14 @@
   .modal-content { width: auto; margin: 0 10px; }
   #userphoto_big_div { left: 10px !important; right: 10px; }
   #userphoto_big_img { max-width: 100%; }
+
+  /* ---------- Tour: the side navigation becomes a row of tabs above the text ---------- */
+
+  .page_content .rightNav { float: none; width: auto; padding: 0; }
+  .page_content .rightNav .tab { float: none; width: auto; display: flex; overflow-x: auto; gap: 4px; margin-bottom: 8px; }
+  .page_content .rightNav .tab button { flex: none; width: auto; height: 40px; margin: 0; padding: 0 12px; font-size: 13px; white-space: nowrap; }
+  .page_content .tabcontent { float: none; width: auto; padding: 0 10px; }
+  .page_content .tabcontent img, .page_content .tabcontent video { max-width: 100%; height: auto; }
 
   /* ---------- Map media ---------- */
 
