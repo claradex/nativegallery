@@ -18,11 +18,6 @@ export function connectRouter(next: PageRouter | null) {
   router = next;
 }
 
-/** Closes open Bootstrap modals first: a soft refresh keeps the DOM, so an open dialog and its backdrop would stay. */
-function closeModals() {
-  for (const button of document.querySelectorAll<HTMLElement>('.modal.show [data-bs-dismiss="modal"]')) button.click();
-}
-
 /**
  * Goes to `href` without reloading the page; a URL outside the site still gets a normal page load.
  * `refresh` also re-renders the shared layout (the menu bar), which a plain navigation keeps as it was:
@@ -35,7 +30,6 @@ export function navigate(href: string, { replace = false, refresh = false } = {}
     else window.location.assign(url.href);
     return;
   }
-  closeModals();
   const path = url.pathname + url.search + url.hash;
   if (refresh) router.refresh();
   if (replace) router.replace(path);
@@ -45,7 +39,6 @@ export function navigate(href: string, { replace = false, refresh = false } = {}
 /** Re-renders the current page with fresh server data, keeping scroll position and client state. */
 export function refreshPage() {
   if (!router) return window.location.reload();
-  closeModals();
   router.refresh();
 }
 
