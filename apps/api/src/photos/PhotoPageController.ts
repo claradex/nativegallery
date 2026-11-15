@@ -78,7 +78,9 @@ export class PhotoPageController {
           where: { photo_id: id, user_id: viewer.id, contest_id: photo.contest_id }, orderBy: { id: 'asc' }, select: { type: true },
         }) : null,
       ]);
-      const showContest = (!videoUrl && viewer?.id !== photo.user_id) || photo.on_contest !== 2;
+      // Contest votes count only for a candidate of a contest's preselection (on_contest = 1); for any other photo
+      // the vote endpoint has no contest to record them against.
+      const showContest = photo.on_contest === 1 && photo.contest_id > 0;
       const users = await database.user.findMany({
         where: { id: { in: [...new Set(votes.map(vote => vote.user_id))] } },
         select: { id: true, username: true },

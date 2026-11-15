@@ -118,16 +118,18 @@ export function bindPhotoActions(signal: AbortSignal) {
   }, { signal });
 
   const photoVote = document.querySelector<HTMLElement>('[data-photo-vote]');
-  let voting = false;
+  // The ordinary and the contest vote are separate, so one may be sent while the other is still pending.
+  const voting = new Set<string>();
   photoVote?.addEventListener('click', async event => {
     const button = event.target instanceof Element && event.target.closest<HTMLElement>('[data-vote]');
     if (!button) return;
     event.preventDefault();
-    if (voting) return;
-    voting = true;
+    const kind = button.classList.contains('konk_btn') ? 'contest' : 'photo';
+    if (voting.has(kind)) return;
+    voting.add(kind);
     try {
       const query = new URLSearchParams({ pid: photoVote.dataset.photoVote ?? '', vote: button.dataset.vote ?? '' });
-      if (button.classList.contains('konk_btn')) {
+      if (kind === 'contest') {
         query.set('action', 'vote-konk');
         query.set('cid', photoVote.dataset.contestId ?? '');
       }
@@ -137,7 +139,7 @@ export function bindPhotoActions(signal: AbortSignal) {
     } catch {
       window.alert('Не удалось сохранить оценку.');
     } finally {
-      voting = false;
+      voting.delete(kind);
     }
   }, { signal });
 }
