@@ -8,6 +8,6 @@ export async function SitePage({ params }: { params: Promise<{ id: string }> }) 
   const page = await apiGet<SitePageData>('/api/internal/pages/' + id, { missing: true });
   return <tr><td className="main">
     <h1>{page.title}</h1>
-    <div dangerouslySetInnerHTML={{ __html: page.html }} />
+    <div className="site-html" dangerouslySetInnerHTML={{ __html: page.html }} />
   </td></tr>;
 }

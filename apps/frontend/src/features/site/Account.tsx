@@ -30,7 +30,7 @@ const dates = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 
 function IndexHistory({ events }: { events: IndexEvent[] }) {
   return <div className="center">
     <h1>История изменения индекса загрузки</h1>
-    <table style={{ marginInline: 'auto' }}><tbody>
+    <div className="scroll-x"><table style={{ marginInline: 'auto' }}><tbody>
       <tr><th>Дата и время</th><th className="r">Индекс</th><th className="r">Изменение</th><th>Действие</th><th>Фотография</th></tr>
       {events.map(event => {
         const delta = event.newindex - event.oldindex;
@@ -42,7 +42,7 @@ function IndexHistory({ events }: { events: IndexEvent[] }) {
           <td className="d">{event.photo_id > 0 && <a href={link} target="_blank">{link}</a>}</td>
         </tr>;
       })}
-    </tbody></table><br />
+    </tbody></table></div><br />
   </div>;
 }
 

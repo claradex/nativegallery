@@ -17,7 +17,7 @@ function ResultGroup({ winners }: { winners: ContestWinnerData[] }) {
     <p><span className="narrow" style={{ fontSize: 21 }}><b>
       <a href={'#contest-' + first.contestId} title="Результаты конкурса">{dates.format(first.date * 1000)}</a>
     </b></span><br /><span className="sm">{first.theme}</span></p>
-    <div style={{ display: 'table', marginInline: 'auto' }} id={'contest-' + first.contestId}>
+    <div className="contest-winners" style={{ display: 'table', marginInline: 'auto' }} id={'contest-' + first.contestId}>
       {winners.map(winner => <Link key={winner.id} href={'/photo/' + winner.photoId + '/'} className="p20"
         style={{ display: 'table-cell', textAlign: 'center', verticalAlign: 'bottom', padding: '20px 20px 10px', fontSize: 17 }}>
         <img src={winner.photoUrl} className="f" style={{ marginBottom: 7 }} alt="" loading="lazy" /><br />

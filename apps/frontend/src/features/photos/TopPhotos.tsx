@@ -6,7 +6,7 @@ function RankedPhoto({ photo, rank }: { photo: TopPhoto; rank: number }) {
   return (
     <div className="p20p">
       <table><tbody><tr>
-        <td style={{ textAlign: 'center', padding: 10 }}>
+        <td className="top30-rank" style={{ textAlign: 'center', padding: 10 }}>
           <b style={{ fontSize: 25 }}>{rank}</b><br /><br />
           <small>Новых просмотров:</small><br /><b>+{photo.views}</b><br /><br />
         </td>
@@ -33,7 +33,7 @@ function TopPhotosContent({ photos }: { photos: TopPhoto[] }) {
     <tr><td className="main">
       <div className="center">
         <h1>30 самых просматриваемых фото за 24 часа</h1>
-        <div style={{ width: '80%', marginInline: 'auto' }}>
+        <div className="top30-list" style={{ width: '80%', marginInline: 'auto' }}>
           {photos.map((photo, index) => <RankedPhoto key={photo.id} photo={photo} rank={index + 1} />)}
         </div>
       </div>

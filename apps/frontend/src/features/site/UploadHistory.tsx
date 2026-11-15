@@ -25,7 +25,7 @@ const declineReasons = [
 export function UploadHistory({ author, photos, sort }: UploadHistoryData & { sort: string }) {
   return <>
     <h1>Журнал</h1>
-    <div className="sm">
+    <div className="sm upload-legend">
       {statuses.map(([code, label]) => <div key={code} className={'p20 s' + code}
         style={{ float: 'left', padding: '1px 5px 2px', marginRight: 15 }}>{label}</div>)}
     </div><br {...{ style: undefined, clear: 'all' }} /><br />
@@ -35,7 +35,7 @@ export function UploadHistory({ author, photos, sort }: UploadHistoryData & { so
       {index > 0 && <>&ensp;·&ensp;</>}
       {String(index) === sort ? <b>{label}</b> : <a href={'/api/internal/account/upload-sort?lk_upl_sort=' + index}>{label}</a>}
     </Fragment>)}</div><br />
-    <div className="p20w" style={{ display: 'block' }}>
+    <div className="p20w scroll-x" style={{ display: 'block' }}>
       <table><tbody>
         <tr><th {...{ width: '100' }}>Изображение</th><th {...{ width: '90%' }}>Информация</th><th></th><th className="c nw">Покинуло очередь</th><th className="c nw">Действия</th></tr>
         {photos.map(photo => <tr key={photo.id} className={photo.moderated <= 0 ? 's0' : photo.moderated === 2 ? 's15' : 's12'}>

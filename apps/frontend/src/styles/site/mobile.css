@@ -1,0 +1,357 @@
+/*
+ * Phone layout. Below 760px the desktop menu bar and logo row give way to a compact header with two buttons,
+ * the profile and the burger, each dropping a full-width accordion menu (modelled on transphoto.org's mobile menu).
+ * The rest of this file unwinds the desktop table layouts: columns stack, fixed widths become fluid,
+ * and wide data tables scroll inside their own box instead of widening the page.
+ * Many page blocks carry inline widths from the legacy markup, hence the !important overrides.
+ */
+
+#mm-mobile { display: none; }
+
+@media screen and (max-width: 760px) {
+
+  /* ---------- Header and burger menu ---------- */
+
+  #navbar, #navbard { display: none !important; }
+  #mm-mobile { display: table-row; }
+  #mm-mobile > td { position: relative; padding: 0; }
+
+  .mmm-head {
+    display: flex;
+    align-items: stretch;
+    height: 54px;
+    background-color: var(--theme-bg-color);
+    color: var(--theme-fg-color);
+  }
+
+  a.mmm-title, a.mmm-title:visited, a.mmm-title:hover {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 8px 0 12px;
+    color: var(--theme-fg-color);
+    background: none;
+    font-family: var(--narrow-font);
+    font-size: 26px;
+    white-space: nowrap;
+  }
+  .mmm-title img { width: 40px; margin-right: 10px; flex: none; }
+  .mmm-title span { overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+
+  button.mmm-btn, button.mmm-btn:hover {
+    flex: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 54px;
+    padding: 0;
+    margin-left: 1px;
+    border: none;
+    color: #fff !important;
+    background-color: rgba(0, 0, 0, .25);
+    font-size: 26px;
+    font-weight: normal;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button.mmm-btn[aria-expanded="true"] { background-color: rgba(255, 255, 255, .2); }
+  button.mmm-btn:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+
+  .mmm-badge {
+    position: absolute;
+    top: 7px;
+    right: 6px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 9px;
+    background-color: #e00;
+    color: #fff;
+    font-family: var(--default-font);
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 17px;
+    text-align: center;
+  }
+
+  .mmm-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 54px;
+    z-index: 2002;
+    max-height: calc(100vh - 54px);
+    max-height: calc(100dvh - 54px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: var(--theme-bg-color);
+    border-top: solid 1px rgba(255, 255, 255, .15);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .45);
+    animation: mmm-drop .15s ease-out;
+  }
+  .mmm-panel[hidden] { display: none; }
+
+  @keyframes mmm-drop {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .mmm-panel ul { list-style: none; margin: 0; padding: 0; }
+  .mmm-panel li { border-top: solid 1px rgba(255, 255, 255, .1); }
+  .mmm-panel > ul > li:first-child { border-top: none; }
+  .mmm-level-2 { background-color: rgba(0, 0, 0, .25); }
+  .mmm-level-3 { background-color: rgba(0, 0, 0, .2); }
+
+  .mmm-item, a.mmm-item:visited, a.mmm-item:hover, button.mmm-item, button.mmm-item:hover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 50px;
+    padding: 6px 48px;
+    margin: 0;
+    border: none;
+    background: none;
+    color: var(--theme-fg-color) !important;
+    font-family: var(--narrow-font);
+    font-size: 24px;
+    font-weight: normal;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mmm-level-2 .mmm-item { min-height: 44px; font-size: 20px; }
+  .mmm-level-3 .mmm-item { min-height: 44px; font-size: 17px; }
+  .mmm-item:active { background-color: var(--theme-bg-hover-color) !important; }
+  .mmm-item:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+
+  .mmm-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; opacity: .8; }
+  .mmm-icon .fa-xs, .mmm-icon .fa-sm { font-size: 18px; }
+  .mmm-item .notify-count { font-family: var(--default-font); }
+
+  .mmm-chevron {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    margin-top: -7px;
+    font-size: 14px;
+    opacity: .7;
+    transition: transform .15s ease-out;
+  }
+  .mmm-toggle[aria-expanded="true"] .mmm-chevron { transform: rotate(180deg); }
+
+  /* ---------- Page frame ---------- */
+
+  body { -webkit-text-size-adjust: 100%; }
+  .tmain { table-layout: fixed; }
+  .main { padding: 0 10px 15px; }
+  #adframe { padding: 0 10px 15px; }
+  .footer { padding: 15px 10px 20px; }
+  .footer b { display: inline-block; line-height: 26px; }
+
+  h1 { font-size: 28px; margin: 12px 0 10px; }
+  h2 { font-size: 24px; }
+  h3 { font-size: 20px; }
+  h4 { font-size: 18px; }
+
+  img, video { max-width: 100%; height: auto; }
+  .main iframe { max-width: 100%; }
+  .main, .main p, .main div { overflow-wrap: break-word; }
+
+  /* Banners stretched across the desktop padding. */
+  .label-orange[style*="-20px"] { margin-left: -10px !important; margin-right: -10px !important; }
+  body > .label-orange { margin: 0 !important; }
+
+  .p20, .p20a, .p20k, .pg, .std-form { padding-left: 12px; padding-right: 12px; }
+  .p20i { box-sizing: border-box; max-width: 100%; }
+
+  /* Block widths from the markup (min-width: 300px forms, 254px columns...). */
+  .mf-center-block, .mf-center-block-wide, .mf-center-block-x-wide { min-width: 0; }
+  [type="text"], [type="password"], [type="email"], [type="search"], [type="number"], [type="url"], select, textarea {
+    max-width: 100%;
+    font-size: 16px; /* Keeps iOS from zooming into focused fields. */
+  }
+  [contenteditable="true"] { font-size: 16px; }
+
+  /* Buttons big enough to tap. */
+  [type="submit"], [type="button"], button, .button, a.button { min-height: 36px; }
+
+  /* Pagination. */
+  .pages { line-height: 20px; }
+  .pg, .ps { padding: 7px 10px; }
+
+  /* A table that does not fit gets its own horizontal scroll instead of widening the page. */
+  .scroll-x { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .site-html table { display: block; max-width: 100%; overflow-x: auto; }
+
+  /* ---------- Photo cards: thumbnail above the caption ---------- */
+
+  .p20p { padding: 10px !important; }
+  .p20p > table, .p20p > table > tbody, .p20p > table > tbody > tr { display: block; width: 100%; }
+  .p20p > table > tbody > tr > td { display: block; box-sizing: border-box; width: 100% !important; padding: 0 !important; text-align: center; }
+  .p20p .pb_photo { padding-bottom: 6px !important; }
+  .pb_descr p { margin: 7px 0; }
+  .pb_descr p.sm { margin: 9px 0 5px; }
+  .pb-pre { display: block; padding: 4px 0 8px !important; font-size: 12px; }
+  .f, .fv3 { max-width: 100%; height: auto; }
+  .xf { box-sizing: border-box; max-width: 100%; }
+  .hpshade { max-width: 100%; }
+  .p5h { padding: 0 !important; }
+
+  /* Ranked list (/top30): the rank stays a compact line above the photo. */
+  .top30-list { width: auto !important; }
+  .top30-rank b { font-size: 20px !important; }
+  .top30-rank br { display: none; }
+  .top30-rank small { margin: 0 4px 0 12px; }
+
+  /* Contest ballot: the vote button sits under the photo. */
+  .contestBtn { margin: 6px auto 10px; }
+
+  /* ---------- Home ---------- */
+
+  #idx-main, #idx-main > tbody, #idx-main > tbody > tr { display: block; width: 100%; }
+  #idx-main > tbody > tr > td { display: block; width: auto !important; padding: 0 !important; }
+  #idx-main { margin-top: 8px; }
+  #idx-main > tbody > tr > td:last-child { margin-top: 18px; }
+  .pop-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  #idx-main .pop-prw { display: block; margin: 0; }
+  #idx-main .pop-prw img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  #idx-main .pop-prw .hpshade { width: 100%; }
+  #idx-main .pop-prw .temp { margin-top: -21px; }
+
+  /* Random strip: swipe sideways instead of squeezing six tiles into the width. */
+  .ix-photos-oneline { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .ix-photos-oneline > .prw-grid-item { flex: 0 0 42%; scroll-snap-align: start; }
+  .ix-photos-multiline > .prw-grid-item { flex-basis: 110px; }
+  .prw-grid-item:hover { animation: none; }
+  .prw-grid-item:hover .prw-wrapper { display: none; }
+
+  #contestNotify { float: none !important; box-sizing: border-box; }
+  #contestBtns a { display: inline-block; margin: 0 4px 6px 0; }
+
+  /* ---------- Photo page ---------- */
+
+  #photobar { margin: 0 -10px; }
+  #ph { max-width: 100%; cursor: default; }
+  #ph.zoomed { max-width: 100%; }
+  #photobar > div { display: block !important; }
+  #underphoto_frame, #ph_frame { display: block; }
+  #prev, #next {
+    opacity: 1;
+    top: auto;
+    bottom: auto;
+    width: 44px;
+    height: 64px;
+    margin-top: -32px;
+    padding: 0;
+    top: 50%;
+    font-size: 36px;
+    line-height: 60px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, .35);
+    z-index: 2;
+  }
+  #prev[aria-disabled="true"], #next[aria-disabled="true"] { display: none !important; }
+  .underphoto, a.underphoto { font-size: 14px; }
+
+  #pmain { padding: 10px 0 15px; margin: 0 -10px; }
+  #pmain > div { padding: 0 10px; }
+  .pwrite td { white-space: normal !important; }
+  #pp-items, #pp-items > tbody, #pp-items > tbody > tr { display: block; width: 100%; }
+  #pp-items { margin-top: 15px; }
+  #pp-items > tbody > tr > td { display: block; width: auto !important; min-width: 0 !important; padding: 0 !important; }
+  #pp-left-col { margin-bottom: 17px; }
+  .pp-item-body > table { table-layout: fixed; }
+  .linetable td { overflow-wrap: anywhere; }
+  .linetable td.nw { white-space: normal; }
+  .vote a, .vote a:visited { height: 36px; font-size: 12px; }
+
+  .comment { padding: 10px 10px 23px; }
+  .comment .message-text { margin-top: 12px; }
+  .dropdown-content { right: 0; }
+  #wtext { height: 120px; }
+  .cmt-submit { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .emoji-picker { left: 10px; right: 10px; grid-template-columns: repeat(6, 1fr); }
+
+  #map_canvas { width: 100% !important; }
+
+  /* ---------- Comment feed ---------- */
+
+  #comfilter { float: none; margin: 0 0 15px; }
+  .p-comment { flex-direction: column; align-items: stretch; }
+  .pc-photo { width: auto; padding: 0 0 8px; text-align: center; }
+  .pc-text { padding: 10px 0 30px; }
+  .pc-topost { top: 10px; right: 0; }
+  .pc-compl { right: 0; bottom: 0; }
+
+  /* ---------- Author profile and account ---------- */
+
+  .profile-table, .profile-table > tbody, .profile-table > tbody > tr { display: block; width: 100%; }
+  .profile-table > tbody > tr > td { display: block; width: auto !important; }
+  .profile-table > tbody > tr > td:last-child { margin-top: 10px; text-align: center; }
+  .p20:has(> .profile-table) > div[style*="float"] { float: none !important; display: inline-block; }
+  .profile-details > colgroup > col { width: 45% !important; }
+  .profile-details td { overflow-wrap: anywhere; }
+
+  .tab-nav { padding: 4px 0 0; overflow-x: auto; }
+  .tab-item { flex: none; padding: 8px 12px; }
+  .tab-content { padding: 12px 8px; }
+  #form[style*="inline-block"] { display: block !important; }
+  #submitBtn { width: 100% !important; max-width: 300px; }
+
+  .session-card .card-header { flex-wrap: wrap; gap: 8px; }
+
+  /* Upload history: the legend wraps, the table scrolls. */
+  .upload-legend > div { margin-bottom: 4px; }
+
+  /* ---------- Forms laid out as label/field tables ---------- */
+
+  table:has(> tbody > tr > td.lcol), table:has(> tbody > tr > td.lcol) > tbody, table:has(> tbody > tr > td.lcol) > tbody > tr { display: block; box-sizing: border-box; width: 100% !important; }
+  table:has(> tbody > tr > td.lcol) > tbody.p20 { padding: 0; }
+  table:has(> tbody > tr > td.lcol) > tbody > tr > td { display: block; width: auto !important; padding: 2px 12px !important; box-sizing: border-box; }
+  table:has(> tbody > tr > td.lcol) > colgroup { display: none; }
+  table:has(> tbody > tr > td.lcol) .lcol { text-align: left; white-space: normal; padding-top: 8px !important; font-weight: bold; }
+  table:has(> tbody > tr > td.lcol) .lcol:empty { display: none; }
+  table:has(> tbody > tr > td.lcol) > tbody > tr > td[colspan] { padding: 10px 12px 5px !important; }
+  table:has(> tbody > tr > td.lcol) input[type="text"], table:has(> tbody > tr > td.lcol) textarea, table:has(> tbody > tr > td.lcol) select { width: 100% !important; max-width: 100%; }
+  table:has(> tbody > tr > td.lcol) .nw-inline select { width: auto !important; }
+  table:has(> tbody > tr > td.lcol) #search_num { width: calc(100% - 110px) !important; }
+  #prgb { max-width: 100% !important; }
+  #statusbox { display: block; top: 0 !important; margin-top: 8px; }
+
+  /* Vehicle edit form */
+  #mform[style*="float"] { float: none !important; }
+
+  /* ---------- Contest results ---------- */
+
+  .contest-winners { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .contest-winners > a { display: block !important; padding: 10px !important; flex: 1 1 140px; }
+
+  /* ---------- Register intro ---------- */
+
+  .register-intro td:first-child { display: none; }
+  .register-intro { margin: 9px 0 !important; }
+
+  /* ---------- Notices and popups ---------- */
+
+  #notify { box-sizing: border-box; width: calc(100% - 20px); left: 10px !important; }
+  #tip { position: fixed; left: 10px; right: 10px; top: auto; bottom: 10px; }
+  .modal { padding-top: 40px; }
+  .modal-content { width: auto; margin: 0 10px; }
+  #userphoto_big_div { left: 10px !important; right: 10px; }
+  #userphoto_big_img { max-width: 100%; }
+
+  /* ---------- Map media ---------- */
+
+  .leaflet-popup-content { max-width: 70vw; }
+}
+
+@media screen and (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .mmm-panel { animation: none; }
+  .mmm-chevron { transition: none; }
+}

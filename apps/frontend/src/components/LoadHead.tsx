@@ -9,6 +9,7 @@ import '../styles/site/comments.css';
 import '../styles/site/map.css';
 import '../styles/site/progress.css';
 import '../styles/themes/nativegallery-dark.css';
+import '../styles/site/mobile.css';
 import type { Metadata, Viewport } from 'next';
 import { readCookie } from '../api/client';
 

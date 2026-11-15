@@ -39,7 +39,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
             <tr>
                 <td style={{ verticalAlign: 'top', paddingRight: 20 }}>
                     <h4><Link href="/top30">Самые популярные за 24 часа</Link></h4>
-                    <div>
+                    <div className="pop-list">
                         {popular.map(photo => <Link key={photo.id} href={'/photo/' + photo.id} className="prw pop-prw">
                           <img width={250} loading="lazy" src={'/api/photo/compress?url=' + photo.photourl} />
                           <div className="hpshade"><div className="eye-icon">+{photo.views}</div></div>
