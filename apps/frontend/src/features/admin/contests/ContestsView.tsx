@@ -189,10 +189,10 @@ export function ThemesList({ themes, contests }: { themes: Theme[]; contests: Co
     return <li key={theme.id} className="flex items-center gap-4 px-5 py-3">
       <div className="grid size-9 place-items-center rounded-md bg-muted text-muted-foreground"><CalendarRange className="size-4" /></div>
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium">{theme.title}</p>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-medium [overflow-wrap:anywhere]">{theme.title}
+          {theme.status === 1 ? <Badge variant="success">Автоотбор</Badge> : <Badge variant="secondary">Вручную</Badge>}</p>
         <p className="text-[13px] text-muted-foreground">№ {theme.id}, конкурсов: {held}</p>
       </div>
-      {theme.status === 1 ? <Badge variant="success">Автоотбор</Badge> : <Badge variant="secondary">Вручную</Badge>}
       <ThemeDialog theme={theme} trigger={<Button size="icon-sm" variant="ghost" aria-label="Изменить категорию"><Pencil /></Button>} />
     </li>;
   })}</ul></Card>;
