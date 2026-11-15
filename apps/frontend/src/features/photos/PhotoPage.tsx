@@ -16,12 +16,14 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
     <div id="err" />
     {!photo.processing && <PhotoMedia photo={photo} scope={scope} />}
     <div id="pmain">
-      <table className="pwrite"><tbody><tr>
-        <td className="nw" style={{ verticalAlign: 'top', textAlign: 'right' }}><b>{photo.place}</b></td>
-        <td>{photo.description}</td>
-      </tr>{photo.vehicle && <PhotoVehicleRoute vehicle={photo.vehicle} route={photo.vehicleRoute} />}</tbody></table>
-      <div>Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
-        {'         Дата: '}<b>{photo.takenAt === 943909200 ? 'дата не указана' : legacyDate(photo.takenAt)}</b>
+      {photo.vehicle && <div><div style={{ lineHeight: '15px', marginBottom: 10 }}>
+        <table className="pwrite"><tbody><PhotoVehicleRoute vehicle={photo.vehicle} route={photo.vehicleRoute} /></tbody></table>
+      </div></div>}
+      {photo.place && <div><b>{photo.place}</b></div>}
+      {photo.description && <div style={{ paddingTop: 8 }}>{photo.description}</div>}
+      <br />
+      <div>Автор: <b><Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link></b>
+        {'\u00a0 \u00a0 \u00a0 \u00a0 \u00a0 Дата: '}<b>{photo.takenAt === 943909200 ? 'не указана' : legacyDate(photo.takenAt)}</b>
       </div>
       <table id="pp-items"><tbody><tr>
         <td id="pp-left-col">
