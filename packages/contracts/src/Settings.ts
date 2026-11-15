@@ -48,7 +48,7 @@ export const settingDefinitions = [
   { key: 'SITE_NAVBAR_LINKS', group: 'site', label: 'Дополнительные пункты меню', description: 'По одному на строку: «Название | /адрес». Добавляются в конец главного меню.', type: 'textarea', default: '', legacy: 'navbar', placeholder: 'Форум | https://forum.example.com' },
   { key: 'SITE_ORIGIN', group: 'site', label: 'Адрес сайта', description: 'Например https://example.com. Нужен для ссылок в письмах, RSS и robots.txt.', type: 'url', default: '' },
   { key: 'SITE_TIMEZONE', group: 'site', label: 'Часовой пояс', description: 'Название из базы IANA, например Europe/Moscow.', type: 'text', default: 'Europe/Moscow', restart: true },
-  { key: 'MAINTENANCE', group: 'site', label: 'Технические работы', description: 'Все страницы сайта отвечают заглушкой «Сайт на обслуживании». Панель управления остаётся доступной.', type: 'boolean', default: 'false', legacy: 'site.maintenance' },
+  { key: 'MAINTENANCE', group: 'site', label: 'Технические работы', description: 'Вместо страниц сайта показывается заглушка о технических работах. Панель управления остаётся доступной.', type: 'boolean', default: 'false', legacy: 'site.maintenance' },
 
   { key: 'REGISTRATION_PUBLIC', group: 'registration', label: 'Открытая регистрация', type: 'boolean', default: 'false', legacy: 'registration.access.public' },
   { key: 'EMAIL_VERIFY', group: 'registration', label: 'Подтверждение почты', description: 'Новые пользователи подтверждают адрес по ссылке из письма. Нужны настройки почты.', type: 'boolean', default: 'false', legacy: 'registration.emailverify' },

@@ -1,6 +1,6 @@
 'use client';
 
-import { Boxes, Camera, Database, ExternalLink, FileText, Globe, Images, Inbox, LogOut, Menu, Newspaper, Settings, Trophy, Users, type LucideIcon } from 'lucide-react';
+import { Boxes, Camera, Database, ExternalLink, FileText, Globe, Images, Inbox, LogOut, Menu, Newspaper, Settings, SlidersHorizontal, Trophy, Users, type LucideIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from '../../components/Link';
@@ -12,7 +12,7 @@ import { Button } from './ui/button';
 
 const icons: Record<string, LucideIcon> = {
   camera: Camera, inbox: Inbox, newspaper: Newspaper, file: FileText, images: Images, trophy: Trophy,
-  boxes: Boxes, database: Database, globe: Globe, users: Users, settings: Settings,
+  boxes: Boxes, database: Database, globe: Globe, users: Users, settings: Settings, sliders: SlidersHorizontal,
 };
 
 export interface SidebarProps {

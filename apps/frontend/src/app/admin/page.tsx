@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
+import { AdminConfig } from '../../features/admin/AdminConfig';
 import { AdminContests } from '../../features/admin/AdminContests';
 import { AdminEntities } from '../../features/admin/AdminEntities';
 import { AdminGalleries } from '../../features/admin/AdminGalleries';
@@ -28,7 +29,7 @@ const titles: Record<string, string> = {
   News: 'Новости сайта', Pages: 'Страницы', PageCreate: 'Новая страница', PageEdit: 'Редактирование страницы',
   Galleries: 'Галереи', Contests: 'Фотоконкурсы', Entities: 'Сущности', EntityCreate: 'Новая сущность',
   EntityUpdate: 'Сущность', Models: 'База моделей', ModelsCreate: 'Новая модель', EntityEdit: 'Редактирование модели',
-  ModelEdit: 'Редактирование модели', GeoDB: 'GeoDB', Settings: 'Фоновые задачи',
+  ModelEdit: 'Редактирование модели', GeoDB: 'GeoDB', Config: 'Конфигурация', Settings: 'Фоновые задачи',
 };
 
 /** Set through metadata rather than a rendered <title>, so client-side navigation between sections updates it. */
@@ -71,6 +72,7 @@ export default async function Admin({ searchParams }: { searchParams: SearchPara
     case 'ModelsCreate': return AdminModelForm();
     case 'EntityEdit': case 'ModelEdit': return AdminModelForm(id);
     case 'GeoDB': return AdminGeo();
+    case 'Config': return AdminConfig();
     case 'Settings': return AdminSettings();
   }
   notFound();
