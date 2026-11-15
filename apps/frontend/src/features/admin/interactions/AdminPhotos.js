@@ -1,3 +1,5 @@
+import { refreshPage } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   document.addEventListener('submit', async event => {
@@ -19,7 +21,7 @@ export function bind(signal) {
         body: new URLSearchParams({ comment: fields.get('comment') ?? '' }),
       });
       if (!response.ok) throw new Error();
-      location.reload();
+      refreshPage();
     } catch {
       button.disabled = false;
       window.alert('Не удалось сохранить решение.');

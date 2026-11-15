@@ -1,3 +1,5 @@
+import { navigate } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   (() => {
@@ -63,7 +65,7 @@ export function bind(signal) {
       try {
         const response = await fetch(form.action, { method: editing ? 'PATCH' : 'POST', body });
         if (!response.ok) throw new Error();
-        location.assign('/admin?type=Models');
+        navigate('/admin?type=Models');
       } catch {
         showError('Не удалось сохранить модель.');
         submit.disabled = false;

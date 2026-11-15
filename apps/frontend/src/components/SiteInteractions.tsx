@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { navigate } from './navigation';
 
 const navigation: Record<string, string> = { ArrowLeft: 'a[rel="prev"]', ArrowRight: 'a[rel="next"]' };
 
@@ -11,7 +12,7 @@ function navigateByKey(event: KeyboardEvent) {
   const href = event.key === 'Home' ? '/' : link && document.querySelector(link)?.getAttribute('href');
   if (!href) return;
   event.preventDefault();
-  window.location.assign(href);
+  navigate(href);
 }
 
 function handleLink(event: MouseEvent) {

@@ -1,3 +1,5 @@
+import { refreshPage } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   async function changeGeo(url, body) {
@@ -13,7 +15,7 @@ export function bind(signal) {
     button.disabled = true;
     try {
       await changeGeo(form.action, new URLSearchParams(new FormData(form)));
-      location.reload();
+      refreshPage();
     } catch {
       button.disabled = false;
       window.alert('Не удалось добавить запись.');

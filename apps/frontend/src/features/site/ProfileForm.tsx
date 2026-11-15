@@ -1,5 +1,7 @@
 'use client';
 
+import { refreshPage } from '../../components/navigation';
+import Link from '../../components/Link';
 import { Fragment, useEffect, useRef, useState, type FormEvent, type MouseEvent as MouseEventReact } from 'react';
 import { profileFields, type ProfileSettingsData } from '@nativegallery/contracts';
 import { profileCountries } from './ProfileCountries';
@@ -37,7 +39,7 @@ export function ProfileForm({ data }: { data: ProfileSettingsData }) {
       const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
       if (!response.ok) throw new Error('Не удалось сохранить изменения.');
       const result = await response.text();
-      if (result === 'refresh') window.location.reload();
+      if (result === 'refresh') refreshPage();
       else if (result) setError(result);
       else setSaved(true);
     } catch {
@@ -60,7 +62,7 @@ export function ProfileForm({ data }: { data: ProfileSettingsData }) {
     <div ref={popup} id="userphoto_big_div" style={{ position: 'absolute', display: previewTop === null ? 'none' : 'block', top: previewTop ?? undefined, padding: 10, backgroundColor: 'white', margin: 'auto', textAlign: 'center', left: 10 }} className="p5 shadow">
       <a href="#" onClick={closePreview}><img alt="" src={previewTop === null ? undefined : data.photourl} id="userphoto_big_img" {...{ border: '0' }} /></a><br /><br /><a href="#" onClick={closePreview}>закрыть</a>
     </div>
-    <p>Ссылка на публичный профиль: <b><a href={'/author/' + data.id + '/'} className="nw">{data.username}</a></b></p>
+    <p>Ссылка на публичный профиль: <b><Link href={'/author/' + data.id + '/'} className="nw">{data.username}</Link></b></p>
     <form method="post" name="form" id="form" encType="multipart/form-data" action="/api/profile/update" onSubmit={submit} style={{ display: 'inline-block' }}>
       <div className="p20" style={panel}>
         <h4>Информация</h4>

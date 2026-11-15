@@ -1,3 +1,5 @@
+import { navigate } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   (() => {
@@ -30,7 +32,7 @@ export function bind(signal) {
       try {
         const response = await fetch(form.action, { method: 'POST', body: new URLSearchParams(new FormData(form)) });
         if (!response.ok) throw new Error();
-        location.assign('/admin?type=Entities');
+        navigate('/admin?type=Entities');
       } catch {
         status.textContent = 'Не удалось сохранить сущность. Проверьте, что ID полей не повторяются.';
         status.hidden = false;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePageVersion } from '../../components/ClientNavigation';
 
 const interactions = {
   AdminContests: () => import('./interactions/AdminContests'),
@@ -24,6 +25,7 @@ export function AdminBootstrap() {
 }
 
 export function AdminInteractions({ section }: { section: AdminSection }) {
+  const version = usePageVersion();
   useEffect(() => {
     const events = new AbortController();
     interactions[section]().then(({ bind }) => {
@@ -32,7 +34,7 @@ export function AdminInteractions({ section }: { section: AdminSection }) {
       if (!events.signal.aborted) console.error(error);
     });
     return () => events.abort();
-  }, [section]);
+  }, [section, version]);
 
   return null;
 }

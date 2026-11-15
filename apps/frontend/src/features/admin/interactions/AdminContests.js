@@ -1,3 +1,5 @@
+import { refreshPage } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   const contestEditor = document.querySelector('#createContest form');
@@ -17,7 +19,7 @@ export function bind(signal) {
     try {
       const response = await fetch(form.action, { method: 'POST', body: new URLSearchParams(new FormData(form)) });
       if (!response.ok || (await response.json()).error !== 0) throw new Error();
-      location.reload();
+      refreshPage();
     } catch {
       button.disabled = false;
       window.alert('Не удалось сохранить данные конкурса. Проверьте поля формы.');

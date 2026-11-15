@@ -1,5 +1,7 @@
 'use client';
 
+import { navigate } from '../../components/navigation';
+import Link from '../../components/Link';
 import { useState, type FormEvent } from 'react';
 
 type Field = 'username' | 'email' | 'password';
@@ -35,7 +37,7 @@ export function RegisterForm({ title }: { title: string }) {
       const result = await response.json();
       if (result.error === 0) {
         redirecting = true;
-        window.location.assign('/');
+        navigate('/', { refresh: true });
       } else {
         setErrors({ [errorFields[result.errorcode] ?? 'email']: result.errortitle ?? 'Не удалось зарегистрироваться.' });
       }
@@ -73,8 +75,8 @@ export function RegisterForm({ title }: { title: string }) {
         </div>
         <div style={{ color: '#e00' }} id="err_password" aria-live="polite"><FieldError message={errors.password} /></div>
         <input type="submit" id="regbtn" className="mf-button-wide" style={{ marginTop: 15 }} disabled={pending} value={pending ? 'Отправка данных...' : 'Зарегистрироваться'} />
-        <p>Регистрируясь на сервере {title}, вы <a href="/rules">принимаете его правила.</a></p>
-        <p><b><a href="/tour">Вы можете пройти экскурсию по сайту.</a></b></p>
+        <p>Регистрируясь на сервере {title}, вы <Link href="/rules">принимаете его правила.</Link></p>
+        <p><b><Link href="/tour">Вы можете пройти экскурсию по сайту.</Link></b></p>
       </form><br /><br /><br />
     </div>
   </center>;

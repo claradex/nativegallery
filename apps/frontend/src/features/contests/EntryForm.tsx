@@ -1,5 +1,6 @@
 'use client';
 
+import { navigate } from '../../components/navigation';
 import { useState, type FormEvent } from 'react';
 
 interface EntryOptions { contests: { id: number; title: string }[]; photos: { id: number; place: string }[] }
@@ -18,7 +19,7 @@ export function EntryForm({ contests, photos }: EntryOptions) {
     try {
       const response = await fetch(form.action, { method: 'POST', body });
       if (!response.ok || (await response.json()).errorcode !== 0) throw new Error('Contest entry rejected');
-      window.location.assign('/voting/waiting');
+      navigate('/voting/waiting');
     } catch {
       setError('Не удалось отправить фотографию на конкурс.');
       setPending(false);

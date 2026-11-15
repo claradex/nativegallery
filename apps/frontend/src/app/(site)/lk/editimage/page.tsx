@@ -1,3 +1,4 @@
+import Link from '../../../../components/Link';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../../../api/client';
 
@@ -17,7 +18,7 @@ export default async function EditPhoto({ searchParams }: { searchParams: Promis
         <tr><td className="lcol"><label htmlFor="descr">Описание:</label></td>
           <td><textarea id="descr" name="descr" rows={5} cols={50} defaultValue={photo.postbody} /></td></tr>
       </tbody></table>
-      <button type="submit">Сохранить</button>{' '}<a href="/lk/history">Отмена</a>
+      <button type="submit">Сохранить</button>{' '}<Link href="/lk/history">Отмена</Link>
     </form>
   </td></tr>;
 }

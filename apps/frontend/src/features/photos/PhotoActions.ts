@@ -1,3 +1,5 @@
+import { refreshPage } from '../../components/navigation';
+
 export function bindPhotoActions(signal: AbortSignal) {
   const favorite = document.querySelector<HTMLAnchorElement>('#favLink');
   let updatingFavorite = false;
@@ -49,9 +51,11 @@ export function bindPhotoActions(signal: AbortSignal) {
     const body = new FormData(commentForm);
     const content = editor.cloneNode(true) as HTMLElement;
     for (const emoji of content.querySelectorAll<HTMLImageElement>('img[data-code]')) emoji.replaceWith(emoji.dataset.code ?? '');
-      // Preserve line breaks from the editable HTML using the live editor layout.
+    // Preserve line breaks from the editable HTML using the live editor layout. The copy must stay rendered:
+    // innerText of a `visibility: hidden` element is empty, so it is made transparent instead.
     content.style.position = 'absolute';
-    content.style.visibility = 'hidden';
+    content.style.opacity = '0';
+    content.style.pointerEvents = 'none';
     content.removeAttribute('id');
     editor.after(content);
     body.set('wtext', content.innerText.trim());
@@ -62,10 +66,16 @@ export function bindPhotoActions(signal: AbortSignal) {
       const response = await fetch(commentForm.action, { method: 'POST', body });
       const result = response.ok ? await response.json() : null;
       if (result?.error !== 0) throw new Error();
-      location.reload();
+      // The page is refreshed in place, so the editor would otherwise keep the sent text and attachment.
+      editor.replaceChildren();
+      commentForm.reset();
+      const list = commentForm.querySelector('#fileList');
+      if (list) list.textContent = '';
+      refreshPage();
     } catch {
       status.textContent = 'Не удалось добавить комментарий.';
       status.hidden = false;
+    } finally {
       submit.disabled = false;
     }
   }, { signal });
@@ -99,9 +109,10 @@ export function bindPhotoActions(signal: AbortSignal) {
       const response = await fetch(url, options);
       const result = response.ok ? await response.json() : null;
       if (action === 'vote' ? !Array.isArray(result) : result?.error !== 0) throw new Error();
-      location.reload();
+      refreshPage();
     } catch {
       window.alert('Не удалось выполнить действие.');
+    } finally {
       delete comment.dataset.pending;
     }
   }, { signal });
@@ -122,10 +133,11 @@ export function bindPhotoActions(signal: AbortSignal) {
       }
       const response = await fetch('/api/photo/vote?' + query, { cache: 'no-store' });
       if (!response.ok || !(await response.json())?.buttons) throw new Error();
-      location.reload();
+      refreshPage();
     } catch {
-      voting = false;
       window.alert('Не удалось сохранить оценку.');
+    } finally {
+      voting = false;
     }
   }, { signal });
 }

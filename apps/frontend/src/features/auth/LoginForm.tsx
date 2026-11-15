@@ -1,5 +1,6 @@
 'use client';
 
+import { navigate } from '../../components/navigation';
 import { useState, type FormEvent } from 'react';
 
 export function LoginForm() {
@@ -25,7 +26,7 @@ export function LoginForm() {
       if (!response.ok) throw new Error('Login request failed');
       const result = await response.json();
       if (result.errorcode === '0') {
-        window.location.assign('/');
+        navigate('/', { refresh: true });
         return;
       }
       setPasswordError('Неверно указаны логин и/или пароль');

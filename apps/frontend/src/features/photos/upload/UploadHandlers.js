@@ -1,3 +1,5 @@
+import { navigate } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bindUpload(signal) {
   const form = document.getElementById('mform');
@@ -138,7 +140,7 @@ export function bindUpload(signal) {
     request.addEventListener('load', () => {
       const result = request.response;
       if (request.status === 200 && result?.error === 0 && Number.isInteger(result.id)) {
-        window.location.replace('/photo/' + result.id);
+        navigate('/photo/' + result.id, { replace: true });
         return;
       }
       const messages = {

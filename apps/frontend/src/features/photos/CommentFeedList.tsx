@@ -1,5 +1,7 @@
 'use client';
 
+import { navigate } from '../../components/navigation';
+import Link from '../../components/Link';
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { legacyDate, type CommentFeedEntry } from '@nativegallery/contracts';
 import { CommentText } from './CommentText';
@@ -18,7 +20,7 @@ function CommentVote({ id, positive: initialPositive, negative: initialNegative 
     setPending(true);
     try {
       const response = await fetch('/api/photo/comment/rate?' + new URLSearchParams({ wid: String(id), vote: value }), { cache: 'no-store' });
-      if (response.status === 403) return window.location.assign('/login');
+      if (response.status === 403) return navigate('/login');
       if (!response.ok) return;
       const [nextSelected, nextCounts] = await response.json();
       setSelected(nextSelected);
@@ -48,7 +50,7 @@ function FeedComment({ comment }: { comment: CommentFeedEntry }) {
     <div className="pc-content">
       <a className="pc-topost" href={href + '#' + comment.id} target="_blank">Ссылка</a>
       <div className="pc-text"><div>
-        <span className="cmt-aname"><b><a href={'/author/' + comment.authorId + '/'}>{comment.author}</a></b></span> · <span className="sm nw">{legacyDate(comment.postedAt)}</span>
+        <span className="cmt-aname"><b><Link href={'/author/' + comment.authorId + '/'}>{comment.author}</Link></b></span> · <span className="sm nw">{legacyDate(comment.postedAt)}</span>
         <div className="rank">Фото: {comment.photoCount}{role}</div>
         <div className="message-text feed"><CommentText body={comment.body} /></div>
       </div></div>

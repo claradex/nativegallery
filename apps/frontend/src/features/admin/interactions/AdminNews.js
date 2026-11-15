@@ -1,9 +1,11 @@
+import { refreshPage } from '../../../components/navigation';
+
 /** @param {AbortSignal} signal */
 export function bind(signal) {
   async function changeNews(url, body) {
     const response = await fetch(url, { method: 'POST', body });
     if (!response.ok || (await response.json()).error !== 0) throw new Error();
-    location.reload();
+    refreshPage();
   }
 
   document.getElementById('create-news')?.addEventListener('submit', async event => {
