@@ -1,24 +1,25 @@
-import { AdminBootstrap, AdminInteractions, type AdminSection } from './AdminInteractions';
 import type { ReactNode } from 'react';
-import { forbidden, redirect } from 'next/navigation';
+import type { Viewer } from '@nativegallery/contracts';
+import { forbidden, notFound, redirect } from 'next/navigation';
+import { apiFetch } from '../../api/client';
 import { siteContext } from '../site/SiteContext';
-import { AdminSidebar } from './AdminSidebar';
+import { can, type AdminRole } from './lib/roles';
 
-export async function AdminPage(title: string, section: AdminSection | null,
-  load: () => Promise<ReactNode>) {
+/** Checks the viewer's admin level for a section, then renders it (titles come from the route's generateMetadata). */
+export async function AdminPage(role: AdminRole, load: (viewer: Viewer) => Promise<ReactNode>) {
   const { viewer } = await siteContext();
   if (!viewer) redirect('/login');
-  if (viewer.admin === 2 && section !== 'AdminPhotos') redirect('/admin?type=Photo');
   if (!viewer.admin) forbidden();
-  const content = await load();
-  if (!content) throw new Error('Could not load admin data');
-  return <>
-    <title>{title}</title>
-    <AdminBootstrap />
-    <div className="container">
-      <AdminSidebar title={process.env.SITE_TITLE ?? 'NativeGallery'} pending={viewer.pendingPhotos} />
-      {content}
-      {section && <AdminInteractions section={section} />}
-    </div>
-  </>;
+  // Photo moderators only ever see the moderation queue, as in the PHP admin.
+  if (!can(viewer.admin, role)) viewer.admin === 2 ? redirect('/admin?type=Photo') : forbidden();
+  return load(viewer);
+}
+
+/** JSON from an admin endpoint with the viewer's session; API statuses become the matching Next pages. */
+export async function adminData<T>(path: string): Promise<T> {
+  const response = await apiFetch(path, { auth: true });
+  if (response?.status === 403) forbidden();
+  if (response?.status === 404) notFound();
+  if (!response?.ok) throw new Error('Не удалось загрузить данные (' + path + ')');
+  return response.json() as Promise<T>;
 }

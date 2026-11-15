@@ -5,4 +5,4 @@ export const narrowFont = PT_Sans_Narrow({
   weight: ['400', '700'], subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-narrow',
 });
 
-export const interFont = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap' });
+export const interFont = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-inter' });

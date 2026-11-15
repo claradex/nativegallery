@@ -1,0 +1,185 @@
+/*
+ * Admin panel stylesheet: Tailwind v4 + shadcn/ui tokens. Imported only by the admin root layout, and scanning is
+ * limited to the admin sources, so none of this reaches the public site.
+ */
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+
+@source "../../app/admin";
+@source "../../features/admin";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-signal: var(--signal);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  /* Cool paper and slate ink; the blue is the signal blue of station signage, amber is the waiting lamp. */
+  --background: #f3f5f8;
+  --foreground: #17202b;
+  --card: #ffffff;
+  --card-foreground: #17202b;
+  --popover: #ffffff;
+  --popover-foreground: #17202b;
+  --primary: #2052d0;
+  --primary-foreground: #ffffff;
+  --secondary: #e9edf2;
+  --secondary-foreground: #1d2835;
+  --muted: #eef1f5;
+  --muted-foreground: #5a6676;
+  --accent: #e7eefc;
+  --accent-foreground: #173d9f;
+  --destructive: #c42f2b;
+  --destructive-foreground: #ffffff;
+  --success: #1b7f47;
+  --success-foreground: #ffffff;
+  --warning: #f4e2b5;
+  --warning-foreground: #6b4a07;
+  --signal: #f0a92c;
+  --border: #dbe1e8;
+  --input: #cfd6df;
+  --ring: #2052d0;
+
+  --sidebar: #18212d;
+  --sidebar-foreground: #c8d1dc;
+  --sidebar-muted: #7d8a9a;
+  --sidebar-accent: #243143;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #263243;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0e141c;
+    --foreground: #e3e8ef;
+    --card: #151d28;
+    --card-foreground: #e3e8ef;
+    --popover: #182130;
+    --popover-foreground: #e3e8ef;
+    --primary: #5b86f0;
+    --primary-foreground: #0b1220;
+    --secondary: #1f2a38;
+    --secondary-foreground: #dbe2ea;
+    --muted: #1a2330;
+    --muted-foreground: #92a0b1;
+    --accent: #1d2b45;
+    --accent-foreground: #b9cdfb;
+    --destructive: #e5534b;
+    --destructive-foreground: #ffffff;
+    --success: #3fb97a;
+    --success-foreground: #07150d;
+    --warning: #3a2e12;
+    --warning-foreground: #f3d38a;
+    --signal: #f0b043;
+    --border: #253041;
+    --input: #2c394b;
+    --ring: #5b86f0;
+
+    --sidebar: #0a1017;
+    --sidebar-foreground: #c0cad6;
+    --sidebar-muted: #6f7c8d;
+    --sidebar-accent: #172231;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #1a2432;
+
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* HTML written by editors (news, pages): keep it readable without a typography plugin. */
+@layer components {
+  .admin-prose {
+    @apply text-sm leading-relaxed text-foreground;
+    overflow-wrap: anywhere;
+  }
+  .admin-prose p,
+  .admin-prose ul,
+  .admin-prose ol,
+  .admin-prose blockquote {
+    @apply my-2;
+  }
+  .admin-prose ul { @apply list-disc pl-5; }
+  .admin-prose ol { @apply list-decimal pl-5; }
+  .admin-prose a { @apply text-primary underline underline-offset-2; }
+  .admin-prose img,
+  .admin-prose video { @apply my-2 h-auto max-w-full rounded-md; }
+  .admin-prose audio { @apply my-2 w-full; }
+  .admin-prose h1, .admin-prose h2, .admin-prose h3 { @apply mt-4 mb-2 font-semibold; }
+  .admin-prose h1 { @apply text-xl; }
+  .admin-prose h2 { @apply text-lg; }
+  .admin-prose blockquote { @apply border-l-2 pl-3 text-muted-foreground; }
+}
+
+/* Page-transition bar driven by components/ClientNavigation (it looks the element up by this class). */
+.progress-bard {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 100;
+  height: 2px;
+  width: 0;
+  background: var(--signal);
+  transition: width 0.3s ease;
+  pointer-events: none;
+}
