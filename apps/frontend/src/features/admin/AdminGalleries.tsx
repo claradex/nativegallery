@@ -17,7 +17,7 @@ function GalleryForm({ gallery }: { gallery?: Gallery }) {
       {gallery && <Link href={'/article/' + gallery.id}>{gallery.title}</Link>}
       <div className="mb-3">
         <label className="form-label" htmlFor={titleId}>Название</label>
-        <input className="form-control" id={titleId} name="title" defaultValue={gallery?.title} maxLength={255} required />
+        <input type="text" className="form-control" id={titleId} name="title" defaultValue={gallery?.title} maxLength={255} required />
       </div>
       <div className="form-check mb-3">
         <input className="form-check-input" id={openedId} type="checkbox" name="opened" value="1" defaultChecked={gallery ? gallery.opened === 1 : true} />

@@ -41,7 +41,7 @@ export function AdminContests(query: URLSearchParams) {
         <table className="table"><thead><tr><th>ID</th><th>Название</th><th>В автоматическом отборе</th></tr></thead>
           <tbody>{themes.map(theme => <tr key={theme.id}><td>{theme.id}</td><td>{theme.title}</td><td>{theme.status === 1 ? 'Да' : 'Нет'}</td></tr>)}</tbody></table>
         <Editor id="createContestTheme" title="Добавление категории конкурса" endpoint="createtheme">
-          <label className="form-label d-block">Содержание<input className="form-control" name="body" required /></label>
+          <label className="form-label d-block">Содержание<input type="text" className="form-control" name="body" required /></label>
           <label className="form-check"><input className="form-check-input" name="active" type="checkbox" value="1" defaultChecked />В автоматическом отборе</label>
         </Editor>
       </div></div> : <div id="contests__block" className="kandle__block active__block"><div className="p20w">

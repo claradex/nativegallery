@@ -7,7 +7,7 @@ import { legacyDate, type PhotoSearchResult } from '@nativegallery/contracts';
 function SearchForm({ authorId }: { authorId?: string }) {
   return <form id="sf" method="get" action="/search">
     <label htmlFor="search-author">ID автора&nbsp;</label>
-    <input id="search-author" name="id" inputMode="numeric" pattern="[0-9]{1,10}" defaultValue={authorId} required />
+    <input type="text" id="search-author" name="id" inputMode="numeric" pattern="[0-9]{1,10}" defaultValue={authorId} required />
     {' '}<button type="submit">Найти</button>
   </form>;
 }

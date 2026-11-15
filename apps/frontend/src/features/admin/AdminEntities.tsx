@@ -6,11 +6,11 @@ function VariableFields() {
   return <>
     <div className="col-md-3"><div className="mb-3">
       <label htmlFor="variablename_1" className="form-label">Название переменной</label>
-      <input name="variablename_1" id="variablename_1" className="form-control" placeholder="#FFFFFF" maxLength={255} required />
+      <input type="text" name="variablename_1" id="variablename_1" className="form-control" placeholder="#FFFFFF" maxLength={255} required />
     </div></div>
     <div className="col-md-3"><div className="mb-3">
       <label htmlFor="variableid_1" className="form-label">ID</label>
-      <input name="variableid_1" id="variableid_1" className="form-control" placeholder="blablabla" maxLength={64} required />
+      <input type="text" name="variableid_1" id="variableid_1" className="form-control" placeholder="blablabla" maxLength={64} required />
     </div></div>
     <div className="col-md-3">
       <label htmlFor="variabletype_1" className="form-label">Тип</label>
@@ -28,7 +28,7 @@ function EntityForm() {
     <h1><b>Создание сущности</b></h1>
     <form id="entity-create" action="/api/admin/entities" method="post" style={{ display: 'inline-block', minWidth: 500 }}>
       <div className="mb-3"><label htmlFor="entity-title" className="form-label">Название</label>
-        <input name="title" id="entity-title" className="form-control" placeholder="Вагон метро" maxLength={255} required />
+        <input type="text" name="title" id="entity-title" className="form-control" placeholder="Вагон метро" maxLength={255} required />
       </div>
       <div className="mb-3"><label htmlFor="entity-color" className="form-label">Цвет</label>
         <input name="color" id="entity-color" type="color" className="form-control form-control-color" defaultValue="#563d7c" />

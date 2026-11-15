@@ -60,7 +60,7 @@ export function VehicleRequestForm({ data, action }: { data: VehicleRequestData;
       <div className="p20" style={{ paddingLeft: 5, marginBottom: 15 }}><table className="nospaces" width="100%"><tbody>
         {data.labels.map((label, index) => <tr key={index}>
           <td className="lcol"><label htmlFor={'modelinput_' + (index + 1)}>{label}</label></td>
-          <td style={{ paddingBottom: 15 }}><input name={'modelinput_' + (index + 1)} id={'modelinput_' + (index + 1)}
+          <td style={{ paddingBottom: 15 }}><input type="text" name={'modelinput_' + (index + 1)} id={'modelinput_' + (index + 1)}
             style={{ width: 80 }} maxLength={21} required value={values[index] ?? ''} onChange={event => {
               const value = event.currentTarget.value;
               setValues(current => Object.assign([...current], { [index]: value }));

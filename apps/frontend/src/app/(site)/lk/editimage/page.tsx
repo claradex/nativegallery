@@ -14,7 +14,7 @@ export default async function EditPhoto({ searchParams }: { searchParams: Promis
     <form method="post" action={'/api/account/photos/' + photo.id} className="p20">
       <table><tbody>
         <tr><td className="lcol"><label htmlFor="place">Место съёмки:</label></td>
-          <td><input id="place" name="place" maxLength={255} defaultValue={photo.place} /></td></tr>
+          <td><input type="text" id="place" name="place" maxLength={255} defaultValue={photo.place} /></td></tr>
         <tr><td className="lcol"><label htmlFor="descr">Описание:</label></td>
           <td><textarea id="descr" name="descr" rows={5} cols={50} defaultValue={photo.postbody} /></td></tr>
       </tbody></table>

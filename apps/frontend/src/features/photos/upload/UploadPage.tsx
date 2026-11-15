@@ -30,7 +30,7 @@ function UploadForm({ data }: { data: UploadOptionsData }) {
               </select>
             </td></tr>
             <tr className="lnk-vehicle"><td className="lcol">ID/Название модели:</td><td style={{ paddingRight: 15 }}>
-              <input name="search_num" id="search_num" maxLength={15} style={{ width: 150, height: 22 }} />
+              <input type="text" name="search_num" id="search_num" maxLength={15} style={{ width: 150, height: 22 }} />
               <input type="button" id="searchVehiclesByNumBtn" className="searchVehiclesBtn" style={{ height: 22, paddingTop: 0, position: 'relative', left: -1 }} value="Найти в БД" />
               <input type="hidden" name="nid" id="nid" />
               <div style={{ position: 'relative', zIndex: 2000, paddingTop: 4 }}><div id="vlist" className="shadow"></div></div>

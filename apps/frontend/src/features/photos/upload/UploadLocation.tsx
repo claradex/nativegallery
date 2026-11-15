@@ -4,7 +4,7 @@ export function UploadLocation() {
     <tbody className="p20">
       <tr><td colSpan={2} id="step3" className="narrow" style={{ fontSize: 20, padding: '10px 15px 7px' }}>Шаг 3. <b>Введите подпись для медиафайла:</b></td></tr>
       <tr><td className="lcol">Место съёмки:</td><td style={{ paddingRight: 15 }}>
-        <input name="place" id="place" maxLength={255} style={{ width: 506 }} />
+        <input type="text" name="place" id="place" maxLength={255} style={{ width: 506 }} />
       </td></tr>
       <tr><td className="lcol">Описание:<div className="sm" style={{ color: '#999', margin: '3px 5px 0 0', whiteSpace: 'normal' }}>(если требуются)</div></td>
         <td style={{ paddingRight: 15 }}><textarea name="descr" style={{ width: 506, height: 100, marginBottom: 7 }} /></td>

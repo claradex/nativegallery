@@ -24,7 +24,7 @@ function PageEditor() {
   return <><form id="page-editor" method="post" action="/api/admin/pages">
     <div className="mb-3">
       <label htmlFor="title" className="form-label">Заголовок</label>
-      <input name="title" id="title" className="form-control" maxLength={255} required />
+      <input type="text" name="title" id="title" className="form-control" maxLength={255} required />
     </div>
     <div className="col-md-auto d-flex align-items-center">
       {formatting.map(([tag, icon, label]) => <button key={tag} type="button" data-format={tag} aria-label={label}
