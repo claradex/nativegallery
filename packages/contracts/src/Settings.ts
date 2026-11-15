@@ -130,3 +130,18 @@ export function navbarLinks(value: string) {
     return label && /^(?:\/(?!\/)|https?:\/\/)/.test(href) ? [{ label, href }] : [];
   });
 }
+
+/** GET /api/admin/config: secrets come back empty, with `set` telling whether one is configured. */
+export interface ConfigValue {
+  key: string;
+  value: string;
+  set: boolean;
+  /** Where the value comes from: the .env file, the process environment, or the registry default. */
+  source: 'file' | 'environment' | 'default';
+}
+
+export interface ConfigOverview {
+  path: string;
+  writable: boolean;
+  values: ConfigValue[];
+}

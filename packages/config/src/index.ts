@@ -85,9 +85,14 @@ function load(): Parsed {
   return parsed;
 }
 
+/** The value as written in the .env file, or undefined when the file does not have the key. */
+export function fileValue(key: string): string | undefined {
+  return load().entries.get(key)?.value;
+}
+
 /** The value as configured (file, then environment), or undefined when neither sets it. */
 export function configuredValue(key: string): string | undefined {
-  return load().entries.get(key)?.value ?? process.env[key];
+  return fileValue(key) ?? process.env[key];
 }
 
 /** The effective value of a setting: configured, or the registry default when empty. */
