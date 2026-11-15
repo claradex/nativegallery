@@ -17,7 +17,7 @@ function PhotoStep({ rel, label, photoId, scope, children }: { rel: 'prev' | 'ne
 export function PhotoMedia({ photo, scope }: { photo: PhotoPageData; scope: string }) {
   const video = mediaUrl(photo.videoUrl);
   const image = mediaUrl(photo.url);
-  return <div style={{ textAlign: 'center' }}>
+  return <div className="center">
     <div id="photobar">
       <PhotoStep rel="prev" label="Предыдущая фотография" photoId={photo.previousId} scope={scope}><span>&lt;</span></PhotoStep>
       <PhotoStep rel="next" label="Следующая фотография" photoId={photo.nextId} scope={scope}><span>&gt;</span></PhotoStep>

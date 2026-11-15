@@ -7,7 +7,7 @@ import { siteContext } from '../site/SiteContext';
 
 function LoginContent() {
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className="center">
       <h1><b>Авторизация</b></h1>
       <div className="mf-center-block mf-label">
         <LoginForm />

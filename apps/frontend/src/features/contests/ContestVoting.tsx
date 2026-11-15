@@ -8,7 +8,7 @@ type Voting = { contest: null; startsAt: number | null }
 
 export async function ContestVoting() {
   const data = await apiGet<Voting>('/api/contests/voting', { auth: true, error: 'Could not load contest data' });
-  return <tr><td className="main"><div style={{ textAlign: 'center' }}>
+  return <tr><td className="main"><div className="center">
     <h1>Фотоконкурс</h1>
     <p className="narrow" style={{ fontSize: 19 }}><b>Голосование</b>&nbsp; · &nbsp;
       <Link href="/voting/results">Победители</Link>&nbsp; · &nbsp;<Link href="/voting/rating">Рейтинг</Link>&nbsp; · &nbsp;

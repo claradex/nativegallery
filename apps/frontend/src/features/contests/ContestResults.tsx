@@ -36,7 +36,7 @@ export async function ContestResults() {
     if (group) group.push(winner);
     else groups.set(winner.contestId, [winner]);
   }
-  return <tr><td className="main"><div style={{ textAlign: 'center' }}>
+  return <tr><td className="main"><div className="center">
     <h1>Победители фотоконкурса</h1><ResultLinks />
     {[...groups].map(([id, winners]) => <ResultGroup key={id} winners={winners} />)}
     <ResultLinks />

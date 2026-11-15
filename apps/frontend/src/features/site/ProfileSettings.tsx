@@ -16,10 +16,10 @@ export async function ProfileSettings({ searchParams }: { searchParams: Promise<
     const [data, cookie] = await Promise.all([apiGet<ProfileSettingsData>('/api/profile/settings', load), requestCookie()]);
     content = type === 'Personalization' ? <ProfileThemeForm theme={readCookie(cookie, 'NGALLERYTHEME')} /> : <ProfileForm data={data} />;
   }
-  return <tr><td className="main"><center><div className="tabs">
+  return <tr><td className="main"><div className="center"><div className="tabs">
     <nav className="tab-nav">{tabs.map(([tab, label]) =>
       <Link key={label} href={tab ? '/lk/profile?type=' + tab : '/lk/profile'} className={type === tab ? 'tab-item active' : 'tab-item'}>{label}</Link>)}
     </nav>
     <div className="tab-content">{content}</div>
-  </div></center></td></tr>;
+  </div></div></td></tr>;
 }

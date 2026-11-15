@@ -48,9 +48,9 @@ export function RegisterForm({ title }: { title: string }) {
     }
   }
 
-  return <center>
+  return <div className="center">
     <h1><b>Регистрация</b></h1>
-    <table cellSpacing="10" cellPadding="0" {...{ border: 0, align: 'center' }} style={{ margin: 9 }}><tbody><tr>
+    <table cellSpacing="10" cellPadding="0" {...{ border: 0 }} style={{ margin: '9px auto' }}><tbody><tr>
       <td><img src="/static/img/logocube.png" style={{ width: 32 }} {...{ align: 'middle' }} /></td>
       <td><b>{title} — это универсальное средство для размещения своих фотографий и видеороликов, созданное на базе движка СТТС.</b><br />
         Публикуйте свои самые лучшие фотографии и великолепные видео на наш портал, чтобы их увидели все желающие.
@@ -79,5 +79,5 @@ export function RegisterForm({ title }: { title: string }) {
         <p><b><Link href="/tour">Вы можете пройти экскурсию по сайту.</Link></b></p>
       </form><br /><br /><br />
     </div>
-  </center>;
+  </div>;
 }

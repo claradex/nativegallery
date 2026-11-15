@@ -61,7 +61,7 @@ export async function Author({ params }: { params: Promise<{ id: string }> }) {
   if (!isId(id)) notFound();
   const profile = await apiFind<Profile>('/api/internal/author/' + id, { auth: true, error: 'Could not load the author profile' });
   return <tr><td className="main">
-    {profile ? <ProfileContent profile={profile} /> : <div style={{ textAlign: 'center' }}>
+    {profile ? <ProfileContent profile={profile} /> : <div className="center">
       <h1>Пользователь не найден</h1><img src="/static/img/404.jpg" alt="" loading="lazy" />
     </div>}
   </td></tr>;

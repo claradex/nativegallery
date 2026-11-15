@@ -223,6 +223,10 @@ a.light-notify-count:hover { background-color:#cdf; }
 
 table { border-width:0; border-collapse:collapse; }
 
+/* Replaces the obsolete <center>: centres the text and the narrower blocks inside (forms, tables, images). */
+.center { text-align:center; }
+.center > * { margin-left:auto; margin-right:auto; }
+
 .h21 { height:21px; }
 .h21 td { vertical-align:top; }
 .h21 td.d,  .h21 td.c,  .h21 td.r  { padding-top:2px; }

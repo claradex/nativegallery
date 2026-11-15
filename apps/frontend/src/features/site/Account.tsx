@@ -28,7 +28,7 @@ function AccountSummary({ data }: { data: Summary }) {
 const dates = new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'medium', timeZone: 'Europe/Moscow' });
 
 function IndexHistory({ events }: { events: IndexEvent[] }) {
-  return <div style={{ textAlign: 'center' }}>
+  return <div className="center">
     <h1>История изменения индекса загрузки</h1>
     <table style={{ marginInline: 'auto' }}><tbody>
       <tr><th>Дата и время</th><th className="r">Индекс</th><th className="r">Изменение</th><th>Действие</th><th>Фотография</th></tr>

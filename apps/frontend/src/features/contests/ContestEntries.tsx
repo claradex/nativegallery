@@ -12,7 +12,7 @@ function Links() {
 }
 
 function Candidates({ contest, photos }: { contest: number | null; photos: Candidate[] }) {
-  return <div style={{ textAlign: 'center' }}>
+  return <div className="center">
     <h1>Претенденты на участие в конкурсе</h1><Links />
     {contest === null ? <h2><b>Следующего конкурса нет. Пожалуйста, заходите сюда позже.</b></h2>
       : <><p><Link href="/voting/sendpretend">Принять участие в Фотоконкурсе</Link></p>

@@ -58,7 +58,7 @@ export async function PhotoDetails({ searchParams }: { searchParams: Promise<{ i
     ? await apiFind<PhotoDetailsData>('/api/internal/photo-details/' + id, { error: 'Could not load photo details' })
     : null;
 
-  return <tr><td className="main"><div style={{ textAlign: 'center' }}>
+  return <tr><td className="main"><div className="center">
     {photo ? <Details photo={photo} /> : <MissingPhoto />}
   </div></td></tr>;
 }

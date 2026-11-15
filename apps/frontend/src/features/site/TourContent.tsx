@@ -179,7 +179,7 @@ export function TourContent({ title }: { title: string }) {
                                     <li><span>Некоторых новых пользователей может слегка отпугнуть нынешняя стоковая тема, которая веет совсем уж древностью</span></li>
                                     <li><span><b>Но не беда:</b> Вы можете создать свою тему для сайта, ознакомившись с <a href="https://docs.ovk.to/">документацией</a> или выбрать уже существующую из каталога</span></li>
                                 </ul>
-                                <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme_picker.png" /></center>
+                                <div className="center"><img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme_picker.png" /></div>
                                 <p className="big">Каталог тем доступен в разделе "Мои Настройки" во вкладке "Интерфейс" </p><br />
                                 <img src="https://ovk.to/assets/packages/static/openvk/img/tour/theme3.png" width="460" />
                                 <table cellSpacing="5" border={0}>
@@ -191,7 +191,7 @@ export function TourContent({ title }: { title: string }) {
                                     </tbody>
                                 </table>
                                 <br />
-                                <center><img src="/https://ovk.to/assets/packages/static/openvk/img/tour/wordart.png" width="65%" /></center>
+                                <div className="center"><img src="/https://ovk.to/assets/packages/static/openvk/img/tour/wordart.png" width="65%" /></div>
                                 <br />
                             </div>
                             <div id="customization" className="tabcontent" style={{ display: activeTab === 'customization' ? 'block' : 'none' }}>
@@ -226,7 +226,7 @@ export function TourContent({ title }: { title: string }) {
                                     <li><span>Вы можете задать вариант показа аватара пользователя: стандартное, закруглённые и квадратные (1:1)</span></li>
                                     <li><span>Данные настройки будут видны только вам</span></li>
                                 </ul>
-                                <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/avatar_picker.png" /></center><br />
+                                <div className="center"><img src="https://ovk.to/assets/packages/static/openvk/img/tour/avatar_picker.png" /></div><br />
                                 <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>
@@ -255,7 +255,7 @@ export function TourContent({ title }: { title: string }) {
                                     <li><span>Вид постов можно менять между двумя вариантами в любое время</span></li>
                                     <li><span><b>Обратите внимание</b>, что если выбран старый вид отображения постов, то последние комментарии подгружаться не будут</span></li>
                                 </ul>
-                                <center><img src="https://ovk.to/assets/packages/static/openvk/img/tour/wall_pick.png" /></center><br />
+                                <div className="center"><img src="https://ovk.to/assets/packages/static/openvk/img/tour/wall_pick.png" /></div><br />
                                 <table cellSpacing="5" border={0}>
                                     <tbody>
                                         <tr>

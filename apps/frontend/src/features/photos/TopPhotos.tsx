@@ -31,7 +31,7 @@ function RankedPhoto({ photo, rank }: { photo: TopPhoto; rank: number }) {
 function TopPhotosContent({ photos }: { photos: TopPhoto[] }) {
   return (
     <tr><td className="main">
-      <div style={{ textAlign: 'center' }}>
+      <div className="center">
         <h1>30 самых просматриваемых фото за 24 часа</h1>
         <div style={{ width: '80%', marginInline: 'auto' }}>
           {photos.map((photo, index) => <RankedPhoto key={photo.id} photo={photo} rank={index + 1} />)}
