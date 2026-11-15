@@ -3,6 +3,7 @@ import { requireId } from '../common/ids';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { flag } from '@nativegallery/config';
 
 function timestamp(value: unknown) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)?$/.test(value)) throw new BadRequestException();
@@ -25,7 +26,7 @@ export class AdminContestsController {
       database.jobSchedule.findUnique({ where: { kind: 'ExecContests' } }),
     ]);
     // The contests job runs only when the server allows it (CONTESTS_ENABLED) and the admin switch is on.
-    const configured = process.env.CONTESTS_ENABLED === 'true';
+    const configured = flag('CONTESTS_ENABLED');
     return { contests, themes, configured, enabled: configured && (schedule?.enabled ?? true) };
   }
 

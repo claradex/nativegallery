@@ -4,6 +4,7 @@ import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
 import { findVehicle } from './VehicleData';
 import { requireId } from '../common/ids';
+import { setting } from '@nativegallery/config';
 
 const timestamp = () => BigInt(Math.floor(Date.now() / 1000));
 const recent = (user_id: number) => ({ user_id, created_at: { gt: timestamp() - 82800n } });
@@ -37,7 +38,7 @@ export class VehicleRequestController {
       Promise.all(matches.map(row => findVehicle(row.id))),
       database.entityRequest.findFirst({ where: recent(userId), select: { id: true } }),
     ]);
-    return { labels, vehicles: vehicles.filter(Boolean), limited: !!last, siteKey: process.env.TURNSTILE_SITE_KEY ?? '' };
+    return { labels, vehicles: vehicles.filter(Boolean), limited: !!last, siteKey: setting('TURNSTILE_SITE_KEY') };
   }
 
   @Post(':model')
@@ -54,8 +55,8 @@ export class VehicleRequestController {
       if (typeof field !== 'string' || !field.trim() || field.length > 21) throw new BadRequestException();
       return [index + 1, { value: field.trim() }] as const;
     });
-    const secret = process.env.TURNSTILE_SECRET_KEY;
-    if (secret || process.env.TURNSTILE_SITE_KEY) {
+    const secret = setting('TURNSTILE_SECRET_KEY');
+    if (secret || setting('TURNSTILE_SITE_KEY')) {
       if (!secret) throw new ServiceUnavailableException();
       const token = body['cf-turnstile-response'];
       if (typeof token !== 'string' || !token || token.length > 2048) throw new BadRequestException();

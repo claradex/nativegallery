@@ -4,6 +4,7 @@ import { compare } from 'bcryptjs';
 import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import type { LoginRequest, LoginResponse, Viewer } from '@nativegallery/contracts';
+import { flag } from '@nativegallery/config';
 
 const sessionAge = 50 * 50 * 54 * 72 * 1000;
 const failure: LoginResponse = { errorcode: '1', error: 1 };
@@ -83,7 +84,7 @@ export class AuthService {
       data: { token: 'v2:' + token, user_id: userId, iv: new Uint8Array(16), device_name: '', os: '',
         ip: '', location: '', created_at: now, last_activity: now },
     });
-    const options = { httpOnly: true, sameSite: 'lax' as const, secure: process.env.COOKIE_SECURE === 'true', path: '/', maxAge: sessionAge };
+    const options = { httpOnly: true, sameSite: 'lax' as const, secure: flag('COOKIE_SECURE'), path: '/', maxAge: sessionAge };
     response.cookie(sessionCookie, token, options);
     response.cookie('NGALLERYSERVICE', randomUUID(), options);
     response.cookie('NGALLERYSESS_', '1', options);

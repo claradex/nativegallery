@@ -97,9 +97,10 @@ NativeGallery - это реверсивный open-source движок попу�
 
 
 # Запуск в Docker
+* Создайте файл настроек: `cp .env.example .env`.
 * `docker compose up -d --build` — поднимает MySQL (`nativegallery-db`), применяет миграции (`nativegallery-migrate`) и запускает `nativegallery-api`, `nativegallery-crons`, `nativegallery-media-worker` и `nativegallery-frontend`.
 * Сайт открывается на http://localhost:3080 (порт меняется переменной `SITE_PORT`).
-* Настройки сайта берутся из `.env`, если он есть; медиафайлы хранятся в папке `uploads/`, база — в томе `db-data`.
+* Настройки сайта берутся из `.env`; медиафайлы хранятся в папке `uploads/`, база — в томе `db-data`.
 
 # Установка
 * Убедитесь, что вы предварительно установили на своём сервере Node.js 22, MySQL версии 8.0 и выше и ffmpeg.
@@ -112,6 +113,12 @@ NativeGallery - это реверсивный open-source движок попу�
   * `npm start -w @nativegallery/crons`
   * `npm start -w @nativegallery/media-worker`
   * `npm start -w @nativegallery/frontend` (адрес API задаётся переменной `API_ORIGIN`, по умолчанию `http://127.0.0.1:3001`)
-* Для режима технических работ задайте `MAINTENANCE=true` перед запуском сайта.
+* Для режима технических работ задайте `MAINTENANCE=true`.
+
+# Настройки
+* Все настройки сайта хранятся в `.env` в корне проекта; он заменяет `ngallery.yaml` PHP-версии. В `.env.example` у каждого ключа есть описание и имя старого ключа из `ngallery.yaml`.
+* Владелец сайта может менять их в панели управления: «Система → Конфигурация». Изменения записываются в `.env` и применяются без перезапуска (кроме `SITE_TIMEZONE`).
+* Пустое значение означает значение по умолчанию. Инфраструктурные переменные (`DATABASE_URL`, `API_PORT`, `MEDIA_ROOT`, `API_ORIGIN`, `FFMPEG_PATH`, `EMOJI_ROOT`) читаются только при запуске и в панели не редактируются.
+* Путь к файлу можно задать переменной `CONFIG_FILE` (по умолчанию `../../.env` относительно папки сервиса).
 * Если вы всё сделали правильно, то вы увидите пустую главную страницу вашей галереи.
 * Готово! Ваш сервер NativeGallery (aka СТТС) готов к работе.

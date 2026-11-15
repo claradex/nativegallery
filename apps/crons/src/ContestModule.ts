@@ -2,12 +2,14 @@ import { Injectable, Module } from '@nestjs/common';
 import { Cron, ScheduleModule } from '@nestjs/schedule';
 import { database, Prisma } from '@nativegallery/database';
 import { enabled } from '@nativegallery/jobs';
+import { flag, setting } from '@nativegallery/config';
+import { durationSeconds, settingByKey, type SettingKey } from '@nativegallery/contracts';
 
 @Injectable()
 export class ContestSchedule {
   @Cron('* * * * *', { waitForCompletion: true })
   async tick() {
-    if (process.env.CONTESTS_ENABLED !== 'true' || !await enabled('ExecContests')) return;
+    if (!flag('CONTESTS_ENABLED') || !await enabled('ExecContests')) return;
     await database.$transaction(async tx => {
       const rows = await tx.$queryRaw<{ id: number }[]>(Prisma.sql`SELECT id FROM contests WHERE status < 3 ORDER BY id FOR UPDATE`);
       const contests = await tx.contest.findMany({ where: { id: { in: rows.map(row => row.id) } }, orderBy: { id: 'asc' } });
@@ -27,9 +29,35 @@ export class ContestSchedule {
         } else if (contest.status === 2 && contest.closedate <= now) {
           await this.closeContest(tx, id, contest.themeid, now);
           voting = false;
+          if (flag('CONTESTS_AUTONEW') && await this.startNext(tx, now)) accepting = true;
         }
       }
     }, { timeout: 30_000 });
+  }
+
+  /**
+   * Starts a contest on a random active theme once one is over (the legacy contests.autonew), unless another one is
+   * already scheduled. Times count from now; "now" opens entries at once, and voting right after entries close.
+   * Returns whether the new contest is accepting entries already.
+   */
+  private async startNext(tx: Prisma.TransactionClient, now: number) {
+    if (await tx.contest.count({ where: { status: { lt: 2 } } })) return false;
+    const themes = await tx.contestTheme.findMany({ where: { status: 1 }, select: { id: true } });
+    if (!themes.length) return false;
+    const after = (key: SettingKey) => {
+      const value = setting(key);
+      if (value === 'now') return null;
+      return now + (durationSeconds(value) ?? durationSeconds(settingByKey.get(key)?.default ?? '') ?? 0);
+    };
+    const pretendsOpen = after('CONTESTS_AUTONEW_PRETENDS_OPEN');
+    const closepretendsdate = after('CONTESTS_AUTONEW_PRETENDS_CLOSE') ?? now;
+    const opendate = after('CONTESTS_AUTONEW_OPEN') ?? closepretendsdate;
+    const closedate = Math.max(after('CONTESTS_AUTONEW_CLOSE') ?? now, opendate);
+    await tx.contest.create({ data: {
+      themeid: themes[Math.floor(Math.random() * themes.length)].id, status: pretendsOpen === null ? 1 : 0,
+      openpretendsdate: pretendsOpen ?? now, closepretendsdate, opendate, closedate,
+    } });
+    return pretendsOpen === null;
   }
 
   private async closeContest(tx: Prisma.TransactionClient, id: number, themeId: number, now: number) {

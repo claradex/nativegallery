@@ -12,12 +12,13 @@ import { AdminPhotos } from '../../features/admin/AdminPhotos';
 import { AdminSettings } from '../../features/admin/AdminSettings';
 import { AdminUsers } from '../../features/admin/AdminUsers';
 import { siteContext } from '../../features/site/SiteContext';
+import { setting } from '@nativegallery/config';
 
 async function origin() {
   const requestHeaders = await headers();
   const host = requestHeaders.get('host');
   const scheme = requestHeaders.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
-  return process.env.SITE_ORIGIN || (host ? scheme + '://' + host : '');
+  return setting('SITE_ORIGIN') || (host ? scheme + '://' + host : '');
 }
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

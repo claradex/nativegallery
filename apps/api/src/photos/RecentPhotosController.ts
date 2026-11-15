@@ -2,6 +2,7 @@ import { Controller, Get, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database } from '@nativegallery/database';
 import { legacyDate } from '@nativegallery/contracts';
+import { setting } from '@nativegallery/config';
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char] ?? char
@@ -28,7 +29,7 @@ export class RecentPhotosController {
     ]);
     const names = new Map(users.map(user => [user.id, user.username]));
     const counts = new Map(comments.map(row => [row.photo_id, row._count.photo_id]));
-    const origin = process.env.SITE_ORIGIN ?? request.protocol + '://' + request.get('host');
+    const origin = setting('SITE_ORIGIN') || request.protocol + '://' + request.get('host');
     return photos.map(photo => {
       const date = legacyDate(photo.posted_at);
       const thumbnail = origin + '/api/photo/compress?url=' + encodeURIComponent(photo.photourl);

@@ -1,8 +1,9 @@
 import Link from './Link';
-import type { Viewer } from '@nativegallery/contracts';
+import { navbarLinks, type Viewer } from '@nativegallery/contracts';
 import { SmallTitle, TitleRow } from './NavbarTitle';
 import { MobileMenu } from './MobileMenu';
 import { mainMenu, userMenu, type MenuEntry } from './menu';
+import { flag, setting } from '@nativegallery/config';
 
 function Notice({ count }: { count?: number | string }) {
   return <>
@@ -37,10 +38,11 @@ export function EmailVerification() {
 }
 
 export function Navbar({ title: siteTitle, viewer }: { title: string; viewer: Viewer | null }) {
-  const verify = process.env.EMAIL_VERIFY === 'true' && viewer?.status === 3;
-  const logo = process.env.SITE_LOGO ?? '/static/img/logosmall.png';
-  const title = process.env.SITE_SHOW_TITLE === 'false' ? '' : siteTitle;
-  const main = mainMenu(viewer);
+  const verify = flag('EMAIL_VERIFY') && viewer?.status === 3;
+  const logo = setting('SITE_LOGO');
+  const title = flag('SITE_SHOW_TITLE') ? siteTitle : '';
+  // Extra entries from SITE_NAVBAR_LINKS (the legacy `navbar` list); other sites load in full, not through client navigation.
+  const main = [...mainMenu(viewer), ...navbarLinks(setting('SITE_NAVBAR_LINKS')).map(link => ({ ...link, reload: !link.href.startsWith('/') }))];
   const user = userMenu(viewer, verify);
   return <>
 <tr>

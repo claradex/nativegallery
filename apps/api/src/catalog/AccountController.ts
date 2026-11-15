@@ -5,6 +5,7 @@ import type { UploadHistoryData } from '@nativegallery/contracts';
 import { photoContent } from '../photos/PhotoContent';
 import { database } from '@nativegallery/database';
 import { AuthService } from '../auth/AuthService';
+import { flag } from '@nativegallery/config';
 
 @Controller('api/internal/account')
 export class AccountController {
@@ -20,7 +21,7 @@ export class AccountController {
       database.user.findUnique({ where: { id: viewer.id }, select: { uploadindex: true } }),
     ]);
     return { id: viewer.id, username: viewer.username, published, pending,
-      uploadIndex: process.env.UPLOAD_INDEX_ENABLED === 'true' ? user?.uploadindex ?? null : null };
+      uploadIndex: flag('UPLOAD_INDEX_ENABLED') ? user?.uploadindex ?? null : null };
   }
 
   @Get('upload-index')

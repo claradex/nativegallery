@@ -197,3 +197,5 @@ export interface SitePageData {
   title: string;
   html: string;
 }
+
+export * from './Settings';

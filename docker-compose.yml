@@ -2,7 +2,8 @@ name: nativegallery
 
 # NativeGallery stack: MySQL, migrations, NestJS API, background workers and the Next.js site.
 # Start with `docker compose up -d --build`; the site listens on http://localhost:${SITE_PORT:-3080}.
-# Site settings (SITE_TITLE, SMTP_*, TURNSTILE_* ...) are read from .env when it exists.
+# Site settings (SITE_TITLE, SMTP_*, TURNSTILE_* ...) live in .env: create it first with `cp .env.example .env`.
+# The file is mounted into the services that read it, so edits from the admin panel («Конфигурация») apply at once.
 
 x-app: &app
   build: .
@@ -16,6 +17,15 @@ x-env: &env
   DATABASE_URL: mysql://nativegallery:${MYSQL_PASSWORD:-nativegallery}@nativegallery-db:3306/nativegallery
   MEDIA_ROOT: /app/uploads
   API_PORT: "3001"
+
+# The settings file, writable for the API (the admin panel saves through it) and read-only elsewhere.
+# create_host_path: false makes a missing .env an error instead of docker creating a directory in its place.
+x-config: &config
+  type: bind
+  source: ./.env
+  target: /app/.env
+  bind:
+    create_host_path: false
 
 x-after-migrations: &after-migrations
   nativegallery-migrate:
@@ -58,6 +68,7 @@ services:
     environment: *env
     volumes:
       - ./uploads:/app/uploads
+      - *config
     depends_on: *after-migrations
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
@@ -73,6 +84,8 @@ services:
     environment: *env
     volumes:
       - ./uploads:/app/uploads
+      - <<: *config
+        read_only: true
     depends_on: *after-migrations
 
   nativegallery-media-worker:
@@ -90,6 +103,9 @@ services:
     command: npm start -w @nativegallery/frontend -- -p 3000 -H 0.0.0.0
     environment:
       API_ORIGIN: http://nativegallery-api:3001
+    volumes:
+      - <<: *config
+        read_only: true
     ports:
       - "${SITE_PORT:-3080}:3000"
     depends_on:

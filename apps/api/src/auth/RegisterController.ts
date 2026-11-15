@@ -6,6 +6,7 @@ import { database, Prisma } from '@nativegallery/database';
 import { AuthService } from './AuthService';
 
 import { verificationMailer } from './VerificationMailer';
+import { flag, numberSetting, setting } from '@nativegallery/config';
 
 const failure = (errorcode: string, errortitle: string) => ({ errorcode, errortitle, error: 1 });
 
@@ -16,7 +17,7 @@ export class RegisterController {
   @Get('options')
   @Header('Cache-Control', 'private, no-store')
   options() {
-    return { open: process.env.REGISTRATION_PUBLIC === 'true' && (process.env.EMAIL_VERIFY !== 'true' || verificationMailer() !== null) };
+    return { open: flag('REGISTRATION_PUBLIC') && (!flag('EMAIL_VERIFY') || verificationMailer() !== null) };
   }
 
   @Post()
@@ -30,14 +31,14 @@ export class RegisterController {
     if (Array.from(username).length < 2 || Array.from(username).length > 20 || /[\u0000-\u001f\u007f]/.test(username)) {
       return failure('5', 'Никнейм некорректный!');
     }
-    const prohibited = (process.env.REGISTRATION_PROHIBITED_USERNAMES ?? '').split(',').map(value => value.trim().toLowerCase());
+    const prohibited = setting('REGISTRATION_PROHIBITED_USERNAMES').split(',').map(value => value.trim().toLowerCase());
     if (prohibited.includes(username.toLowerCase())) return failure('7', 'Никнейм запрещён на сервере.');
     if (Array.from(password).length < 5 || Buffer.byteLength(password) > 72) {
       return failure('4', 'Пароль должен содержать от 5 символов и занимать не более 72 байт.');
     }
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return failure('3', 'Почта некорректного формата!');
-    const mailer = process.env.EMAIL_VERIFY === 'true' ? verificationMailer() : null;
-    if (process.env.EMAIL_VERIFY === 'true' && !mailer) return failure('8', 'Регистрация закрыта.');
+    const mailer = flag('EMAIL_VERIFY') ? verificationMailer() : null;
+    if (flag('EMAIL_VERIFY') && !mailer) return failure('8', 'Регистрация закрыта.');
     const token = mailer ? randomUUID() : null;
     const encrypted = await hash(password, 12);
     const now = Math.floor(Date.now() / 1000);
@@ -51,7 +52,7 @@ export class RegisterController {
       if (existing) return failure('6', 'Никнейм уже существует!');
       if (await tx.user.findFirst({ where: { email }, select: { id: true } })) return failure('2', 'Пользователь с такой почтой уже существует!');
       const account = await tx.user.create({ data: {
-        username, email, password: encrypted, photourl: '/static/img/avatar.png', uploadindex: 5,
+        username, email, password: encrypted, photourl: '/static/img/avatar.png', uploadindex: numberSetting('UPLOAD_INDEX_DEFAULT'),
         online: now, admin: 0, status: token ? 3 : 0, content: JSON.stringify({ route: 'NONE', regdate: now }),
       }, select: { id: true } });
       if (token) await tx.serviceKey.create({ data: {

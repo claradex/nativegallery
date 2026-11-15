@@ -5,11 +5,12 @@ import { database } from '@nativegallery/database';
 import { profileFields, type ProfileSession } from '@nativegallery/contracts';
 import { AuthService, sessionToken } from '../auth/AuthService';
 import { storeAvatar } from './ProfileAvatar';
+import { flag } from '@nativegallery/config';
 
 const themes = new Set(['standard', 'nativegallery-dark']);
 
 export const preferenceCookie = (path: string) =>
-  ({ path, httpOnly: true, sameSite: 'lax' as const, secure: process.env.COOKIE_SECURE === 'true' });
+  ({ path, httpOnly: true, sameSite: 'lax' as const, secure: flag('COOKIE_SECURE') });
 
 function profileContent(raw: string): Record<string, unknown> {
   try {

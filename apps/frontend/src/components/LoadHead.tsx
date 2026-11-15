@@ -12,6 +12,7 @@ import '../styles/themes/nativegallery-dark.css';
 import '../styles/site/mobile.css';
 import type { Metadata, Viewport } from 'next';
 import { readCookie } from '../api/client';
+import { setting } from '@nativegallery/config';
 
 const themes = new Set(['nativegallery-dark']);
 
@@ -22,7 +23,9 @@ export function siteTheme(cookie: string) {
 }
 
 export function generateMetadata(): Metadata {
-  return { title: process.env.SITE_TITLE ?? 'NativeGallery' };
+  const description = setting('SITE_DESCRIPTION').replace(/\s+/g, ' ').trim();
+  const keywords = setting('SITE_KEYWORDS').split(',').map(word => word.trim()).filter(Boolean);
+  return { title: setting('SITE_TITLE'), description: description || undefined, keywords: keywords.length ? keywords : undefined };
 }
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 };

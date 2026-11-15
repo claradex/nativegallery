@@ -5,9 +5,10 @@ import { apiGet } from '../../../api/client';
 import { UploadMedia } from './UploadMedia';
 import { UploadOptions } from './UploadOptions';
 import { UploadLocation } from './UploadLocation';
+import { setting } from '@nativegallery/config';
 
 function UploadForm({ data }: { data: UploadOptionsData }) {
-  const title = process.env.SITE_TITLE ?? 'NativeGallery';
+  const title = setting('SITE_TITLE');
   return <tr><td className="main">
     <h1>Предложить медиа на публикацию</h1>
     <p>Ваш текущий индекс загрузки: <b>{data.uploadIndex}</b></p>

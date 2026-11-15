@@ -7,6 +7,7 @@ import { Fragment } from 'react';
 import { legacyDate } from '@nativegallery/contracts';
 import { NewsItem } from '../site/NewsPage';
 import { HomeContest } from './HomeContest';
+import { setting } from '@nativegallery/config';
 
 interface HomeData {
   popular: { id: number; photourl: string; views: number; priority: number }[];
@@ -56,7 +57,7 @@ function HomeContent({ popular, random, online, news, recent, contest }: HomeDat
                         {random.map(photo => <RandomPhoto key={photo.id} photo={photo} />)}
                     </div>
                     
-                    {contest && <HomeContest title={process.env.SITE_TITLE ?? 'NativeGallery'} contest={contest} />}
+                    {contest && <HomeContest title={setting('SITE_TITLE')} contest={contest} />}
                     <br />
                     <h4 style={{ clear: 'both' }}><Link href="/update">Недавно добавленные фотографии</Link></h4>
                     <RecentPhotos lastId={(recent[0]?.id ?? 0) + 1} firstId={recent.at(-1)?.id} />

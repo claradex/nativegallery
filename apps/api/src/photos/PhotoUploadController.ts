@@ -6,6 +6,7 @@ import { AuthService } from '../auth/AuthService';
 import type { UploadOptionsData } from '@nativegallery/contracts';
 import { photoContent } from './PhotoContent';
 import { uploadPhoto } from './PhotoUpload';
+import { flag } from '@nativegallery/config';
 
 @Controller('api/upload')
 export class PhotoUploadController {
@@ -21,7 +22,7 @@ export class PhotoUploadController {
       database.user.findUniqueOrThrow({ where: { id: viewer.id }, select: { uploadindex: true, content: true } }),
     ]);
     return { galleries, entities, username: viewer.username, uploadIndex: user.uploadindex,
-      directUpload: process.env.PHOTO_PREMODERATION !== 'false' && photoContent(user.content).premoderation === 'true' };
+      directUpload: flag('PHOTO_PREMODERATION') && photoContent(user.content).premoderation === 'true' };
   }
 
   @Get('entities')

@@ -1,6 +1,7 @@
 import Link from '../../components/Link';
 import { apiGet } from '../../api/client';
 import type { SiteOverview } from '@nativegallery/contracts';
+import { setting } from '@nativegallery/config';
 
 const roles = [
   { id: 1, icon: '220.ico', label: 'Администраторы' },
@@ -22,11 +23,12 @@ function StaffMember({ user }: { user: SiteOverview['staff'][number] }) {
   );
 }
 
-function AboutContent({ data, title, description }: { data: SiteOverview; title: string; description: string }) {
+function AboutContent({ data, title, description, email }: { data: SiteOverview; title: string; description: string; email: string }) {
   return (
     <>
       <h1>О сервере <b>{title}</b></h1>
-      <p>{description}</p>
+      <p style={{ whiteSpace: 'pre-line' }}>{description}</p>
+      {email && <p>Связаться с администрацией: <a href={'mailto:' + email}>{email}</a></p>}
       <div className="p20">
         <h4><img src="/static/img/go-home.png" loading="lazy" />Общая информация</h4>
         <ul className="straight">
@@ -51,6 +53,6 @@ function AboutContent({ data, title, description }: { data: SiteOverview; title:
 export async function About() {
   const data = await apiGet<SiteOverview>('/api/internal/about', { error: 'Could not load site information' });
   return <tr><td className="main">
-    <AboutContent data={data} title={process.env.SITE_TITLE ?? 'NativeGallery'} description={process.env.SITE_DESCRIPTION ?? ''} />
+    <AboutContent data={data} title={setting('SITE_TITLE')} description={setting('SITE_DESCRIPTION')} email={setting('SITE_ADMIN_EMAIL')} />
   </td></tr>;
 }

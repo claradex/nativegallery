@@ -10,6 +10,7 @@ COPY apps/crons/package.json apps/crons/
 COPY apps/frontend/package.json apps/frontend/
 COPY apps/media-worker/package.json apps/media-worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/config/package.json packages/config/
 COPY packages/database/package.json packages/database/
 COPY packages/jobs/package.json packages/jobs/
 RUN npm ci

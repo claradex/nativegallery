@@ -6,6 +6,7 @@ import { findVehicle } from '../catalog/VehicleData';
 import { photoExif } from './PhotoExif';
 import { AuthService } from '../auth/AuthService';
 import { requireId } from '../common/ids';
+import { flag } from '@nativegallery/config';
 
 /** One view per viewer per photo per 24 hours; guests share user id 0, as in the PHP version. */
 async function recordView(photo_id: number, user_id: number) {
@@ -102,7 +103,7 @@ export class PhotoPageController {
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
       vehicle, vehicleRoute,
       exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],
-      canComment: !!viewer && (process.env.EMAIL_VERIFY !== "true" || viewer.status !== 3),
+      canComment: !!viewer && (!flag('EMAIL_VERIFY') || viewer.status !== 3),
     };
   }
 }

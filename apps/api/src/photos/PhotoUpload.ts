@@ -6,6 +6,7 @@ import { notifyPhotoFollowers, database } from '@nativegallery/database';
 import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
 import { photoContent } from './PhotoContent';
+import { flag, setting } from '@nativegallery/config';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
 const rejected = (errorcode: string) => ({ errorcode, error: 1 });
@@ -17,7 +18,7 @@ function photoDate(body: Record<string, unknown>) {
   if (![year, month, day].every(Number.isInteger) || (year !== 0 && year < 1850) || year > 2037 || month < 0 || month > 12 || day < 0 || day > 31) return null;
   const midnight = new Date(Date.UTC(year || 2000, month - 1, day));
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
-    timeZone: process.env.SITE_TIMEZONE ?? 'Europe/Moscow', timeZoneName: 'longOffset',
+    timeZone: setting('SITE_TIMEZONE'), timeZoneName: 'longOffset',
   }).formatToParts(midnight).map(part => [part.type, part.value]));
   const offset = /^GMT([+-])(\d{2}):(\d{2})$/.exec(parts.timeZoneName);
   const minutes = offset ? (Number(offset[2]) * 60 + Number(offset[3])) * (offset[1] === '-' ? -1 : 1) : 0;
@@ -31,7 +32,7 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
   const image = sharp(buffer, { limitInputPixels: 40000000, animated: true });
   const metadata = video ? null : await image.metadata().catch(() => null);
   const extension = video ? 'jpg' : metadata && formats.get(metadata.format);
-  if (!extension || (extension === 'gif' && process.env.PHOTO_ALLOW_GIF === 'false')) return rejected('FILE_NOTSUPPORTED');
+  if (!extension || (extension === 'gif' && !flag('PHOTO_ALLOW_GIF'))) return rejected('FILE_NOTSUPPORTED');
   if (!video && !await image.stats().catch(() => null)) return rejected('FILE_NOTSUPPORTED');
 
   const fields = body.disableexif === '1' ? {} : uploadedExif(metadata?.exif);
@@ -65,7 +66,7 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
       const user = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { admin: true, content: true } });
       const targetGallery = gallery && await tx.gallery.findUnique({ where: { id: gallery }, select: { opened: true } });
       if ((gallery && (!targetGallery || !targetGallery.opened)) || (entity && !await tx.entityData.findUnique({ where: { id: entity }, select: { id: true } }))) return null;
-      const moderated = process.env.PHOTO_PREMODERATION !== 'false' && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
+      const moderated = flag('PHOTO_PREMODERATION') && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
         user_id: userId, postbody: description, photourl: '/uploads/' + preview, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
         exif, priority: 0, moderated: video ? -1 : moderated, endmoderation: moderated === 0 ? -1 : 0, place, gallery_id: gallery, entitydata_id: entity,

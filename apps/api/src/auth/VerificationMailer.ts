@@ -1,8 +1,9 @@
 import { createTransport } from 'nodemailer';
+import { setting } from '@nativegallery/config';
 
 export function verificationMailer() {
-  const { SMTP_HOST: host, SMTP_USER: user, SMTP_PASSWORD: pass, SMTP_FROM: from, SITE_ORIGIN: origin } = process.env;
-  const port = Number(process.env.SMTP_PORT || 465);
+  const [host, user, pass, from, origin] = (['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_FROM', 'SITE_ORIGIN'] as const).map(setting);
+  const port = Number(setting('SMTP_PORT'));
   if (!host || !from || !origin || !Number.isInteger(port) || port < 1 || port > 65535 || Boolean(user) !== Boolean(pass)) return null;
   let site: URL;
   try { site = new URL(origin); } catch { return null; }
@@ -18,7 +19,7 @@ export function verificationMailer() {
       });
       await transport.sendMail({
         from, to: email,
-        subject: 'Подтверждение регистрации | ' + (process.env.SITE_TITLE ?? 'NativeGallery'),
+        subject: 'Подтверждение регистрации | ' + setting('SITE_TITLE'),
         text: 'Подтвердите адрес электронной почты: ' + link.href + '\nЕсли вы не регистрировались, проигнорируйте письмо.',
       });
     },

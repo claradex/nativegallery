@@ -7,7 +7,6 @@
 apps/frontend/next-env.d.ts
 .env
 *.zip
-ngallery.yaml
 uploads
 cdn
 storage

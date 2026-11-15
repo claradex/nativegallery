@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { apiOrigin } from './api/origin';
+import { flag } from '@nativegallery/config';
 
 /** Legacy URLs whose behaviour now lives entirely in the API. */
 const aliases: Record<string, string> = {
@@ -17,7 +18,9 @@ const apiPath = /^\/(?:api\/|uploads\/cdn\/(?:img|pages|video)\/[^/]+$)/;
  */
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  if (process.env.MAINTENANCE === 'true') {
+  // The admin panel stays reachable during maintenance, so the mode can be switched off from «Конфигурация».
+  const admin = pathname === '/admin' || pathname.startsWith('/admin/') || pathname.startsWith('/api/admin/');
+  if (flag('MAINTENANCE') && !admin) {
     return NextResponse.rewrite(new URL('/maintenance', request.url), { status: 503, headers: { 'Retry-After': '3600' } });
   }
   if (pathname === '/maintenance') return NextResponse.rewrite(new URL('/not-found-page', request.url));

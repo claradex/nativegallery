@@ -6,12 +6,13 @@ import { narrowFont } from '../styles/fonts';
 import { Footer } from './Footer';
 import { ProgressBar, siteTheme } from './LoadHead';
 import { EmailVerification, Navbar } from './Navbar';
+import { flag, setting } from '@nativegallery/config';
 
 export { generateMetadata, viewport } from './LoadHead';
 
 export async function SiteLayout({ children }: { children: ReactNode }) {
   const context = await siteContext();
-  const title = process.env.SITE_TITLE ?? 'NativeGallery';
+  const title = setting('SITE_TITLE');
 
   return <html lang="ru" className={narrowFont.variable} data-theme={siteTheme(context.cookie)}>
     <body>
@@ -19,7 +20,7 @@ export async function SiteLayout({ children }: { children: ReactNode }) {
       <SiteInteractions />
       <ProgressBar />
       <div id="backgr"></div>
-      {process.env.EMAIL_VERIFY === 'true' && context.viewer?.status === 3 && <EmailVerification />}
+      {flag('EMAIL_VERIFY') && context.viewer?.status === 3 && <EmailVerification />}
       <table className="tmain"><tbody>
         <Navbar title={title} viewer={context.viewer} />
         {children}
