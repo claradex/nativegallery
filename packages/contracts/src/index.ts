@@ -241,3 +241,5 @@ export interface ModelListData {
 }
 
 export * from './Vehicles';
+
+export * from './HomeBlocks';

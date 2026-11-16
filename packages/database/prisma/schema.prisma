@@ -44,8 +44,25 @@ model News {
   id Int @id @default(autoincrement())
   body String @db.MediumText
   time Int
+  /// 0 site news, 1 transport news (`newsKinds` in contracts).
+  kind Int @default(0) @db.TinyInt
+  /// GeoDB city a transport news item is about.
+  city_id Int?
 
+  @@index([kind])
   @@map("news")
+}
+
+/// A home page block's settings (`homeBlockDefinitions` in contracts); a missing row keeps the defaults.
+model HomeBlock {
+  key String @id @db.VarChar(32)
+  /// 0 everyone, 1 signed-in visitors only, 2 nobody.
+  visibility Int @default(0) @db.TinyInt
+  sort Int @default(0)
+  title String? @db.VarChar(255)
+  body String? @db.MediumText
+
+  @@map("ng_home_blocks")
 }
 
 model Photo {

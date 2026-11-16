@@ -53,6 +53,19 @@ export class AuthService {
     return { ...user, unreadPhotos, pendingPhotos };
   }
 
+  /** Whether the request carries a live session of an active user; unlike `viewer` it writes nothing. */
+  async signedIn(request: Request): Promise<boolean> {
+    const token = sessionToken(request);
+    if (!token) return false;
+    const lastValid = BigInt(Math.floor((Date.now() - sessionAge) / 1000));
+    const session = await database.loginToken.findFirst({
+      where: { token: 'v2:' + token, created_at: { gte: lastValid } }, select: { user_id: true },
+    });
+    if (!session) return false;
+    const user = await database.user.findUnique({ where: { id: session.user_id }, select: { status: true } });
+    return !!user && user.status !== 1;
+  }
+
   /** The signed-in viewer, or 403 for guests. */
   async requireViewer(request: Request): Promise<Viewer> {
     const viewer = await this.viewer(request);
