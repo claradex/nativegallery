@@ -28,6 +28,7 @@ export const settingGroups = [
   { id: 'site', title: 'Сайт', description: 'Название, оформление и адрес сайта.' },
   { id: 'registration', title: 'Регистрация', description: 'Кто и как может зарегистрироваться.' },
   { id: 'photos', title: 'Фотографии', description: 'Загрузка и модерация снимков.' },
+  { id: 'storage', title: 'Внешние хранилища', description: 'Плановая проверка копий фотографий и видео во внешних хранилищах.' },
   { id: 'contests', title: 'Фотоконкурсы', description: 'Проведение конкурсов и автоматический запуск новых.' },
   { id: 'mail', title: 'Почта', description: 'SMTP-сервер для писем с подтверждением регистрации.' },
   { id: 'security', title: 'Защита', description: 'Капча и параметры cookie.' },
@@ -58,6 +59,10 @@ export const settingDefinitions = [
   { key: 'PHOTO_PREMODERATION', group: 'photos', label: 'Премодерация', description: 'Новые фотографии появляются на сайте после проверки модератором.', type: 'boolean', default: 'true', legacy: 'photo.upload.premoderation' },
   { key: 'PHOTO_ALLOW_GIF', group: 'photos', label: 'Разрешить GIF', type: 'boolean', default: 'true', legacy: 'photo.upload.allowgif' },
   { key: 'UPLOAD_INDEX_ENABLED', group: 'photos', label: 'Индекс загрузки', description: 'Показывать пользователям их индекс загрузки в личном кабинете.', type: 'boolean', default: 'false', legacy: 'photo.uploadindex.enabled' },
+
+  { key: 'STORAGE_VERIFY_EVERY', group: 'storage', label: 'Проверять хранилища', description: 'Как часто сверять опубликованные файлы с оригиналами. off — не проверять по расписанию. ' + durationHint, type: 'duration', default: '1d' },
+  { key: 'STORAGE_VERIFY_DEEP', group: 'storage', label: 'Глубокая проверка по расписанию', description: 'Скачивать файлы и сравнивать SHA-256, а не только наличие и размер (и контрольную сумму, если хранилище её отдаёт). Медленно и расходует трафик.', type: 'boolean', default: 'false' },
+  { key: 'STORAGE_VERIFY_REPAIR', group: 'storage', label: 'Исправлять найденные проблемы', description: 'После проверки заново публиковать пропавшие и повреждённые файлы, а также фотографии, загруженные после подключения хранилища, но не попавшие в него.', type: 'boolean', default: 'true' },
 
   { key: 'CONTESTS_ENABLED', group: 'contests', label: 'Фотоконкурсы', description: 'Разрешает фоновую задачу, которая переводит конкурсы между этапами.', type: 'boolean', default: 'false', legacy: 'contests.enabled' },
   { key: 'CONTESTS_AUTONEW', group: 'contests', label: 'Запускать новый конкурс автоматически', description: 'После подведения итогов создаётся конкурс на случайную активную тему.', type: 'boolean', default: 'false', legacy: 'contests.autonew.enabled' },
@@ -113,6 +118,7 @@ export function settingError(definition: SettingDefinition, value: string): stri
     case 'duration': {
       // Only the two "start" moments may be "now"; the ends are always measured from the moment the contest closes.
       const nowAllowed = definition.key === 'CONTESTS_AUTONEW_PRETENDS_OPEN' || definition.key === 'CONTESTS_AUTONEW_OPEN';
+      if (value === 'off' && definition.key === 'STORAGE_VERIFY_EVERY') return null;
       if (value === 'now') return nowAllowed ? null : 'Укажите срок, например 2d.';
       return durationSeconds(value) !== null ? null : 'Например 2d, 12h или 30m.';
     }

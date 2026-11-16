@@ -69,6 +69,8 @@ services:
     volumes:
       - ./uploads:/app/uploads
       - *config
+      # «Хранилища» → «Другой диск»: mount the folder here and in the media worker at the same path, e.g.
+      # - /mnt/backup/nativegallery:/mnt/backup/nativegallery
     depends_on: *after-migrations
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
@@ -95,6 +97,7 @@ services:
     environment: *env
     volumes:
       - ./uploads:/app/uploads
+      # - /mnt/backup/nativegallery:/mnt/backup/nativegallery
     depends_on: *after-migrations
 
   nativegallery-frontend:

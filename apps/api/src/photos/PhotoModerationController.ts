@@ -1,6 +1,7 @@
 import { All, BadRequestException, Body, Controller, Get, Header, NotFoundException, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { notifyPhotoFollowers, database, Prisma } from '@nativegallery/database';
+import { queuePublication } from '@nativegallery/jobs';
 import { AuthService } from '../auth/AuthService';
 import { photoContent } from './PhotoContent';
 
@@ -81,6 +82,8 @@ export class PhotoModerationController {
         endmoderation: nextStatus === 0 ? -1 : photo.moderated === 0 ? now : undefined,
         content,
       } });
+      // Storages that take only approved photos get it now; the rest had it queued on upload.
+      if (firstPublication) await queuePublication(tx, id, true);
       if (!firstPublication || data.subsnotify === 'disabled') return;
       await notifyPhotoFollowers(tx, id, photo.user_id);
     });

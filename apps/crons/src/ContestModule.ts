@@ -4,6 +4,7 @@ import { database, Prisma } from '@nativegallery/database';
 import { enabled } from '@nativegallery/jobs';
 import { flag, setting } from '@nativegallery/config';
 import { durationSeconds, settingByKey, type SettingKey } from '@nativegallery/contracts';
+import { StorageSchedule } from './StorageSchedule';
 
 @Injectable()
 export class ContestSchedule {
@@ -82,5 +83,5 @@ export class ContestSchedule {
   }
 }
 
-@Module({ imports: [ScheduleModule.forRoot()], providers: [ContestSchedule] })
+@Module({ imports: [ScheduleModule.forRoot()], providers: [ContestSchedule, StorageSchedule] })
 export class ContestModule {}

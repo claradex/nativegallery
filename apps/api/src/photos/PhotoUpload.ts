@@ -7,6 +7,7 @@ import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
 import { photoContent } from './PhotoContent';
 import { flag, setting } from '@nativegallery/config';
+import { queuePublication } from '@nativegallery/jobs';
 import { maxPhotoVehicles, vehicleAngles, type UploadVehicleLink } from '@nativegallery/contracts';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
@@ -116,6 +117,8 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
         kind: 'RenderVideo', dedupe_key: 'render-video:' + photo.id,
         payload: { input, output, preview, format: video, photoId: photo.id, moderation: moderated }, available_at: new Date(),
       } });
+      // A video's files are published by the media worker once they are rendered.
+      if (!video) await queuePublication(tx, photo.id, moderated === 1);
       if (!video && moderated === 1 && allowed('disablesubsnotify') === 'allowed') {
         await notifyPhotoFollowers(tx, photo.id, userId);
       }

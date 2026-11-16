@@ -6,9 +6,10 @@ import { promisify } from 'node:util';
 import { Injectable, Module, OnApplicationShutdown, OnModuleInit } from '@nestjs/common';
 import type { JobKind } from '@nativegallery/contracts';
 import { database, notifyPhotoFollowers } from '@nativegallery/database';
-import { consume, enabled } from '@nativegallery/jobs';
+import { consume, enabled, queuePublication } from '@nativegallery/jobs';
 
 import { renderUploadedVideo } from './RenderUploadedVideo';
+import { StorageWorker } from './StorageWorker';
 
 const ffmpeg = promisify(execFile);
 const formats = {
@@ -50,7 +51,7 @@ class MediaWorker implements OnModuleInit, OnApplicationShutdown {
     }
     if (!kinds.length) return;
     await consume(kinds, async (kind, payload) => {
-      if (kind === 'ExecContests' || !payload || typeof payload !== 'object' || Array.isArray(payload) ||
+      if (!(kind === 'BlurNewImage' || kind === 'CompressImage' || kind === 'RenderVideo') || !payload || typeof payload !== 'object' || Array.isArray(payload) ||
           typeof payload.input !== 'string' || typeof payload.output !== 'string') {
         throw new Error('Invalid media job');
       }
@@ -73,7 +74,10 @@ class MediaWorker implements OnModuleInit, OnApplicationShutdown {
               where: { id: photoId, moderated: -1, photourl: previewUrl },
               data: { moderated: moderation, timeupload: Math.floor(Date.now() / 1000) },
             });
-            if (!changed.count || moderation === 0) return;
+            if (!changed.count) return;
+            // The poster and the video exist only now, so this is when they can go to the external storages.
+            await queuePublication(tx, photoId, moderation === 1);
+            if (moderation === 0) return;
             const photo = await tx.photo.findUniqueOrThrow({ where: { id: photoId }, select: { user_id: true, content: true } });
             const settings = JSON.parse(photo.content);
             if (settings.subsnotify !== 'disabled') await notifyPhotoFollowers(tx, photoId, photo.user_id);
@@ -93,5 +97,5 @@ class MediaWorker implements OnModuleInit, OnApplicationShutdown {
   }
 }
 
-@Module({ providers: [MediaWorker] })
+@Module({ providers: [MediaWorker, StorageWorker] })
 export class MediaModule {}

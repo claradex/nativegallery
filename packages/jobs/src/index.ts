@@ -53,3 +53,5 @@ export async function consume(kinds: JobKind[], handle: (kind: JobKind, payload:
   }
   return true;
 }
+
+export { eligiblePhotos, queueMissingPublications, queuePublication } from './Publication';
