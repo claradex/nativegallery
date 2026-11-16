@@ -22,14 +22,20 @@ async function news(kind: number, take: number): Promise<HomeNewsItem[]> {
   const cities = new Map((cityIds.length
     ? await database.geoEntry.findMany({ where: { id: { in: cityIds } }, select: { id: true, title: true } }) : [])
     .map(city => [city.id, city.title]));
-  return rows.map(row => ({ id: row.id, body: newsHtml(row.body), time: row.time, city: row.city_id ? cities.get(row.city_id) ?? null : null }));
+  return rows.map(row => ({ id: row.id, body: newsHtml(row.body), time: row.time, city: row.city_id ? cities.get(row.city_id) ?? null : null, cityId: row.city_id }));
 }
 
-/** Photos ranked by `table` rows (views or comments) since `since`. */
-function ranked(source: Prisma.Sql) {
-  return database.$queryRaw<{ id: number; photourl: string; priority: number; count: number }[]>(Prisma.sql`
-    SELECT p.id, p.photourl, p.priority, CAST(r.n AS DOUBLE) AS count
+/**
+ * Photos ranked by `source` (views or comments over the last day), each with both of transphoto's tile counters:
+ * views since `since` and the photo's comments in total.
+ */
+async function ranked(source: Prisma.Sql, since: number) {
+  const rows = await database.$queryRaw<{ id: number; photourl: string; priority: number; views: number; comments: number }[]>(Prisma.sql`
+    SELECT p.id, p.photourl, p.priority,
+      CAST((SELECT COUNT(*) FROM photos_views v WHERE v.photo_id = p.id AND v.time >= ${since}) AS DOUBLE) AS views,
+      CAST((SELECT COUNT(*) FROM photos_comments c WHERE c.photo_id = p.id AND ${commentNotDeleted}) AS DOUBLE) AS comments
     FROM (${source}) r JOIN photos p ON p.id = r.photo_id WHERE p.moderated = 1 ORDER BY r.n DESC, p.id DESC`);
+  return rows.map(row => ({ ...row, views: Number(row.views), comments: Number(row.comments) }));
 }
 
 /** Vehicle kinds with their model and vehicle counts, for «Поиск подвижного состава». */
@@ -175,9 +181,9 @@ export class HomeController {
 
     const [popular, discussed, random, online, siteNews, transportNews, recent, contest, types, comments, summary] = await Promise.all([
       when(on('popular'), () => ranked(Prisma.sql`SELECT photo_id, COUNT(*) AS n FROM photos_views
-        WHERE time >= ${now - day} GROUP BY photo_id ORDER BY n DESC LIMIT 10`), []),
+        WHERE time >= ${now - day} GROUP BY photo_id ORDER BY n DESC LIMIT 10`, now - day), []),
       when(on('discussed'), () => ranked(Prisma.sql`SELECT c.photo_id, COUNT(*) AS n FROM photos_comments c
-        WHERE c.posted_at >= ${now - day} AND ${commentNotDeleted} GROUP BY c.photo_id ORDER BY n DESC LIMIT 10`), []),
+        WHERE c.posted_at >= ${now - day} AND ${commentNotDeleted} GROUP BY c.photo_id ORDER BY n DESC LIMIT 10`, now - day), []),
       when(on('random'), () => database.$queryRaw<HomeData['random']>(Prisma.sql`
         SELECT id, photourl, posted_at, place FROM photos WHERE moderated = 1 ORDER BY RAND() LIMIT 7`), []),
       when(on('online'), () => database.user.findMany({
@@ -194,10 +200,9 @@ export class HomeController {
     ]);
     const theme = contest ? await database.contestTheme.findUnique({ where: { id: contest.themeid }, select: { title: true } }) : null;
     const contestWinner = on('contest') && !contest ? await latestWinner() : null;
-    const count = <T extends { count: number }>(rows: T[]) => rows.map(row => ({ ...row, count: Number(row.count) }));
     return {
       blocks: blocks.map(({ key, column, title, body }) => ({ key, column, title, body })),
-      popular: count(popular), discussed: count(discussed), random, online, siteNews, transportNews, recent,
+      popular, discussed, random, online, siteNews, transportNews, recent,
       contest: contest && { ...contest, theme: theme?.title ?? '' }, contestWinner,
       vehicleTypes: types, discussions: comments, daily: summary,
     };

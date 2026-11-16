@@ -26,15 +26,19 @@ function RandomPhoto({ photo }: { photo: HomeData['random'][number] }) {
   </div>;
 }
 
-function ContestWinner({ winner }: { winner: NonNullable<HomeData['contestWinner']> }) {
-  return <div className="ix-winner">
-    <h4><Link href="/voting/results">Фотоконкурс</Link></h4>
-    <Link href={'/photo/' + winner.photoId} className="prw ix-winner-photo">
+/** Between contests: the latest winner with its place over the photo, as on transphoto.org. */
+function ContestWinner({ title, winner }: { title: string; winner: NonNullable<HomeData['contestWinner']> }) {
+  return <div className="ix-block">
+    <h4><Link href="/voting/results">{title}</Link></h4>
+    <Link href={'/photo/' + winner.photoId} className="prw pop-prw ix-winner" title={winner.theme ? 'Тематика: ' + winner.theme : undefined}>
       <img width={250} loading="lazy" src={thumbnail(winner.photourl)} alt="" />
+      <div className="hpshade"><div className="ix-winner-place">{places[winner.place] ?? winner.place} место</div></div>
     </Link>
-    <div className="sm"><b>{places[winner.place] ?? winner.place} место</b>{winner.theme && <> · {winner.theme}</>}</div>
   </div>;
 }
+
+/** «15 ноября 2026 г.»: the news date without the time. */
+const newsDate = (time: number) => legacyDate(time).replace(/ в \d\d:\d\d$/, '') + ' г.';
 
 function VehicleSearch({ types }: { types: HomeData['vehicleTypes'] }) {
   if (!types.length) return <p className="sm">В базе пока нет видов транспорта.</p>;
@@ -47,42 +51,43 @@ function VehicleSearch({ types }: { types: HomeData['vehicleTypes'] }) {
 }
 
 function TransportNews({ items }: { items: HomeData['transportNews'] }) {
-  if (!items.length) return <p className="sm">Новостей пока нет.</p>;
-  return <div className="ix-tnews">
-    {items.map(item => <div key={item.id} className="ix-tnews-item">
-      <div className="ix-tnews-head">{item.city && <b>{item.city}, </b>}<span>{legacyDate(item.time).replace(/ в \d\d:\d\d$/, '')}</span></div>
-      <div className="break-links" dangerouslySetInnerHTML={{ __html: item.body }} />
+  if (!items.length) return <div className="ix-news-item">Новостей пока нет.</div>;
+  return <>
+    {items.map(item => <div key={item.id} className="ix-news-item">
+      {item.city && <><b>{item.cityId ? <Link href={'/list?cid=' + item.cityId}>{item.city}</Link> : item.city}</b>, </>}<b>{newsDate(item.time)}</b>
+      <div className="break-links" style={{ paddingTop: 3 }} dangerouslySetInnerHTML={{ __html: item.body }} />
     </div>)}
-    <p className="sm"><Link href="/news?kind=1">Все новости транспорта</Link></p>
-  </div>;
+    <div>Просмотр записей: <Link href="/news?kind=1">все</Link></div>
+  </>;
 }
 
 function Discussions({ items }: { items: HomeData['discussions'] }) {
-  if (!items.length) return <p className="sm">Комментариев пока нет.</p>;
-  return <div className="ix-talk">
-    {items.map(item => <div key={item.id} className="ix-talk-item">
-      <Link href={'/photo/' + item.photoId} className="ix-talk-thumb" style={{ backgroundImage: 'url("' + thumbnail(item.photourl) + '")' }} aria-label={item.place} />
+  if (!items.length) return <div className="ix-news-item">Комментариев пока нет.</div>;
+  return <>
+    {items.map(item => <div key={item.id} className="ix-news-item ix-talk-item">
+      <Link href={'/photo/' + item.photoId} className="ix-talk-thumb" style={{ backgroundImage: 'url("' + thumbnail(item.photourl) + '")' }} aria-label={item.place || 'Фото № ' + item.photoId} />
       <div>
-        <div className="ix-talk-head"><Link href={'/photo/' + item.photoId}><b>{item.place || 'Фото № ' + item.photoId}</b></Link>
-          {' · '}<Link href={'/author/' + item.authorId + '/'}>{item.author}</Link>{' · '}<span>{legacyDate(item.postedAt)}</span></div>
-        <div className="ix-talk-body">{item.body}</div>
+        <div><b><Link href={'/photo/' + item.photoId}>{item.place || 'Фото № ' + item.photoId}</Link></b>
+          {' · '}<Link href={'/author/' + item.authorId + '/'}>{item.author}</Link><span className="sm"> &nbsp;·&nbsp; {legacyDate(item.postedAt)}</span></div>
+        {item.body ? <div className="ix-talk-body">{item.body}</div> : <div className="ix-talk-body sm">(вложение)</div>}
       </div>
     </div>)}
-    <p className="sm"><Link href="/comments">Все комментарии</Link></p>
-  </div>;
+    <Link href="/comments">Все комментарии</Link>
+  </>;
 }
 
 function Daily({ places }: { places: HomeData['daily'] }) {
-  if (!places.length) return <p className="sm">За последние сутки новых фотографий нет.</p>;
-  return <div className="ix-daily">
-    {places.map(place => <div key={place.place}>
-      <b>{place.place}:</b>{' '}
-      {place.items.map((item, index) => <Fragment key={item.title + index}>
-        {index > 0 && ', '}<Link href={item.href}>{item.title}</Link> <span className="ix-plus">+{item.count}</span>
-      </Fragment>)}
-    </div>)}
-    <p className="sm"><Link href="/update">Архив обновлений</Link></p>
-  </div>;
+  return <>
+    <div className="ix-news-item" style={{ lineHeight: '20px' }}>
+      {places.length ? places.map(place => <div key={place.place}>
+        <b>{place.place}</b>:{' '}
+        {place.items.map((item, index) => <Fragment key={item.title + index}>
+          {index > 0 && ', '}<Link href={item.href}>{item.title}</Link> +{item.count}
+        </Fragment>)}
+      </div>) : 'За последние сутки новых фотографий нет.'}
+    </div>
+    <Link href="/update">Архив обновлений по датам</Link>
+  </>;
 }
 
 function BlockView({ block, data }: { block: Block; data: HomeData }): ReactNode {
@@ -90,19 +95,24 @@ function BlockView({ block, data }: { block: Block; data: HomeData }): ReactNode
     <h4>{href ? <Link href={href}>{block.title}</Link> : block.title}</h4>
     {children}
   </div>;
+  /** White bordered card (`.p20`) across the centre, like transphoto's news, forum and daily blocks. */
+  const card = (href: string, children: ReactNode) => <div className="p20 ix-card">
+    <h4><Link href={href}>{block.title}</Link></h4>
+    {children}
+  </div>;
   switch (block.key) {
     case 'contest':
       if (data.contest) return <div className="ix-block" style={{ overflow: 'hidden' }}><HomeContest title={setting('SITE_TITLE')} contest={data.contest} /></div>;
-      return data.contestWinner ? <ContestWinner winner={data.contestWinner} /> : null;
+      return data.contestWinner ? <ContestWinner title={block.title} winner={data.contestWinner} /> : null;
     case 'random':
       return titled('/photo/', <div id="random-photos" className="ix-photos ix-photos-oneline">
         {data.random.map(photo => <RandomPhoto key={photo.id} photo={photo} />)}</div>, { clear: 'both' });
     case 'vehicleSearch': return titled('/models', <VehicleSearch types={data.vehicleTypes} />, { clear: 'both' });
     case 'recent':
       return titled('/update', <RecentPhotos lastId={(data.recent[0]?.id ?? 0) + 1} firstId={data.recent.at(-1)?.id} />, { clear: 'both' });
-    case 'transportNews': return titled('/news?kind=1', <TransportNews items={data.transportNews} />);
-    case 'discussions': return titled('/comments', <Discussions items={data.discussions} />);
-    case 'daily': return titled('/update', <Daily places={data.daily} />);
+    case 'transportNews': return card('/news?kind=1', <TransportNews items={data.transportNews} />);
+    case 'discussions': return card('/comments', <Discussions items={data.discussions} />);
+    case 'daily': return card('/update', <Daily places={data.daily} />);
     case 'online':
       return <div className="ix-block"><h4>{block.title} ({data.online.length})</h4>
         <div>{data.online.map((user, index) => <Fragment key={user.id}>{index > 0 && ', '}<Link href={'/author/' + user.id + '/'}>{user.username}</Link></Fragment>)}</div>
@@ -144,13 +154,14 @@ function HomeContent(data: HomeData) {
     <td className="main">
       <table id="idx-main"><tbody>
         <tr>
-          {has('left') && <td style={{ verticalAlign: 'top', paddingRight: 20, width: 254 }}>
+          {has('left') && <td style={{ verticalAlign: 'top', paddingRight: 20 }}>
             <Column column="left" blocks={data.blocks} data={data} />
           </td>}
-          <td style={{ verticalAlign: 'top', paddingTop: 4 }}>
+          <td className="idx-center" style={{ verticalAlign: 'top', width: '100%', paddingTop: 4 }}>
             <Column column="center" blocks={data.blocks} data={data} />
           </td>
-          {has('right') && <td style={{ paddingLeft: 20, width: 254, verticalAlign: 'top' }}>
+          {has('right') && <td style={{ paddingLeft: 20, verticalAlign: 'top' }}>
+            <div style={{ width: 254 }} />
             <Column column="right" blocks={data.blocks} data={data} />
           </td>}
         </tr>

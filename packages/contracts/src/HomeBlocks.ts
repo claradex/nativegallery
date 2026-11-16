@@ -19,13 +19,13 @@ export const homeColumns = [
 export type HomeColumn = typeof homeColumns[number]['id'];
 
 export const homeBlockDefinitions = [
+  { key: 'contest', title: 'Фотоконкурс', column: 'left', description: 'Идущий фотоконкурс, а между конкурсами — фото-победитель последнего.' },
   { key: 'popular', title: 'Самые популярные за 24 часа', column: 'left', description: 'Фотографии с наибольшим числом просмотров за сутки.' },
   { key: 'discussed', title: 'Самые обсуждаемые за 24 часа', column: 'left', description: 'Фотографии с наибольшим числом новых комментариев за сутки. Вместе с популярными показывается вкладкой.' },
-  { key: 'contest', title: 'Фотоконкурс', column: 'center', description: 'Идущий фотоконкурс, а между конкурсами — фото-победитель последнего.' },
   { key: 'random', title: 'Случайные фотографии', column: 'center', description: 'Семь случайных опубликованных фотографий.' },
   { key: 'vehicleSearch', title: 'Поиск подвижного состава', column: 'center', description: 'Виды транспорта со ссылками на списки моделей и числом ТС в базе.' },
   { key: 'recent', title: 'Недавно добавленные фотографии', column: 'center', description: 'Лента последних опубликованных фотографий.' },
-  { key: 'transportNews', title: 'Новости транспорта', column: 'center', description: 'Новости с типом «Транспорт» из раздела «Новости», с городом.' },
+  { key: 'transportNews', title: 'Новости электротранспорта', column: 'center', description: 'Новости с типом «Транспорт» из раздела «Новости», с городом.' },
   { key: 'discussions', title: 'Последние обсуждения', column: 'center', description: 'Свежие комментарии к фотографиям.' },
   { key: 'daily', title: 'Фотографии, добавленные за последние 24 часа', column: 'center', description: 'Сводка новых фотографий по городам и видам транспорта.' },
   { key: 'online', title: 'Сейчас на сайте', column: 'center', description: 'Пользователи, заходившие за последние 5 минут.' },
@@ -64,9 +64,10 @@ export const newsKinds = [
 ] as const;
 export const NewsKind = { Site: 0, Transport: 1 } as const;
 
-export interface HomeNewsItem { id: number; body: string; time: number; city: string | null }
+export interface HomeNewsItem { id: number; body: string; time: number; city: string | null; cityId: number | null }
 
-export interface HomePhoto { id: number; photourl: string; priority: number; count: number }
+/** A ranked photo: views over the last 24 hours and comments in total, both shown on the tile. */
+export interface HomePhoto { id: number; photourl: string; priority: number; views: number; comments: number }
 
 export interface HomeData {
   blocks: { key: HomeBlockKey; column: HomeColumn; title: string; body: string }[];
