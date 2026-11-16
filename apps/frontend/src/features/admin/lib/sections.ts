@@ -7,7 +7,8 @@ export const menu = [
     { key: 'VehicleRequests', label: 'Заявки на ТС', icon: 'inbox', role: 'editor', badge: 'pendingRequests' },
   ] },
   { group: 'Контент', items: [
-    { key: 'News', label: 'Новости сайта', icon: 'newspaper', role: 'editor' },
+    { key: 'HomeBlocks', label: 'Главная страница', icon: 'layout', role: 'owner' },
+    { key: 'News', label: 'Новости', icon: 'newspaper', role: 'editor' },
     { key: 'Pages', label: 'Страницы', icon: 'file', role: 'owner' },
     { key: 'Galleries', label: 'Галереи', icon: 'images', role: 'owner' },
     { key: 'Contests', label: 'Фотоконкурсы', icon: 'trophy', role: 'editor' },

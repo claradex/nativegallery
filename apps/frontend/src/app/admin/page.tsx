@@ -9,6 +9,7 @@ import { AdminGeo } from '../../features/admin/AdminGeo';
 import { AdminVehicleForm, AdminVehicles } from '../../features/admin/AdminVehicles';
 import { AdminModelForm, AdminModels, AdminVehicleRequests } from '../../features/admin/AdminModels';
 import { AdminNews } from '../../features/admin/AdminNews';
+import { AdminHomeBlocks } from '../../features/admin/AdminHomeBlocks';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminPhotos } from '../../features/admin/AdminPhotos';
 import { AdminSettings } from '../../features/admin/AdminSettings';
@@ -27,7 +28,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 const titles: Record<string, string> = {
   General: 'Пользователи', UserEdit: 'Пользователь', Photo: 'Фотографии', VehicleRequests: 'Заявки на ТС',
-  News: 'Новости сайта', Pages: 'Страницы', PageCreate: 'Новая страница', PageEdit: 'Редактирование страницы',
+  News: 'Новости', HomeBlocks: 'Главная страница', Pages: 'Страницы', PageCreate: 'Новая страница', PageEdit: 'Редактирование страницы',
   Galleries: 'Галереи', Contests: 'Фотоконкурсы', Entities: 'Сущности', EntityCreate: 'Новая сущность',
   EntityUpdate: 'Сущность', Models: 'Модели', ModelsCreate: 'Новая модель', ModelEdit: 'Редактирование модели',
   Vehicles: 'Подвижной состав', VehicleCreate: 'Новое ТС', VehicleEdit: 'Редактирование ТС', EntityEdit: 'Редактирование ТС', GeoDB: 'GeoDB', Config: 'Конфигурация', Settings: 'Фоновые задачи',
@@ -59,6 +60,7 @@ export default async function Admin({ searchParams }: { searchParams: SearchPara
     case 'Photo': return AdminPhotos(query);
     case 'VehicleRequests': return AdminVehicleRequests(query);
     case 'News': return AdminNews();
+    case 'HomeBlocks': return AdminHomeBlocks();
     case 'Pages': return AdminPages('list');
     case 'PageCreate': return AdminPages('create');
     case 'PageEdit': return AdminPages('edit', id);

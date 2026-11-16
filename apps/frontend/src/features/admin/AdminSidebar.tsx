@@ -1,6 +1,6 @@
 'use client';
 
-import { Boxes, Camera, Database, ExternalLink, FileText, Globe, Images, Inbox, LogOut, Menu, Newspaper, Settings, SlidersHorizontal, TrainFront, Trophy, Users, type LucideIcon } from 'lucide-react';
+import { Boxes, Camera, Database, ExternalLink, FileText, Globe, Images, Inbox, LogOut, Menu, LayoutDashboard, Newspaper, Settings, SlidersHorizontal, TrainFront, Trophy, Users, type LucideIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from '../../components/Link';
@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/button';
 
 const icons: Record<string, LucideIcon> = {
-  camera: Camera, inbox: Inbox, newspaper: Newspaper, file: FileText, images: Images, trophy: Trophy,
+  camera: Camera, inbox: Inbox, newspaper: Newspaper, layout: LayoutDashboard, file: FileText, images: Images, trophy: Trophy,
   boxes: Boxes, database: Database, train: TrainFront, globe: Globe, users: Users, settings: Settings, sliders: SlidersHorizontal,
 };
 
