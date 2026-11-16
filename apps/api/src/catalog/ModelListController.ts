@@ -30,8 +30,10 @@ export class ModelListController {
   @Header('Cache-Control', 'no-store')
   async list(@Param('type') rawType: string): Promise<ModelListData> {
     const id = requireId(rawType);
-    const type = await database.entity.findUnique({ where: { id }, select: { id: true, title: true, color: true } });
-    if (!type) throw new NotFoundException();
+    const entity = await database.entity.findUnique({ where: { id }, select: { id: true, title: true, color: true, navcolor: true } });
+    if (!entity) throw new NotFoundException();
+    const { navcolor, ...rest } = entity;
+    const type = { ...rest, navColor: navcolor };
     const [types, rows] = await Promise.all([
       this.types(),
       database.$queryRaw<{ id: number; title: string; manufacturer: string | null; parent_id: number | null;

@@ -1,4 +1,5 @@
 import Link from '../../components/Link';
+import { NavbarTheme } from '../../components/NavbarTheme';
 import { PhotoInteractions } from './PhotoInteractions';
 import { legacyDate, type PhotoCommentData, type PhotoPageData } from '@nativegallery/contracts';
 import { CommentForm } from "./CommentForm";
@@ -12,6 +13,7 @@ import { apiFetch, apiGet, isId } from '../../api/client';
 
 function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; comments: PhotoCommentData[]; scope: string }) {
   return <tr><td className="main">
+    <NavbarTheme color={photo.navColor} />
     {!photo.published && <div className="label-orange" style={{ padding: 10, margin: '0 -20px', color: '#fff', textAlign: 'center' }}>{photo.processing ? 'Видео обрабатывается' : 'Изображение находится на модерации'}</div>}
     <div id="err" />
     {!photo.processing && <PhotoMedia photo={photo} scope={scope} />}

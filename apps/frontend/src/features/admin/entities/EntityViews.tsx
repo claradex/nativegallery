@@ -3,6 +3,7 @@
 import { ArrowDown, ArrowUp, Boxes, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import Link from '../../../components/Link';
+import { navbarPalette } from '../../../components/NavbarTheme';
 import { navigate } from '../../../components/navigation';
 import { formatDate, plural } from '../lib/format';
 import { send, useAction } from '../lib/request';
@@ -16,9 +17,9 @@ import { Switch } from '../ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { fieldTypes } from '@nativegallery/contracts';
 
-export interface EntityRow { id: number; title: string; color: string; createdAt: number; fields: number; models: number; vehicles: number }
+export interface EntityRow { id: number; title: string; color: string; navColor: string | null; createdAt: number; fields: number; models: number; vehicles: number }
 export interface EntityField { name: string; id: string; type: string; important: string; scope: 'model' | 'vehicle'; list: string }
-export interface EntityDetails { id: number; title: string; color: string; fields: EntityField[]; models: number; vehicles: number }
+export interface EntityDetails { id: number; title: string; color: string; navColor: string | null; fields: EntityField[]; models: number; vehicles: number }
 
 export function EntitiesTable({ entities, create }: { entities: EntityRow[]; create: React.ReactNode }) {
   const [pending, run] = useAction();
@@ -59,12 +60,30 @@ export function EntitiesTable({ entities, create }: { entities: EntityRow[]; cre
   </Card>;
 }
 
+/** The site navbar as it will look: the bar is the colour darkened by 20%, the hovered item its brighter shade. */
+function NavbarPreview({ color }: { color: string }) {
+  const palette = navbarPalette(color);
+  if (!palette) return <p className="text-sm text-destructive">Укажите цвет в формате #rrggbb.</p>;
+  const bar = 'linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)) ' + palette['--theme-bg-color'];
+  return <div className="grid gap-1.5">
+    <span className="text-[13px] font-medium text-muted-foreground">Предпросмотр</span>
+    <div className="flex h-9 items-stretch overflow-hidden rounded-md text-[15px] text-white shadow-xs" style={{ background: bar }} aria-hidden>
+      {['Главная', 'База данных', 'Обновления'].map((label, index) => <span key={label} className="flex items-center px-3"
+        style={index === 1 ? { background: palette['--theme-bg-hover-color'] } : undefined}>{label}</span>)}
+    </div>
+    <span className="text-[13px]">Ссылка: <span style={{ color: palette['--theme-link-color'] }}>Москва</span>,
+      посещённая: <span style={{ color: palette['--theme-link-visited-color'] }}>81-765 «Москва»</span></span>
+  </div>;
+}
+
 type Row = EntityField & { key: number; locked: boolean };
 
 export function EntityForm({ entity }: { entity?: EntityDetails }) {
   const locked = (entity?.models ?? 0) + (entity?.vehicles ?? 0) > 0;
   const [title, setTitle] = useState(entity?.title ?? '');
   const [color, setColor] = useState(entity?.color ?? '#2052d0');
+  const [navOn, setNavOn] = useState(!!entity?.navColor);
+  const [navColor, setNavColor] = useState(entity?.navColor ?? entity?.color ?? '#3f6793');
   const [rows, setRows] = useState<Row[]>(() => (entity ? entity.fields : [])
     .map((field, index) => ({ ...field, key: index, locked: locked && !!entity })));
   const [next, setNext] = useState(rows.length);
@@ -84,7 +103,7 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    const body: Record<string, string> = { title, color };
+    const body: Record<string, string> = { title, color, navcolor: navOn ? navColor : '' };
     rows.forEach((row, index) => {
       const n = index + 1;
       body['variablename_' + n] = row.name; body['variableid_' + n] = row.id;
@@ -110,6 +129,29 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
               className="h-9 w-12 cursor-pointer rounded-md border border-input bg-card p-1 shadow-xs" />
             <Input value={color} onChange={event => setColor(event.target.value)} pattern="#[0-9a-fA-F]{6}" aria-label="Цвет в HEX" className="w-28 font-mono" />
           </div></Field>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader><div>
+        <CardTitle>Оформление на сайте</CardTitle>
+        <CardDescription>На страницах фотографий, ТС, моделей и списка моделей этой сущности верхнее меню и ссылки перекрашиваются в выбранный цвет —
+          как синее меню у метрополитена на transphoto. Для фото берётся сущность первого ТС на снимке.</CardDescription>
+      </div></CardHeader>
+      <CardContent className="grid gap-4">
+        <label className="flex items-center gap-3 text-sm">
+          <Switch checked={navOn} onCheckedChange={setNavOn} aria-label="Перекрашивать navbar" />
+          <span>Перекрашивать navbar</span>
+        </label>
+        {navOn && <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-end">
+          <Field><Label htmlFor="entity-navcolor">Цвет navbar</Label>
+            <div className="flex items-center gap-2">
+              <input id="entity-navcolor" type="color" value={navColor} onChange={event => setNavColor(event.target.value)}
+                className="h-9 w-12 cursor-pointer rounded-md border border-input bg-card p-1 shadow-xs" />
+              <Input value={navColor} onChange={event => setNavColor(event.target.value)} pattern="#[0-9a-fA-F]{6}" aria-label="Цвет navbar в HEX" className="w-28 font-mono" />
+              <Button type="button" variant="ghost" size="sm" onClick={() => setNavColor(color)} disabled={navColor === color}>Как основной</Button>
+            </div></Field>
+          <NavbarPreview color={navColor} />
+        </div>}
       </CardContent>
     </Card>
     <Card>
@@ -161,7 +203,7 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
       </CardContent>
       <CardFooter>
         <Button type="button" variant="ghost" asChild><Link href="/admin?type=Entities">Отмена</Link></Button>
-        <Button type="submit" disabled={pending || duplicate !== null}>{entity ? 'Сохранить' : 'Создать сущность'}</Button>
+        <Button type="submit" disabled={pending || duplicate !== null || (navOn && !navbarPalette(navColor))}>{entity ? 'Сохранить' : 'Создать сущность'}</Button>
       </CardFooter>
     </Card>
   </form>;

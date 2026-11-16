@@ -10,11 +10,11 @@ export async function vehicleDetails(id: number): Promise<VehicleDetails | null>
   if (!row) return null;
   const [[summary], entity] = await Promise.all([
     vehicleSummaries([row]),
-    database.entity.findUnique({ where: { id: row.entityid }, select: { id: true, title: true, color: true, sampledata: true } }),
+    database.entity.findUnique({ where: { id: row.entityid }, select: { id: true, title: true, color: true, navcolor: true, sampledata: true } }),
   ]);
   return {
     ...summary,
-    entity: { id: row.entityid, title: entity?.title ?? '', color: entity?.color ?? '' },
+    entity: { id: row.entityid, title: entity?.title ?? '', color: entity?.color ?? '', navColor: entity?.navcolor ?? null },
     heading: vehicleHeading(summary.city?.title, entity?.title ?? '', summary.number),
     fields: fieldValues(row.content, entityFields(entity?.sampledata), 'vehicle'),
   };

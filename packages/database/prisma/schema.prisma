@@ -133,6 +133,8 @@ model Entity {
   createdate BigInt
   sampledata String @db.Text
   color String @db.Text
+  /// Navbar colour of the site pages of this entity's photos, vehicles and models (#rrggbb); null keeps the site default.
+  navcolor String? @db.VarChar(7)
 
   @@map("entities")
 }

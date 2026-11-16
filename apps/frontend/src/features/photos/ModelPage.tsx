@@ -1,4 +1,5 @@
 import Link from '../../components/Link';
+import { NavbarTheme } from '../../components/NavbarTheme';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
 import type { ModelPageData } from '@nativegallery/contracts';
@@ -41,6 +42,7 @@ function Cities({ model }: { model: ModelPageData }) {
 function ModelContent({ model, editable }: { model: ModelPageData; editable: boolean }) {
   const produced = years(model);
   return <tr><td className="main">
+    <NavbarTheme color={model.entity.navColor} />
     <h1>{model.title}</h1>
     {model.manufacturer && <h4>{model.manufacturer}</h4>}
     <table className="horlines ct-facts"><colgroup><col style={{ width: 190 }} /><col /></colgroup><tbody>

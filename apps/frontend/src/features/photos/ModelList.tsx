@@ -1,4 +1,5 @@
 import Link from '../../components/Link';
+import { NavbarTheme } from '../../components/NavbarTheme';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
 import type { EntityType, ModelListData, ModelListEntry } from '@nativegallery/contracts';
@@ -31,6 +32,7 @@ function TypeIndex({ types }: { types: TypeSummary[] }) {
 
 function Models({ type, types, groups }: ModelListData) {
   return <tr><td className="main">
+    <NavbarTheme color={type.navColor} />
     <h1>{type.title} — список моделей</h1>
     {types.length > 1 && <p className="ct-filters">{types.map(item => item.id === type.id
       ? <b key={item.id}>{item.title}</b> : <Link key={item.id} href={'/models?t=' + item.id}>{item.title}</Link>)}</p>}

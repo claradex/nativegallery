@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from '../../components/Link';
+import { NavbarTheme } from '../../components/NavbarTheme';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
 import { formatPartialDate, shootingDate, vehiclePurpose, type VehiclePageData } from '@nativegallery/contracts';
@@ -49,6 +50,7 @@ function Lists({ vehicle }: { vehicle: VehiclePageData['vehicle'] }) {
 function VehicleContent({ vehicle, photos, events, editable }: VehiclePageData & { editable: boolean }) {
   const date = (value: string) => formatPartialDate(value) || null;
   return <tr><td className="main">
+    <NavbarTheme color={vehicle.entity.navColor} />
     <h1>{vehicle.heading}</h1>
     <table className="horlines ct-facts">
       <colgroup><col style={{ width: 170 }} /><col /></colgroup>

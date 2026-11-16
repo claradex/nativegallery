@@ -105,12 +105,15 @@ export class PhotoPageController {
       const vehicle = await findVehicle(link.id);
       return vehicle ? [{ ...vehicle, route: link.route, note: link.note, angle: link.angle }] : [];
     }))).flat();
+    // The navbar takes the colour of the first vehicle's entity kind, as transphoto.org paints metro photos blue.
+    const first = vehicles[0] ? await database.entityData.findUnique({ where: { id: vehicles[0].id }, select: { entityid: true } }) : null;
+    const navColor = first ? (await database.entity.findUnique({ where: { id: first.entityid }, select: { navcolor: true } }))?.navcolor ?? null : null;
     return {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
       published: photo.moderated === 1, processing: photo.moderated === -1, videoUrl, priority: photo.priority,
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
-      vehicles,
+      vehicles, navColor,
       exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],
       canComment: !!viewer && (!flag('EMAIL_VERIFY') || viewer.status !== 3),
     };

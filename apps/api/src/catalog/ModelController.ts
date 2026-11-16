@@ -43,7 +43,7 @@ export class ModelController {
     const withSub = sub === '1';
     const ids = withSub ? await withSubmodels(id) : [id];
     const [entity, parent, children, cities, photos] = await Promise.all([
-      database.entity.findUnique({ where: { id: model.entityid }, select: { id: true, title: true, color: true, sampledata: true } }),
+      database.entity.findUnique({ where: { id: model.entityid }, select: { id: true, title: true, color: true, navcolor: true, sampledata: true } }),
       model.parent_id ? database.entityModel.findUnique({ where: { id: model.parent_id }, select: { id: true, title: true } }) : null,
       database.entityModel.findMany({ where: { parent_id: id }, select: { id: true, title: true }, orderBy: { title: 'asc' } }),
       database.$queryRaw<{ city_id: number | null; total: bigint; active: bigint }[]>(Prisma.sql`
@@ -77,7 +77,7 @@ export class ModelController {
     return {
       id, title: model.title, manufacturer: model.manufacturer ?? '', builtFrom: model.built_from, builtTo: model.built_to,
       description: model.description ?? '',
-      entity: { id: model.entityid, title: entity?.title ?? '', color: entity?.color ?? '' },
+      entity: { id: model.entityid, title: entity?.title ?? '', color: entity?.color ?? '', navColor: entity?.navcolor ?? null },
       parent, children: children.map(child => ({ ...child, vehicles: childCounts.find(row => row.model_id === child.id)?._count._all ?? 0 })),
       fields: fieldValues(model.content, entityFields(entity?.sampledata), 'model'),
       photos, countries: groups,

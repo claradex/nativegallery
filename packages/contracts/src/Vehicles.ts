@@ -151,8 +151,11 @@ export interface VehicleSummary {
   extra: string[];
 }
 
+/** An entity kind as the site pages show it; `navColor` recolours the navbar (null keeps the default). */
+export interface EntityRef { id: number; title: string; color: string; navColor: string | null }
+
 export interface VehicleDetails extends VehicleSummary {
-  entity: { id: number; title: string; color: string };
+  entity: EntityRef;
   /** «Санкт-Петербург, Трамвай № 5000». */
   heading: string;
   fields: { label: string; value: string }[];
@@ -165,7 +168,7 @@ export interface ModelPageData {
   builtFrom: number | null;
   builtTo: number | null;
   description: string;
-  entity: { id: number; title: string; color: string };
+  entity: EntityRef;
   parent: ModelRef | null;
   children: (ModelRef & { vehicles: number })[];
   fields: { label: string; value: string }[];

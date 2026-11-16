@@ -6,11 +6,14 @@ import { requireId } from '../common/ids';
 
 type Field = { name: string; id: string; type: string; important: string; scope: 'model' | 'vehicle'; list: string };
 
-/** Title, colour and the `variable*_N` field rows of the entity form. */
+const hex = /^#[a-f0-9]{6}$/i;
+
+/** Title, colour, navbar colour (empty for the site default) and the `variable*_N` field rows of the entity form. */
 function entityInput(body: Record<string, unknown>) {
-  const { title, color } = body ?? {};
+  const { title, color, navcolor = '' } = body ?? {};
   if (typeof title !== 'string' || !title.trim() || title.length > 255 ||
-      typeof color !== 'string' || !/^#[a-f0-9]{6}$/i.test(color)) throw new BadRequestException();
+      typeof color !== 'string' || !hex.test(color) ||
+      typeof navcolor !== 'string' || (navcolor !== '' && !hex.test(navcolor))) throw new BadRequestException();
   const sample: Record<string, Field> = {};
   const ids = new Set<string>();
   const indexes = Object.keys(body).map(key => key.match(/^variablename_([1-9]\d?)$/)?.[1]).filter(Boolean) as string[];
@@ -30,7 +33,7 @@ function entityInput(body: Record<string, unknown>) {
   }
   const sampledata = JSON.stringify(sample);
   if (Buffer.byteLength(sampledata) > 65535) throw new BadRequestException();
-  return { title: title.trim(), color, sample, sampledata };
+  return { title: title.trim(), color, navcolor: navcolor ? navcolor.toLowerCase() : null, sample, sampledata };
 }
 
 function parseFields(raw: string): Field[] {
@@ -56,12 +59,12 @@ export class AdminEntitiesController {
   async list(@Req() request: Request) {
     await this.auth.requireAdmin(request, 'editor');
     const [entities, models, vehicles] = await Promise.all([
-      database.entity.findMany({ select: { id: true, title: true, color: true, sampledata: true, createdate: true }, orderBy: { id: 'desc' } }),
+      database.entity.findMany({ select: { id: true, title: true, color: true, navcolor: true, sampledata: true, createdate: true }, orderBy: { id: 'desc' } }),
       database.entityModel.groupBy({ by: ['entityid'], _count: { _all: true } }),
       database.entityData.groupBy({ by: ['entityid'], _count: { _all: true } }),
     ]);
-    return entities.map(({ sampledata, createdate, ...entity }) => ({
-      ...entity, createdAt: Number(createdate), fields: parseFields(sampledata).length,
+    return entities.map(({ sampledata, createdate, navcolor, ...entity }) => ({
+      ...entity, navColor: navcolor, createdAt: Number(createdate), fields: parseFields(sampledata).length,
       models: models.find(row => row.entityid === entity.id)?._count._all ?? 0,
       vehicles: vehicles.find(row => row.entityid === entity.id)?._count._all ?? 0,
     }));
@@ -78,15 +81,15 @@ export class AdminEntitiesController {
       database.entityModel.count({ where: { entityid: id } }),
       database.entityData.count({ where: { entityid: id } }),
     ]);
-    return { id, title: entity.title, color: entity.color, fields: parseFields(entity.sampledata), models, vehicles };
+    return { id, title: entity.title, color: entity.color, navColor: entity.navcolor, fields: parseFields(entity.sampledata), models, vehicles };
   }
 
   @Post()
   async create(@Req() request: Request, @Body() body: Record<string, unknown>) {
     await this.auth.requireAdmin(request, 'editor');
-    const { title, color, sampledata } = entityInput(body);
+    const { title, color, navcolor, sampledata } = entityInput(body);
     return database.entity.create({
-      data: { title, color, sampledata, createdate: BigInt(Math.floor(Date.now() / 1000)) },
+      data: { title, color, navcolor, sampledata, createdate: BigInt(Math.floor(Date.now() / 1000)) },
       select: { id: true },
     });
   }
@@ -99,7 +102,7 @@ export class AdminEntitiesController {
   async update(@Req() request: Request, @Param('id') rawId: string, @Body() body: Record<string, unknown>) {
     await this.auth.requireAdmin(request, 'editor');
     const id = requireId(rawId);
-    const { title, color, sample, sampledata } = entityInput(body);
+    const { title, color, navcolor, sample, sampledata } = entityInput(body);
     await database.$transaction(async tx => {
       const [entity] = await tx.$queryRaw<{ sampledata: string }[]>(Prisma.sql`
         SELECT sampledata FROM entities WHERE id = ${id} FOR UPDATE
@@ -109,7 +112,7 @@ export class AdminEntitiesController {
       if (used && Object.keys(sample).length < parseFields(entity.sampledata).length) {
         throw new ConflictException('У сущности есть модели или ТС: поля можно переименовать или добавить, но не удалить.');
       }
-      await tx.entity.update({ where: { id }, data: { title, color, sampledata } });
+      await tx.entity.update({ where: { id }, data: { title, color, navcolor, sampledata } });
     });
     return { id };
   }

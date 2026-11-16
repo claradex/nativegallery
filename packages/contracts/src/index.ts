@@ -91,6 +91,8 @@ export interface PhotoPageData {
   exif: { label: string; value: string }[];
   /** Vehicles on the photo, left to right. */
   vehicles: PhotoVehicleData[];
+  /** Navbar colour of the first vehicle's entity kind, or null for the site default. */
+  navColor: string | null;
   previousId: number | null;
   nextId: number | null;
   views: number;
@@ -233,7 +235,7 @@ export interface ModelListEntry {
 
 /** `/models?t=`: the models of one entity type, grouped by manufacturer. */
 export interface ModelListData {
-  type: EntityType & { color: string };
+  type: EntityType & { color: string; navColor: string | null };
   types: (EntityType & { models: number })[];
   groups: { title: string; models: ModelListEntry[] }[];
 }
