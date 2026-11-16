@@ -30,7 +30,13 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
     response.setHeader('Content-Type', 'application/json');
     const fixtures = {
       '/api/register/options': { open: true },
-      '/api/internal/home': { popular: [], random: [], online: [], news: [], recent: [], contest: null },
+      '/api/internal/home': {
+        blocks: ['popular', 'random', 'recent', 'online', 'siteNews'].map(key => ({ key, column: key === 'popular' ? 'left' : key === 'siteNews' ? 'right' : 'center', title: key, body: '' })),
+        popular: [], discussed: [], random: [], online: [], siteNews: [], transportNews: [], recent: [], contest: null, contestWinner: null,
+        vehicleTypes: [], discussions: [], daily: [],
+      },
+      '/api/admin/geodb': [],
+      '/api/admin/home-blocks': [],
       '/api/internal/feed': [],
       '/api/account/photos/7': { id: 7, place: 'Место съёмки', postbody: 'Подпись' },
       '/api/admin/news': [],
@@ -59,7 +65,7 @@ test('production frontend serves legacy HTML and native scripts', { timeout: 20_
       '/api/users/search?q=Anna': [{ id: 12, username: 'Anna', photourl: '' }],
       '/api/internal/galleries': [{ id: 7, title: 'Тестовая галерея' }],
       '/api/internal/galleries/7': { title: 'Тестовая галерея', photos: [] },
-      '/api/internal/news': [{ id: 1, time: 0, body: '<b>Тестовая новость</b>' }],
+      '/api/internal/news?kind=0': [{ id: 1, time: 0, body: '<b>Тестовая новость</b>' }],
       '/api/internal/pages/4': { title: 'Тестовая страница', html: '<p>Материал</p>' },
       '/api/internal/about': { users: 5, photos: 8, online: 1, staff: [] },
     };

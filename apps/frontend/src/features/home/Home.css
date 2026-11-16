@@ -26,3 +26,40 @@
     .ix-arrow.ix-arrow-expanded {
         transform: rotate(90deg);
     }
+
+/* Home page blocks (see HomeBlocks.ts in contracts). */
+.ix-block { margin-bottom: 22px; }
+.ix-block > h4 { margin-bottom: 8px; }
+
+.ix-tabs { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: -4px 0 8px; }
+.ix-tabs button {
+  padding: 0; border: 0; background: none; cursor: pointer; font: inherit;
+  color: var(--link-color, #2a5885); border-bottom: 1px dotted currentColor;
+}
+.ix-tabs button:hover { color: var(--link-hover-color, #d00); }
+
+.ix-winner { float: left; margin: 0 20px 13px 0; }
+.ix-winner-photo { display: block; margin-bottom: 4px; }
+.ix-winner-photo img { display: block; max-width: 250px; height: auto; }
+
+.ix-types { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; padding: 0; list-style: none; font-size: 15px; }
+.ix-types li { white-space: nowrap; }
+.ix-count, .ix-plus { color: #888; font-size: 11px; }
+.ix-count { margin-left: 5px; }
+.ix-plus { white-space: nowrap; }
+
+.ix-tnews { max-height: 420px; overflow-y: auto; padding-right: 6px; }
+.ix-tnews-item { padding: 6px 0 8px; border-bottom: 1px solid rgba(0, 0, 0, .08); }
+.ix-tnews-item:last-of-type { border-bottom: 0; }
+.ix-tnews-head { margin-bottom: 3px; }
+.ix-tnews-head span { color: #777; }
+
+.ix-talk-item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 6px 0; }
+.ix-talk-thumb { display: block; width: 64px; height: 48px; border-radius: 2px; background: #eee center / cover no-repeat; }
+.ix-talk-head { font-size: 12px; color: #777; }
+.ix-talk-body { margin-top: 2px; overflow-wrap: anywhere; white-space: pre-line; }
+
+.ix-daily { line-height: 1.6; }
+.ix-daily > div { padding-left: 1em; text-indent: -1em; }
+
+.ix-custom img { max-width: 100%; height: auto; }
