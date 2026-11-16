@@ -28,7 +28,7 @@ export const settingGroups = [
   { id: 'site', title: 'Сайт', description: 'Название, оформление и адрес сайта.' },
   { id: 'registration', title: 'Регистрация', description: 'Кто и как может зарегистрироваться.' },
   { id: 'photos', title: 'Фотографии', description: 'Загрузка и модерация снимков.' },
-  { id: 'storage', title: 'Внешние хранилища', description: 'Плановая проверка копий фотографий и видео во внешних хранилищах.' },
+  { id: 'storage', title: 'Внешние хранилища', description: 'Плановая проверка копий фотографий и видео во внешних хранилищах и вход в Google Drive.' },
   { id: 'contests', title: 'Фотоконкурсы', description: 'Проведение конкурсов и автоматический запуск новых.' },
   { id: 'mail', title: 'Почта', description: 'SMTP-сервер для писем с подтверждением регистрации.' },
   { id: 'security', title: 'Защита', description: 'Капча и параметры cookie.' },
@@ -63,6 +63,11 @@ export const settingDefinitions = [
   { key: 'STORAGE_VERIFY_EVERY', group: 'storage', label: 'Проверять хранилища', description: 'Как часто сверять опубликованные файлы с оригиналами. off — не проверять по расписанию. ' + durationHint, type: 'duration', default: '1d' },
   { key: 'STORAGE_VERIFY_DEEP', group: 'storage', label: 'Глубокая проверка по расписанию', description: 'Скачивать файлы и сравнивать SHA-256, а не только наличие и размер (и контрольную сумму, если хранилище её отдаёт). Медленно и расходует трафик.', type: 'boolean', default: 'false' },
   { key: 'STORAGE_VERIFY_REPAIR', group: 'storage', label: 'Исправлять найденные проблемы', description: 'После проверки заново публиковать пропавшие и повреждённые файлы, а также фотографии, загруженные после подключения хранилища, но не попавшие в него.', type: 'boolean', default: 'true' },
+  { key: 'GOOGLE_CLIENT_ID', group: 'storage', label: 'Google: Client ID для входа по коду', placeholder: '123456789-….apps.googleusercontent.com',
+    description: 'OAuth-клиент типа «TVs and Limited Input devices» из Google Cloud Console с включённым Google Drive API. ' +
+      'С ним хранилища Google Drive подключаются кнопкой: владелец вводит код на google.com/device, без своего Client ID и адресов перенаправления.',
+    type: 'text', default: '' },
+  { key: 'GOOGLE_CLIENT_SECRET', group: 'storage', label: 'Google: Client secret для входа по коду', type: 'secret', default: '' },
 
   { key: 'CONTESTS_ENABLED', group: 'contests', label: 'Фотоконкурсы', description: 'Разрешает фоновую задачу, которая переводит конкурсы между этапами.', type: 'boolean', default: 'false', legacy: 'contests.enabled' },
   { key: 'CONTESTS_AUTONEW', group: 'contests', label: 'Запускать новый конкурс автоматически', description: 'После подведения итогов создаётся конкурс на случайную активную тему.', type: 'boolean', default: 'false', legacy: 'contests.autonew.enabled' },

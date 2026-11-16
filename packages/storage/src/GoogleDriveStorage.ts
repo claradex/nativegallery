@@ -162,7 +162,13 @@ export async function googleExchangeCode({ clientId, clientSecret, code, redirec
     body: new URLSearchParams({ grant_type: 'authorization_code', client_id: clientId, client_secret: clientSecret, code, redirect_uri: redirectUri }).toString(),
   });
   if (response.status !== 200) throw failure('Google OAuth', response);
-  const json = JSON.parse(response.body.toString('utf8')) as { access_token: string; refresh_token?: string; id_token?: string; scope?: string };
+  return granted(JSON.parse(response.body.toString('utf8')));
+}
+
+interface TokenReply { access_token: string; refresh_token?: string; id_token?: string; scope?: string }
+
+/** The refresh token and the account's address from a token reply that should grant Drive access. */
+function granted(json: TokenReply) {
   if (!json.refresh_token) throw new Error('Google не выдал refresh token. Отзовите доступ сайта в настройках аккаунта Google и войдите снова.');
   if (!json.scope?.split(' ').some(item => item === scope || item === fileScope)) throw new Error('Не выдан доступ к Google Drive: отметьте его на экране согласия.');
   // The ID token comes straight from Google's token endpoint over TLS, so its claims can be read without checking the signature.
@@ -171,8 +177,59 @@ export async function googleExchangeCode({ clientId, clientSecret, code, redirec
   return { accessToken: json.access_token, refreshToken: json.refresh_token, email };
 }
 
-/** Creates the site's own folder in the account's «Мой диск» and returns its ID. */
-export async function googleCreateFolder(accessToken: string, name: string) {
+/**
+ * Sign-in with a code («TVs and Limited Input devices» client): Google shows the owner a page where they type the code,
+ * so the site needs no redirect URI. Such clients may only ask for the site's own files (drive.file).
+ */
+export async function googleDeviceStart(clientId: string) {
+  const response = await http('https://oauth2.googleapis.com/device/code', {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: clientId, scope: [fileScope, 'openid', 'email'].join(' ') }).toString(),
+  });
+  if (response.status !== 200) throw failure('Google OAuth', response);
+  const json = JSON.parse(response.body.toString('utf8')) as { device_code: string; user_code: string; verification_url?: string; verification_uri?: string; expires_in: number; interval?: number };
+  return {
+    deviceCode: json.device_code, userCode: json.user_code, verificationUrl: json.verification_url ?? json.verification_uri ?? 'https://www.google.com/device',
+    expiresIn: Number(json.expires_in) || 1800, interval: Number(json.interval) || 5,
+  };
+}
+
+export type GoogleDeviceResult =
+  | { status: 'pending' | 'slow_down' | 'denied' | 'expired' }
+  | { status: 'granted'; accessToken: string; refreshToken: string; email: string };
+
+/** Asks Google whether the owner has entered the code and allowed access yet. */
+export async function googleDevicePoll({ clientId, clientSecret, deviceCode }: { clientId: string; clientSecret: string; deviceCode: string }): Promise<GoogleDeviceResult> {
+  const response = await http(tokenEndpoint, {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: clientId, client_secret: clientSecret, device_code: deviceCode, grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+    }).toString(),
+  });
+  if (response.status === 200) return { status: 'granted', ...granted(JSON.parse(response.body.toString('utf8'))) };
+  let error = '';
+  try { error = String(JSON.parse(response.body.toString('utf8')).error ?? ''); } catch {}
+  if (error === 'authorization_pending') return { status: 'pending' };
+  if (error === 'slow_down') return { status: 'slow_down' };
+  if (error === 'access_denied') return { status: 'denied' };
+  if (error === 'expired_token') return { status: 'expired' };
+  throw failure('Google OAuth', response);
+}
+
+/**
+ * The site's own folder in the account's «Мой диск»: the one it made before (with drive.file the site sees only its own
+ * files, so a folder of that name is its own), or a new one.
+ */
+export async function googleOwnFolder(accessToken: string, name: string) {
+  const quoted = "'" + name.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+  const query = new URLSearchParams({
+    q: 'name = ' + quoted + " and mimeType = 'application/vnd.google-apps.folder' and 'root' in parents and trashed = false",
+    fields: 'files(id)', pageSize: '1', orderBy: 'createdTime',
+  });
+  const found = await http(api + '?' + query, { headers: { authorization: 'Bearer ' + accessToken } });
+  if (found.status !== 200) throw failure('Google Drive: поиск папки', found);
+  const existing = (JSON.parse(found.body.toString('utf8')) as { files?: { id: string }[] }).files?.[0];
+  if (existing) return existing.id;
   const response = await http(api + '?fields=id', {
     method: 'POST', headers: { authorization: 'Bearer ' + accessToken, 'content-type': 'application/json; charset=utf-8' },
     body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder' }),

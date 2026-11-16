@@ -142,6 +142,8 @@ export interface StorageOverview {
   mediaRoot: string;
   /** The redirect URI to register in the Google OAuth client for «Войти через Google». */
   googleRedirectUri: string;
+  /** The site has its own Google client (GOOGLE_CLIENT_ID), so Drive storages connect with a code, without a Client ID. */
+  googleDevice: boolean;
 }
 
 export interface StorageReplicaData {
@@ -167,6 +169,24 @@ export interface StorageTestResult {
   ok: boolean;
   message: string;
   milliseconds: number;
+}
+
+/** POST /api/admin/storage/:id/google/device: the code to enter on Google's page. */
+export interface GoogleDeviceStart {
+  handle: string;
+  userCode: string;
+  verificationUrl: string;
+  /** Seconds the code stays valid. */
+  expiresIn: number;
+  /** Seconds to wait between polls. */
+  interval: number;
+}
+
+/** POST /api/admin/storage/:id/google/device/poll */
+export interface GoogleDevicePoll {
+  status: 'pending' | 'connected' | 'denied' | 'expired' | 'error';
+  message?: string;
+  account?: string;
 }
 
 /** Payloads of the PublishMedia and VerifyMedia jobs. */

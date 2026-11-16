@@ -4,13 +4,13 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { resolve } from 'node:path';
 import {
   isStorageKind, isStoragePublishMode, needsGoogleSignIn, replicaStatusName, replicaStatuses, storageKindById,
-  type ReplicaStatus, type StorageOverview, type StorageReplicaPage, type StorageTargetData, type StorageTestResult,
+  type GoogleDevicePoll, type GoogleDeviceStart, type ReplicaStatus, type StorageOverview, type StorageReplicaPage, type StorageTargetData, type StorageTestResult,
 } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 import { eligiblePhotos, queueMissingPublications } from '@nativegallery/jobs';
 import { setting } from '@nativegallery/config';
 import {
-  createDriver, googleAuthorizeUrl, googleCreateFolder, googleExchangeCode, missingStorageFields, parseStorageConfig, testStorage,
+  createDriver, googleAuthorizeUrl, googleDevicePoll, googleDeviceStart, googleExchangeCode, googleOwnFolder, missingStorageFields, parseStorageConfig, testStorage,
 } from '@nativegallery/storage';
 import { AuthService } from '../auth/AuthService';
 
@@ -87,6 +87,15 @@ const googleCallback = '/api/admin/storage/google/callback';
 const googleCookie = 'ng_google_oauth';
 const googleCookiePath = '/api/admin/storage/google';
 
+/** Sign-ins with a code waiting for the owner on Google's page, by handle. They live minutes, so memory is enough. */
+const deviceSignIns = new Map<string, { targetId: number; deviceCode: string; expires: number; interval: number; next: number }>();
+
+/** The site's own Google client for sign-in with a code, if it is configured. */
+function deviceClient() {
+  const clientId = setting('GOOGLE_CLIENT_ID').trim(), clientSecret = setting('GOOGLE_CLIENT_SECRET').trim();
+  return clientId && clientSecret ? { clientId, clientSecret } : null;
+}
+
 const problemStatuses = [replicaStatuses.failed, replicaStatuses.missing, replicaStatuses.mismatch];
 
 /**
@@ -113,7 +122,7 @@ export class AdminStorageController {
       for (const row of files) if (row.target_id === target.id) counts[replicaStatusName(row.status)] += row._count._all;
       return this.describe(target, counts, Number(queued.find(row => Number(row.target) === target.id)?.count ?? 0), await this.photoTotals(target));
     }));
-    return { targets: data, mediaRoot: resolve(process.env.MEDIA_ROOT ?? '../../uploads'), googleRedirectUri: siteOrigin(request) + googleCallback };
+    return { targets: data, mediaRoot: resolve(process.env.MEDIA_ROOT ?? '../../uploads'), googleRedirectUri: siteOrigin(request) + googleCallback, googleDevice: !!deviceClient() };
   }
 
   private async photoTotals(target: Target) {
@@ -269,15 +278,80 @@ export class AdminStorageController {
       const granted = await googleExchangeCode({
         clientId: config.clientId, clientSecret: config.clientSecret, code: query.code, redirectUri: siteOrigin(request) + googleCallback,
       });
-      const folderId = config.folderId || await googleCreateFolder(granted.accessToken, 'NativeGallery');
-      await database.storageTarget.update({ where: { id: target.id }, data: {
-        config: JSON.stringify({ ...config, refreshToken: granted.refreshToken, account: granted.email, folderId }),
-      } });
+      await this.connectGoogle(target, { ...config, ...granted, folderId: config.folderId || await googleOwnFolder(granted.accessToken, 'NativeGallery') });
     } catch (error) {
       return back({ google: 'error', message: error instanceof Error ? error.message.slice(0, 300) : 'Не удалось войти через Google.' });
     }
-    if (target.enabled) await queueMissingPublications(target.id, target.mode, { since: Math.floor(target.created_at.getTime() / 1000) });
     back({ google: 'connected', title: target.title });
+  }
+
+  /** Keeps what the sign-in gave and catches up with the photos uploaded while the storage had no account. */
+  private async connectGoogle(target: Target, connected: Record<string, string> & { refreshToken: string; email: string; accessToken: string; folderId: string }) {
+    const { accessToken: _, email, ...config } = connected;
+    await database.storageTarget.update({ where: { id: target.id }, data: { config: JSON.stringify({ ...config, account: email }) } });
+    if (target.enabled) await queueMissingPublications(target.id, target.mode, { since: Math.floor(target.created_at.getTime() / 1000) });
+  }
+
+  /**
+   * «Подключить Google Drive» with the site's own client: asks Google for a code the owner types on google.com/device.
+   * Such sign-ins may only reach the site's own files, so the storage always gets the site's own folder.
+   */
+  @Post(':id/google/device')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private, no-store')
+  async googleDevice(@Req() request: Request, @Param('id') raw: string): Promise<GoogleDeviceStart> {
+    await this.auth.requireAdmin(request, 'owner');
+    const target = await this.target(raw);
+    if (target.kind !== 'gdrive') throw new BadRequestException('Это не хранилище Google Drive.');
+    const client = deviceClient();
+    if (!client) throw new BadRequestException('Вход по коду не настроен: задайте GOOGLE_CLIENT_ID и GOOGLE_CLIENT_SECRET в конфигурации.');
+    let started: Awaited<ReturnType<typeof googleDeviceStart>>;
+    try { started = await googleDeviceStart(client.clientId); } catch (error) {
+      throw new BadRequestException(error instanceof Error ? error.message : 'Google не выдал код.');
+    }
+    const now = Date.now();
+    for (const [key, item] of deviceSignIns) if (item.expires < now || item.targetId === target.id) deviceSignIns.delete(key);
+    const handle = randomBytes(18).toString('hex');
+    deviceSignIns.set(handle, {
+      targetId: target.id, deviceCode: started.deviceCode, expires: now + started.expiresIn * 1000, interval: started.interval, next: now + started.interval * 1000,
+    });
+    return { handle, userCode: started.userCode, verificationUrl: started.verificationUrl, expiresIn: started.expiresIn, interval: started.interval };
+  }
+
+  /** Whether the owner has entered the code yet; once they have, the storage is connected. */
+  @Post(':id/google/device/poll')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private, no-store')
+  async googleDevicePoll(@Req() request: Request, @Param('id') raw: string, @Body('handle') handle: unknown): Promise<GoogleDevicePoll> {
+    await this.auth.requireAdmin(request, 'owner');
+    const target = await this.target(raw);
+    const session = typeof handle === 'string' ? deviceSignIns.get(handle) : undefined;
+    if (!session || session.targetId !== target.id || session.expires < Date.now()) {
+      if (typeof handle === 'string') deviceSignIns.delete(handle);
+      return { status: 'expired', message: 'Код устарел. Получите новый.' };
+    }
+    if (Date.now() < session.next) return { status: 'pending' };
+    const client = deviceClient();
+    if (!client) return { status: 'error', message: 'Вход по коду больше не настроен.' };
+    try {
+      const result = await googleDevicePoll({ ...client, deviceCode: session.deviceCode });
+      if (result.status === 'slow_down') session.interval += 5;
+      session.next = Date.now() + session.interval * 1000;
+      if (result.status === 'pending' || result.status === 'slow_down') return { status: 'pending' };
+      deviceSignIns.delete(handle as string);
+      if (result.status === 'denied') return { status: 'denied', message: 'Доступ к Google Drive не выдан.' };
+      if (result.status !== 'granted') return { status: 'expired', message: 'Код устарел. Получите новый.' };
+      const config = parseStorageConfig(target.config);
+      delete config.serviceAccount;
+      await this.connectGoogle(target, {
+        ...config, ...client, refreshToken: result.refreshToken, email: result.email, accessToken: result.accessToken,
+        folderId: await googleOwnFolder(result.accessToken, 'NativeGallery'),
+      });
+      return { status: 'connected', account: result.email };
+    } catch (error) {
+      deviceSignIns.delete(handle as string);
+      return { status: 'error', message: error instanceof Error ? error.message.slice(0, 300) : 'Не удалось подключить Google.' };
+    }
   }
 
   /** Queues a check of the published files; `deep` downloads them and compares SHA-256. */

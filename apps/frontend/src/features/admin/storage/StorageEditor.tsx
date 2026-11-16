@@ -14,6 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Field, FieldDescription, Label } from '../ui/field';
 import { Input, Textarea } from '../ui/input';
 import { Switch } from '../ui/switch';
+import { refreshPage } from '../../../components/navigation';
+import { GoogleDevicePanel } from './GoogleDeviceSignIn';
 import { KindIcon } from './KindIcon';
 
 interface Draft {
@@ -95,8 +97,10 @@ function GoogleAccount({ account, connected, redirectUri, pending, onSignIn, onD
 }
 
 /** Adds a storage, or (with `target`) edits one: the kind's settings, a connection test and the publication mode. */
-export function StorageEditor({ target, redirectUri }: { target?: StorageTargetData; redirectUri: string }) {
+export function StorageEditor({ target, redirectUri, googleDevice }: { target?: StorageTargetData; redirectUri: string; googleDevice: boolean }) {
   const [open, setOpen] = useState(false);
+  /** The storage being connected with a code (it is saved first, so a new one has an id only from then on). */
+  const [deviceTarget, setDeviceTarget] = useState<number | null>(null);
   const [draft, setDraft] = useState(() => initial(target));
   const [test, setTest] = useState<StorageTestResult | null>(null);
   const [testing, setTesting] = useState(false);
@@ -138,6 +142,16 @@ export function StorageEditor({ target, redirectUri }: { target?: StorageTargetD
     if (saved.ok) window.location.assign('/api/admin/storage/' + saved.result.id + '/google');
   }
 
+  /** «Подключить Google Drive» with the site's own client: saves the form, then shows the code to enter. */
+  async function connectDevice() {
+    if (!draft.title.trim()) return void toast.error('Укажите название хранилища.');
+    const body = { title: draft.title, kind: draft.kind, mode: draft.mode, enabled: draft.enabled, config: payload() };
+    const saved = await run(() => target
+      ? send<{ id: number }>('/api/admin/storage/' + target.id, { method: 'PUT', body, fallback: 'Не удалось сохранить хранилище.' })
+      : send<{ id: number }>('/api/admin/storage', { body, fallback: 'Не удалось добавить хранилище.' }), { refresh: false });
+    if (saved.ok) setDeviceTarget(saved.result.id);
+  }
+
   const googleConnected = !!target?.secrets.includes('refreshToken') && !draft.cleared.includes('refreshToken');
   const serviceAccount = !!draft.config.serviceAccount?.trim() || (!!target?.secrets.includes('serviceAccount') && !draft.cleared.includes('serviceAccount'));
   const signInVisible = draft.kind === 'gdrive' && !serviceAccount;
@@ -151,7 +165,23 @@ export function StorageEditor({ target, redirectUri }: { target?: StorageTargetD
     if (result.ok) setOpen(false);
   }
 
-  return <Dialog open={open} onOpenChange={value => { setOpen(value); if (value) { setDraft(initial(target)); setTest(null); } }}>
+  const fields = <div className="grid gap-4">
+    {kind.fields.map(field => field.readOnly
+      ? field.key === 'account' && signInVisible && <GoogleAccount key="account" account={target?.config.account ?? ''} connected={googleConnected}
+        redirectUri={redirectUri} pending={pending} onSignIn={signIn}
+        onDisconnect={() => update({ cleared: [...draft.cleared.filter(key => key !== 'refreshToken' && key !== 'account'), 'refreshToken', 'account'] })} />
+      : <ConfigField key={draft.kind + field.key} field={field} value={draft.config[field.key] ?? ''}
+        stored={!!target?.secrets.includes(field.key)} cleared={draft.cleared.includes(field.key)}
+        onChange={value => setConfig(field.key, value)}
+        onClear={cleared => update({ cleared: cleared ? [...draft.cleared, field.key] : draft.cleared.filter(key => key !== field.key) })} />)}
+  </div>;
+
+  return <Dialog open={open} onOpenChange={value => {
+    setOpen(value);
+    if (value) { setDraft(initial(target)); setTest(null); setDeviceTarget(null); }
+    // A storage saved on the way to the code should show up in the list even if the sign-in was left unfinished.
+    else if (deviceTarget) refreshPage();
+  }}>
     <DialogTrigger asChild>
       {target ? <Button variant="outline" size="sm"><Pencil />Изменить</Button> : <Button><Plus />Добавить хранилище</Button>}
     </DialogTrigger>
@@ -191,16 +221,29 @@ export function StorageEditor({ target, redirectUri }: { target?: StorageTargetD
           </Field>
         </div>
 
-        <div className="grid gap-4">
-          {kind.fields.map(field => field.readOnly
-            ? field.key === 'account' && signInVisible && <GoogleAccount key="account" account={target?.config.account ?? ''} connected={googleConnected}
-              redirectUri={redirectUri} pending={pending} onSignIn={signIn}
-              onDisconnect={() => update({ cleared: [...draft.cleared.filter(key => key !== 'refreshToken' && key !== 'account'), 'refreshToken', 'account'] })} />
-            : <ConfigField key={draft.kind + field.key} field={field} value={draft.config[field.key] ?? ''}
-              stored={!!target?.secrets.includes(field.key)} cleared={draft.cleared.includes(field.key)}
-              onChange={value => setConfig(field.key, value)}
-              onClear={cleared => update({ cleared: cleared ? [...draft.cleared, field.key] : draft.cleared.filter(key => key !== field.key) })} />)}
-        </div>
+        {draft.kind === 'gdrive' && googleDevice ? <>
+          <div className="grid gap-3 rounded-md border bg-muted/40 px-3 py-3">
+            {deviceTarget
+              ? <GoogleDevicePanel targetId={deviceTarget} onConnected={() => setTimeout(() => setOpen(false), 1500)} />
+              : <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="grid gap-1">
+                  <span className="text-sm font-medium">Аккаунт Google</span>
+                  <span className="text-[13px] text-muted-foreground">
+                    {googleConnected
+                      ? <>Подключён{target?.config.account && <>: <span className="font-medium text-foreground">{target.config.account}</span></>}</>
+                      : 'Вход по коду на google.com/device — без Client ID. Копии лягут в папку NativeGallery вашего Диска.'}
+                  </span>
+                </div>
+                <Button type="button" variant={googleConnected ? 'outline' : 'default'} size="sm" onClick={connectDevice} disabled={pending}>
+                  {pending ? <Loader2 className="animate-spin" /> : <LogIn />}{googleConnected ? 'Подключить другой аккаунт' : 'Подключить Google Drive'}
+                </Button>
+              </div>}
+          </div>
+          <details className="group rounded-md border px-3 py-2.5">
+            <summary className="cursor-pointer text-sm font-medium text-muted-foreground select-none group-open:mb-4">Свой OAuth-клиент, своя папка или сервисный аккаунт</summary>
+            {fields}
+          </details>
+        </> : fields}
 
         <div className="flex items-center justify-between gap-4 rounded-md border px-3 py-2.5">
           <div className="grid gap-1">

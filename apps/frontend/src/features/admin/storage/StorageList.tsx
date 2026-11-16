@@ -15,6 +15,7 @@ import { Confirm } from '../ui/confirm';
 import { Empty } from '../ui/empty';
 import { Switch } from '../ui/switch';
 import { KindIcon } from './KindIcon';
+import { GoogleDeviceDialog } from './GoogleDeviceSignIn';
 import { StorageEditor } from './StorageEditor';
 
 /** ISO timestamps from the storage API in the site's date format. */
@@ -30,7 +31,7 @@ function Stat({ label, value, hint, tone }: { label: string; value: string; hint
   </div>;
 }
 
-function StorageCard({ target, redirectUri }: { target: StorageTargetData; redirectUri: string }) {
+function StorageCard({ target, redirectUri, googleDevice }: { target: StorageTargetData; redirectUri: string; googleDevice: boolean }) {
   const [pending, run] = useAction();
   const [testing, setTesting] = useState(false);
   const kind = storageKindById.get(target.kind);
@@ -109,7 +110,9 @@ function StorageCard({ target, redirectUri }: { target: StorageTargetData; redir
       </p>
       {signIn && <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-warning/30 px-3 py-2.5 text-[13px]">
         Файлы не публикуются, пока не подключён аккаунт Google.
-        <Button size="sm" asChild><a href={url + '/google'}><LogIn />Войти через Google</a></Button>
+        {googleDevice ? <GoogleDeviceDialog targetId={target.id} />
+          : target.config.clientId ? <Button size="sm" asChild><a href={url + '/google'}><LogIn />Войти через Google</a></Button>
+            : <span className="text-muted-foreground">Укажите Client ID в настройках хранилища или GOOGLE_CLIENT_ID в конфигурации.</span>}
       </div>}
       {target.kind === 'gdrive' && target.config.account && <p className="text-[13px] text-muted-foreground">Аккаунт Google: {target.config.account}</p>}
       {target.lastCheck?.error && <p className="rounded-md bg-destructive/8 px-3 py-2 text-[13px] break-words text-destructive">{target.lastCheck.error}</p>}
@@ -123,7 +126,7 @@ function StorageCard({ target, redirectUri }: { target: StorageTargetData; redir
         <ScanSearch />Полная проверка</Button>
       <Button variant="outline" size="sm" onClick={publish} disabled={pending || !target.enabled}><CloudUpload />Опубликовать недостающие</Button>
       <div className="ml-auto flex gap-2">
-        <StorageEditor target={target} redirectUri={redirectUri} />
+        <StorageEditor target={target} redirectUri={redirectUri} googleDevice={googleDevice} />
         <Confirm title={'Удалить хранилище «' + target.title + '»?'}
           description="Сведения о публикациях и очередь задач будут удалены. Файлы в самом хранилище останутся."
           trigger={<Button variant="ghost-destructive" size="sm" disabled={pending}><Trash2 />Удалить</Button>}
@@ -136,14 +139,14 @@ function StorageCard({ target, redirectUri }: { target: StorageTargetData; redir
 export function StorageList({ overview }: { overview: StorageOverview }) {
   if (!overview.targets.length) {
     return <Card>
-      <Empty icon={HardDrive} title="Внешних хранилищ пока нет" action={<StorageEditor redirectUri={overview.googleRedirectUri} />}>
+      <Empty icon={HardDrive} title="Внешних хранилищ пока нет" action={<StorageEditor redirectUri={overview.googleRedirectUri} googleDevice={overview.googleDevice} />}>
         Добавьте другой диск, Google Drive, S3 или WebDAV — новые фотографии и видео будут копироваться туда автоматически,
         а уже загруженные можно опубликовать одной кнопкой.
       </Empty>
     </Card>;
   }
   return <div className="grid gap-4">
-    {overview.targets.map(target => <StorageCard key={target.id} target={target} redirectUri={overview.googleRedirectUri} />)}
+    {overview.targets.map(target => <StorageCard key={target.id} target={target} redirectUri={overview.googleRedirectUri} googleDevice={overview.googleDevice} />)}
     <p className="text-xs text-muted-foreground">Оригиналы читаются из <code className="rounded bg-muted px-1 py-0.5">{overview.mediaRoot}</code>.
       Расписание проверок — в настройках, раздел «Внешние хранилища».</p>
   </div>;

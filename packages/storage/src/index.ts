@@ -12,7 +12,7 @@ import { WebDavStorage } from './WebDavStorage';
 export { contentType, encodePath, hashFile, localFile, prefixed, safeKey, type LocalFile, type RemoteStat, type StorageDriver } from './Driver';
 export { http, failure } from './Http';
 export { signV4 } from './S3Storage';
-export { googleAuthorizeUrl, googleCreateFolder, googleExchangeCode } from './GoogleDriveStorage';
+export { googleAuthorizeUrl, googleOwnFolder, googleDeviceStart, googleDevicePoll, googleExchangeCode, type GoogleDeviceResult } from './GoogleDriveStorage';
 export { DiskStorage, GoogleDriveStorage, S3Storage, WebDavStorage };
 
 export function createDriver(kind: StorageKind | string, config: Record<string, string>): StorageDriver {

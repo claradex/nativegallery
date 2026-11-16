@@ -38,7 +38,7 @@ export function AdminStorage(query: URLSearchParams) {
       return <>
         <PageHeader title="Хранилища"
           description="Копии фотографий и видео во внешних хранилищах: на другом диске, в Google Drive, S3 или WebDAV. Файлы публикуются в фоне после загрузки и регулярно сверяются с оригиналами."
-          actions={<StorageEditor redirectUri={overview.googleRedirectUri} />} />
+          actions={<StorageEditor redirectUri={overview.googleRedirectUri} googleDevice={overview.googleDevice} />} />
         <GoogleOutcome query={query} />
         <StorageList overview={overview} />
       </>;
