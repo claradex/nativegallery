@@ -1,13 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, Get, Header, HttpCode, NotFoundException, Param, Post, Put, Query, Req } from '@nestjs/common';
-import type { Request } from 'express';
+import { BadRequestException, Body, Controller, Delete, Get, Header, HttpCode, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import type { Request, Response } from 'express';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { resolve } from 'node:path';
 import {
-  isStorageKind, isStoragePublishMode, replicaStatusName, replicaStatuses, storageKindById,
+  isStorageKind, isStoragePublishMode, needsGoogleSignIn, replicaStatusName, replicaStatuses, storageKindById,
   type ReplicaStatus, type StorageOverview, type StorageReplicaPage, type StorageTargetData, type StorageTestResult,
 } from '@nativegallery/contracts';
 import { database, Prisma } from '@nativegallery/database';
 import { eligiblePhotos, queueMissingPublications } from '@nativegallery/jobs';
-import { createDriver, missingStorageFields, parseStorageConfig, testStorage } from '@nativegallery/storage';
+import { setting } from '@nativegallery/config';
+import {
+  createDriver, googleAuthorizeUrl, googleCreateFolder, googleExchangeCode, missingStorageFields, parseStorageConfig, testStorage,
+} from '@nativegallery/storage';
 import { AuthService } from '../auth/AuthService';
 
 type Target = Awaited<ReturnType<typeof database.storageTarget.findMany>>[number];
@@ -41,6 +45,8 @@ function storageConfig(kind: string, input: Record<string, unknown>, stored: Rec
     if (raw === null) continue;
     if (raw !== undefined && typeof raw !== 'string' && typeof raw !== 'boolean') throw new BadRequestException();
     let value = typeof raw === 'boolean' ? String(raw) : (raw ?? '').trim();
+    // Filled in by «Войти через Google»: the form can only clear them (null), not set them.
+    if (field.readOnly) value = stored[field.key] ?? '';
     if (value.length > 20000) throw new BadRequestException('Слишком длинное значение: ' + field.label + '.');
     if (field.type === 'secret' && value === '') value = stored[field.key] ?? '';
     if (field.type === 'boolean' && value !== '' && value !== 'true' && value !== 'false') throw new BadRequestException();
@@ -53,6 +59,8 @@ function storageConfig(kind: string, input: Record<string, unknown>, stored: Rec
   }
   const missing = missingStorageFields(kind, config);
   if (missing.length) throw new BadRequestException('Не заполнено: ' + missing.join(', ') + '.');
+  // A Google Drive storage is saved before its account is connected, since the sign-in needs it to exist.
+  if (needsGoogleSignIn(kind, config)) return config;
   try { createDriver(kind, config); } catch (error) {
     throw new BadRequestException(error instanceof Error ? error.message : 'Некорректные настройки.');
   }
@@ -66,6 +74,18 @@ function secretsOf(kind: string, config: Record<string, string>) {
     secrets: Object.keys(config).filter(key => secret.has(key) && config[key]),
   };
 }
+
+/** The public address of the site, as the owner's browser sees it (the frontend forwards the host). */
+function siteOrigin(request: Request) {
+  const configured = setting('SITE_ORIGIN').trim().replace(/\/+$/, '');
+  if (configured) return configured;
+  const first = (name: string) => request.get(name)?.split(',')[0]?.trim();
+  return (first('x-forwarded-proto') || request.protocol) + '://' + (first('x-forwarded-host') || request.get('host') || 'localhost');
+}
+
+const googleCallback = '/api/admin/storage/google/callback';
+const googleCookie = 'ng_google_oauth';
+const googleCookiePath = '/api/admin/storage/google';
 
 const problemStatuses = [replicaStatuses.failed, replicaStatuses.missing, replicaStatuses.mismatch];
 
@@ -93,7 +113,7 @@ export class AdminStorageController {
       for (const row of files) if (row.target_id === target.id) counts[replicaStatusName(row.status)] += row._count._all;
       return this.describe(target, counts, Number(queued.find(row => Number(row.target) === target.id)?.count ?? 0), await this.photoTotals(target));
     }));
-    return { targets: data, mediaRoot: resolve(process.env.MEDIA_ROOT ?? '../../uploads') };
+    return { targets: data, mediaRoot: resolve(process.env.MEDIA_ROOT ?? '../../uploads'), googleRedirectUri: siteOrigin(request) + googleCallback };
   }
 
   private async photoTotals(target: Target) {
@@ -198,6 +218,66 @@ export class AdminStorageController {
       throw error;
     }
     return testStorage(kind, config);
+  }
+
+  /**
+   * «Войти через Google»: sends the owner to Google's consent screen for this storage's OAuth client. The state ties
+   * the answer to this browser (a short-lived cookie) and to the storage.
+   */
+  @Get(':id/google')
+  @Header('Cache-Control', 'private, no-store')
+  async googleSignIn(@Req() request: Request, @Res() response: Response, @Param('id') raw: string) {
+    await this.auth.requireAdmin(request, 'owner');
+    const target = await this.target(raw);
+    const config = parseStorageConfig(target.config);
+    if (target.kind !== 'gdrive') throw new BadRequestException('Это не хранилище Google Drive.');
+    if (!config.clientId || !config.clientSecret) throw new BadRequestException('Сначала сохраните Client ID и Client secret.');
+    const state = randomBytes(24).toString('hex') + '.' + target.id;
+    const origin = siteOrigin(request);
+    response.cookie(googleCookie, state, {
+      httpOnly: true, sameSite: 'lax', secure: origin.startsWith('https:'), maxAge: 15 * 60 * 1000, path: googleCookiePath,
+    });
+    response.redirect(302, googleAuthorizeUrl({ clientId: config.clientId, redirectUri: origin + googleCallback, state, fullAccess: !!config.folderId }));
+  }
+
+  /**
+   * Google's redirect back: keeps the refresh token and the account's address, creates the site's own folder when no
+   * folder was given, catches up with the photos uploaded meanwhile and returns to «Хранилища» with the outcome.
+   */
+  @Get('google/callback')
+  @Header('Cache-Control', 'private, no-store')
+  async googleCallback(@Req() request: Request, @Res() response: Response, @Query() query: Record<string, unknown>) {
+    await this.auth.requireAdmin(request, 'owner');
+    const back = (outcome: Record<string, string>) => {
+      response.clearCookie(googleCookie, { path: googleCookiePath });
+      response.redirect(302, '/admin?' + new URLSearchParams({ type: 'Storage', ...outcome }));
+    };
+    const state = typeof query.state === 'string' ? query.state : '';
+    const expected = request.headers.cookie?.match(/(?:^|;\s*)ng_google_oauth=([a-f0-9]{48}\.\d{1,10})(?:;|$)/)?.[1] ?? '';
+    if (!state || state.length !== expected.length || !timingSafeEqual(Buffer.from(state), Buffer.from(expected))) {
+      return back({ google: 'error', message: 'Вход через Google устарел или открыт в другом браузере. Попробуйте ещё раз.' });
+    }
+    if (typeof query.error === 'string') {
+      return back({ google: 'error', message: query.error === 'access_denied' ? 'Доступ к Google Drive не выдан.' : 'Google ответил ошибкой: ' + query.error.slice(0, 100) });
+    }
+    const target = await database.storageTarget.findUnique({ where: { id: Number(state.split('.')[1]) } });
+    if (!target || target.kind !== 'gdrive') return back({ google: 'error', message: 'Хранилище уже удалено.' });
+    const config = parseStorageConfig(target.config);
+    try {
+      if (typeof query.code !== 'string' || !query.code) throw new Error('Google не вернул код входа.');
+      if (!config.clientId || !config.clientSecret) throw new Error('У хранилища нет Client ID и Client secret.');
+      const granted = await googleExchangeCode({
+        clientId: config.clientId, clientSecret: config.clientSecret, code: query.code, redirectUri: siteOrigin(request) + googleCallback,
+      });
+      const folderId = config.folderId || await googleCreateFolder(granted.accessToken, 'NativeGallery');
+      await database.storageTarget.update({ where: { id: target.id }, data: {
+        config: JSON.stringify({ ...config, refreshToken: granted.refreshToken, account: granted.email, folderId }),
+      } });
+    } catch (error) {
+      return back({ google: 'error', message: error instanceof Error ? error.message.slice(0, 300) : 'Не удалось войти через Google.' });
+    }
+    if (target.enabled) await queueMissingPublications(target.id, target.mode, { since: Math.floor(target.created_at.getTime() / 1000) });
+    back({ google: 'connected', title: target.title });
   }
 
   /** Queues a check of the published files; `deep` downloads them and compares SHA-256. */

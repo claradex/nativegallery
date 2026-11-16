@@ -15,6 +15,8 @@ export interface StorageField {
   required?: boolean;
   placeholder?: string;
   description?: string;
+  /** Filled in by the server (the connected Google account), not typed in the form. */
+  readOnly?: boolean;
 }
 
 export interface StorageKindDefinition {
@@ -38,15 +40,18 @@ export const storageKindDefinitions: readonly StorageKindDefinition[] = [
     ],
   },
   {
-    id: 'gdrive', label: 'Google Drive', description: 'Папка Google Drive через сервисный аккаунт или OAuth-приложение.',
+    id: 'gdrive', label: 'Google Drive', description: 'Google Drive обычного аккаунта Google (вход через Google) или сервисного аккаунта.',
     fields: [
-      { key: 'folderId', label: 'ID папки', type: 'text', required: true, placeholder: '1AbC…',
-        description: 'Последняя часть адреса папки: drive.google.com/drive/folders/<ID>. Папку нужно открыть сервисному аккаунту на редактирование.' },
+      { key: 'clientId', label: 'Client ID', type: 'text', placeholder: '123456789-….apps.googleusercontent.com',
+        description: 'OAuth-клиент типа «Веб-приложение» из Google Cloud Console (APIs & Services → Credentials) с включённым Google Drive API.' },
+      { key: 'clientSecret', label: 'Client secret', type: 'secret' },
+      { key: 'account', label: 'Аккаунт Google', type: 'text', readOnly: true },
+      { key: 'refreshToken', label: 'Refresh token', type: 'secret', readOnly: true },
+      { key: 'folderId', label: 'ID папки', type: 'text', placeholder: 'Пусто — создать папку NativeGallery',
+        description: 'Пусто — при входе через Google в «Моём диске» создаётся папка NativeGallery, и сайт получает доступ только к своим файлам. ' +
+          'ID своей папки (drive.google.com/drive/folders/<ID>) потребует полного доступа к Диску.' },
       { key: 'serviceAccount', label: 'Ключ сервисного аккаунта (JSON)', type: 'secret',
-        description: 'Содержимое JSON-ключа из Google Cloud Console. У сервисных аккаунтов нет своего места на диске — используйте общий диск (Shared drive) или OAuth.' },
-      { key: 'clientId', label: 'OAuth: Client ID', type: 'text', description: 'Вместо сервисного аккаунта: OAuth-клиент и refresh token с правом drive.file или drive.' },
-      { key: 'clientSecret', label: 'OAuth: Client secret', type: 'secret' },
-      { key: 'refreshToken', label: 'OAuth: Refresh token', type: 'secret' },
+        description: 'Вместо входа через Google. У сервисных аккаунтов нет своего места — нужен ID папки на общем диске (Shared drive), открытой аккаунту на редактирование.' },
     ],
   },
   {
@@ -135,6 +140,8 @@ export interface StorageOverview {
   targets: StorageTargetData[];
   /** Where the media worker reads originals from, for the help text. */
   mediaRoot: string;
+  /** The redirect URI to register in the Google OAuth client for «Войти через Google». */
+  googleRedirectUri: string;
 }
 
 export interface StorageReplicaData {
@@ -165,3 +172,8 @@ export interface StorageTestResult {
 /** Payloads of the PublishMedia and VerifyMedia jobs. */
 export interface PublishMediaJob { targetId: number; photoId: number; force?: boolean }
 export interface VerifyMediaJob { targetId: number; deep?: boolean; photoId?: number; scheduled?: boolean }
+
+/** A Google Drive storage set up for «Войти через Google» that has no account connected yet. */
+export function needsGoogleSignIn(kind: string, config: Record<string, string>, secrets: readonly string[] = Object.keys(config).filter(key => config[key])) {
+  return kind === 'gdrive' && !secrets.includes('serviceAccount') && !secrets.includes('refreshToken');
+}

@@ -1,6 +1,7 @@
 'use client';
 
-import { CheckCircle2, CircleAlert, Loader2, Pencil, Plug, Plus, Save } from 'lucide-react';
+import { CheckCircle2, CircleAlert, Copy, Loader2, LogIn, Pencil, Plug, Plus, Save, Unlink } from 'lucide-react';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import {
   storageKindById, storageKindDefinitions, storagePublishModes,
@@ -61,8 +62,40 @@ function ConfigField({ field, value, stored, cleared, onChange, onClear }: {
   </Field>;
 }
 
+/** «Войти через Google»: which account is connected, the redirect URI for the OAuth client and the sign-in itself. */
+function GoogleAccount({ account, connected, redirectUri, pending, onSignIn, onDisconnect }: {
+  account: string; connected: boolean; redirectUri: string; pending: boolean; onSignIn: () => void; onDisconnect: () => void;
+}) {
+  return <div className="grid gap-3 rounded-md border bg-muted/40 px-3 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="grid gap-1">
+        <span className="text-sm font-medium">Аккаунт Google</span>
+        <span className="text-[13px] text-muted-foreground">
+          {connected ? <>Подключён{account && <>: <span className="font-medium text-foreground">{account}</span></>}</> : 'Не подключён'}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        {connected && <Button type="button" variant="ghost-destructive" size="sm" onClick={onDisconnect} disabled={pending}><Unlink />Отключить</Button>}
+        <Button type="button" variant={connected ? 'outline' : 'default'} size="sm" onClick={onSignIn} disabled={pending}>
+          {pending ? <Loader2 className="animate-spin" /> : <LogIn />}{connected ? 'Войти другим аккаунтом' : 'Войти через Google'}
+        </Button>
+      </div>
+    </div>
+    <div className="grid gap-1.5">
+      <span className="text-xs text-muted-foreground">Разрешённый URI перенаправления для OAuth-клиента в Google Cloud Console:</span>
+      <div className="flex items-center gap-2">
+        <code className="min-w-0 flex-1 truncate rounded bg-card px-2 py-1.5 font-mono text-xs" title={redirectUri}>{redirectUri}</code>
+        <Button type="button" variant="ghost" size="icon-sm" aria-label="Скопировать адрес"
+          onClick={() => navigator.clipboard.writeText(redirectUri).then(() => toast.success('Адрес скопирован'), () => toast.error('Не удалось скопировать'))}>
+          <Copy /></Button>
+      </div>
+      <span className="text-xs text-muted-foreground">Опубликуйте приложение на экране согласия (In production): в режиме Testing Google отзывает доступ через 7 дней.</span>
+    </div>
+  </div>;
+}
+
 /** Adds a storage, or (with `target`) edits one: the kind's settings, a connection test and the publication mode. */
-export function StorageEditor({ target }: { target?: StorageTargetData }) {
+export function StorageEditor({ target, redirectUri }: { target?: StorageTargetData; redirectUri: string }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(() => initial(target));
   const [test, setTest] = useState<StorageTestResult | null>(null);
@@ -92,6 +125,22 @@ export function StorageEditor({ target }: { target?: StorageTargetData }) {
       setTesting(false);
     }
   }
+
+  /** Saves the form (the storage must exist for Google to return to it), then leaves for Google's consent screen. */
+  async function signIn() {
+    if (!draft.title.trim()) return void toast.error('Укажите название хранилища.');
+    if (!draft.config.clientId?.trim()) return void toast.error('Укажите Client ID.');
+    if (!draft.config.clientSecret?.trim() && !target?.secrets.includes('clientSecret')) return void toast.error('Укажите Client secret.');
+    const body = { title: draft.title, kind: draft.kind, mode: draft.mode, enabled: draft.enabled, config: payload() };
+    const saved = await run(() => target
+      ? send<{ id: number }>('/api/admin/storage/' + target.id, { method: 'PUT', body, fallback: 'Не удалось сохранить хранилище.' })
+      : send<{ id: number }>('/api/admin/storage', { body, fallback: 'Не удалось добавить хранилище.' }), { refresh: false });
+    if (saved.ok) window.location.assign('/api/admin/storage/' + saved.result.id + '/google');
+  }
+
+  const googleConnected = !!target?.secrets.includes('refreshToken') && !draft.cleared.includes('refreshToken');
+  const serviceAccount = !!draft.config.serviceAccount?.trim() || (!!target?.secrets.includes('serviceAccount') && !draft.cleared.includes('serviceAccount'));
+  const signInVisible = draft.kind === 'gdrive' && !serviceAccount;
 
   async function save() {
     const body = { title: draft.title, kind: draft.kind, mode: draft.mode, enabled: draft.enabled, config: payload() };
@@ -143,10 +192,14 @@ export function StorageEditor({ target }: { target?: StorageTargetData }) {
         </div>
 
         <div className="grid gap-4">
-          {kind.fields.map(field => <ConfigField key={draft.kind + field.key} field={field} value={draft.config[field.key] ?? ''}
-            stored={!!target?.secrets.includes(field.key)} cleared={draft.cleared.includes(field.key)}
-            onChange={value => setConfig(field.key, value)}
-            onClear={cleared => update({ cleared: cleared ? [...draft.cleared, field.key] : draft.cleared.filter(key => key !== field.key) })} />)}
+          {kind.fields.map(field => field.readOnly
+            ? field.key === 'account' && signInVisible && <GoogleAccount key="account" account={target?.config.account ?? ''} connected={googleConnected}
+              redirectUri={redirectUri} pending={pending} onSignIn={signIn}
+              onDisconnect={() => update({ cleared: [...draft.cleared.filter(key => key !== 'refreshToken' && key !== 'account'), 'refreshToken', 'account'] })} />
+            : <ConfigField key={draft.kind + field.key} field={field} value={draft.config[field.key] ?? ''}
+              stored={!!target?.secrets.includes(field.key)} cleared={draft.cleared.includes(field.key)}
+              onChange={value => setConfig(field.key, value)}
+              onClear={cleared => update({ cleared: cleared ? [...draft.cleared, field.key] : draft.cleared.filter(key => key !== field.key) })} />)}
         </div>
 
         <div className="flex items-center justify-between gap-4 rounded-md border px-3 py-2.5">

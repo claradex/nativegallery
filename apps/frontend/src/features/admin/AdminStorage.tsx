@@ -1,3 +1,4 @@
+import { CheckCircle2, CircleAlert } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { replicaStatusLabels, type ReplicaStatus, type StorageOverview, type StorageReplicaPage } from '@nativegallery/contracts';
 import { AdminPage, adminData } from './AdminPage';
@@ -12,6 +13,22 @@ const filters = ['problems', 'pending', 'published', 'all'] as const;
 type Filter = typeof filters[number];
 const filterLabels: Record<Filter, string> = { problems: 'Проблемы', pending: replicaStatusLabels.pending, published: 'Опубликованные', all: 'Все файлы' };
 
+/** The outcome of «Войти через Google», which returns here. */
+function GoogleOutcome({ query }: { query: URLSearchParams }) {
+  const outcome = query.get('google');
+  if (outcome === 'connected') {
+    return <p role="status" className="mb-4 flex items-center gap-2 rounded-md bg-success/10 px-3 py-2.5 text-sm text-success">
+      <CheckCircle2 className="size-4 shrink-0" />Аккаунт Google подключён{query.get('title') ? ' к хранилищу «' + query.get('title') + '»' : ''}. Публикация начнётся в фоне.
+    </p>;
+  }
+  if (outcome === 'error') {
+    return <p role="alert" className="mb-4 flex items-start gap-2 rounded-md bg-destructive/8 px-3 py-2.5 text-sm break-words text-destructive">
+      <CircleAlert className="mt-0.5 size-4 shrink-0" />Не удалось подключить Google: {query.get('message') || 'неизвестная ошибка'}
+    </p>;
+  }
+  return null;
+}
+
 /** «Хранилища»: the external storages with their totals, or (`id`) the files of one storage by state. */
 export function AdminStorage(query: URLSearchParams) {
   return AdminPage('owner', async () => {
@@ -21,7 +38,8 @@ export function AdminStorage(query: URLSearchParams) {
       return <>
         <PageHeader title="Хранилища"
           description="Копии фотографий и видео во внешних хранилищах: на другом диске, в Google Drive, S3 или WebDAV. Файлы публикуются в фоне после загрузки и регулярно сверяются с оригиналами."
-          actions={<StorageEditor />} />
+          actions={<StorageEditor redirectUri={overview.googleRedirectUri} />} />
+        <GoogleOutcome query={query} />
         <StorageList overview={overview} />
       </>;
     }

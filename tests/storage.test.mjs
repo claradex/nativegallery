@@ -157,3 +157,27 @@ test('S3 storage streams signed uploads and reads metadata back (path-style)', a
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('Google sign-in asks for offline access, and only the own files unless a folder of the account is given', async () => {
+  const contracts = require('@nativegallery/contracts');
+  const own = new URL(storage.googleAuthorizeUrl({ clientId: 'client', redirectUri: 'https://gallery.test/api/admin/storage/google/callback', state: 'abc.1', fullAccess: false }));
+  assert.equal(own.origin + own.pathname, 'https://accounts.google.com/o/oauth2/v2/auth');
+  assert.equal(own.searchParams.get('access_type'), 'offline');
+  assert.equal(own.searchParams.get('prompt'), 'consent');
+  assert.equal(own.searchParams.get('state'), 'abc.1');
+  assert.equal(own.searchParams.get('scope'), 'https://www.googleapis.com/auth/drive.file openid email');
+  const full = new URL(storage.googleAuthorizeUrl({ clientId: 'client', redirectUri: 'https://x/cb', state: 's', fullAccess: true }));
+  assert.match(full.searchParams.get('scope'), /auth\/drive openid/);
+
+  const pending = { clientId: 'client', clientSecret: 'secret' };
+  assert.equal(contracts.needsGoogleSignIn('gdrive', pending), true);
+  assert.equal(contracts.needsGoogleSignIn('gdrive', { ...pending, refreshToken: 'token' }), false);
+  assert.equal(contracts.needsGoogleSignIn('gdrive', { serviceAccount: '{}' }), false);
+  assert.equal(contracts.needsGoogleSignIn('s3', {}), false);
+  assert.throws(() => storage.createDriver('gdrive', pending), /Войти через Google/);
+  assert.throws(() => storage.createDriver('gdrive', { ...pending, refreshToken: 'token' }), /ID папки/);
+  assert.ok(storage.createDriver('gdrive', { ...pending, refreshToken: 'token', folderId: '1AbCdEfGhIjK' }));
+  const result = await storage.testStorage('gdrive', pending);
+  assert.equal(result.ok, false);
+  assert.match(result.message, /не подключён/);
+});

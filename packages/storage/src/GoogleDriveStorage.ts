@@ -25,13 +25,16 @@ export class GoogleDriveStorage implements StorageDriver {
 
   constructor(private readonly config: Record<string, string>) {
     this.folderId = (config.folderId ?? '').trim();
-    if (!/^[\w-]{10,}$/.test(this.folderId)) throw new Error('Укажите ID папки Google Drive.');
     if (config.serviceAccount?.trim()) {
       try { this.account = JSON.parse(config.serviceAccount); } catch { throw new Error('Ключ сервисного аккаунта — не JSON.'); }
       if (!this.account?.client_email || !this.account.private_key) throw new Error('В ключе нет client_email или private_key.');
-    } else if (!config.clientId || !config.clientSecret || !config.refreshToken) {
-      throw new Error('Укажите ключ сервисного аккаунта или Client ID, Client secret и Refresh token.');
+      if (!this.folderId) throw new Error('Для сервисного аккаунта укажите ID папки на общем диске.');
+    } else if (!config.clientId || !config.clientSecret) {
+      throw new Error('Укажите Client ID и Client secret OAuth-клиента или ключ сервисного аккаунта.');
+    } else if (!config.refreshToken) {
+      throw new Error('Аккаунт Google не подключён: нажмите «Войти через Google».');
     }
+    if (!/^[\w-]{10,}$/.test(this.folderId)) throw new Error('Укажите ID папки Google Drive.');
   }
 
   private async token() {
@@ -132,4 +135,48 @@ export class GoogleDriveStorage implements StorageDriver {
     const response = await this.send(api + '/' + encodeURIComponent(file.id) + '?supportsAllDrives=true', { method: 'DELETE' });
     if (![200, 204, 404].includes(response.status)) throw failure('Google Drive: удаление', response);
   }
+}
+
+const authorizeEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+const tokenEndpoint = 'https://oauth2.googleapis.com/token';
+/** Only the files the site creates itself; enough when the site makes its own folder. */
+const fileScope = 'https://www.googleapis.com/auth/drive.file';
+
+/**
+ * Where to send the owner for «Войти через Google». With an existing folder of theirs the site needs the whole Drive;
+ * otherwise it creates its own folder and asks only for its own files.
+ */
+export function googleAuthorizeUrl({ clientId, redirectUri, state, fullAccess }: { clientId: string; redirectUri: string; state: string; fullAccess: boolean }) {
+  return authorizeEndpoint + '?' + new URLSearchParams({
+    client_id: clientId, redirect_uri: redirectUri, response_type: 'code', state,
+    scope: [fullAccess ? scope : fileScope, 'openid', 'email'].join(' '),
+    // A refresh token is issued only with offline access, and again for an account that signed in before only with consent.
+    access_type: 'offline', prompt: 'consent', include_granted_scopes: 'true',
+  });
+}
+
+/** Trades the code from the Google redirect for a refresh token and the account's address. */
+export async function googleExchangeCode({ clientId, clientSecret, code, redirectUri }: { clientId: string; clientSecret: string; code: string; redirectUri: string }) {
+  const response = await http(tokenEndpoint, {
+    method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'authorization_code', client_id: clientId, client_secret: clientSecret, code, redirect_uri: redirectUri }).toString(),
+  });
+  if (response.status !== 200) throw failure('Google OAuth', response);
+  const json = JSON.parse(response.body.toString('utf8')) as { access_token: string; refresh_token?: string; id_token?: string; scope?: string };
+  if (!json.refresh_token) throw new Error('Google не выдал refresh token. Отзовите доступ сайта в настройках аккаунта Google и войдите снова.');
+  if (!json.scope?.split(' ').some(item => item === scope || item === fileScope)) throw new Error('Не выдан доступ к Google Drive: отметьте его на экране согласия.');
+  // The ID token comes straight from Google's token endpoint over TLS, so its claims can be read without checking the signature.
+  let email = '';
+  try { email = String(JSON.parse(Buffer.from(json.id_token?.split('.')[1] ?? '', 'base64url').toString('utf8')).email ?? ''); } catch {}
+  return { accessToken: json.access_token, refreshToken: json.refresh_token, email };
+}
+
+/** Creates the site's own folder in the account's «Мой диск» and returns its ID. */
+export async function googleCreateFolder(accessToken: string, name: string) {
+  const response = await http(api + '?fields=id', {
+    method: 'POST', headers: { authorization: 'Bearer ' + accessToken, 'content-type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder' }),
+  });
+  if (response.status !== 200) throw failure('Google Drive: создание папки', response);
+  return (JSON.parse(response.body.toString('utf8')) as { id: string }).id;
 }
