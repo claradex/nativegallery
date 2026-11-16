@@ -162,11 +162,11 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
           {locked && ' У сущности уже есть модели или ТС: существующие поля нельзя удалять и переставлять, потому что значения хранятся по номеру поля.'}</CardDescription>
       </div></CardHeader>
       <CardContent className="grid gap-3">
-        {rows.length > 0 && <div className="hidden grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_auto_auto_5.5rem] gap-3 px-1 text-[13px] font-medium text-muted-foreground lg:grid">
-          <span>№</span><span>Подпись</span><span>Идентификатор</span><span>Уровень</span><span>Тип</span><span>Обязательно</span><span>В списке ПС</span><span />
+        {rows.length > 0 && <div className="hidden grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_6.5rem_6.5rem_5.5rem] gap-3 px-1 text-[13px] font-medium text-muted-foreground lg:grid">
+          <span className="text-center">№</span><span>Подпись</span><span>Идентификатор</span><span>Уровень</span><span>Тип</span><span className="text-center">Обязательно</span><span className="text-center">В списке ПС</span><span />
         </div>}
         {!rows.length && <p className="text-sm text-muted-foreground">Своих полей нет — будут только стандартные.</p>}
-        {rows.map((row, index) => <div key={row.key} className="grid grid-cols-2 gap-3 rounded-lg border p-3 lg:grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_auto_auto_5.5rem] lg:items-center lg:border-0 lg:p-1">
+        {rows.map((row, index) => <div key={row.key} className="grid grid-cols-2 gap-3 rounded-lg border p-3 lg:grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_6.5rem_6.5rem_5.5rem] lg:items-center lg:border-0 lg:p-1">
           <span className="col-span-2 text-sm text-muted-foreground tabular-nums lg:col-span-1 lg:text-center">{index + 1}</span>
           <div className="col-span-2 lg:col-span-1"><Input value={row.name} onChange={event => update(row.key, { name: event.target.value })}
             placeholder="Тип двигателя" aria-label={'Подпись поля ' + (index + 1)} maxLength={255} required /></div>
