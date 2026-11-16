@@ -22,7 +22,8 @@ export class PhotoThumbnailController {
         !await stat(source).then(value => value.isFile()).catch(() => false)) throw new NotFoundException();
     const output = resolve(dirname(source), '.' + basename(source) + '.thumb.jpg');
     if (await stat(output).then(value => value.isFile()).catch(() => false)) {
-      response.sendFile(output);
+      // Thumbnails are hidden ".name.thumb.jpg" files, which sendFile refuses (404) unless dotfiles are allowed.
+      response.sendFile(output, { dotfiles: 'allow' });
       return;
     }
     await enqueue('CompressImage', 'compress:' + photo.id + ':' + part, { input: part, output: relative(root, output) });
