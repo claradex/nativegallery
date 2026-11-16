@@ -1,6 +1,6 @@
 import Link from '../../components/Link';
 import { ProfileForm, ProfileThemeForm } from './ProfileForm';
-import { ProfileSessions } from './ProfileSessions';
+import { ProfileSecurity } from './ProfileSecurity';
 import type { ProfileSession, ProfileSettingsData } from '@nativegallery/contracts';
 import { apiGet, readCookie, requestCookie } from '../../api/client';
 
@@ -10,7 +10,7 @@ export async function ProfileSettings({ searchParams }: { searchParams: Promise<
   const { type } = await searchParams;
   const load = { auth: true, login: true, error: 'Could not load profile settings' };
   let content;
-  if (type === 'Security') content = <ProfileSessions sessions={await apiGet<ProfileSession[]>('/api/profile/sessions', load)} />;
+  if (type === 'Security') content = <ProfileSecurity sessions={await apiGet<ProfileSession[]>('/api/profile/sessions', load)} />;
   else {
     // The settings request also sends guests to the login page for the personalization tab.
     const [data, cookie] = await Promise.all([apiGet<ProfileSettingsData>('/api/profile/settings', load), requestCookie()]);

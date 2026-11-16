@@ -11,8 +11,8 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @Header('Content-Type', 'text/html; charset=utf-8')
-  async login(@Body() body: Partial<LoginRequest>, @Res({ passthrough: true }) response: Response) {
-    return JSON.stringify(await this.auth.login(body, response));
+  async login(@Body() body: Partial<LoginRequest>, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
+    return JSON.stringify(await this.auth.login(body, request, response));
   }
 
   @Get('internal/logout')

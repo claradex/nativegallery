@@ -154,8 +154,11 @@ export interface ProfileSettingsData {
 }
 export interface ProfileSession {
   id: number;
+  /** Browser and its major version, such as "Chrome 131"; empty for sessions started before it was recorded. */
   device: string;
   os: string;
+  ip: string;
+  createdAt: number;
   lastActivity: number;
   current: boolean;
 }

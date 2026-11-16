@@ -5,6 +5,7 @@ import type { Request, Response } from 'express';
 import { database } from '@nativegallery/database';
 import type { LoginRequest, LoginResponse, Viewer } from '@nativegallery/contracts';
 import { flag } from '@nativegallery/config';
+import { clientInfo } from './ClientInfo';
 
 const sessionAge = 50 * 50 * 54 * 72 * 1000;
 const failure: LoginResponse = { errorcode: '1', error: 1 };
@@ -45,6 +46,9 @@ export class AuthService {
       database.followerNotification.count({ where: { follower_id: user.id, checked: 0 } }),
       user.admin > 0 ? database.photo.count({ where: { moderated: 0 } }) : 0,
       database.user.update({ where: { id: user.id }, data: { online: now } }),
+      // «Последняя активность» in «Безопасность»; at most one write a minute per session.
+      now - Number(session.last_activity) >= 60
+        ? database.loginToken.update({ where: { id: session.id }, data: { last_activity: BigInt(now) } }) : null,
     ]);
     return { ...user, unreadPhotos, pendingPhotos };
   }
@@ -63,7 +67,7 @@ export class AuthService {
     return viewer;
   }
 
-  async login(body: Partial<LoginRequest>, response: Response): Promise<LoginResponse> {
+  async login(body: Partial<LoginRequest>, request: Request, response: Response): Promise<LoginResponse> {
     if (typeof body?.username !== 'string' || !body.username || body.username.length > 255 ||
         typeof body?.password !== 'string' || !body.password || body.password.length > 1024) return failure;
     // Exact match only (case-insensitive under utf8mb4_unicode_ci), trimmed like registration does.
@@ -74,15 +78,16 @@ export class AuthService {
       orderBy: { id: 'asc' },
     });
     if (!user || user.status === 1 || !await compare(body.password, user.password.replace(/^\$2y\$/, () => '$2b$'))) return failure;
-    return this.startSession(user.id, response);
+    return this.startSession(user.id, request, response);
   }
 
-  async startSession(userId: number, response: Response): Promise<LoginResponse> {
+  async startSession(userId: number, request: Request, response: Response): Promise<LoginResponse> {
     const token = randomUUID();
+    const client = clientInfo(request);
     const now = BigInt(Math.floor(Date.now() / 1000));
     await database.loginToken.create({
-      data: { token: 'v2:' + token, user_id: userId, iv: new Uint8Array(16), device_name: '', os: '',
-        ip: '', location: '', created_at: now, last_activity: now },
+      data: { token: 'v2:' + token, user_id: userId, iv: new Uint8Array(16), device_name: client.device, os: client.os,
+        ip: client.ip, location: '', created_at: now, last_activity: now },
     });
     const options = { httpOnly: true, sameSite: 'lax' as const, secure: flag('COOKIE_SECURE'), path: '/', maxAge: sessionAge };
     response.cookie(sessionCookie, token, options);

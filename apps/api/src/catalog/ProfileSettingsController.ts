@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Header, HttpCode, Param, ParseIntPipe, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Request, Response } from 'express';
+import { compare, hash } from 'bcryptjs';
 import { database } from '@nativegallery/database';
 import { profileFields, type ProfileSession } from '@nativegallery/contracts';
 import { AuthService, sessionToken } from '../auth/AuthService';
@@ -45,10 +46,48 @@ export class ProfileSettingsController {
     const current = 'v2:' + sessionToken(request);
     const rows = await database.loginToken.findMany({
       where: { user_id: viewer.id }, orderBy: { last_activity: 'desc' },
-      select: { id: true, token: true, device_name: true, os: true, last_activity: true },
+      select: { id: true, token: true, device_name: true, os: true, ip: true, created_at: true, last_activity: true },
     });
-    return rows.map(row => ({ id: row.id, device: row.device_name, os: row.os,
-      lastActivity: Number(row.last_activity), current: row.token === current }));
+    // The current session first, the rest by last activity.
+    return rows.map(row => ({ id: row.id, device: row.device_name, os: row.os, ip: row.ip,
+      createdAt: Number(row.created_at), lastActivity: Number(row.last_activity), current: row.token === current }))
+      .sort((a, b) => Number(b.current) - Number(a.current));
+  }
+
+  /** Ends every session of the viewer except the one making the request. */
+  @Post('sessions/delete-others')
+  async endOtherSessions(@Req() request: Request, @Res() response: Response) {
+    response.setHeader('Cache-Control', 'private, no-store');
+    const viewer = await this.auth.viewer(request);
+    if (!viewer) return response.redirect(303, '/login');
+    await database.loginToken.deleteMany({ where: { user_id: viewer.id, NOT: { token: 'v2:' + sessionToken(request) } } });
+    response.redirect(303, '/lk/profile?type=Security');
+  }
+
+  /**
+   * Changes the password after checking the current one, with the rules of registration, and signs out every other
+   * session. Answers in plain text like /update: empty on success, otherwise the message to show.
+   */
+  @Post('password')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private, no-store')
+  @Header('Content-Type', 'text/plain; charset=utf-8')
+  async changePassword(@Req() request: Request, @Body() body: Record<string, unknown>) {
+    const viewer = await this.auth.requireViewer(request);
+    const text = (key: string) => typeof body?.[key] === 'string' ? (body[key] as string) : '';
+    const current = text('current_password');
+    const password = text('new_password').trim();
+    if (!current) return 'Введите текущий пароль.';
+    if (Array.from(password).length < 5) return 'Новый пароль должен быть не короче 5 символов.';
+    if (Buffer.byteLength(password) > 72) return 'Новый пароль слишком длинный.';
+    if (password !== text('repeat_password').trim()) return 'Новый пароль и повтор не совпадают.';
+    const user = await database.user.findUniqueOrThrow({ where: { id: viewer.id }, select: { password: true } });
+    if (current.length > 1024 || !await compare(current, user.password.replace(/^\$2y\$/, () => '$2b$'))) return 'Текущий пароль указан неверно.';
+    await database.$transaction([
+      database.user.update({ where: { id: viewer.id }, data: { password: await hash(password, 12) } }),
+      database.loginToken.deleteMany({ where: { user_id: viewer.id, NOT: { token: 'v2:' + sessionToken(request) } } }),
+    ]);
+    return '';
   }
 
   /** Ends one of the viewer's other sessions; the current one is left to /logout. */

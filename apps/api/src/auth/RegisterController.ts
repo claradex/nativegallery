@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Header, HttpCode, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Body, Controller, Get, Header, HttpCode, Post, Req, Res } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import { compare, hash } from 'bcryptjs';
 import { database, Prisma } from '@nativegallery/database';
@@ -23,7 +23,7 @@ export class RegisterController {
   @Post()
   @Header('Cache-Control', 'private, no-store')
   @HttpCode(200)
-  async register(@Body() form: Record<string, unknown>, @Res({ passthrough: true }) response: Response) {
+  async register(@Body() form: Record<string, unknown>, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
     if (!this.options().open) return failure('8', 'Регистрация закрыта.');
     const username = typeof form?.username === 'string' ? form.username.trim() : '';
     const email = typeof form?.email === 'string' ? form.email.trim().toLowerCase() : '';
@@ -74,6 +74,6 @@ export class RegisterController {
         return failure('8', 'Не удалось отправить письмо. Повторите регистрацию с теми же данными.');
       }
     }
-    return this.auth.startSession(result.id, response);
+    return this.auth.startSession(result.id, request, response);
   }
 }
