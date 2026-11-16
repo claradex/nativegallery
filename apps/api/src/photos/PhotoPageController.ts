@@ -43,18 +43,19 @@ export class PhotoPageController {
     const group = requested ?? (photo.entitydata_id > 0 ? groups[0] : undefined);
     const neighbors = { moderated: 1, ...(group ? { [group[1]]: group[2] } : {}) };
     if (photo.moderated === 1) await recordView(id, viewer?.id ?? 0);
-    const [author, views, favorite, previous, next, vehicle] = await Promise.all([
+    const [author, views, favorite, previous, next, links] = await Promise.all([
       database.user.findUnique({ where: { id: photo.user_id }, select: { username: true } }),
       database.photoView.count({ where: { photo_id: id } }),
       viewer ? database.photoFavorite.findFirst({ where: { photo_id: id, user_id: viewer.id }, select: { id: true } }) : null,
       database.photo.findFirst({ where: { ...neighbors, id: { gt: id } }, orderBy: { id: 'asc' }, select: { id: true } }),
       database.photo.findFirst({ where: { ...neighbors, id: { lt: id } }, orderBy: { id: 'desc' }, select: { id: true } }),
-      findVehicle(photo.entitydata_id),
+      database.photoVehicle.findMany({ where: { photo_id: id }, orderBy: [{ position: 'asc' }, { id: 'asc' }] }),
     ]);
     let commentsEnabled = true;
     let ratingEnabled = true;
     let exifEnabled = true;
-    let vehicleRoute = '';
+    let legacyRoute = '';
+    let legacyNote = '';
     let videoUrl: string | null = null;
     let contestPlaces: number[] = [];
     try {
@@ -63,8 +64,9 @@ export class PhotoPageController {
       ratingEnabled = content?.rating !== 'disabled';
       exifEnabled = content?.type !== 'none';
       if (typeof content?.entityroute === 'string' || typeof content?.entityroute === 'number') {
-        vehicleRoute = String(content.entityroute);
+        legacyRoute = String(content.entityroute);
       }
+      if (typeof content?.entitycomment === 'string') legacyNote = content.entitycomment;
       if (typeof content?.videourl === 'string') videoUrl = content.videourl;
       if (Array.isArray(content?.contests)) {
         contestPlaces = content.contests.map((entry: { place?: unknown } | null) => entry?.place)
@@ -96,12 +98,19 @@ export class PhotoPageController {
         contest: showContest ? { id: photo.contest_id, current: contestVote?.type ?? null } : null,
       };
     }
+    // Photos uploaded before multiple vehicles existed only have `entitydata_id` and the route in their content.
+    const bound = links.length ? links.map(link => ({ id: link.entitydata_id, route: link.route ?? '', note: link.note ?? '', angle: link.angle }))
+      : photo.entitydata_id > 0 ? [{ id: photo.entitydata_id, route: legacyRoute, note: legacyNote, angle: 0 }] : [];
+    const vehicles = (await Promise.all(bound.map(async link => {
+      const vehicle = await findVehicle(link.id);
+      return vehicle ? [{ ...vehicle, route: link.route, note: link.note, angle: link.angle }] : [];
+    }))).flat();
     return {
       id, authorId: photo.user_id, author: author?.username ?? '', url: photo.photourl,
       place: photo.place, description: photo.postbody, takenAt: photo.posted_at, publishedAt: photo.timeupload,
       published: photo.moderated === 1, processing: photo.moderated === -1, videoUrl, priority: photo.priority,
       contestEntry: photo.on_contest === 2, contestPlaces, previousId: previous?.id ?? null, nextId: next?.id ?? null, views, favorite: !!favorite, signedIn: !!viewer, commentsEnabled, rating,
-      vehicle, vehicleRoute,
+      vehicles,
       exif: exifEnabled && ratingEnabled ? photoExif(photo.exif) : [],
       canComment: !!viewer && (!flag('EMAIL_VERIFY') || viewer.status !== 3),
     };

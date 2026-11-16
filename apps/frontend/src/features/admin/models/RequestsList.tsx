@@ -10,14 +10,14 @@ import { Card } from '../ui/card';
 import { Empty } from '../ui/empty';
 
 export interface VehicleRequest {
-  id: number; title: string; model: string; color: string; status: number; userId: number; username: string; createdAt: number;
+  id: number; title: string; model: string; color: string; vehicleModel: string; city: string; status: number; userId: number; username: string; createdAt: number;
   fields: { label: string; value: string }[];
 }
 
 function RequestCard({ request }: { request: VehicleRequest }) {
   const [pending, run] = useAction();
   const decide = (action: 'accept' | 'decline') => run(() => send('/api/admin/models/requests/' + request.id + '/' + action,
-    { fallback: 'Не удалось обработать заявку.' }), { success: action === 'accept' ? 'Модель «' + request.title + '» добавлена в базу' : 'Заявка отклонена' });
+    { fallback: 'Не удалось обработать заявку.' }), { success: action === 'accept' ? 'ТС № ' + request.title + ' добавлено в базу' : 'Заявка отклонена' });
   const filled = request.fields.filter(field => field.value.trim());
   return <Card className="flex flex-col">
     <div className="flex items-start justify-between gap-3 px-5 pt-4">
@@ -25,7 +25,8 @@ function RequestCard({ request }: { request: VehicleRequest }) {
         <p className="flex items-center gap-2 text-[13px] text-muted-foreground">
           <span className="size-2.5 rounded-full ring-1 ring-black/10" style={{ background: request.color || 'var(--muted-foreground)' }} />{request.model || 'Сущность удалена'}
         </p>
-        <h2 className="mt-1 text-base font-semibold">{request.title}</h2>
+        <h2 className="mt-1 text-base font-semibold">№ {request.title}</h2>
+        {(request.vehicleModel || request.city) && <p className="text-sm text-muted-foreground">{[request.vehicleModel, request.city].filter(Boolean).join(', ')}</p>}
       </div>
       {request.status === 1 && <Badge variant="success">Принята</Badge>}
       {request.status === 2 && <Badge variant="destructive">Отклонена</Badge>}
@@ -50,6 +51,6 @@ function RequestCard({ request }: { request: VehicleRequest }) {
 
 export function RequestsList({ requests, status }: { requests: VehicleRequest[]; status: number }) {
   if (!requests.length) return <Card><Empty icon={Inbox} title={status === 0 ? 'Новых заявок нет' : 'Здесь пока пусто'}>
-    {status === 0 ? 'Пользователи предлагают модели со страницы загрузки фотографий.' : undefined}</Empty></Card>;
+    {status === 0 ? 'Пользователи предлагают ТС со страницы загрузки фотографий.' : undefined}</Empty></Card>;
   return <ul className="grid gap-4 md:grid-cols-2">{requests.map(request => <li key={request.id} className="grid"><RequestCard request={request} /></li>)}</ul>;
 }

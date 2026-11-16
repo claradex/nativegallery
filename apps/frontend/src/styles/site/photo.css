@@ -100,10 +100,10 @@ a.underphoto:hover { background-color:#888; }
 #pp-items { margin:20px auto 0; }
 #pp-left-col { vertical-align:top; min-width:250px; width:250px; padding-right:20px; }
 #pp-main-col { vertical-align:top; min-width:622px; width:622px; }
-#pp-main-col, #pp-item-vdata, #pp-item-exif, #pp-item-comments { text-align:left; }
+#pp-main-col, #pp-item-vdata, .pp-item-vdata, #pp-item-exif, #pp-item-comments { text-align:left; }
 
-#pp-left-col > div, #pp-main-col > div, #pp-item-vdata > div { margin-bottom:17px; }
-#pp-left-col > div:last-child, #pp-main-col > div:last-child, #pp-item-vdata > div:last-child { margin-bottom:0; }
+#pp-left-col > div, #pp-main-col > div, #pp-item-vdata > div, .pp-item-vdata > div { margin-bottom:17px; }
+#pp-left-col > div:last-child, #pp-main-col > div:last-child, #pp-item-vdata > div:last-child, .pp-item-vdata > div:last-child { margin-bottom:0; }
 
 /* .pp-item-header in comments.css */
 .pp-item-body > table { width:100%; }

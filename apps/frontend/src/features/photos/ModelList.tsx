@@ -2,15 +2,16 @@ import Link from '../../components/Link';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
 import type { EntityType, ModelListData, ModelListEntry } from '@nativegallery/contracts';
-import './ModelList.css';
+import './Catalog.css';
 
 type TypeSummary = EntityType & { models: number };
 
 function Model({ model }: { model: ModelListEntry }) {
-  return <li>
-    <Link href={'/vehicle/' + model.id}>{model.title}</Link>
-    {model.photos > 0 && <span className="ml-count" title="Фотографий">{model.photos}</span>}
-    {model.comment && <span className="ml-comment"> — {model.comment}</span>}
+  return <li id={'m' + model.id}>
+    <Link href={'/model/' + model.id}>{model.title}</Link>
+    {model.years && <span className="ml-count">{model.years}</span>}
+    {model.vehicles > 0 && <> <Link href={'/list?mid=' + model.id} className="ml-count" title="ТС в базе: всего / действующих">{model.vehicles} / {model.active}</Link></>}
+    {model.children.length > 0 && <ul>{model.children.map(child => <Model key={child.id} model={child} />)}</ul>}
   </li>;
 }
 
@@ -28,9 +29,11 @@ function TypeIndex({ types }: { types: TypeSummary[] }) {
   </td></tr>;
 }
 
-function Models({ type, groups }: ModelListData) {
+function Models({ type, types, groups }: ModelListData) {
   return <tr><td className="main">
     <h1>{type.title} — список моделей</h1>
+    {types.length > 1 && <p className="ct-filters">{types.map(item => item.id === type.id
+      ? <b key={item.id}>{item.title}</b> : <Link key={item.id} href={'/models?t=' + item.id}>{item.title}</Link>)}</p>}
     {groups.length ? groups.map((group, index) => <div key={group.title || index} id={'z' + index} className="p20 ml-group">
       {group.title && <h4>{group.title}</h4>}
       <ul className="straight ml-models">{group.models.map(model => <Model key={model.id} model={model} />)}</ul>

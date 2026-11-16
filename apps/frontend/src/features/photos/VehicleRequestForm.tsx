@@ -3,15 +3,32 @@
 import Script from 'next/script';
 import { useState, type FormEvent } from 'react';
 
+import type { CityRef } from '@nativegallery/contracts';
+
 export interface VehicleRequestData {
-  labels: string[];
-  vehicles: { id: number; title: string; fields: { value: string }[] }[];
+  fields: { key: string; label: string; required: boolean; type: string }[];
+  models: { id: number; title: string }[];
+  cities: CityRef[];
+  vehicles: { id: number; title: string; modelId: number | null; cityId: number | null; values: Record<string, string> }[];
   limited: boolean;
   siteKey: string;
 }
 
-export function VehicleRequestForm({ data, action }: { data: VehicleRequestData; action: string }) {
-  const [values, setValues] = useState<string[]>([]);
+type Values = Record<string, string>;
+
+export function VehicleRequestForm({ data, action, initial = {} }: { data: VehicleRequestData; action: string; initial?: Values }) {
+  const [values, setValues] = useState<Values>(() => Object.fromEntries(Object.entries(initial).filter(([, value]) => value)));
+  const [base, setBase] = useState(0);
+  const pick = (vehicle?: VehicleRequestData['vehicles'][number]) => {
+    setBase(vehicle?.id ?? 0);
+    setValues(vehicle ? { number: vehicle.title, model_id: String(vehicle.modelId ?? ''), city_id: String(vehicle.cityId ?? ''),
+      ...Object.fromEntries(Object.entries(vehicle.values).map(([key, value]) => ['modelinput_' + key, value])) } : {});
+  };
+  const bind = (name: string) => ({ name, id: name, value: values[name] ?? '',
+    onChange: (event: { currentTarget: { value: string } }) => {
+      const value = event.currentTarget.value;
+      setValues(current => ({ ...current, [name]: value }));
+    } });
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -48,23 +65,40 @@ export function VehicleRequestForm({ data, action }: { data: VehicleRequestData;
       <h4>Какую запись вы хотите уточнить?</h4>
       <div className="p20w"><table><tbody>
         <tr><th /><th>№</th><th>Название</th></tr>
-        <tr className="s1"><td className="ds"><input type="radio" name="base_nid" value="0" defaultChecked onChange={() => setValues([])} /></td>
+        <tr className="s1"><td className="ds"><input type="radio" name="base_nid" value="0" checked={base === 0} onChange={() => pick()} /></td>
           <td className="d" colSpan={7}>Никакую, я хочу добавить новое ТС</td></tr>
         {data.vehicles.map(vehicle => <tr key={vehicle.id}>
-          <td className="ds"><input type="radio" name="base_nid" value={vehicle.id} data-values={JSON.stringify(vehicle.fields.map(field => field.value))} onChange={() => setValues(vehicle.fields.map(field => field.value))} /></td>
+          <td className="ds"><input type="radio" name="base_nid" value={vehicle.id} checked={base === vehicle.id} onChange={() => pick(vehicle)} /></td>
           <td className="n"><a href={'/vehicle/' + vehicle.id} target="_blank">{vehicle.id}</a></td>
           <td className="ds">{vehicle.title}</td>
         </tr>)}
       </tbody></table></div>
       <br style={{ clear: 'both' }} /><br />
       <div className="p20" style={{ paddingLeft: 5, marginBottom: 15 }}><table className="nospaces" width="100%"><tbody>
-        {data.labels.map((label, index) => <tr key={index}>
-          <td className="lcol"><label htmlFor={'modelinput_' + (index + 1)}>{label}</label></td>
-          <td style={{ paddingBottom: 15 }}><input type="text" name={'modelinput_' + (index + 1)} id={'modelinput_' + (index + 1)}
-            style={{ width: 80 }} maxLength={21} required value={values[index] ?? ''} onChange={event => {
-              const value = event.currentTarget.value;
-              setValues(current => Object.assign([...current], { [index]: value }));
-            }} /></td>
+        <tr>
+          <td className="lcol"><label htmlFor="number"><b>Бортовой №</b></label></td>
+          <td style={{ paddingBottom: 15 }}><input type="text" {...bind('number')} style={{ width: 120 }} maxLength={64} required={base === 0} /></td>
+        </tr>
+        <tr>
+          <td className="lcol"><label htmlFor="model_id">Модель</label></td>
+          <td style={{ paddingBottom: 15 }}><select {...bind('model_id')}>
+            <option value="">— не знаю / нет в списке —</option>
+            {data.models.map(model => <option key={model.id} value={model.id}>{model.title}</option>)}
+          </select></td>
+        </tr>
+        <tr>
+          <td className="lcol"><label htmlFor="city_id">Город</label></td>
+          <td style={{ paddingBottom: 15 }}><select {...bind('city_id')}>
+            <option value="">— не указан —</option>
+            {data.cities.map(city => <option key={city.id} value={city.id}>{city.title}{city.country ? ' (' + city.country.title + ')' : ''}</option>)}
+          </select></td>
+        </tr>
+        {data.fields.map(field => <tr key={field.key}>
+          <td className="lcol"><label htmlFor={'modelinput_' + field.key}>{field.required ? <b>{field.label}</b> : field.label}</label></td>
+          <td style={{ paddingBottom: 15 }}>{field.type === '4'
+            ? <textarea {...bind('modelinput_' + field.key)} rows={3} cols={40} maxLength={1000} required={field.required} />
+            : <input type="text" {...bind('modelinput_' + field.key)} style={{ width: field.type === '1' ? 200 : 100 }} maxLength={1000}
+              required={field.required} placeholder={field.type === '3' ? 'ММ.ГГГГ' : undefined} />}</td>
         </tr>)}
         {data.siteKey && <tr><td /><td><br /><div className="cf-turnstile" data-sitekey={data.siteKey} /></td></tr>}
         <tr><td /><td><br /><input type="submit" name="create" disabled={pending} value="     Отправить     " /></td></tr>
@@ -75,7 +109,7 @@ export function VehicleRequestForm({ data, action }: { data: VehicleRequestData;
       <ul className="straight">
         <li>Обязательные для заполнения поля выделены жирным шрифтом.</li>
         <li>Если какие-либо данные отсутствуют, оставьте соответствующее поле пустым. Пожалуйста, не вписывайте дефис и тому подобные знаки.</li>
-        <li>Если требуемой модели нет в списке — укажите её в поле «Примечание». После публикации фотографии модель будет добавлена в список.</li>
+        <li>Если требуемой модели нет в списке — оставьте «не знаю» и укажите её в примечании к фотографии. Редакторы добавят модель в базу.</li>
         <li>Если Вы обладаете информацией о приписке данного ТС, а поле «Депо/Парк» отсутствует, укажите эти данные в поле «Примечание».</li>
       </ul>
     </div>

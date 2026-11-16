@@ -5,6 +5,7 @@ import { apiGet } from '../../../api/client';
 import { UploadMedia } from './UploadMedia';
 import { UploadOptions } from './UploadOptions';
 import { UploadLocation } from './UploadLocation';
+import { UploadVehicles } from './UploadVehicles';
 import { setting } from '@nativegallery/config';
 
 function UploadForm({ data }: { data: UploadOptionsData }) {
@@ -24,18 +25,8 @@ function UploadForm({ data }: { data: UploadOptionsData }) {
           <UploadMedia galleries={data.galleries} />
           <tbody><tr><td colSpan={2} style={{ height: 10 }}></td></tr></tbody>
           <tbody className="p20">
-            <tr><td colSpan={2} id="step2" className="narrow" style={{ fontSize: 20, padding: '10px 15px 5px' }}>Шаг 2. <b>Укажите объект, присутствующие на медиа</b></td></tr>
-            <tr className="lnk-vehicle"><td className="lcol">Вид сущности:</td><td style={{ paddingRight: 15 }}>
-              <select name="search_type" id="search_type" className="s5">{data.entities.map(entity =>
-                <option key={entity.id} value={entity.id} style={{ backgroundColor: entity.color }}>{entity.title}</option>)}
-              </select>
-            </td></tr>
-            <tr className="lnk-vehicle"><td className="lcol">ID/Название модели:</td><td style={{ paddingRight: 15 }}>
-              <input type="text" name="search_num" id="search_num" maxLength={15} style={{ width: 150, height: 22 }} />
-              <input type="button" id="searchVehiclesByNumBtn" className="searchVehiclesBtn" style={{ height: 22, paddingTop: 0, position: 'relative', left: -1 }} value="Найти в БД" />
-              <input type="hidden" name="nid" id="nid" />
-              <div style={{ position: 'relative', zIndex: 2000, paddingTop: 4 }}><div id="vlist" className="shadow"></div></div>
-            </td></tr>
+            <tr><td colSpan={2} id="step2" className="narrow" style={{ fontSize: 20, padding: '10px 15px 5px' }}>Шаг 2. <b>Укажите ТС, присутствующие на фотографии (слева направо)</b></td></tr>
+            <UploadVehicles entities={data.entities} cities={data.cities} />
           </tbody>
           <UploadLocation />
           <UploadOptions />

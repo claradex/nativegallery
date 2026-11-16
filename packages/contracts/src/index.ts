@@ -1,3 +1,5 @@
+import type { CityRef, VehicleDetails } from './Vehicles';
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -87,8 +89,8 @@ export interface PhotoPageData {
   contestEntry: boolean;
   contestPlaces: number[];
   exif: { label: string; value: string }[];
-  vehicle: { id: number; title: string; fields: { label: string; value: string }[] } | null;
-  vehicleRoute: string;
+  /** Vehicles on the photo, left to right. */
+  vehicles: PhotoVehicleData[];
   previousId: number | null;
   nextId: number | null;
   views: number;
@@ -106,7 +108,7 @@ export interface PhotoPageData {
 }
 
 export interface VehiclePageData {
-  vehicle: NonNullable<PhotoPageData["vehicle"]>;
+  vehicle: VehicleDetails;
   photos: (TopPhoto & { comments: number })[];
 }
 
@@ -162,9 +164,15 @@ export interface ProfileSession {
   lastActivity: number;
   current: boolean;
 }
+export interface PhotoVehicleData {
+  id: number; title: string; heading: string; status: number; model: { id: number; title: string } | null;
+  fields: { label: string; value: string }[];
+  route: string; note: string; angle: number;
+}
 export interface UploadOptionsData {
   galleries: { id: number; title: string }[];
   entities: { id: number; title: string; color: string }[];
+  cities: CityRef[];
   username: string;
   uploadIndex: number;
   directUpload: boolean;
@@ -212,13 +220,19 @@ export interface EntityType {
 export interface ModelListEntry {
   id: number;
   title: string;
-  comment: string | null;
-  photos: number;
+  /** Production years, e.g. «2014–2023». */
+  years: string;
+  vehicles: number;
+  active: number;
+  /** Submodels (71-931М under 71-931) are listed under their parent. */
+  children: ModelListEntry[];
 }
 
-/** `/models?t=`: the models of one entity type, grouped by manufacturer when the type has such a field. */
+/** `/models?t=`: the models of one entity type, grouped by manufacturer. */
 export interface ModelListData {
   type: EntityType & { color: string };
   types: (EntityType & { models: number })[];
   groups: { title: string; models: ModelListEntry[] }[];
 }
+
+export * from './Vehicles';

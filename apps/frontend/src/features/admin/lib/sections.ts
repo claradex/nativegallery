@@ -4,7 +4,7 @@ import type { AdminRole } from './roles';
 export const menu = [
   { group: 'Модерация', items: [
     { key: 'Photo', label: 'Фотографии', icon: 'camera', role: 'moderator', badge: 'pendingPhotos' },
-    { key: 'VehicleRequests', label: 'Заявки на модели', icon: 'inbox', role: 'editor', badge: 'pendingRequests' },
+    { key: 'VehicleRequests', label: 'Заявки на ТС', icon: 'inbox', role: 'editor', badge: 'pendingRequests' },
   ] },
   { group: 'Контент', items: [
     { key: 'News', label: 'Новости сайта', icon: 'newspaper', role: 'editor' },
@@ -14,7 +14,8 @@ export const menu = [
   ] },
   { group: 'Каталог', items: [
     { key: 'Entities', label: 'Сущности', icon: 'boxes', role: 'editor' },
-    { key: 'Models', label: 'База моделей', icon: 'database', role: 'editor' },
+    { key: 'Models', label: 'Модели', icon: 'database', role: 'editor' },
+    { key: 'Vehicles', label: 'Подвижной состав', icon: 'train', role: 'editor' },
     { key: 'GeoDB', label: 'GeoDB', icon: 'globe', role: 'editor' },
   ] },
   { group: 'Система', items: [
@@ -32,7 +33,8 @@ export function menuKey(type: string | null, tab: string | null): MenuKey {
     case null: case '': case 'General': case 'UserEdit': return 'General';
     case 'PageCreate': case 'PageEdit': return 'Pages';
     case 'EntityCreate': case 'EntityUpdate': return 'Entities';
-    case 'ModelsCreate': case 'EntityEdit': case 'ModelEdit': return tab === 'moderate' ? 'VehicleRequests' : 'Models';
+    case 'ModelsCreate': case 'ModelEdit': return 'Models';
+    case 'VehicleCreate': case 'VehicleEdit': case 'EntityEdit': return 'Vehicles';
     case 'Models': return tab === 'moderate' ? 'VehicleRequests' : 'Models';
     default: return type as MenuKey;
   }

@@ -14,5 +14,7 @@ export async function VehicleRequest({ searchParams }: { searchParams: Promise<R
   const data = await apiGet<VehicleRequestData>('/api/vehicles/requests/' + id + '?' + search, {
     auth: true, login: true, missing: true, error: 'Could not load vehicle data',
   });
-  return <VehicleRequestForm data={data} action={'/api/vehicles/requests/' + id} />;
+  const text = (value: unknown, pattern: RegExp) => typeof value === 'string' && pattern.test(value) ? value : '';
+  return <VehicleRequestForm data={data} action={'/api/vehicles/requests/' + id}
+    initial={{ number: text(query.num, /^.{1,64}$/), city_id: text(query.city, /^\d{1,10}$/) }} />;
 }

@@ -29,7 +29,7 @@ export function VehicleEditForm({ models }: { models: VehicleModel[] }) {
         </td><td style={{ paddingRight: 10 }}>
           <input type="text" name="num" id="num" maxLength={20} style={{ width: 80 }} disabled={byName} value={number} onChange={event => setNumber(event.currentTarget.value)} /> &nbsp;
           <input type="radio" name="link_gos" id="link_gos1" value="1" checked={byName} onChange={() => setByName(true)} />
-          <label htmlFor="link_gos1">Название:</label>
+          <label htmlFor="link_gos1">Бортовой №:</label>
           <input type="text" name="gos" id="gos" maxLength={20} style={{ width: 120 }} disabled={!byName} value={name} onChange={event => setName(event.currentTarget.value)} />
         </td></tr>
         <tr><td /><td><input type="submit" id="submit" style={{ width: 100, marginTop: 15 }} value="Далее >>" disabled={!type || !(byName ? name : number).trim()} /></td></tr>

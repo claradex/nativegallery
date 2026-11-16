@@ -4,6 +4,7 @@ import type { NextConfig } from 'next';
 const legacyPages: Record<string, string> = {
   '/authors.php': '/authors',
   '/comments.php': '/comments',
+  '/list.php': '/list',
   '/models.php': '/models',
   '/news2.php': '/news',
   '/search.php': '/search',

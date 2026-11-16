@@ -14,10 +14,11 @@ import { Field, FieldDescription, Label } from '../ui/field';
 import { Input, NativeSelect } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
+import { fieldTypes } from '@nativegallery/contracts';
 
-export interface EntityRow { id: number; title: string; color: string; createdAt: number; fields: number; models: number }
-export interface EntityField { name: string; id: string; type: string; important: string }
-export interface EntityDetails { id: number; title: string; color: string; fields: EntityField[]; models: number }
+export interface EntityRow { id: number; title: string; color: string; createdAt: number; fields: number; models: number; vehicles: number }
+export interface EntityField { name: string; id: string; type: string; important: string; scope: 'model' | 'vehicle'; list: string }
+export interface EntityDetails { id: number; title: string; color: string; fields: EntityField[]; models: number; vehicles: number }
 
 export function EntitiesTable({ entities, create }: { entities: EntityRow[]; create: React.ReactNode }) {
   const [pending, run] = useAction();
@@ -25,23 +26,24 @@ export function EntitiesTable({ entities, create }: { entities: EntityRow[]; cre
     Сущность — это тип подвижного состава (например, «Вагон метро») со своим набором полей для моделей.</Empty></Card>;
   const actions = (entity: EntityRow) => <div className="flex justify-end gap-1">
     <Button size="icon-sm" variant="ghost" asChild><Link href={'/admin?type=EntityUpdate&id=' + entity.id} aria-label="Редактировать"><Pencil /></Link></Button>
-    <Confirm title={'Удалить сущность «' + entity.title + '»?'} description="Её поля и заявки на модели будут удалены. Это действие нельзя отменить."
+    <Confirm title={'Удалить сущность «' + entity.title + '»?'} description="Её поля и заявки на ТС будут удалены. Это действие нельзя отменить."
       onConfirm={() => run(() => send('/api/admin/entities/' + entity.id, { method: 'DELETE', fallback: 'Не удалось удалить сущность.' }), { success: 'Сущность удалена' })}
-      trigger={<Button size="icon-sm" variant="ghost-destructive" disabled={pending || entity.models > 0} aria-label="Удалить"
-        title={entity.models ? 'Сначала удалите модели этой сущности' : undefined}><Trash2 /></Button>} />
+      trigger={<Button size="icon-sm" variant="ghost-destructive" disabled={pending || entity.models + entity.vehicles > 0} aria-label="Удалить"
+        title={entity.models + entity.vehicles ? 'Сначала удалите модели и ТС этой сущности' : undefined}><Trash2 /></Button>} />
   </div>;
   const swatch = (color: string) => <span className="size-3 shrink-0 rounded-full ring-1 ring-black/10" style={{ background: color }} />;
   return <Card>
     <Table className="hidden md:table">
       <TableHeader><TableRow className="hover:bg-transparent">
         <TableHead className="w-14">ID</TableHead><TableHead>Название</TableHead><TableHead className="text-right">Поля</TableHead>
-        <TableHead className="text-right">Модели</TableHead><TableHead>Создана</TableHead><TableHead className="w-24" />
+        <TableHead className="text-right">Модели</TableHead><TableHead className="text-right">ТС</TableHead><TableHead>Создана</TableHead><TableHead className="w-24" />
       </TableRow></TableHeader>
       <TableBody>{entities.map(entity => <TableRow key={entity.id}>
         <TableCell className="text-muted-foreground tabular-nums">{entity.id}</TableCell>
         <TableCell><Link href={'/admin?type=EntityUpdate&id=' + entity.id} className="inline-flex items-center gap-2.5 font-medium hover:underline">{swatch(entity.color)}{entity.title}</Link></TableCell>
         <TableCell className="text-right tabular-nums">{entity.fields}</TableCell>
         <TableCell className="text-right tabular-nums"><Link href={'/admin?type=Models&entity=' + entity.id} className="hover:underline">{entity.models}</Link></TableCell>
+        <TableCell className="text-right tabular-nums"><Link href={'/admin?type=Vehicles&entity=' + entity.id} className="hover:underline">{entity.vehicles}</Link></TableCell>
         <TableCell className="text-[13px] text-muted-foreground">{formatDate(entity.createdAt, { time: false })}</TableCell>
         <TableCell>{actions(entity)}</TableCell>
       </TableRow>)}</TableBody>
@@ -50,7 +52,7 @@ export function EntitiesTable({ entities, create }: { entities: EntityRow[]; cre
       {swatch(entity.color)}
       <div className="min-w-0 flex-1">
         <Link href={'/admin?type=EntityUpdate&id=' + entity.id} className="block truncate font-medium">{entity.title}</Link>
-        <p className="text-[13px] text-muted-foreground">{plural(entity.fields, 'поле', 'поля', 'полей')}, {plural(entity.models, 'модель', 'модели', 'моделей')}</p>
+        <p className="text-[13px] text-muted-foreground">{plural(entity.fields, 'поле', 'поля', 'полей')}, {plural(entity.models, 'модель', 'модели', 'моделей')}, {entity.vehicles} ТС</p>
       </div>
       {actions(entity)}
     </li>)}</ul>
@@ -60,10 +62,10 @@ export function EntitiesTable({ entities, create }: { entities: EntityRow[]; cre
 type Row = EntityField & { key: number; locked: boolean };
 
 export function EntityForm({ entity }: { entity?: EntityDetails }) {
-  const locked = (entity?.models ?? 0) > 0;
+  const locked = (entity?.models ?? 0) + (entity?.vehicles ?? 0) > 0;
   const [title, setTitle] = useState(entity?.title ?? '');
   const [color, setColor] = useState(entity?.color ?? '#2052d0');
-  const [rows, setRows] = useState<Row[]>(() => (entity?.fields.length ? entity.fields : [{ name: '', id: '', type: '1', important: '1' }])
+  const [rows, setRows] = useState<Row[]>(() => (entity ? entity.fields : [])
     .map((field, index) => ({ ...field, key: index, locked: locked && !!entity })));
   const [next, setNext] = useState(rows.length);
   const [pending, run] = useAction();
@@ -87,6 +89,7 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
       const n = index + 1;
       body['variablename_' + n] = row.name; body['variableid_' + n] = row.id;
       body['variabletype_' + n] = row.type; body['variableimportant_' + n] = row.important;
+      body['variablescope_' + n] = row.scope; body['variablelist_' + n] = row.scope === 'vehicle' ? row.list : '0';
     });
     const result = await run(() => entity
       ? send('/api/admin/entities/' + entity.id, { method: 'PATCH', body, fallback: 'Не удалось сохранить сущность. Проверьте поля.' })
@@ -111,38 +114,48 @@ export function EntityForm({ entity }: { entity?: EntityDetails }) {
     </Card>
     <Card>
       <CardHeader><div>
-        <CardTitle>Поля модели</CardTitle>
-        <CardDescription>Шаблон формы, которую заполняют при добавлении модели этой сущности.
-          {locked && ' У сущности уже есть модели, поэтому существующие поля можно только переименовать: значения хранятся по порядку полей.'}</CardDescription>
+        <CardTitle>Свои поля</CardTitle>
+        <CardDescription>Дополнительные поля сверх стандартных (город, депо, модель, даты, заводской №, состояние, назначение).
+          Поле уровня «Модель» заполняется один раз в карточке модели, уровня «ТС» — у каждого экземпляра; такие поля можно вывести колонкой в списке подвижного состава.
+          {locked && ' У сущности уже есть модели или ТС: существующие поля нельзя удалять и переставлять, потому что значения хранятся по номеру поля.'}</CardDescription>
       </div></CardHeader>
       <CardContent className="grid gap-3">
-        <div className="hidden grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_8rem_auto_5.5rem] gap-3 px-1 text-[13px] font-medium text-muted-foreground md:grid">
-          <span>№</span><span>Подпись</span><span>Идентификатор</span><span>Тип</span><span>Обязательно</span><span />
-        </div>
-        {rows.map((row, index) => <div key={row.key} className="grid grid-cols-2 gap-3 rounded-lg border p-3 md:grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_8rem_auto_5.5rem] md:items-center md:border-0 md:p-1">
-          <span className="text-sm text-muted-foreground tabular-nums md:text-center">{index + 1}</span>
-          <div className="col-span-2 md:col-span-1 md:-order-none"><Input value={row.name} onChange={event => update(row.key, { name: event.target.value })}
-            placeholder="Заводской номер" aria-label={'Подпись поля ' + (index + 1)} maxLength={255} required /></div>
-          <div className="col-span-2 md:col-span-1"><Input value={row.id} onChange={event => update(row.key, { id: event.target.value })}
-            placeholder="serial" aria-label={'Идентификатор поля ' + (index + 1)} maxLength={64} required className="font-mono text-[13px]"
+        {rows.length > 0 && <div className="hidden grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_auto_auto_5.5rem] gap-3 px-1 text-[13px] font-medium text-muted-foreground lg:grid">
+          <span>№</span><span>Подпись</span><span>Идентификатор</span><span>Уровень</span><span>Тип</span><span>Обязательно</span><span>В списке ПС</span><span />
+        </div>}
+        {!rows.length && <p className="text-sm text-muted-foreground">Своих полей нет — будут только стандартные.</p>}
+        {rows.map((row, index) => <div key={row.key} className="grid grid-cols-2 gap-3 rounded-lg border p-3 lg:grid-cols-[2rem_minmax(0,1.4fr)_minmax(0,1fr)_7rem_7.5rem_auto_auto_5.5rem] lg:items-center lg:border-0 lg:p-1">
+          <span className="col-span-2 text-sm text-muted-foreground tabular-nums lg:col-span-1 lg:text-center">{index + 1}</span>
+          <div className="col-span-2 lg:col-span-1"><Input value={row.name} onChange={event => update(row.key, { name: event.target.value })}
+            placeholder="Тип двигателя" aria-label={'Подпись поля ' + (index + 1)} maxLength={255} required /></div>
+          <div className="col-span-2 lg:col-span-1"><Input value={row.id} onChange={event => update(row.key, { id: event.target.value })}
+            placeholder="engine" aria-label={'Идентификатор поля ' + (index + 1)} maxLength={64} required className="font-mono text-[13px]"
             aria-invalid={duplicate !== null && row.id.trim() === duplicate} /></div>
-          <NativeSelect value={row.type} onChange={event => update(row.key, { type: event.target.value })} aria-label={'Тип поля ' + (index + 1)}>
-            <option value="1">Строка</option><option value="2">Число</option>
+          <NativeSelect value={row.scope} onChange={event => update(row.key, { scope: event.target.value as EntityField['scope'] })} aria-label={'Уровень поля ' + (index + 1)}>
+            <option value="model">Модель</option><option value="vehicle">ТС</option>
           </NativeSelect>
-          <label className="flex items-center gap-2 text-sm md:justify-center">
+          <NativeSelect value={row.type} onChange={event => update(row.key, { type: event.target.value })} aria-label={'Тип поля ' + (index + 1)}>
+            {fieldTypes.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
+          </NativeSelect>
+          <label className="flex items-center gap-2 text-sm lg:justify-center">
             <Switch checked={row.important === '1'} onCheckedChange={value => update(row.key, { important: value ? '1' : '2' })} aria-label={'Поле ' + (index + 1) + ' обязательно'} />
-            <span className="md:sr-only">Обязательно</span>
+            <span className="lg:sr-only">Обязательно</span>
           </label>
-          <div className="col-span-2 flex justify-end gap-0.5 md:col-span-1">
+          <label className="flex items-center gap-2 text-sm lg:justify-center" title={row.scope === 'model' ? 'Только для полей уровня ТС' : undefined}>
+            <Switch checked={row.scope === 'vehicle' && row.list === '1'} disabled={row.scope !== 'vehicle'}
+              onCheckedChange={value => update(row.key, { list: value ? '1' : '0' })} aria-label={'Поле ' + (index + 1) + ' в списке подвижного состава'} />
+            <span className="lg:sr-only">В списке ПС</span>
+          </label>
+          <div className="col-span-2 flex justify-end gap-0.5 lg:col-span-1">
             <Button type="button" size="icon-sm" variant="ghost" disabled={index === 0 || locked} onClick={() => move(index, -1)} aria-label="Выше"><ArrowUp /></Button>
             <Button type="button" size="icon-sm" variant="ghost" disabled={index === rows.length - 1 || locked} onClick={() => move(index, 1)} aria-label="Ниже"><ArrowDown /></Button>
-            <Button type="button" size="icon-sm" variant="ghost-destructive" disabled={rows.length === 1 || row.locked}
+            <Button type="button" size="icon-sm" variant="ghost-destructive" disabled={row.locked}
               onClick={() => setRows(list => list.filter(item => item.key !== row.key))} aria-label="Убрать поле"><X /></Button>
           </div>
         </div>)}
         {duplicate !== null && <FieldDescription className="text-destructive">Идентификатор «{duplicate}» повторяется: у каждого поля он должен быть своим.</FieldDescription>}
         <Button type="button" variant="outline" className="w-fit" disabled={rows.length >= 99}
-          onClick={() => { setRows(list => [...list, { name: '', id: '', type: '1', important: '2', key: next, locked: false }]); setNext(next + 1); }}>
+          onClick={() => { setRows(list => [...list, { name: '', id: '', type: '1', important: '2', scope: 'vehicle', list: '0', key: next, locked: false }]); setNext(next + 1); }}>
           <Plus />Добавить поле
         </Button>
       </CardContent>

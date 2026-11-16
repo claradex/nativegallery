@@ -6,6 +6,7 @@ import { AdminContests } from '../../features/admin/AdminContests';
 import { AdminEntities } from '../../features/admin/AdminEntities';
 import { AdminGalleries } from '../../features/admin/AdminGalleries';
 import { AdminGeo } from '../../features/admin/AdminGeo';
+import { AdminVehicleForm, AdminVehicles } from '../../features/admin/AdminVehicles';
 import { AdminModelForm, AdminModels, AdminVehicleRequests } from '../../features/admin/AdminModels';
 import { AdminNews } from '../../features/admin/AdminNews';
 import { AdminPages } from '../../features/admin/AdminPages';
@@ -25,11 +26,11 @@ async function origin() {
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 const titles: Record<string, string> = {
-  General: 'Пользователи', UserEdit: 'Пользователь', Photo: 'Фотографии', VehicleRequests: 'Заявки на модели',
+  General: 'Пользователи', UserEdit: 'Пользователь', Photo: 'Фотографии', VehicleRequests: 'Заявки на ТС',
   News: 'Новости сайта', Pages: 'Страницы', PageCreate: 'Новая страница', PageEdit: 'Редактирование страницы',
   Galleries: 'Галереи', Contests: 'Фотоконкурсы', Entities: 'Сущности', EntityCreate: 'Новая сущность',
-  EntityUpdate: 'Сущность', Models: 'База моделей', ModelsCreate: 'Новая модель', EntityEdit: 'Редактирование модели',
-  ModelEdit: 'Редактирование модели', GeoDB: 'GeoDB', Config: 'Конфигурация', Settings: 'Фоновые задачи',
+  EntityUpdate: 'Сущность', Models: 'Модели', ModelsCreate: 'Новая модель', ModelEdit: 'Редактирование модели',
+  Vehicles: 'Подвижной состав', VehicleCreate: 'Новое ТС', VehicleEdit: 'Редактирование ТС', EntityEdit: 'Редактирование ТС', GeoDB: 'GeoDB', Config: 'Конфигурация', Settings: 'Фоновые задачи',
 };
 
 /** Set through metadata rather than a rendered <title>, so client-side navigation between sections updates it. */
@@ -69,8 +70,11 @@ export default async function Admin({ searchParams }: { searchParams: SearchPara
     case 'Models':
       if (query.get('tab') === 'moderate') redirect('/admin?type=VehicleRequests');
       return AdminModels(query);
-    case 'ModelsCreate': return AdminModelForm();
-    case 'EntityEdit': case 'ModelEdit': return AdminModelForm(id);
+    case 'ModelsCreate': return AdminModelForm(undefined, query.get('entity'));
+    case 'ModelEdit': return AdminModelForm(id);
+    case 'Vehicles': return AdminVehicles(query);
+    case 'VehicleCreate': return AdminVehicleForm(undefined, query);
+    case 'EntityEdit': case 'VehicleEdit': return AdminVehicleForm(id);
     case 'GeoDB': return AdminGeo();
     case 'Config': return AdminConfig();
     case 'Settings': return AdminSettings();

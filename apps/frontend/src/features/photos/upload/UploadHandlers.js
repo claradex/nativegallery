@@ -63,46 +63,8 @@ export function bindUpload(signal) {
     else setDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
   }, { signal }));
 
-  const results = get('vlist');
-  const type = get('search_type');
-  let search;
   let upload;
-  signal.addEventListener('abort', () => {
-    search?.abort();
-    upload?.abort();
-  }, { once: true });
-  type.addEventListener('change', () => {
-    search?.abort();
-    get('nid').value = '';
-    results.replaceChildren();
-  }, { signal });
-  get('searchVehiclesByNumBtn').addEventListener('click', async () => {
-    search?.abort();
-    const request = new AbortController();
-    search = request;
-    const params = new URLSearchParams({ type: type.value, q: get('search_num').value.trim() });
-    try {
-      const response = await fetch('/api/upload/entities?' + params, { signal: request.signal });
-      if (!response.ok) throw new Error();
-      const matches = await response.json();
-      if (signal.aborted || request.signal.aborted) return;
-      results.replaceChildren();
-      if (!matches.length) results.textContent = 'Ничего не найдено';
-      for (const entry of matches) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.textContent = entry.id + ' — ' + entry.title;
-        button.addEventListener('click', () => {
-          get('nid').value = entry.id;
-          get('search_num').value = entry.id;
-          results.textContent = entry.title;
-        }, { signal });
-        results.append(button);
-      }
-    } catch (error) {
-      if (error.name !== 'AbortError') results.textContent = 'Не удалось выполнить поиск';
-    }
-  }, { signal });
+  signal.addEventListener('abort', () => upload?.abort(), { once: true });
 
   form.addEventListener('submit', event => {
     event.preventDefault();

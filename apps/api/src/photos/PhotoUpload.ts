@@ -7,9 +7,43 @@ import { videoContainer } from './VideoContainer';
 import { uploadedExif } from './UploadedExif';
 import { photoContent } from './PhotoContent';
 import { flag, setting } from '@nativegallery/config';
+import { maxPhotoVehicles, vehicleAngles, type UploadVehicleLink } from '@nativegallery/contracts';
 
 const formats = new Map([['jpeg', 'jpg'], ['png', 'png'], ['gif', 'gif'], ['webp', 'webp']]);
 const rejected = (errorcode: string) => ({ errorcode, error: 1 });
+
+/**
+ * The vehicles on the photo, left to right: the `vehicles` JSON array the upload form sends, or the legacy single
+ * `nid` with `route[nid]`/`notes[nid]`. `null` when the value is malformed.
+ */
+function photoVehicles(body: Record<string, unknown>): UploadVehicleLink[] | null {
+  const short = (value: unknown, max: number) => typeof value === 'string' && value.length <= max ? value.trim() : value === undefined || value === null ? '' : null;
+  if (typeof body.vehicles === 'string' && body.vehicles.trim()) {
+    let list: unknown;
+    try { list = JSON.parse(body.vehicles); } catch { return null; }
+    if (!Array.isArray(list) || list.length > maxPhotoVehicles) return null;
+    const links: UploadVehicleLink[] = [];
+    for (const item of list) {
+      if (!item || typeof item !== 'object') return null;
+      const { id, route, note, angle } = item as Record<string, unknown>;
+      const r = short(route, 16), n = short(note, 255);
+      if (!Number.isInteger(id) || (id as number) < 1 || (id as number) > 2147483647 || r === null || n === null) return null;
+      if (!vehicleAngles.some(item => item.id === (angle ?? 0))) return null;
+      if (links.some(link => link.id === id)) continue;
+      links.push({ id: id as number, route: r, note: n, angle: (angle as number | undefined) ?? 0 });
+    }
+    return links;
+  }
+  const entity = Number(body.nid || 0);
+  if (!Number.isInteger(entity) || entity < 0 || entity > 2147483647) return null;
+  if (!entity) return [];
+  const linked = (key: string) => {
+    const values = body[key];
+    const value = body[key + '[' + entity + ']'] ?? (values && typeof values === 'object' ? Reflect.get(values, String(entity)) : null);
+    return typeof value === 'string' ? value.trim() : '';
+  };
+  return [{ id: entity, route: linked('route').slice(0, 16), note: linked('notes').slice(0, 255), angle: 0 }];
+}
 
 function photoDate(body: Record<string, unknown>) {
   const year = Number(body.year);
@@ -41,15 +75,12 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
   const place = typeof body.place === 'string' ? body.place : '';
   const description = typeof body.descr === 'string' ? body.descr : '';
   const gallery = Number(body.gallery || 0);
-  const entity = Number(body.nid || 0);
-  if (date === null || place.length > 255 || ![gallery, entity].every(id => Number.isInteger(id) && id >= 0 && id <= 2147483647)) {
+  const vehicles = photoVehicles(body);
+  if (date === null || place.length > 255 || !vehicles || !Number.isInteger(gallery) || gallery < 0 || gallery > 2147483647) {
     return rejected('INVALID_FIELDS');
   }
+  const entity = vehicles[0]?.id ?? 0;
   const text = (value: unknown) => typeof value === 'string' ? value : null;
-  const linkedValue = (key: string) => {
-    const values = body[key];
-    return text(body[key + '[' + entity + ']'] ?? (values && typeof values === 'object' ? Reflect.get(values, String(entity)) : null));
-  };
   const allowed = (key: string) => body[key] === '1' ? 'disabled' : 'allowed';
   const key = randomBytes(32).toString('hex');
   const root = process.env.MEDIA_ROOT ?? '../../uploads';
@@ -65,7 +96,8 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
     const result = await database.$transaction(async tx => {
       const user = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { admin: true, content: true } });
       const targetGallery = gallery && await tx.gallery.findUnique({ where: { id: gallery }, select: { opened: true } });
-      if ((gallery && (!targetGallery || !targetGallery.opened)) || (entity && !await tx.entityData.findUnique({ where: { id: entity }, select: { id: true } }))) return null;
+      if ((gallery && (!targetGallery || !targetGallery.opened)) || 
+        (vehicles.length && await tx.entityData.count({ where: { id: { in: vehicles.map(vehicle => vehicle.id) } } }) !== vehicles.length)) return null;
       const moderated = flag('PHOTO_PREMODERATION') && user.admin <= 0 && photoContent(user.content).premoderation !== 'true' ? 0 : 1;
       const photo = await tx.photo.create({ data: {
         user_id: userId, postbody: description, photourl: '/uploads/' + preview, posted_at: date, timeupload: Math.floor(Date.now() / 1000),
@@ -74,9 +106,12 @@ export async function uploadPhoto(userId: number, body: Record<string, unknown>,
           type: video ? 'video' : 'image', videourl: video ? '/uploads/' + output : null, copyright: text(body.license), comment: description,
           lat: body.nomap ? null : text(body.lat), lng: body.nomap ? null : text(body.lng),
           comments: allowed('disablecomments'), rating: allowed('disablerating'), showtop: allowed('disableshowtop'), subsnotify: allowed('disablesubsnotify'),
-          entityroute: entity ? linkedValue('route') : null, entitycomment: entity ? linkedValue('notes') : null,
+          entityroute: vehicles[0]?.route || null, entitycomment: vehicles[0]?.note || null,
         }),
       }, select: { id: true } });
+      if (vehicles.length) await tx.photoVehicle.createMany({ data: vehicles.map((vehicle, position) => ({
+        photo_id: photo.id, entitydata_id: vehicle.id, position, route: vehicle.route || null, note: vehicle.note || null, angle: vehicle.angle,
+      })) });
       if (video) await tx.job.create({ data: {
         kind: 'RenderVideo', dedupe_key: 'render-video:' + photo.id,
         payload: { input, output, preview, format: video, photoId: photo.id, moderation: moderated }, available_at: new Date(),

@@ -39,8 +39,10 @@ export class VehicleSearchController {
     const query = '%' + (num ?? '') + '%';
     const modelId = typeof type === 'string' && /^\d{1,10}$/.test(type) ? Number(type) : 0;
     const rows = await database.$queryRaw<VehicleMatch[]>(Prisma.sql`
-      SELECT v.id, v.title, v.comment, m.title AS model
+      SELECT v.id, v.title, v.comment,
+        CONCAT_WS(', ', m.title, md.title, g.title) AS model
       FROM entities_data v LEFT JOIN entities m ON m.id = v.entityid
+        LEFT JOIN entities_models md ON md.id = v.model_id LEFT JOIN geodb g ON g.id = v.city_id
       WHERE LOWER(v.title) LIKE LOWER(${query})
         OR (CAST(v.id AS CHAR) LIKE ${query} AND v.entityid = ${modelId})
       ORDER BY v.id

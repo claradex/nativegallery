@@ -16,8 +16,8 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
     <div id="err" />
     {!photo.processing && <PhotoMedia photo={photo} scope={scope} />}
     <div id="pmain">
-      {photo.vehicle && <div><div style={{ lineHeight: '15px', marginBottom: 10 }}>
-        <table className="pwrite"><tbody><PhotoVehicleRoute vehicle={photo.vehicle} route={photo.vehicleRoute} /></tbody></table>
+      {photo.vehicles.length > 0 && <div><div style={{ lineHeight: '15px', marginBottom: 10 }}>
+        <table className="pwrite"><tbody>{photo.vehicles.map(vehicle => <PhotoVehicleRoute key={vehicle.id} vehicle={vehicle} />)}</tbody></table>
       </div></div>}
       {photo.place && <div><b>{photo.place}</b></div>}
       {photo.description && <div style={{ paddingTop: 8 }}>{photo.description}</div>}
@@ -47,7 +47,7 @@ function PhotoContent({ photo, comments, scope }: { photo: PhotoPageData; commen
           <PhotoRating photo={photo} />
         </td>
         <td id="pp-main-col">
-          {photo.vehicle && <PhotoVehicle vehicle={photo.vehicle} />}
+          {photo.vehicles.map(vehicle => <PhotoVehicle key={vehicle.id} vehicle={vehicle} />)}
           <PhotoExif fields={photo.exif} />
           <div className="p0" id="pp-item-comments">
             <h4 className="pp-item-header">Комментарии{photo.commentsEnabled && <span id="commcount" style={{ fontWeight: 'normal' }}>

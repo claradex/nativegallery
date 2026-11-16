@@ -67,6 +67,7 @@ model Photo {
   contest_id Int @default(0)
   content String @db.Text
 
+  @@index([entitydata_id])
   @@map("photos")
 }
 
@@ -124,6 +125,8 @@ model User {
   @@map("users")
 }
 
+/// A kind of entity (Трамвай, Троллейбус …). `sampledata` is the template of custom fields, each one belonging to the
+/// model or to the vehicle (`scope`), with values stored by the field's position.
 model Entity {
   id Int @id @default(autoincrement())
   title String @db.Text
@@ -134,6 +137,7 @@ model Entity {
   @@map("entities")
 }
 
+/// One concrete vehicle: a model's unit in a city with its fleet number (`title`). Photos link to it.
 model EntityData {
   id Int @id @default(autoincrement())
   title String @db.Text
@@ -142,7 +146,56 @@ model EntityData {
   comment String? @db.Text
   content String? @db.Text
 
+  model_id Int?
+  city_id Int?
+  depot_id Int?
+  factory_number String? @db.VarChar(64)
+  vin String? @db.VarChar(64)
+  built String? @db.VarChar(10)
+  started String? @db.VarChar(10)
+  retired String? @db.VarChar(10)
+  scrapped String? @db.VarChar(10)
+  status Int @default(1) @db.TinyInt
+  purpose Int @default(0) @db.TinyInt
+
+  @@index([entityid])
+  @@index([model_id])
+  @@index([city_id])
+  @@index([depot_id])
   @@map("entities_data")
+}
+
+/// A model of an entity, shared by every city and country (71-931 «Витязь»).
+model EntityModel {
+  id Int @id @default(autoincrement())
+  entityid Int
+  parent_id Int?
+  title String @db.VarChar(255)
+  manufacturer String? @db.VarChar(255)
+  built_from Int? @db.SmallInt
+  built_to Int? @db.SmallInt
+  description String? @db.Text
+  content String? @db.Text
+  createdate BigInt
+
+  @@index([entityid])
+  @@index([parent_id])
+  @@map("entities_models")
+}
+
+/// A vehicle on a photo, in order from left to right, with the route it ran and the angle it was shot from.
+model PhotoVehicle {
+  id Int @id @default(autoincrement())
+  photo_id Int
+  entitydata_id Int
+  position Int @default(0) @db.TinyInt
+  route String? @db.VarChar(16)
+  note String? @db.VarChar(255)
+  angle Int @default(0) @db.TinyInt
+
+  @@index([photo_id])
+  @@index([entitydata_id])
+  @@map("photos_vehicles")
 }
 
 model Gallery {
@@ -185,10 +238,17 @@ model Contest {
   @@map("contests")
 }
 
+/// GeoDB: a tree of countries, regions, cities, depots and free places (`kind` 1–5, see `geoKinds` in contracts).
 model GeoEntry {
   id Int @id @default(autoincrement())
   title String @db.Text
+  parent_id Int?
+  kind Int @default(5) @db.TinyInt
+  code String? @db.VarChar(8)
+  sort Int @default(0)
 
+  @@index([parent_id])
+  @@index([kind])
   @@map("geodb")
 }
 
@@ -265,6 +325,8 @@ model EntityRequest {
   entityid Int
   data String @db.Text
   status Int
+  model_id Int?
+  city_id Int?
 
   @@map("entities_requests")
 }
