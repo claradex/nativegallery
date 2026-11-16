@@ -13,6 +13,7 @@ import { AdminHomeBlocks } from '../../features/admin/AdminHomeBlocks';
 import { AdminPages } from '../../features/admin/AdminPages';
 import { AdminPhotos } from '../../features/admin/AdminPhotos';
 import { AdminSettings } from '../../features/admin/AdminSettings';
+import { AdminStorage } from '../../features/admin/AdminStorage';
 import { AdminUsers } from '../../features/admin/AdminUsers';
 import { siteContext } from '../../features/site/SiteContext';
 import { setting } from '@nativegallery/config';
@@ -31,7 +32,7 @@ const titles: Record<string, string> = {
   News: 'Новости', HomeBlocks: 'Главная страница', Pages: 'Страницы', PageCreate: 'Новая страница', PageEdit: 'Редактирование страницы',
   Galleries: 'Галереи', Contests: 'Фотоконкурсы', Entities: 'Сущности', EntityCreate: 'Новая сущность',
   EntityUpdate: 'Сущность', Models: 'Модели', ModelsCreate: 'Новая модель', ModelEdit: 'Редактирование модели',
-  Vehicles: 'Подвижной состав', VehicleCreate: 'Новое ТС', VehicleEdit: 'Редактирование ТС', EntityEdit: 'Редактирование ТС', GeoDB: 'GeoDB', Config: 'Конфигурация', Settings: 'Фоновые задачи',
+  Vehicles: 'Подвижной состав', VehicleCreate: 'Новое ТС', VehicleEdit: 'Редактирование ТС', EntityEdit: 'Редактирование ТС', GeoDB: 'GeoDB', Config: 'Конфигурация', Storage: 'Хранилища', Settings: 'Фоновые задачи',
 };
 
 /** Set through metadata rather than a rendered <title>, so client-side navigation between sections updates it. */
@@ -79,6 +80,7 @@ export default async function Admin({ searchParams }: { searchParams: SearchPara
     case 'EntityEdit': case 'VehicleEdit': return AdminVehicleForm(id);
     case 'GeoDB': return AdminGeo();
     case 'Config': return AdminConfig();
+    case 'Storage': return AdminStorage(query);
     case 'Settings': return AdminSettings();
   }
   notFound();

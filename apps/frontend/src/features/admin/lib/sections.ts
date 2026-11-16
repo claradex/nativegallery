@@ -22,6 +22,7 @@ export const menu = [
   { group: 'Система', items: [
     { key: 'General', label: 'Пользователи', icon: 'users', role: 'owner' },
     { key: 'Config', label: 'Конфигурация', icon: 'sliders', role: 'owner' },
+    { key: 'Storage', label: 'Хранилища', icon: 'hard-drive', role: 'owner' },
     { key: 'Settings', label: 'Фоновые задачи', icon: 'settings', role: 'editor' },
   ] },
 ] as const satisfies readonly { group: string; items: readonly { key: string; label: string; icon: string; role: AdminRole; badge?: string }[] }[];
