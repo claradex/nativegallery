@@ -17,6 +17,7 @@ import { VehicleModule } from './catalog/VehicleModule';
 import { NewsModule } from './news/NewsModule';
 import { JobsModule } from './jobs/JobsModule';
 import { ConfigModule } from './config/ConfigModule';
+import { StorageModule } from './storage/StorageModule';
 
-@Module({ imports: [AuthModule, CatalogModule, JobsModule, ConfigModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule, PhotoStatsModule, PhotoCommentsModule, PhotoPageModule, VehicleModule, NewsModule], controllers: [HealthController] })
+@Module({ imports: [AuthModule, CatalogModule, JobsModule, ConfigModule, HomeModule, PhotosModule, ContestsModule, EngagementModule, CommentsModule, PhotoRatingsModule, FollowingModule, PhotoDetailsModule, PhotoStatsModule, PhotoCommentsModule, PhotoPageModule, VehicleModule, NewsModule, StorageModule], controllers: [HealthController] })
 export class ApiModule {}
