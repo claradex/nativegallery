@@ -1,0 +1,167 @@
+/**
+ * External storages photos and videos are published to (a second disk, Google Drive, S3-compatible buckets, WebDAV),
+ * managed from the admin panel («Хранилища»). Each uploaded file gets a replica row per storage that records whether
+ * it was published and what the last check found.
+ */
+export const storageKinds = ['disk', 'gdrive', 's3', 'webdav'] as const;
+export type StorageKind = typeof storageKinds[number];
+
+export type StorageFieldType = 'text' | 'secret' | 'textarea' | 'boolean' | 'url';
+
+export interface StorageField {
+  key: string;
+  label: string;
+  type: StorageFieldType;
+  required?: boolean;
+  placeholder?: string;
+  description?: string;
+}
+
+export interface StorageKindDefinition {
+  id: StorageKind;
+  label: string;
+  description: string;
+  fields: readonly StorageField[];
+}
+
+const prefixField: StorageField = {
+  key: 'prefix', label: 'Папка внутри хранилища', type: 'text', placeholder: 'nativegallery',
+  description: 'Файлы кладутся в эту папку с теми же путями, что и в uploads (cdn/img/…, cdn/video/…). Пусто — в корень.',
+};
+
+export const storageKindDefinitions: readonly StorageKindDefinition[] = [
+  {
+    id: 'disk', label: 'Другой диск', description: 'Папка на сервере: второй диск, NAS по NFS/SMB или любая примонтированная файловая система.',
+    fields: [
+      { key: 'path', label: 'Путь к папке', type: 'text', required: true, placeholder: '/mnt/backup/nativegallery',
+        description: 'Абсолютный путь. В docker папку нужно примонтировать в контейнеры api и media-worker.' },
+    ],
+  },
+  {
+    id: 'gdrive', label: 'Google Drive', description: 'Папка Google Drive через сервисный аккаунт или OAuth-приложение.',
+    fields: [
+      { key: 'folderId', label: 'ID папки', type: 'text', required: true, placeholder: '1AbC…',
+        description: 'Последняя часть адреса папки: drive.google.com/drive/folders/<ID>. Папку нужно открыть сервисному аккаунту на редактирование.' },
+      { key: 'serviceAccount', label: 'Ключ сервисного аккаунта (JSON)', type: 'secret',
+        description: 'Содержимое JSON-ключа из Google Cloud Console. У сервисных аккаунтов нет своего места на диске — используйте общий диск (Shared drive) или OAuth.' },
+      { key: 'clientId', label: 'OAuth: Client ID', type: 'text', description: 'Вместо сервисного аккаунта: OAuth-клиент и refresh token с правом drive.file или drive.' },
+      { key: 'clientSecret', label: 'OAuth: Client secret', type: 'secret' },
+      { key: 'refreshToken', label: 'OAuth: Refresh token', type: 'secret' },
+    ],
+  },
+  {
+    id: 's3', label: 'S3', description: 'Amazon S3 и совместимые: Cloudflare R2, Yandex Object Storage, MinIO, Backblaze B2, Selectel.',
+    fields: [
+      { key: 'endpoint', label: 'Endpoint', type: 'url', placeholder: 'https://storage.yandexcloud.net',
+        description: 'Пусто — Amazon S3 в выбранном регионе. Для R2: https://<account>.r2.cloudflarestorage.com.' },
+      { key: 'region', label: 'Регион', type: 'text', placeholder: 'us-east-1', description: 'Для R2 — auto.' },
+      { key: 'bucket', label: 'Бакет', type: 'text', required: true },
+      { key: 'accessKeyId', label: 'Access key ID', type: 'text', required: true },
+      { key: 'secretAccessKey', label: 'Secret access key', type: 'secret', required: true },
+      { key: 'pathStyle', label: 'Адреса вида endpoint/bucket', type: 'boolean',
+        description: 'Включите для MinIO и других серверов без поддоменов бакетов.' },
+      prefixField,
+    ],
+  },
+  {
+    id: 'webdav', label: 'WebDAV', description: 'Nextcloud, ownCloud, Яндекс Диск (webdav.yandex.ru), Synology и любой сервер WebDAV.',
+    fields: [
+      { key: 'url', label: 'Адрес', type: 'url', required: true, placeholder: 'https://cloud.example.com/remote.php/dav/files/user/' },
+      { key: 'username', label: 'Логин', type: 'text' },
+      { key: 'password', label: 'Пароль', type: 'secret', description: 'Для Nextcloud и Яндекс Диска лучше пароль приложения.' },
+      prefixField,
+    ],
+  },
+];
+
+export const storageKindById: ReadonlyMap<string, StorageKindDefinition> = new Map(storageKindDefinitions.map(kind => [kind.id, kind]));
+
+export function isStorageKind(value: unknown): value is StorageKind {
+  return typeof value === 'string' && storageKindById.has(value);
+}
+
+/** Which photos go to a storage: every upload as soon as its files are ready, or only photos once they are approved. */
+export const storagePublishModes = [
+  { id: 'all', label: 'Все загрузки', description: 'Сразу после загрузки, включая снимки на модерации.' },
+  { id: 'published', label: 'Только опубликованные', description: 'После одобрения модератором.' },
+] as const;
+export type StoragePublishMode = typeof storagePublishModes[number]['id'];
+
+export function isStoragePublishMode(value: unknown): value is StoragePublishMode {
+  return storagePublishModes.some(mode => mode.id === value);
+}
+
+/** Replica states as stored in ng_media_replicas.status. */
+export const replicaStatuses = {
+  pending: 0,
+  published: 1,
+  failed: 2,
+  /** The last check did not find the file in the storage. */
+  missing: 3,
+  /** The file is there but its size or checksum differs from the original. */
+  mismatch: 4,
+} as const;
+export type ReplicaStatus = keyof typeof replicaStatuses;
+
+export const replicaStatusLabels: Record<ReplicaStatus, string> = {
+  pending: 'В очереди', published: 'Опубликован', failed: 'Ошибка', missing: 'Не найден', mismatch: 'Не совпадает',
+};
+
+export function replicaStatusName(code: number): ReplicaStatus {
+  return (Object.entries(replicaStatuses).find(([, value]) => value === code)?.[0] ?? 'pending') as ReplicaStatus;
+}
+
+/** GET /api/admin/storage: a storage with its settings (secrets blanked, see `secrets`) and publication totals. */
+export interface StorageTargetData {
+  id: number;
+  title: string;
+  kind: StorageKind;
+  enabled: boolean;
+  mode: StoragePublishMode;
+  config: Record<string, string>;
+  /** Secret fields that have a value stored; their value comes back empty. */
+  secrets: string[];
+  createdAt: string;
+  lastCheck: { at: string; deep: boolean; checked: number; problems: number; error: string | null } | null;
+  /** Files by replica status. */
+  files: Record<ReplicaStatus, number>;
+  /** Photos that should be in this storage, and how many of them have every file published. */
+  photos: { eligible: number; published: number };
+  /** Publication and check jobs still queued for this storage. */
+  queued: number;
+}
+
+export interface StorageOverview {
+  targets: StorageTargetData[];
+  /** Where the media worker reads originals from, for the help text. */
+  mediaRoot: string;
+}
+
+export interface StorageReplicaData {
+  id: number;
+  photoId: number;
+  file: string;
+  status: ReplicaStatus;
+  size: number | null;
+  publishedAt: string | null;
+  checkedAt: string | null;
+  error: string | null;
+}
+
+export interface StorageReplicaPage {
+  total: number;
+  page: number;
+  pages: number;
+  replicas: StorageReplicaData[];
+}
+
+/** POST /api/admin/storage/:id/test */
+export interface StorageTestResult {
+  ok: boolean;
+  message: string;
+  milliseconds: number;
+}
+
+/** Payloads of the PublishMedia and VerifyMedia jobs. */
+export interface PublishMediaJob { targetId: number; photoId: number; force?: boolean }
+export interface VerifyMediaJob { targetId: number; deep?: boolean; photoId?: number; scheduled?: boolean }

@@ -385,3 +385,44 @@ model JobSchedule {
 
   @@map("ng_job_schedules")
 }
+
+/// An external storage photos and videos are published to (`storageKinds` in contracts); `config` is its JSON settings.
+model StorageTarget {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(255)
+  kind String @db.VarChar(16)
+  enabled Boolean @default(true)
+  /// 'all' publishes every upload, 'published' only approved photos.
+  mode String @default("all") @db.VarChar(16)
+  config String @db.Text
+  created_at DateTime @default(now()) @db.DateTime(3)
+  last_check_at DateTime? @db.DateTime(3)
+  last_check_deep Boolean @default(false)
+  last_check_count Int @default(0)
+  last_check_problems Int @default(0)
+  last_check_error String? @db.Text
+
+  @@map("ng_storage_targets")
+}
+
+/// One file of a photo (image, video, video poster) in one storage: path relative to MEDIA_ROOT, what was published
+/// and what the last check found (`replicaStatuses` in contracts).
+model MediaReplica {
+  id Int @id @default(autoincrement())
+  target_id Int
+  photo_id Int
+  file String @db.VarChar(191)
+  status Int @default(0) @db.TinyInt
+  size BigInt?
+  sha256 String? @db.Char(64)
+  /// The storage's own id of the file (Google Drive file id).
+  remote_id String? @db.VarChar(255)
+  published_at DateTime? @db.DateTime(3)
+  checked_at DateTime? @db.DateTime(3)
+  error String? @db.Text
+
+  @@unique([target_id, file])
+  @@index([photo_id])
+  @@index([target_id, status])
+  @@map("ng_media_replicas")
+}

@@ -13,8 +13,10 @@
     "@nestjs/core": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "@nativegallery/config": "2.0.0",
     "@nativegallery/database": "2.0.0",
     "@nativegallery/contracts": "2.0.0",
-    "@nativegallery/jobs": "2.0.0"
+    "@nativegallery/jobs": "2.0.0",
+    "@nativegallery/storage": "2.0.0"
   }
 }

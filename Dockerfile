@@ -13,6 +13,7 @@ COPY packages/contracts/package.json packages/contracts/
 COPY packages/config/package.json packages/config/
 COPY packages/database/package.json packages/database/
 COPY packages/jobs/package.json packages/jobs/
+COPY packages/storage/package.json packages/storage/
 RUN npm ci
 
 COPY . .

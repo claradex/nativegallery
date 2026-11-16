@@ -18,7 +18,7 @@ export interface Viewer {
   pendingPhotos: number;
 }
 
-export const jobKinds = ['ExecContests', 'BlurNewImage', 'CompressImage', 'RenderVideo'] as const;
+export const jobKinds = ['ExecContests', 'BlurNewImage', 'CompressImage', 'RenderVideo', 'PublishMedia', 'VerifyMedia'] as const;
 export type JobKind = typeof jobKinds[number];
 
 export interface MediaJob {
@@ -243,3 +243,5 @@ export interface ModelListData {
 export * from './Vehicles';
 
 export * from './HomeBlocks';
+
+export * from './Storage';
