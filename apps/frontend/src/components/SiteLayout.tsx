@@ -22,7 +22,7 @@ export async function SiteLayout({ children }: { children: ReactNode }) {
       <div id="backgr"></div>
       {flag('EMAIL_VERIFY') && context.viewer?.status === 3 && <EmailVerification />}
       <table className="tmain"><tbody>
-        <Navbar title={title} viewer={context.viewer} />
+        <Navbar title={title} viewer={context.viewer} entityTypes={context.entityTypes ?? []} />
         {children}
         <tr><Footer databaseVersion={context.databaseVersion} /></tr>
       </tbody></table>

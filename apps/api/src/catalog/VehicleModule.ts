@@ -12,5 +12,7 @@ import { AdminVehicleEditorController } from './AdminVehicleEditorController';
 
 import { AdminEntitiesController } from './AdminEntitiesController';
 
-@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController, VehicleModerationController, AdminVehicleEditorController, AdminEntitiesController] })
+import { ModelListController } from './ModelListController';
+
+@Module({ imports: [AuthModule], controllers: [VehicleController, VehicleSearchController, VehicleRequestController, VehicleModerationController, AdminVehicleEditorController, AdminEntitiesController, ModelListController] })
 export class VehicleModule {}

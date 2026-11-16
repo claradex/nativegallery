@@ -202,3 +202,23 @@ export interface SitePageData {
 }
 
 export * from './Settings';
+
+/** A kind of entity (Трамвай, Троллейбус …): the `t` of `/models?t=`. */
+export interface EntityType {
+  id: number;
+  title: string;
+}
+
+export interface ModelListEntry {
+  id: number;
+  title: string;
+  comment: string | null;
+  photos: number;
+}
+
+/** `/models?t=`: the models of one entity type, grouped by manufacturer when the type has such a field. */
+export interface ModelListData {
+  type: EntityType & { color: string };
+  types: (EntityType & { models: number })[];
+  groups: { title: string; models: ModelListEntry[] }[];
+}

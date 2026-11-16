@@ -1,4 +1,4 @@
-import type { Viewer } from '@nativegallery/contracts';
+import type { EntityType, Viewer } from '@nativegallery/contracts';
 
 /**
  * The site menu as data, so the desktop bar (`Navbar`) and the phone burger menu (`MobileMenu`) list the same items.
@@ -19,9 +19,14 @@ export interface MenuEntry {
   children?: MenuEntry[];
 }
 
-export function mainMenu(viewer: Viewer | null): MenuEntry[] {
+export function mainMenu(viewer: Viewer | null, types: EntityType[] = []): MenuEntry[] {
   const unread = viewer?.unreadPhotos ?? 0;
   return [
+    { label: 'База данных', children: [
+      types.length
+        ? { label: 'Модели', children: types.map(type => ({ label: type.title, href: '/models?t=' + type.id })) }
+        : { label: 'Модели', href: '/models' },
+    ] },
     { label: 'Дополнительно', children: [
       { label: 'Новости и хронология', href: '/news.php' },
       { label: 'Разные фотогалереи', href: '/misc/' },

@@ -1,0 +1,5 @@
+.ml-group { margin-bottom: 10px; }
+.ml-models { columns: 3 220px; column-gap: 24px; }
+.ml-models > li { break-inside: avoid; padding-top: 1px; padding-bottom: 1px; }
+.ml-count { margin-left: 5px; color: #888; font-size: 11px; }
+.ml-comment { color: #888; }
