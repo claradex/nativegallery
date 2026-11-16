@@ -1,4 +1,4 @@
-import type { CityRef, VehicleDetails } from './Vehicles';
+import type { CityRef, VehicleDetails, VehicleEvent } from './Vehicles';
 
 export interface LoginRequest {
   username: string;
@@ -26,7 +26,7 @@ export interface MediaJob {
   output: string;
 }
 
-export { legacyDate } from './Date';
+export { legacyDate, shootingDate, siteDay } from './Date';
 
 export interface SiteOverview {
   users: number;
@@ -109,7 +109,10 @@ export interface PhotoPageData {
 
 export interface VehiclePageData {
   vehicle: VehicleDetails;
-  photos: (TopPhoto & { comments: number })[];
+  /** Newest first; `takenAt` is the shooting date and `route` the route the vehicle ran on it. */
+  photos: (TopPhoto & { comments: number; takenAt: number; route: string })[];
+  /** Explicit events plus the ones derived from the vehicle's dates, in no particular order. */
+  events: VehicleEvent[];
 }
 
 export interface ContestWinnerData {

@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import Link from '../../components/Link';
 import { notFound } from 'next/navigation';
 import { apiGet, isId } from '../../api/client';
-import { formatPartialDate, legacyDate, vehiclePurpose, type VehiclePageData } from '@nativegallery/contracts';
+import { formatPartialDate, shootingDate, vehiclePurpose, type VehiclePageData } from '@nativegallery/contracts';
 import { canEditCatalog, CityLink, Paragraphs, StatusLabel } from './CatalogParts';
+import { VehicleTimeline } from './VehicleTimeline';
 
 function VehiclePhoto({ photo, vehicleId }: { photo: VehiclePageData['photos'][number]; vehicleId: number }) {
   return <div className="p20p s11"><table><tbody><tr>
@@ -16,9 +17,9 @@ function VehiclePhoto({ photo, vehicleId }: { photo: VehiclePageData['photos'][n
     </a></td>
     <td className="pb_descr">
       <p><b className="pw-place">{photo.place}</b></p>
+      <p className="sm">{shootingDate(photo.takenAt) || 'Дата не указана'}{photo.route && <><br />Маршрут {photo.route}</>}</p>
       <span className="pw-descr">{photo.postbody}</span>
-      <p className="sm"><b>{legacyDate(photo.timeupload)}</b><br />
-        Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
+      <p className="sm">Автор: <Link href={'/author/' + photo.authorId + '/'}>{photo.author}</Link>
       </p>
     </td>
   </tr></tbody></table></div>;
@@ -45,7 +46,7 @@ function Lists({ vehicle }: { vehicle: VehiclePageData['vehicle'] }) {
   </div>;
 }
 
-function VehicleContent({ vehicle, photos, editable }: VehiclePageData & { editable: boolean }) {
+function VehicleContent({ vehicle, photos, events, editable }: VehiclePageData & { editable: boolean }) {
   const date = (value: string) => formatPartialDate(value) || null;
   return <tr><td className="main">
     <h1>{vehicle.heading}</h1>
@@ -71,8 +72,10 @@ function VehicleContent({ vehicle, photos, editable }: VehiclePageData & { edita
       </tbody>
     </table>
     {editable && <p className="sm"><Link href={'/admin?type=VehicleEdit&id=' + vehicle.id}>Редактировать в панели управления</Link></p>}
-    {photos.length ? photos.map(photo => <VehiclePhoto key={photo.id} photo={photo} vehicleId={vehicle.id} />)
-      : <div className="p20">Фотографий этого ТС пока нет.</div>}
+    {!photos.length && <div className="p20">Фотографий этого ТС пока нет.</div>}
+    <div className="ct-timeline">
+      <VehicleTimeline photos={photos} events={events} renderPhoto={photo => <VehiclePhoto photo={photo} vehicleId={vehicle.id} />} />
+    </div>
     <br />
     <Lists vehicle={vehicle} />
   </td></tr>;

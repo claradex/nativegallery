@@ -1,7 +1,7 @@
 import { Controller, Get, Header, NotFoundException, Param } from '@nestjs/common';
 import { database, Prisma } from '@nativegallery/database';
 import type { VehiclePageData } from '@nativegallery/contracts';
-import { vehicleDetails } from './VehicleData';
+import { vehicleDetails, vehicleEvents } from './VehicleData';
 import { requireId } from '../common/ids';
 
 @Controller('api/internal')
@@ -22,14 +22,18 @@ export class VehicleController {
     if (!vehicle) throw new NotFoundException();
 
     type Photo = VehiclePageData['photos'][number];
-    const rows = await database.$queryRaw<(Omit<Photo, 'views' | 'comments'> & { views: bigint; comments: bigint })[]>(Prisma.sql`
-      SELECT p.id, p.photourl, p.place, p.postbody, p.timeupload, p.user_id AS authorId,
+    const rows = await database.$queryRaw<(Omit<Photo, 'views' | 'comments' | 'takenAt' | 'route'> & { views: bigint; comments: bigint; takenAt: number | bigint; route: string | null })[]>(Prisma.sql`
+      SELECT p.id, p.photourl, p.place, p.postbody, p.timeupload, p.posted_at AS takenAt, p.user_id AS authorId,
+        (SELECT pv.route FROM photos_vehicles pv WHERE pv.photo_id = p.id AND pv.entitydata_id = ${id} LIMIT 1) AS route,
         COALESCE(u.username, '') AS author,
         (SELECT COUNT(*) FROM photos_views v WHERE v.photo_id = p.id) AS views,
         (SELECT COUNT(*) FROM photos_comments c WHERE c.photo_id = p.id) AS comments
       FROM photos p LEFT JOIN users u ON u.id = p.user_id
       WHERE (p.entitydata_id = ${id} OR p.id IN (SELECT photo_id FROM photos_vehicles WHERE entitydata_id = ${id})) AND p.moderated = 1 ORDER BY p.posted_at DESC, p.id DESC
     `);
-    return { vehicle, photos: rows.map(row => ({ ...row, views: Number(row.views), comments: Number(row.comments) })) };
+    return {
+      vehicle, events: await vehicleEvents(vehicle),
+      photos: rows.map(row => ({ ...row, takenAt: Number(row.takenAt), route: row.route ?? '', views: Number(row.views), comments: Number(row.comments) })),
+    };
   }
 }

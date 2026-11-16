@@ -3,17 +3,20 @@
  * vehicles of a model in a city (Санкт-Петербург, № 5000). GeoDB is a tree of countries, regions, cities and depots.
  */
 
-/** Vehicle states, with the row colour class (`s1` … `s9`, `s1x` on odd rows) the lists use. */
+/**
+ * Vehicle states, with the row colour class the lists use: `s1` … `s9` as on transphoto (s2 green «не был», s3 yellow,
+ * s4 grey, s5 pink «списан», s6 brown, s7 light blue «КВР», s9 lilac «передан»), `s1x` on odd rows.
+ */
 export const vehicleStatuses = [
   { id: 1, label: 'Эксплуатируется', css: 1 },
-  { id: 0, label: 'Не был в эксплуатации', css: 7 },
+  { id: 0, label: 'Не был в эксплуатации', css: 2 },
   { id: 2, label: 'Не эксплуатируется', css: 3 },
-  { id: 3, label: 'Выведен из эксплуатации / ожидает списания', css: 6 },
-  { id: 4, label: 'Списан', css: 4 },
-  { id: 5, label: 'Местонахождение и судьба неизвестны', css: 9 },
-  { id: 6, label: 'КВР / модернизация (смена модели)', css: 8 },
-  { id: 7, label: 'Передан в другой город', css: 5 },
-  { id: 8, label: 'Сохранён (музей, памятник)', css: 2 },
+  { id: 3, label: 'Выведен из эксплуатации / ожидает списания', css: 4 },
+  { id: 4, label: 'Списан', css: 5 },
+  { id: 5, label: 'Местонахождение и судьба неизвестны', css: 6 },
+  { id: 6, label: 'КВР / модернизация (смена модели)', css: 7 },
+  { id: 8, label: 'Сохранён (музей, памятник)', css: 8 },
+  { id: 7, label: 'Передан в другой город', css: 9 },
 ] as const;
 
 /** States that count as «действующий» in the per-city totals. */
@@ -252,3 +255,58 @@ export interface UploadVehicleLink {
 }
 
 export const maxPhotoVehicles = 10;
+
+/**
+ * Kinds of dated events in a vehicle's life, shown between its photos on the vehicle page. `css` is the
+ * status class of the bar; `wraps` marks the events after which the vehicle is gone from its city, so the
+ * photos taken later are wrapped in the event's colour.
+ */
+export const vehicleEventKinds = [
+  { id: 1, label: 'Поступил на предприятие', css: 's12', wraps: false },
+  { id: 2, label: 'Начало эксплуатации', css: 's12', wraps: false },
+  { id: 3, label: 'Смена госномера', css: 's31', wraps: false },
+  { id: 4, label: 'Перенумерован', css: 's11', wraps: false },
+  { id: 5, label: 'Передан в другое депо', css: 's11', wraps: false },
+  { id: 6, label: 'Передан в другой город', css: 's19', wraps: true },
+  { id: 7, label: 'КВР / модернизация', css: 's17', wraps: false },
+  { id: 8, label: 'Капитальный ремонт', css: 's17', wraps: false },
+  { id: 9, label: 'Отставлен от эксплуатации', css: 's13', wraps: false },
+  { id: 10, label: 'Выведен из эксплуатации', css: 's14', wraps: false },
+  { id: 11, label: 'Списан', css: 's15', wraps: true },
+  { id: 12, label: 'Утилизирован', css: 's15', wraps: true },
+  { id: 13, label: 'Сохранён (музей, памятник)', css: 's18', wraps: true },
+  { id: 14, label: 'Другое', css: 's11', wraps: false },
+] as const;
+
+export const vehicleEventKind = (id: number) => vehicleEventKinds.find(kind => kind.id === id) ?? vehicleEventKinds[vehicleEventKinds.length - 1];
+
+/** How sure the date of an event is. */
+export const eventApprox = [
+  { id: 0, label: 'Точно' },
+  { id: 1, label: 'или позднее' },
+  { id: 2, label: 'или ранее' },
+  { id: 3, label: 'около' },
+] as const;
+
+export interface VehicleEvent {
+  /** `null` for an event derived from the vehicle's own dates (Начало работы, Выбытие, Утилизация). */
+  id: number | null;
+  kind: number;
+  /** Partial date: YYYY, YYYY-MM or YYYY-MM-DD. */
+  date: string;
+  approx: number;
+  note: string;
+}
+
+const genitiveMonths = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const nominativeMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+/** «22 декабря 1999 г. или позднее», «Май 2025 г.», «около 1978 г.». */
+export function eventDateLabel(date: string, approx = 0) {
+  const [year, month, day] = date.split('-');
+  if (!year) return '';
+  const text = day ? Number(day) + ' ' + genitiveMonths[Number(month) - 1] + ' ' + year + ' г.'
+    : month ? nominativeMonths[Number(month) - 1] + ' ' + year + ' г.' : year + ' г.';
+  if (approx === 3) return 'около ' + (month && !day ? genitiveMonths[Number(month) - 1] + ' ' + year + ' г.' : text);
+  return approx === 1 ? text + ' или позднее' : approx === 2 ? text + ' или ранее' : text;
+}

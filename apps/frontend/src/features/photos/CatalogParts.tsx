@@ -19,9 +19,13 @@ export function CityLink({ city }: { city: CityRef | null }) {
     {city.country && <span className="ct-muted"> ({city.country.title})</span>}</>;
 }
 
+/** «Цветовые обозначения»: one row per state, alternating plain and odd-row shades as on transphoto. */
 export function StatusLegend() {
-  return <div className="ct-legend">{vehicleStatuses.map(status =>
-    <span key={status.id} className={statusClass(status.id)}>{status.label}</span>)}</div>;
+  return <>
+    <h4>Цветовые обозначения</h4>
+    <table className="horlines ct-legend"><tbody>{vehicleStatuses.map((status, index) =>
+      <tr key={status.id} className={statusClass(status.id, index % 2 === 0)}><td className="c">{status.label}</td></tr>)}</tbody></table>
+  </>;
 }
 
 /** Multi-line text with line breaks kept. */

@@ -1,8 +1,8 @@
 'use client';
 
-import { ExternalLink, Pencil, Search, TrainFront, Trash2 } from 'lucide-react';
+import { ExternalLink, Pencil, Plus, Search, TrainFront, Trash2, X } from 'lucide-react';
 import { useMemo, useState, type FormEvent } from 'react';
-import { formatPartialDate, vehiclePurposes, vehicleStatus, vehicleStatuses, type CityRef, type VehicleSummary } from '@nativegallery/contracts';
+import { eventApprox, formatPartialDate, vehicleEventKinds, vehiclePurposes, vehicleStatus, vehicleStatuses, type CityRef, type VehicleSummary } from '@nativegallery/contracts';
 import Link from '../../../components/Link';
 import { navigate } from '../../../components/navigation';
 import { CustomFields, datePlaceholder, fieldBody, savedValues, useEntityFields } from '../catalog/CustomFields';
@@ -27,6 +27,7 @@ export interface VehicleDetails {
   id: number; entityid: number; title: string; comment: string | null; content: string | null;
   model_id: number | null; city_id: number | null; depot_id: number | null; factory_number: string | null; vin: string | null;
   built: string | null; started: string | null; retired: string | null; scrapped: string | null; status: number; purpose: number; photos: number;
+  events: { kind: number; date: string; approx: number; note: string | null }[];
 }
 export type VehicleFilters = { entity: string; model: string; city: string; q: string };
 
@@ -113,6 +114,39 @@ export function VehiclesTable({ data, options, filters, create }: { data: Vehicl
 /** Partial dates come from the API as YYYY[-MM[-DD]] and are edited as ДД.ММ.ГГГГ. */
 const shownDate = (value: string | null) => value ? formatPartialDate(value) || value : '';
 
+type EventDraft = { key: number; kind: string; date: string; approx: string; note: string };
+let eventKey = 0;
+
+/** «Хронология»: dated events shown between the photos on the vehicle page. */
+function EventsEditor({ events, setEvents }: { events: EventDraft[]; setEvents: (update: (list: EventDraft[]) => EventDraft[]) => void }) {
+  const change = (key: number, field: keyof EventDraft) => (event: { target: { value: string } }) =>
+    setEvents(list => list.map(item => item.key === key ? { ...item, [field]: event.target.value } : item));
+  return <Card>
+    <CardHeader><div>
+      <CardTitle>Хронология</CardTitle>
+      <CardDescription>События между фотографиями на странице ТС. Начало работы, выбытие и утилизация из дат выше показываются сами, если их нет здесь.</CardDescription>
+    </div></CardHeader>
+    <CardContent className="grid gap-3">
+      {events.map((item, index) => <div key={item.key} className="grid gap-2 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_8rem_9rem_auto]">
+        <NativeSelect value={item.kind} onChange={change(item.key, 'kind')} aria-label={'Событие ' + (index + 1)}>
+          {vehicleEventKinds.map(kind => <option key={kind.id} value={kind.id}>{kind.label}</option>)}
+        </NativeSelect>
+        <Input value={item.date} onChange={change(item.key, 'date')} placeholder={datePlaceholder} aria-label="Дата" required
+          pattern="(\d{1,2}\.)?(\d{1,2}\.)?\d{4}" />
+        <NativeSelect value={item.approx} onChange={change(item.key, 'approx')} aria-label="Точность даты">
+          {eventApprox.map(approx => <option key={approx.id} value={approx.id}>{approx.label}</option>)}
+        </NativeSelect>
+        <Button type="button" size="icon-sm" variant="ghost" className="self-center" aria-label="Удалить событие"
+          onClick={() => setEvents(list => list.filter(other => other.key !== item.key))}><X /></Button>
+        <Input value={item.note} onChange={change(item.key, 'note')} placeholder="Пояснение, например «в № 3105»" aria-label="Пояснение"
+          maxLength={255} className="sm:col-span-4" />
+      </div>)}
+      <Button type="button" variant="outline" className="justify-self-start"
+        onClick={() => setEvents(list => [...list, { key: ++eventKey, kind: '1', date: '', approx: '0', note: '' }])}><Plus />Добавить событие</Button>
+    </CardContent>
+  </Card>;
+}
+
 export function VehicleForm({ options, vehicle, preset }: { options: VehicleOptions; vehicle?: VehicleDetails; preset?: { model?: string; city?: string } }) {
   const presetModel = options.models.find(model => String(model.id) === preset?.model);
   const [entity, setEntity] = useState(vehicle ? String(vehicle.entityid) : presetModel ? String(presetModel.entityid) : options.entities.length === 1 ? String(options.entities[0].id) : '');
@@ -123,6 +157,9 @@ export function VehicleForm({ options, vehicle, preset }: { options: VehicleOpti
     built: shownDate(vehicle?.built ?? null), started: shownDate(vehicle?.started ?? null), retired: shownDate(vehicle?.retired ?? null), scrapped: shownDate(vehicle?.scrapped ?? null),
     status: String(vehicle?.status ?? 1), purpose: String(vehicle?.purpose ?? 0), comment: vehicle?.comment ?? '',
   });
+  const [events, setEvents] = useState<EventDraft[]>(() => (vehicle?.events ?? []).map(event => ({
+    key: ++eventKey, kind: String(event.kind), date: shownDate(event.date), approx: String(event.approx), note: event.note ?? '',
+  })));
   const { fields, error } = useEntityFields(entity);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [pending, run] = useAction();
@@ -134,7 +171,8 @@ export function VehicleForm({ options, vehicle, preset }: { options: VehicleOpti
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    const body = { ...(vehicle ? {} : { entityid: entity }), ...form, ...fieldBody(fields, 'vehicle', values) };
+    const body = { ...(vehicle ? {} : { entityid: entity }), ...form, ...fieldBody(fields, 'vehicle', values),
+      events: JSON.stringify(events.map(({ kind, date, approx, note }) => ({ kind, date, approx, note }))) };
     const result = await run(() => vehicle
       ? send('/api/admin/vehicles/' + vehicle.id, { method: 'PATCH', body, fallback: 'Не удалось сохранить ТС. Проверьте поля и даты.' })
       : send<{ id: number }>('/api/admin/vehicles', { body, fallback: 'Не удалось добавить ТС. Проверьте поля и даты.' }),
@@ -208,6 +246,7 @@ export function VehicleForm({ options, vehicle, preset }: { options: VehicleOpti
           {date('built', 'Построен')}{date('started', 'Начало работы')}{date('retired', 'Выбытие')}{date('scrapped', 'Утилизация')}
         </CardContent>
       </Card>
+      <EventsEditor events={events} setEvents={setEvents} />
     </div>
     <Card>
       <CardHeader><div>

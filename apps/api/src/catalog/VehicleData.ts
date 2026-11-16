@@ -1,5 +1,5 @@
 import { database, Prisma } from '@nativegallery/database';
-import { formatPartialDate, vehiclePurpose, vehicleStatus, type PhotoVehicleData, type VehicleDetails } from '@nativegallery/contracts';
+import { formatPartialDate, vehiclePurpose, vehicleStatus, type PhotoVehicleData, type VehicleDetails, type VehicleEvent } from '@nativegallery/contracts';
 import { entityFields, fieldValues, vehicleColumns, vehicleHeading, vehicleSummaries, type VehicleRow } from './VehicleCatalog';
 
 export async function vehicleDetails(id: number): Promise<VehicleDetails | null> {
@@ -37,4 +37,21 @@ export async function findVehicle(id: number): Promise<Omit<PhotoVehicleData, 'r
     id, title: vehicle.heading, heading: vehicle.heading, status: vehicle.status, model: vehicle.model,
     fields: [...rows.filter(([, value]) => value).map(([label, value]) => ({ label, value })), ...vehicle.fields],
   };
+}
+
+/**
+ * Events of a vehicle for its timeline: the ones entered by editors, plus «Поступил на предприятие»,
+ * «Выведен из эксплуатации» / «Списан» and «Утилизирован» derived from its dates unless an editor entered them.
+ */
+export async function vehicleEvents(vehicle: Pick<VehicleDetails, 'id' | 'started' | 'retired' | 'scrapped' | 'status'>): Promise<VehicleEvent[]> {
+  const rows = await database.vehicleEvent.findMany({ where: { entitydata_id: vehicle.id }, orderBy: [{ date: 'desc' }, { id: 'desc' }] });
+  const events: VehicleEvent[] = rows.map(row => ({ id: row.id, kind: row.kind, date: row.date, approx: row.approx, note: row.note ?? '' }));
+  const has = (...kinds: number[]) => events.some(event => kinds.includes(event.kind));
+  const derive = (date: string, kind: number, ...covered: number[]) => {
+    if (date && !has(kind, ...covered)) events.push({ id: null, kind, date, approx: 0, note: '' });
+  };
+  derive(vehicle.started, 1, 2);
+  derive(vehicle.retired, vehicle.status === 4 ? 11 : 10, 10, 11);
+  derive(vehicle.scrapped, 12);
+  return events;
 }

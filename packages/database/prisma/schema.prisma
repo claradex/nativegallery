@@ -198,6 +198,19 @@ model PhotoVehicle {
   @@map("photos_vehicles")
 }
 
+model VehicleEvent {
+  id Int @id @default(autoincrement())
+  entitydata_id Int
+  kind Int @db.TinyInt
+  date String @db.VarChar(10)
+  approx Int @default(0) @db.TinyInt
+  note String? @db.VarChar(255)
+  createdate BigInt
+
+  @@index([entitydata_id])
+  @@map("entities_events")
+}
+
 model Gallery {
   id Int @id @default(autoincrement())
   title String @db.Text

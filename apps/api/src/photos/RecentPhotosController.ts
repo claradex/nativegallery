@@ -1,5 +1,4 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
-import type { Request } from 'express';
+import { Controller, Get, Query } from '@nestjs/common';
 import { database } from '@nativegallery/database';
 import { legacyDate } from '@nativegallery/contracts';
 import { setting } from '@nativegallery/config';
@@ -11,7 +10,7 @@ const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => (
 @Controller('api/photo')
 export class RecentPhotosController {
   @Get('loadrecent')
-  async recent(@Query('lastpid') lastpid: string, @Req() request: Request) {
+  async recent(@Query('lastpid') lastpid: string) {
     const limit = Number(lastpid);
     if (!Number.isSafeInteger(limit) || limit <= 0) return [];
     const photos = await database.photo.findMany({
@@ -29,7 +28,8 @@ export class RecentPhotosController {
     ]);
     const names = new Map(users.map(user => [user.id, user.username]));
     const counts = new Map(comments.map(row => [row.photo_id, row._count.photo_id]));
-    const origin = setting('SITE_ORIGIN') || request.protocol + '://' + request.get('host');
+    // Relative unless an origin is configured: behind the frontend proxy the Host header is the internal API address.
+    const origin = setting('SITE_ORIGIN') || '';
     return photos.map(photo => {
       const date = legacyDate(photo.posted_at);
       const thumbnail = origin + '/api/photo/compress?url=' + encodeURIComponent(photo.photourl);

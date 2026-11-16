@@ -1,7 +1,7 @@
 import { BadRequestException, Body, ConflictException, Controller, Delete, Get, Header, NotFoundException, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { database, Prisma } from '@nativegallery/database';
-import { GeoKind, parsePartialDate, vehiclePurposes, vehicleStatuses } from '@nativegallery/contracts';
+import { eventApprox, GeoKind, parsePartialDate, vehicleEventKinds, vehiclePurposes, vehicleStatuses } from '@nativegallery/contracts';
 import { AuthService } from '../auth/AuthService';
 import { requireId } from '../common/ids';
 import { contentFromBody, entityFields, geoTree, vehicleColumns, vehicleSummaries, type VehicleRow } from './VehicleCatalog';
@@ -32,6 +32,27 @@ function partialDate(value: unknown) {
   const date = parsePartialDate(value as string);
   if (date === null) invalid();
   return date || null;
+}
+
+/** The timeline of the vehicle form, `undefined` when the body leaves it as it is. */
+function eventsFromBody(raw: unknown) {
+  if (raw === undefined) return undefined;
+  let value = raw;
+  if (typeof raw === 'string') { try { value = JSON.parse(raw); } catch { invalid(); } }
+  if (!Array.isArray(value) || value.length > 100) invalid();
+  return (value as Record<string, unknown>[]).map(event => {
+    const kind = Number(event?.kind), approx = Number(event?.approx ?? 0);
+    if (!vehicleEventKinds.some(item => item.id === kind) || !eventApprox.some(item => item.id === approx)) invalid();
+    const date = partialDate(event.date);
+    if (!date) throw new BadRequestException('У события должна быть дата.');
+    return { kind, approx, date, note: optionalText(event.note, 255) };
+  });
+}
+
+async function saveEvents(tx: Prisma.TransactionClient, id: number, events: ReturnType<typeof eventsFromBody>) {
+  if (!events) return;
+  await tx.vehicleEvent.deleteMany({ where: { entitydata_id: id } });
+  if (events.length) await tx.vehicleEvent.createMany({ data: events.map(event => ({ ...event, entitydata_id: id, createdate: now() })) });
 }
 
 async function entityTemplate(id: number) {
@@ -194,17 +215,23 @@ export class AdminVehicleEditorController {
     await this.auth.requireAdmin(request, 'editor');
     const vehicle = await database.entityData.findUnique({ where: { id: requireId(rawId, BadRequestException) } });
     if (!vehicle) throw new NotFoundException();
+    const events = await database.vehicleEvent.findMany({ where: { entitydata_id: vehicle.id }, orderBy: [{ date: 'asc' }, { id: 'asc' }],
+      select: { kind: true, date: true, approx: true, note: true } });
     const photos = await database.photo.count({ where: { OR: [{ entitydata_id: vehicle.id },
       { id: { in: (await database.photoVehicle.findMany({ where: { entitydata_id: vehicle.id }, select: { photo_id: true } })).map(link => link.photo_id) } }] } });
-    return { ...vehicle, createdate: Number(vehicle.createdate), photos };
+    return { ...vehicle, createdate: Number(vehicle.createdate), photos, events };
   }
 
   @Post('vehicles')
   async createVehicle(@Req() request: Request, @Body() body: Record<string, unknown>) {
     await this.auth.requireAdmin(request, 'editor');
     const entityid = requireId(body?.entityid, BadRequestException);
-    const data = await this.vehicleData(entityid, body);
-    return database.entityData.create({ data: { ...data, entityid, createdate: now() }, select: { id: true } });
+    const data = await this.vehicleData(entityid, body), events = eventsFromBody(body?.events);
+    return database.$transaction(async tx => {
+      const vehicle = await tx.entityData.create({ data: { ...data, entityid, createdate: now() }, select: { id: true } });
+      await saveEvents(tx, vehicle.id, events);
+      return vehicle;
+    });
   }
 
   @Patch('vehicles/:id')
@@ -213,7 +240,11 @@ export class AdminVehicleEditorController {
     const id = requireId(rawId, BadRequestException);
     const vehicle = await database.entityData.findUnique({ where: { id }, select: { entityid: true } });
     if (!vehicle) throw new NotFoundException();
-    await database.entityData.update({ where: { id }, data: await this.vehicleData(vehicle.entityid, body) });
+    const data = await this.vehicleData(vehicle.entityid, body), events = eventsFromBody(body?.events);
+    await database.$transaction(async tx => {
+      await tx.entityData.update({ where: { id }, data });
+      await saveEvents(tx, id, events);
+    });
     return { id };
   }
 
@@ -226,6 +257,7 @@ export class AdminVehicleEditorController {
       if (!vehicle) throw new NotFoundException();
       if (await tx.photo.findFirst({ where: { entitydata_id: id }, select: { id: true } }) ||
           await tx.photoVehicle.findFirst({ where: { entitydata_id: id }, select: { id: true } })) throw new ConflictException('К ТС привязаны фотографии.');
+      await tx.vehicleEvent.deleteMany({ where: { entitydata_id: id } });
       await tx.entityData.delete({ where: { id } });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return { id };

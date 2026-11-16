@@ -6,16 +6,18 @@
 .ct-facts td { padding-top:3px; padding-bottom:3px; }
 .ct-links { margin:12px 0; line-height:20px; }
 .ct-links a { white-space:nowrap; }
-.ct-legend { display:flex; flex-wrap:wrap; gap:4px; margin:10px 0; font-size:11px; }
-.ct-legend span { padding:2px 7px; border:solid 1px #ddd; }
+/* Rolling-stock list (`/list`), laid out like transphoto's list.php: centred, filters in white boxes, a sticky header. */
+.ct-center { text-align:center; }
+.ct-center h2.ct-subtitle { margin-top:-13px; }
+.ct-choices { line-height:20px; max-width:100%; box-sizing:border-box; }
+.ct-center .rtable { max-width:100%; overflow-x:auto; }
+.ct-center .rtable > .p20w { text-align:left; }
+.ct-center .rtable td { vertical-align:middle; }
+.ct-center .rtable td.n a { text-decoration:none; }
 .ct-filters { margin:6px 0; line-height:20px; }
 .ct-filters b, .ct-filters a { margin-right:6px; }
-.ct-scroll { overflow-x:auto; max-width:100%; }
-.ct-list { border:solid 1px #ddd; min-width:100%; }
-.ct-list th { font-size:13px; white-space:nowrap; }
-.ct-list td { border-top:solid 1px #ddd; vertical-align:top; }
-.ct-list td.n a { font-family:var(--narrow-font); font-size:18px; }
-.ct-list .ct-note { min-width:180px; }
+.ct-legend { margin:5px auto 0; }
+.ct-legend td { padding:2px 12px; }
 .ct-photos { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 14px; }
 .ct-photos img { height:120px; display:block; }
 .ct-cities td, .ct-cities th { padding-top:3px; padding-bottom:3px; }
@@ -33,3 +35,13 @@
   .ct-photos img { height:80px; }
   .ml-models { columns:1; }
 }
+
+/* Vehicle timeline: event bars and year dividers between the photos, as on transphoto. */
+.ct-event { padding:5px 20px 0; margin:0 -20px; min-height:21px; }
+.ct-event.s31, .ct-event.s31 b { color:#fff; }
+.ct-event-block { padding:0 20px; margin:0 -20px; }
+.ct-event-block > br:first-child { line-height:12px; }
+.ct-event-mark { padding:15px 0 6px; }
+.ct-year-newer { color:#888; font-size:10px; padding-left:20px; margin:10px -20px 0; padding-bottom:1px; border-bottom:dotted 1px #777; }
+.ct-year-older { color:#888; font-size:10px; margin-bottom:10px; }
+.ct-year > .ct-year-older:only-child { margin-top:10px; }
