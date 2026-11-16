@@ -12,7 +12,7 @@ export function legacyDate(timestamp: number, now = Math.floor(Date.now() / 1000
   if (!timestamp) return '';
   const age = now - timestamp;
   if (age <= 1) return 'только что';
-  if (age < 60) return age + ' секунд назад';
+  if (age < 60) return age + ' ' + plural(age, ['секунду', 'секунды', 'секунд']) + ' назад';
   if (age < 3600) {
     const minutes = Math.floor(age / 60);
     return minutes + ' ' + plural(minutes, ['минуту', 'минуты', 'минут']) + ' назад';
