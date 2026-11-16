@@ -14,7 +14,8 @@ export class CommentFeedController {
     const cursor = before !== undefined ? Prisma.sql`AND c.id < ${Number(before)}`
       : after !== undefined ? Prisma.sql`AND c.id > ${Number(after)}` : Prisma.empty;
     const order = after === undefined ? Prisma.sql`DESC` : Prisma.sql`ASC`;
-    const rows = await database.$queryRaw<FeedRow[]>(Prisma.sql`
+    // MySQL types COALESCE(int, 0) as BIGINT, which $queryRaw returns as a BigInt that JSON cannot serialise.
+    const raw = await database.$queryRaw<FeedRow[]>(Prisma.sql`
       SELECT c.id, c.photo_id AS photoId, p.photourl AS photoUrl,
         c.user_id AS authorId, COALESCE(u.username, '') AS author,
         COALESCE(u.admin, 0) AS admin, c.body, c.posted_at AS postedAt
@@ -27,6 +28,8 @@ export class CommentFeedController {
       ${cursor}
       ORDER BY c.id ${order} LIMIT 30
     `);
+    const rows = raw.map(row => ({ ...row, id: Number(row.id), photoId: Number(row.photoId), authorId: Number(row.authorId),
+      admin: Number(row.admin), postedAt: Number(row.postedAt) }));
     if (after !== undefined) rows.reverse();
     const [counts, votes] = await Promise.all([
       database.photo.groupBy({
